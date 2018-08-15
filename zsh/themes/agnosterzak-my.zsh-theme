@@ -719,32 +719,47 @@ prompt_indicator() {
 }
 
 prompt_prompt_timer_preexec() {
-  prompt_timer=$SECONDS
-  export ZSH_PROMPT_TIME="$prompt_timer"
+  export ZSH_PROMPT_TIME_PREEXEC="$SECONDS"
+}
+
+prompt_prompt_timer_precmd() {
+  if [[ -n "$ZSH_PROMPT_TIME_PREEXEC" ]]; then
+    timer_command=$(($SECONDS - $ZSH_PROMPT_TIME_PREEXEC))
+    if [[ -n "$TTY" ]] && [[ $timer_command -ge ${AGNOSTERZAK_COMMAND_EXECUTION_TIME_THRESHOLD:-3} ]]; then
+      export ZSH_COMMAND_TIME="$timer_command"
+    else
+      export ZSH_COMMAND_TIME=""
+    fi
+  fi
 }
 
 prompt_prompt_timer() {
-  local time_prompt
-  if [[ "$AGNOSTERZAK_SHOW_COMMAND_PROMPT_TIME" == true ]]; then
-    if [[ -n "$ZSH_PROMPT_TIME" ]]; then
-      timer_show=$(($SECONDS - $ZSH_PROMPT_TIME))
-      if [[ -n "$ZSH_COMMAND_TIME" ]]; then
-        time_prompt="${ZSH_COMMAND_TIME}s/${timer_show}s"
+  local time_prompt prompt_time_msg
+
+  if [[ -n "$ZSH_PROMPT_TIME_PREEXEC" ]]; then
+    time_prompt=$(($SECONDS - $ZSH_PROMPT_TIME_PREEXEC))
+    if [[ -n "$TTY" ]] && [[ $time_prompt -ge ${AGNOSTERZAK_PROMPT_TIME_THRESHOLD:-3} ]]; then
+      ZSH_PROMPT_TIME="$time_prompt"
+    fi
+  fi
+
+  if [[ "$AGNOSTERZAK_PROMPT_TIME" == true ]] && [[ -n "$ZSH_PROMPT_TIME" ]]; then
+      if [[ "$AGNOSTERZAK_COMMAND_EXECUTION_TIME" == true ]] && [[ -n "$ZSH_COMMAND_TIME" ]]; then
+        prompt_time_msg="${ZSH_PROMPT_TIME}s,${ZSH_COMMAND_TIME}s"
       else
-        time_prompt="${timer_show}s"
+        prompt_time_msg="${ZSH_PROMPT_TIME}s"
       fi
-    fi
-  elif [[ "$AGNOSTERZAK_SHOW_COMMAND_TIME" == true ]]; then
-    if [[ -n "$ZSH_COMMAND_TIME" ]]; then
-      time_prompt="${ZSH_COMMAND_TIME}s"
+  else
+    if [[ "$AGNOSTERZAK_COMMAND_EXECUTION_TIME" == true ]] && [[ -n "$ZSH_COMMAND_TIME" ]]; then
+      # timer_show=$(printf '%dh:%02dm:%02ds\n' $(($ZSH_COMMAND_TIME/3600)) $(($ZSH_COMMAND_TIME%3600/60)) $(($ZSH_COMMAND_TIME%60)))
+      prompt_time_msg="${ZSH_COMMAND_TIME}s"
     fi
   fi
 
-  if [[ -n "$time_prompt" ]]; then
-    prompt_segment black yellow "${time_prompt}"
+  # $'\uF252' # 
+  if [[ -n "$prompt_time_msg" ]]; then
+    prompt_segment black red "\uF252 ${prompt_time_msg}"
   fi
-
-  unset prompt_timer
 }
 
 prompt_os_icon() {
@@ -786,6 +801,7 @@ else
   fi
 fi
 
+precmd_functions+=(prompt_prompt_timer_precmd)
 preexec_functions+=(prompt_prompt_timer_preexec)
 
 

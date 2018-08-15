@@ -30,15 +30,15 @@ changeTheme() {
 
     if [[ "$theme" == "powerlevel9k" ]]; then
         cp ~/zsh_custom_env_xterm.sh ~/.zshenv
-        sed -i '/^  command-time.*/d' ~/.zshrc
+        # sed -i '/^  command-time.*/d' ~/.zshrc
     else
         cp ~/zsh_custom_env.sh ~/.zshenv
-        # if grep -q "command-time" ~/.zshrc; then
-        if [[ $(grep "command-time" ~/.zshrc) ]]; then
-            :
-        else
-            sed -i '/^  git/a\  command-time' ~/.zshrc
-        fi
+        # # if grep -q "command-time" ~/.zshrc; then
+        # if [[ $(grep "command-time" ~/.zshrc) ]]; then
+        #     :
+        # else
+        #     sed -i '/^  git/a\  command-time' ~/.zshrc
+        # fi
     fi
 
     colorEcho ${GREEN} "ZSH 主题已更换为 ${theme}，重启 zsh 后生效！"

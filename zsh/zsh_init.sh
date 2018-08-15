@@ -53,7 +53,7 @@ fi
 
 # enable plugins
 colorEcho ${BLUE} "enable plugins..."
-sed -i '/^  git/a\  command-time' ~/.zshrc
+# sed -i '/^  git/a\  command-time' ~/.zshrc
 sed -i '/^  git/a\  colored-man-pages' ~/.zshrc
 sed -i '/^  git/a\  zsh-autosuggestions' ~/.zshrc
 sed -i '/^  git/a\  fast-syntax-highlighting' ~/.zshrc
