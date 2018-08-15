@@ -1,5 +1,16 @@
 #!/bin/bash
 
+#######color code########
+RED="31m"      # Error message
+GREEN="32m"    # Success message
+YELLOW="33m"   # Warning message
+BLUE="36m"     # Info message
+
+colorEcho() {
+  COLOR=$1
+  echo -e "\033[${COLOR}${@:2}\033[0m"
+}
+
 # Determine which desktop environment is installed from the shell
 # desktop=$(ps -e | grep -E -i "gnome|kde|mate|cinnamon|lxde|xfce|jwm")
 if [[ -n "$XDG_CURRENT_DESKTOP" ]]; then
@@ -10,6 +21,7 @@ fi
 
 
 # custom configuration
+colorEcho ${BLUE} "custom configuration..."
 tee -a ~/.zshrc <<-'EOF'
 
 # Custom configuration
@@ -23,6 +35,7 @@ sed -i 's/[#]*[ ]*HIST_STAMPS.*/HIST_STAMPS="yyyy-mm-dd"/' ~/.zshrc
 
 
 # custom theme
+colorEcho ${BLUE} "custom theme..."
 if [[ -n "$desktop" ]]; then
   cp ~/zsh_custom_env_xterm.sh ~/.zshenv
   sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"powerlevel9k\"/" ~/.zshrc
@@ -39,7 +52,7 @@ fi
 
 
 # enable plugins
-echo "enable plugins..."
+colorEcho ${BLUE} "enable plugins..."
 sed -i '/^  git/a\  command-time' ~/.zshrc
 sed -i '/^  git/a\  colored-man-pages' ~/.zshrc
 sed -i '/^  git/a\  zsh-autosuggestions' ~/.zshrc
@@ -58,3 +71,5 @@ set functioncolor magenta
 
 include "/usr/share/nano/*.nanorc"
 EOF
+
+colorEcho ${GREEN} "ZSH init done, please restart ZSH!"

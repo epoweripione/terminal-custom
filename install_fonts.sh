@@ -1,8 +1,14 @@
 #!/bin/bash
 
+#######color code########
+RED="31m"      # Error message
+GREEN="32m"    # Success message
+YELLOW="33m"   # Warning message
+BLUE="36m"     # Info message
+
 colorEcho() {
-    COLOR=$1
-    echo -e "\033[${COLOR}${@:2}\033[0m"
+  COLOR=$1
+  echo -e "\033[${COLOR}${@:2}\033[0m"
 }
 
 ostype=$(uname)
@@ -29,7 +35,7 @@ if [[ ! -n $(which unzip) ]]; then
   exit 0
 fi
 
-if [[ $ostype =~ "MSYS_NT" ]] || [[ $ostype =~ "CYGWIN_NT" ]]; then
+if [[ $ostype =~ "MSYS_NT" || $ostype =~ "CYGWIN_NT" ]]; then
   :
 else
   # if ((${EUID:-0} || "$(id -u)")); then
@@ -39,7 +45,8 @@ else
   fi
 fi
 
-echo "Downloading Nerd fonts..."
+
+colorEcho ${BLUE} "Downloading Nerd fonts..."
 mkdir -p ~/patched-fonts
 
 # echo "Downloading SourceCodePro..."
@@ -48,19 +55,19 @@ mkdir -p ~/patched-fonts
 #   unzip -q ~/patched-fonts/SourceCodePro.zip -d ~/patched-fonts/SourceCodePro && \
 #   rm -f ~/patched-fonts/SourceCodePro.zip
 
-echo "Downloading FiraCode..."
+colorEcho ${BLUE} "Downloading FiraCode..."
 curl -fSL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/FiraCode.zip -o ~/patched-fonts/FiraCode.zip
 mkdir -p ~/patched-fonts/FiraCode && \
   unzip -q ~/patched-fonts/FiraCode.zip -d ~/patched-fonts/FiraCode && \
   rm -f ~/patched-fonts/FiraCode.zip
 
-echo "Downloading FiraMono..."
+colorEcho ${BLUE} "Downloading FiraMono..."
 curl -fSL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/FiraMono.zip -o ~/patched-fonts/FiraMono.zip
 mkdir -p ~/patched-fonts/FiraMono && \
   unzip -q ~/patched-fonts/FiraMono.zip -d ~/patched-fonts/FiraMono && \
   rm -f ~/patched-fonts/FiraMono.zip
 
-echo "Downloading Iosevka..."
+colorEcho ${BLUE} "Downloading Iosevka..."
 curl -fSL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/Iosevka.zip -o ~/patched-fonts/Iosevka.zip
 mkdir -p ~/patched-fonts/Iosevka && \
   unzip -q ~/patched-fonts/Iosevka.zip -d ~/patched-fonts/Iosevka && \
@@ -69,11 +76,11 @@ mkdir -p ~/patched-fonts/Iosevka && \
 # Install Script
 curl -fSL https://github.com/ryanoasis/nerd-fonts/raw/master/install.sh -o ~/nerdfonts_installer.sh && chmod +x ~/nerdfonts_installer.sh
 
-echo "Installing Nerd fonts..."
+colorEcho ${BLUE} "Installing Nerd fonts..."
 if [[ $ostype =~ "MSYS_NT" ]] || [[ $ostype =~ "CYGWIN_NT" ]]; then
   cd ~ && ./nerdfonts_install.sh --quiet --clean --use-single-width-glyphs --install-to-user-path
-  echo "Please manual install fonts from $HOME/.local/share/fonts"
+  colorEcho ${BLUE} "Please manual install fonts from $HOME/.local/share/fonts"
 else
   cd ~ && ./nerdfonts_install.sh --quiet --clean --use-single-width-glyphs --install-to-system-path
-  echo "Nerd fonts install complete!"
+  colorEcho ${GREEN} "Nerd fonts install complete!"
 fi

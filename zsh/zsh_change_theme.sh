@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#######color code########
+# https://misc.flogisoft.com/bash/tip_colors_and_formatting
+RED="31m"      # Error message
+GREEN="32m"    # Success message
+YELLOW="33m"   # Warning message
+BLUE="36m"     # Info message
+
 colorEcho() {
     COLOR=$1
     echo -e "\033[${COLOR}${@:2}\033[0m"
@@ -34,7 +41,7 @@ changeTheme() {
         fi
     fi
 
-    echo "ZSH 主题已更换为 ${theme}，重启 zsh 后生效！"
+    colorEcho ${GREEN} "ZSH 主题已更换为 ${theme}，重启 zsh 后生效！"
 }
 
 

@@ -1,15 +1,26 @@
 #!/bin/zsh
 
+#######color code########
+RED="31m"      # Error message
+GREEN="32m"    # Success message
+YELLOW="33m"   # Warning message
+BLUE="36m"     # Info message
+
+colorEcho() {
+  COLOR=$1
+  echo -e "\033[${COLOR}${@:2}\033[0m"
+}
+
 ostype=$(uname)
 
 # ZSH
-echo "Updating Oh-my-zsh..."
+colorEcho ${BLUE} "Updating Oh-my-zsh..."
 # upgrade_oh_my_zsh
 cd $ZSH && git pull
 
 
 # neofetch
-echo "Updating neofetch..."
+colorEcho ${BLUE} "Updating neofetch..."
 if [[ -d $HOME/neofetch ]]; then
   cd $HOME/neofetch && git pull
 # else
@@ -26,14 +37,14 @@ fi
 
 
 # custom plugins
-echo "Updating custom plugins..."
+colorEcho ${BLUE} "Updating custom plugins..."
 
 # zsh-navigation-tools
 # echo "Updating zsh-navigation-tools..."
 # sh -c "$(curl -fsSL https://raw.githubusercontent.com/psprint/zsh-navigation-tools/master/doc/install.sh)"
 
 # fast-syntax-highlighting
-echo "Updating fast-syntax-highlighting..."
+colorEcho ${BLUE} "Updating fast-syntax-highlighting..."
 if [[ -d $ZSH/custom/plugins/fast-syntax-highlighting ]]; then
   cd $ZSH/custom/plugins/fast-syntax-highlighting && git pull
 else
@@ -41,7 +52,7 @@ else
 fi
 
 # zsh-syntax-highlighting
-echo "Updating zsh-syntax-highlighting..."
+colorEcho ${BLUE} "Updating zsh-syntax-highlighting..."
 if [[ -d $ZSH/custom/plugins/zsh-syntax-highlighting ]]; then
   cd $ZSH/custom/plugins/zsh-syntax-highlighting && git pull
 else
@@ -49,7 +60,7 @@ else
 fi
 
 # zsh-autosuggestions
-echo "Updating zsh-autosuggestions..."
+colorEcho ${BLUE} "Updating zsh-autosuggestions..."
 if [[ -d $ZSH/custom/plugins/zsh-autosuggestions ]]; then
   cd $ZSH/custom/plugins/zsh-autosuggestions && git pull
 else
@@ -57,7 +68,7 @@ else
 fi
 
 # zsh-command-time
-echo "Updating zsh-command-time..."
+colorEcho ${BLUE} "Updating zsh-command-time..."
 if [[ -d $ZSH/custom/plugins/command-time ]]; then
   cd $ZSH/custom/plugins/command-time && git pull
 else
@@ -66,10 +77,10 @@ fi
 
 
 # custom themes
-echo "Updating custom themes..."
+colorEcho ${BLUE} "Updating custom themes..."
 
 # agnosterzak
-echo "Updating agnosterzak..."
+colorEcho ${BLUE} "Updating agnosterzak..."
 if [[ -d $ZSH/custom/themes/agnosterzak ]]; then
   cd $ZSH/custom/themes/agnosterzak && git pull
 else
@@ -80,7 +91,7 @@ fi
 ln -s $ZSH/custom/themes/agnosterzak/agnosterzak.zsh-theme $ZSH/custom/themes/agnosterzak.zsh-theme
 
 # spaceship-prompt
-echo "Updating spaceship-prompt..."
+colorEcho ${BLUE} "Updating spaceship-prompt..."
 if [[ -d $ZSH/custom/themes/spaceship-prompt ]]; then
   cd $ZSH/custom/themes/spaceship-prompt && git pull
 else
@@ -91,7 +102,7 @@ fi
 ln -s $ZSH/custom/themes/spaceship-prompt/spaceship.zsh-theme $ZSH/custom/themes/spaceship.zsh-theme
 
 # powerlevel9k
-echo "Updating powerlevel9k..."
+colorEcho ${BLUE} "Updating powerlevel9k..."
 if [[ -d $ZSH/custom/themes/powerlevel9k ]]; then
   cd $ZSH/custom/themes/powerlevel9k && git pull
 else
@@ -102,7 +113,7 @@ fi
 ln -s $ZSH/custom/themes/powerlevel9k/powerlevel9k.zsh-theme $ZSH/custom/themes/powerlevel9k.zsh-theme
 
 # agkozak
-echo "Updating agkozak..."
+colorEcho ${BLUE} "Updating agkozak..."
 if [[ -d $ZSH/custom/themes/agkozak ]]; then
   cd $ZSH/custom/themes/agkozak && git pull
 else
@@ -113,7 +124,7 @@ fi
 ln -s $ZSH/custom/themes/agkozak/agkozak-zsh-prompt.plugin.zsh $ZSH/custom/themes/agkozak.zsh-theme
 
 # alien
-echo "Updating alien..."
+colorEcho ${BLUE} "Updating alien..."
 if [[ -d $ZSH/custom/themes/alien ]]; then
   cd $ZSH/custom/themes/alien && git pull
 else
@@ -124,5 +135,5 @@ fi
 ln -s $ZSH/custom/themes/alien/alien.plugin.zsh $ZSH/custom/themes/alien.zsh-theme
 
 
-echo "Update finished!"
+colorEcho ${GREEN} "Update finished!"
 cd $HOME
