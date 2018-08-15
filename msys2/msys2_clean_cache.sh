@@ -13,4 +13,4 @@ cat /dev/null > ~/.bash_history
 cat /dev/null > ~/.zsh_history
 # exec $SHELL -l
 
-echo "\033[${GREEN}Done, please restart MSYS2!\033[0m"
+echo -e "\033[${GREEN}Done, please restart MSYS2!\033[0m"
