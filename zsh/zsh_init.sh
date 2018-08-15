@@ -1,7 +1,5 @@
 #!/bin/bash
 
-ostype=$(uname)
-
 # Determine which desktop environment is installed from the shell
 # desktop=$(ps -e | grep -E -i "gnome|kde|mate|cinnamon|lxde|xfce|jwm")
 if [[ -n "$XDG_CURRENT_DESKTOP" ]]; then
