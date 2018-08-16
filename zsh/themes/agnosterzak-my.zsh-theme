@@ -665,7 +665,7 @@ prompt_prompt_timer() {
 
 prompt_os_icon() {
   get_os_icon
-  prompt_segment black default "$OS_ICON"
+  prompt_segment black yellow "$OS_ICON"
 }
 
 ## Main prompt
