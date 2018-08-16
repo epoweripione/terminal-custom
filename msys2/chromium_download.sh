@@ -8,16 +8,16 @@ check_sys() {
     local release=''
     local systemPackage=''
 
-    if [ -f /etc/redhat-release ]; then
+    if [[ -f /etc/redhat-release ]]; then
         release="centos"
         systemPackage="yum"
-    elif [ -f /etc/alpine-release ]; then
+    elif [[ -f /etc/alpine-release ]]; then
         release="alpine"
         systemPackage="apk"
-    elif [ -f /etc/arch-release ]; then
+    elif [[ -f /etc/arch-release ]]; then
         release="arch"
         systemPackage="pacman"
-    elif [ $(uname) =~ "MSYS_NT" ]; then
+    elif [[ $(uname) =~ "MSYS_NT" || $(uname) =~ "CYGWIN_NT" ]]; then
         release="MSYS"
         systemPackage="pacman"
     elif cat /etc/issue | grep -Eqi "debian"; then
@@ -40,14 +40,14 @@ check_sys() {
         systemPackage="yum"
     fi
 
-    if [ ${checkType} == "sysRelease" ]; then
-        if [ "$value" == "$release" ]; then
+    if [[ ${checkType} == "sysRelease" ]]; then
+        if [[ "$value" == "$release" ]]; then
             return 0
         else
             return 1
         fi
-    elif [ ${checkType} == "packageManager" ]; then
-        if [ "$value" == "$systemPackage" ]; then
+    elif [[ ${checkType} == "packageManager" ]]; then
+        if [[ "$value" == "$systemPackage" ]]; then
             return 0
         else
             return 1
@@ -66,8 +66,8 @@ get_arch() {
 			;;
 		*)
 			cat 1>&2 <<-EOF
-			当前脚本仅支持 32 位 和 64 位系统
-			你的系统为: $architecture
+			This script only support 32bit and 64bit architecture!
+			Your OS is: $architecture.
 			EOF
 			exit 1
 			;;
@@ -78,7 +78,7 @@ get_os_type() {
     os=$(uname)
     if [[ $os == "Darwin" ]]; then
         ostype="darwin"
-    elif [[ $os =~ "MSYS_NT" ]]; then
+    elif [[ $os =~ "MSYS_NT" || $os =~ "CYGWIN_NT" ]]; then
         ostype="windows"
     else
         ostype=$(echo "$os" | sed 's/.*/\L&/')
