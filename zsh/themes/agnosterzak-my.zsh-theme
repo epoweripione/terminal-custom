@@ -653,7 +653,7 @@ prompt_user_host() {
   local visual_user_icon
 
   if [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
-    visual_user_icon="%F{green}\uF489%f " # SSH_ICON 
+    visual_user_icon="%F{magenta}\uF489%f " # SSH_ICON 
   fi
 
   if [[ $(print -P "%#") == '#' ]]; then
@@ -661,7 +661,7 @@ prompt_user_host() {
   elif sudo -n true 2>/dev/null; then
     visual_user_icon+="%F{red}\uF09C%f " # SUDO_ICON 
   else
-    visual_user_icon+="%F{magenta}\uF415%f " # USER_ICON 
+    visual_user_icon+="%F{yellow}\uF415%f " # USER_ICON 
   fi
 
   prompt_segment cyan default "${visual_user_icon}%{$fg_bold[yellow]%}$USER@%m%{$fg_no_bold[yellow]%}"
@@ -712,7 +712,7 @@ prompt_indicator() {
     if [[ $UID -eq 0 ]]; then
       indicator="%{%F{red}%}➤"
     else
-      indicator="%{%F{cyan}%}➤"
+      indicator="%{%F{yellow}%}➤"
     fi
   fi
   prompt_segment default default "$indicator"
@@ -729,44 +729,48 @@ prompt_prompt_timer_precmd() {
 }
 
 prompt_prompt_timer() {
-  local time_prompt prompt_time_msg
+  local time_duration prompt_command_msg prompt_prompt_msg prompt_msg
 
   if [[ -n "$ZSH_COMMAND_EXECUTION_TIME" ]]; then
     if [[ -n "$TTY" ]] && [[ $ZSH_COMMAND_EXECUTION_TIME -ge ${AGNOSTERZAK_COMMAND_EXECUTION_TIME_THRESHOLD:-3} ]]; then
       ZSH_COMMAND_TIME="$ZSH_COMMAND_EXECUTION_TIME"
-    else
-      ZSH_COMMAND_TIME=""
     fi
   fi
 
   if [[ -n "$ZSH_PROMPT_TIME_PREEXEC" ]]; then
     if [[ -n "$ZSH_COMMAND_EXECUTION_TIME" ]]; then
-      time_prompt=$(($SECONDS - $ZSH_PROMPT_TIME_PREEXEC - $ZSH_COMMAND_EXECUTION_TIME))
+      time_duration=$(($SECONDS - $ZSH_PROMPT_TIME_PREEXEC - $ZSH_COMMAND_EXECUTION_TIME))
     else
-      time_prompt=$(($SECONDS - $ZSH_PROMPT_TIME_PREEXEC))
+      time_duration=$(($SECONDS - $ZSH_PROMPT_TIME_PREEXEC))
     fi
 
-    if [[ -n "$TTY" ]] && [[ $time_prompt -ge ${AGNOSTERZAK_PROMPT_TIME_THRESHOLD:-5} ]]; then
-      ZSH_PROMPT_TIME="$time_prompt"
+    if [[ -n "$TTY" ]] && [[ $time_duration -ge ${AGNOSTERZAK_PROMPT_TIME_THRESHOLD:-5} ]]; then
+      ZSH_PROMPT_TIME="$time_duration"
     fi
   fi
 
   if [[ "$AGNOSTERZAK_PROMPT_TIME" == true ]] && [[ -n "$ZSH_PROMPT_TIME" ]]; then
-      if [[ "$AGNOSTERZAK_COMMAND_EXECUTION_TIME" == true ]] && [[ -n "$ZSH_COMMAND_TIME" ]]; then
-        prompt_time_msg="\uF252:${ZSH_COMMAND_TIME}s \uF120:${ZSH_PROMPT_TIME}s"
-      else
-        prompt_time_msg="\uF120:${ZSH_PROMPT_TIME}s"
-      fi
-  else
-    if [[ "$AGNOSTERZAK_COMMAND_EXECUTION_TIME" == true ]] && [[ -n "$ZSH_COMMAND_TIME" ]]; then
-      # timer_show=$(printf '%dh:%02dm:%02ds\n' $(($ZSH_COMMAND_TIME/3600)) $(($ZSH_COMMAND_TIME%3600/60)) $(($ZSH_COMMAND_TIME%60)))
-      prompt_time_msg="\uF252:${ZSH_COMMAND_TIME}s"
+    # prompt_prompt_msg=$(printf '%dh:%02dm:%02ds\n' $(($ZSH_PROMPT_TIME/3600)) $(($ZSH_PROMPT_TIME%3600/60)) $(($ZSH_PROMPT_TIME%60)))
+    prompt_prompt_msg="${ZSH_PROMPT_TIME}s"
+  fi
+
+  if [[ "$AGNOSTERZAK_COMMAND_EXECUTION_TIME" == true ]] && [[ -n "$ZSH_COMMAND_TIME" ]]; then
+    prompt_command_msg=$(printf '%dh:%02dm:%02ds\n' $(($ZSH_COMMAND_TIME/3600)) $(($ZSH_COMMAND_TIME%3600/60)) $(($ZSH_COMMAND_TIME%60)))
+  fi
+
+  if [[ -n "$prompt_prompt_msg" ]]; then
+    if [[ -n "$prompt_command_msg" ]]; then
+      prompt_msg="\uF252${prompt_command_msg} \uF120${prompt_prompt_msg}"
+    else
+      prompt_msg="\uF120${prompt_prompt_msg}"
     fi
+  elif [[ -n "$prompt_command_msg" ]]; then
+    prompt_msg="\uF252${prompt_command_msg}"
   fi
 
   # $'\uF252'   $'\uF120' 
-  if [[ -n "$prompt_time_msg" ]]; then
-    prompt_segment black yellow "${prompt_time_msg}"
+  if [[ -n "$prompt_msg" ]]; then
+    prompt_segment black yellow "${prompt_msg}"
   fi
 }
 
@@ -781,11 +785,11 @@ build_prompt() {
   echo -n "\n"
   prompt_os_icon
   prompt_battery
-  prompt_time_only
   prompt_user_host
   prompt_dir_blue
   prompt_git_fast
   prompt_hg
+  prompt_time_only
   prompt_status_exitcode
   prompt_prompt_timer
   prompt_end
@@ -805,7 +809,7 @@ else
   if [[ $UID -eq 0 ]]; then
     PROMPT2='%{$fg[red]%}❯%{$reset_color%} '
   else
-    PROMPT2='%{$fg[cyan]%}❯%{$reset_color%} '
+    PROMPT2='%{$fg[yellow]%}❯%{$reset_color%} '
   fi
 fi
 

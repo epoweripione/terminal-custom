@@ -1,9 +1,8 @@
 #!/bin/bash
 
 ## How to use
-## source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh
-## or
-## cd ~ && curl -fSL https://raw.githubusercontent.com/epoweripione/terminal-custom/master/zsh/zsh_download_custom_script.sh -o ~/zsh_download_custom_script.sh && chmod +x ~/zsh_download_custom_script.sh && ./zsh_download_custom_script.sh && ./zsh_update.sh
+## Init: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_init.sh
+## Update: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh
 
 ostype=$(uname)
 

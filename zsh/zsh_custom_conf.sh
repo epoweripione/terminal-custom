@@ -64,7 +64,7 @@ else
     if [[ $UID -eq 0 ]]; then
       ZSH_COMMAND_TIME_COLOR="red"
     else
-      ZSH_COMMAND_TIME_COLOR="cyan"
+      ZSH_COMMAND_TIME_COLOR="yellow"
     fi
   fi
 fi
@@ -104,4 +104,7 @@ if [[ $ostype =~ "MSYS_NT" || $ostype =~ "CYGWIN_NT" ]]; then
   alias phpunit="winpty phpunit.bat"
   alias psysh="winpty psysh.bat"
   alias var-dump-server="winpty var-dump-server.bat"
+
+  # other
+  alias wmic="winpty wmic"
 fi
