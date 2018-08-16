@@ -14,13 +14,13 @@ colorEcho() {
 
 changeTheme() {
     theme="$1"
+    custom_theme="zsh_custom_theme_${theme}"
 
+    # custom theme
     sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" ~/.zshrc
 
     # custom theme configuration 
     sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
-
-    custom_theme="zsh_custom_theme_${theme}"
     if [[ -e ~/${custom_theme}.sh ]]; then
         sed -i "/^ZSH_THEME=.*/a\source ~/${custom_theme}.sh" ~/.zshrc
     fi
