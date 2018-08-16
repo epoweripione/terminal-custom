@@ -724,41 +724,49 @@ prompt_prompt_timer_preexec() {
 
 prompt_prompt_timer_precmd() {
   if [[ -n "$ZSH_PROMPT_TIME_PREEXEC" ]]; then
-    timer_command=$(($SECONDS - $ZSH_PROMPT_TIME_PREEXEC))
-    if [[ -n "$TTY" ]] && [[ $timer_command -ge ${AGNOSTERZAK_COMMAND_EXECUTION_TIME_THRESHOLD:-3} ]]; then
-      export ZSH_COMMAND_TIME="$timer_command"
-    else
-      export ZSH_COMMAND_TIME=""
-    fi
+    export ZSH_COMMAND_EXECUTION_TIME="$(($SECONDS - $ZSH_PROMPT_TIME_PREEXEC))"
   fi
 }
 
 prompt_prompt_timer() {
   local time_prompt prompt_time_msg
 
+  if [[ -n "$ZSH_COMMAND_EXECUTION_TIME" ]]; then
+    if [[ -n "$TTY" ]] && [[ $ZSH_COMMAND_EXECUTION_TIME -ge ${AGNOSTERZAK_COMMAND_EXECUTION_TIME_THRESHOLD:-3} ]]; then
+      ZSH_COMMAND_TIME="$ZSH_COMMAND_EXECUTION_TIME"
+    else
+      ZSH_COMMAND_TIME=""
+    fi
+  fi
+
   if [[ -n "$ZSH_PROMPT_TIME_PREEXEC" ]]; then
-    time_prompt=$(($SECONDS - $ZSH_PROMPT_TIME_PREEXEC))
-    if [[ -n "$TTY" ]] && [[ $time_prompt -ge ${AGNOSTERZAK_PROMPT_TIME_THRESHOLD:-3} ]]; then
+    if [[ -n "$ZSH_COMMAND_EXECUTION_TIME" ]]; then
+      time_prompt=$(($SECONDS - $ZSH_PROMPT_TIME_PREEXEC - $ZSH_COMMAND_EXECUTION_TIME))
+    else
+      time_prompt=$(($SECONDS - $ZSH_PROMPT_TIME_PREEXEC))
+    fi
+
+    if [[ -n "$TTY" ]] && [[ $time_prompt -ge ${AGNOSTERZAK_PROMPT_TIME_THRESHOLD:-5} ]]; then
       ZSH_PROMPT_TIME="$time_prompt"
     fi
   fi
 
   if [[ "$AGNOSTERZAK_PROMPT_TIME" == true ]] && [[ -n "$ZSH_PROMPT_TIME" ]]; then
       if [[ "$AGNOSTERZAK_COMMAND_EXECUTION_TIME" == true ]] && [[ -n "$ZSH_COMMAND_TIME" ]]; then
-        prompt_time_msg="${ZSH_PROMPT_TIME}s,${ZSH_COMMAND_TIME}s"
+        prompt_time_msg="\uF252${ZSH_COMMAND_TIME}s \uF120${ZSH_PROMPT_TIME}s"
       else
-        prompt_time_msg="${ZSH_PROMPT_TIME}s"
+        prompt_time_msg="\uF120${ZSH_PROMPT_TIME}s"
       fi
   else
     if [[ "$AGNOSTERZAK_COMMAND_EXECUTION_TIME" == true ]] && [[ -n "$ZSH_COMMAND_TIME" ]]; then
       # timer_show=$(printf '%dh:%02dm:%02ds\n' $(($ZSH_COMMAND_TIME/3600)) $(($ZSH_COMMAND_TIME%3600/60)) $(($ZSH_COMMAND_TIME%60)))
-      prompt_time_msg="${ZSH_COMMAND_TIME}s"
+      prompt_time_msg="\uF252${ZSH_COMMAND_TIME}s"
     fi
   fi
 
-  # $'\uF252' # 
+  # $'\uF252'   $'\uF120' 
   if [[ -n "$prompt_time_msg" ]]; then
-    prompt_segment black red "\uF252 ${prompt_time_msg}"
+    prompt_segment black red "${prompt_time_msg}"
   fi
 }
 

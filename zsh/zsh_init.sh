@@ -36,19 +36,24 @@ sed -i 's/[#]*[ ]*HIST_STAMPS.*/HIST_STAMPS="yyyy-mm-dd"/' ~/.zshrc
 
 # custom theme
 colorEcho ${BLUE} "custom theme..."
-if [[ -n "$desktop" ]]; then
-  cp ~/zsh_custom_env_xterm.sh ~/.zshenv
-  sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"powerlevel9k\"/" ~/.zshrc
-  sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
-  sed -i "/^ZSH_THEME=.*/a\source ~/zsh_custom_theme_powerlevel9k.sh" ~/.zshrc
-  # echo -e "\nsource ~/zsh_custom_theme_powerlevel9k.sh" >> ~/.zshrc
-else
-  cp ~/zsh_custom_env.sh ~/.zshenv
-  sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"agnosterzak-my\"/" ~/.zshrc
-  sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
-  sed -i "/^ZSH_THEME=.*/a\source ~/zsh_custom_theme_agnosterzak-my.sh" ~/.zshrc
-  #echo -e "\nsource ~/zsh_custom_theme_agnosterzak-my.sh" >> ~/.zshrc
-fi
+cp ~/zsh_custom_env.sh ~/.zshenv
+sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"agnosterzak-my\"/" ~/.zshrc
+sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
+sed -i "/^ZSH_THEME=.*/a\source ~/zsh_custom_theme_agnosterzak-my.sh" ~/.zshrc
+
+# if [[ -n "$desktop" ]]; then
+#   cp ~/zsh_custom_env_xterm.sh ~/.zshenv
+#   sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"powerlevel9k\"/" ~/.zshrc
+#   sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
+#   sed -i "/^ZSH_THEME=.*/a\source ~/zsh_custom_theme_powerlevel9k.sh" ~/.zshrc
+#   # echo -e "\nsource ~/zsh_custom_theme_powerlevel9k.sh" >> ~/.zshrc
+# else
+#   cp ~/zsh_custom_env.sh ~/.zshenv
+#   sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"agnosterzak-my\"/" ~/.zshrc
+#   sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
+#   sed -i "/^ZSH_THEME=.*/a\source ~/zsh_custom_theme_agnosterzak-my.sh" ~/.zshrc
+#   #echo -e "\nsource ~/zsh_custom_theme_agnosterzak-my.sh" >> ~/.zshrc
+# fi
 
 
 # enable plugins

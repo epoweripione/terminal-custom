@@ -41,7 +41,7 @@ changeTheme() {
         # fi
     fi
 
-    colorEcho ${GREEN} "ZSH 主题已更换为 ${theme}，重启 zsh 后生效！"
+    colorEcho ${GREEN} "ZSH theme has change to ${theme}，please exit and restart ZSH Shell!"
 }
 
 
@@ -68,12 +68,12 @@ echo -e "6.spaceship"
 echo -e "7.ys-my"
 
 while :; do echo
-	read -n1 -p "请输入数字选择自定义主题(按回车键退出)：" CHOICE
+	read -n1 -p "Please choose theme(enter to exit):" CHOICE
 	if [[ ! $CHOICE =~ ^[1-7]$ ]]; then
         if [[ -z ${CHOICE} ]]; then
             exit 0
         fi
-		colorEcho ${RED} "输入错误，请输入正确的数字！"
+		colorEcho ${RED} "Input error, please choose theme from above!"
 	else
         echo -e "\n"
 		break
@@ -103,6 +103,6 @@ case "$CHOICE" in
         changeTheme "ys-my"
         ;;
     *)
-        colorEcho ${YELLOW} "传参有误！"  # unknown option
+        colorEcho ${YELLOW} "Wrong choice!"  # unknown option
         ;;
 esac
