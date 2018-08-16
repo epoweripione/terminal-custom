@@ -1,7 +1,9 @@
 #!/bin/bash
 
 ## How to use
-## cd ~ && curl -fSL https://github.com/epoweripione/terminal-custom/raw/master/zsh/zsh_download_custom_script.sh -o ~/zsh_download_custom_script.sh && chmod +x ~/zsh_download_custom_script.sh && ./zsh_download_custom_script.sh && ./zsh_update.sh
+## source <(curl -sL https://git.io/fNpeJ)
+## or
+## cd ~ && curl -fSL https://raw.githubusercontent.com/epoweripione/terminal-custom/master/zsh/zsh_download_custom_script.sh -o ~/zsh_download_custom_script.sh && chmod +x ~/zsh_download_custom_script.sh && ./zsh_download_custom_script.sh && ./zsh_update.sh
 
 ostype=$(uname)
 

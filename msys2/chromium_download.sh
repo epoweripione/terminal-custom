@@ -133,16 +133,16 @@ get_os_icon() {
             OS_ICON=$'\uF30D'
             ;;
         *mageia*)
-            OS_ICON= $'\uF310'
+            OS_ICON=$'\uF310'
             ;;
         *centos*)
-            OS_ICON= $'\uF304'
+            OS_ICON=$'\uF304'
             ;;
         *opensuse*|*tumbleweed*)
             OS_ICON=$'\uF314'
             ;;
         *sabayon*)
-            OS_ICON= $'\uF317'
+            OS_ICON=$'\uF317'
             ;;
         *slackware*)
             OS_ICON=$'\uF319'
@@ -151,10 +151,10 @@ get_os_icon() {
             OS_ICON=$'\uF30E'
             ;;
         *alpine*)
-            OS_ICON= $'\uF300'
+            OS_ICON=$'\uF300'
             ;;
         *aosc*)
-            OS_ICON= $'\uF301'
+            OS_ICON=$'\uF301'
             ;;
         *nixos*)
             OS_ICON=$'\uF313'

@@ -409,16 +409,16 @@ get_os_icon() {
             OS_ICON=$'\uF30D'
             ;;
         *mageia*)
-            OS_ICON= $'\uF310'
+            OS_ICON=$'\uF310'
             ;;
         *centos*)
-            OS_ICON= $'\uF304'
+            OS_ICON=$'\uF304'
             ;;
         *opensuse*|*tumbleweed*)
             OS_ICON=$'\uF314'
             ;;
         *sabayon*)
-            OS_ICON= $'\uF317'
+            OS_ICON=$'\uF317'
             ;;
         *slackware*)
             OS_ICON=$'\uF319'
@@ -427,10 +427,10 @@ get_os_icon() {
             OS_ICON=$'\uF30E'
             ;;
         *alpine*)
-            OS_ICON= $'\uF300'
+            OS_ICON=$'\uF300'
             ;;
         *aosc*)
-            OS_ICON= $'\uF301'
+            OS_ICON=$'\uF301'
             ;;
         *nixos*)
             OS_ICON=$'\uF313'
@@ -653,18 +653,18 @@ prompt_user_host() {
   local visual_user_icon
 
   if [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
-    visual_user_icon=  $'\uF489 ' # SSH_ICON 
+    visual_user_icon="%F{green}\uF489%f " # SSH_ICON 
   fi
 
   if [[ $(print -P "%#") == '#' ]]; then
-    visual_user_icon+=$'\u26A1 ' # ROOT_ICON $'\u26A1' ⚡ $'\uE614' 
+    visual_user_icon+="%F{red}\u26A1%f " # ROOT_ICON $'\u26A1' ⚡ $'\uE614' 
   elif sudo -n true 2>/dev/null; then
-    visual_user_icon+=$'\uF09C ' # SUDO_ICON 
+    visual_user_icon+="%F{red}\uF09C%f " # SUDO_ICON 
   else
-    visual_user_icon+=$'\uF415 ' # USER_ICON 
+    visual_user_icon+="%F{magenta}\uF415%f " # USER_ICON 
   fi
 
-  prompt_segment cyan default "%{$fg_bold[yellow]%}${visual_user_icon}$USER@%m%{$fg_no_bold[yellow]%}"
+  prompt_segment cyan default "${visual_user_icon}%{$fg_bold[yellow]%}$USER@%m%{$fg_no_bold[yellow]%}"
 }
 
 prompt_dir_blue() {
@@ -699,8 +699,8 @@ prompt_status_exitcode() {
 
   if [[ -n "$symbols" ]]; then
     prompt_segment black default "$symbols"
-  else
-    prompt_segment black default " "
+  # else
+  #   prompt_segment black default " "
   fi
 }
 
@@ -753,20 +753,20 @@ prompt_prompt_timer() {
 
   if [[ "$AGNOSTERZAK_PROMPT_TIME" == true ]] && [[ -n "$ZSH_PROMPT_TIME" ]]; then
       if [[ "$AGNOSTERZAK_COMMAND_EXECUTION_TIME" == true ]] && [[ -n "$ZSH_COMMAND_TIME" ]]; then
-        prompt_time_msg="\uF252${ZSH_COMMAND_TIME}s \uF120${ZSH_PROMPT_TIME}s"
+        prompt_time_msg="\uF252:${ZSH_COMMAND_TIME}s \uF120:${ZSH_PROMPT_TIME}s"
       else
-        prompt_time_msg="\uF120${ZSH_PROMPT_TIME}s"
+        prompt_time_msg="\uF120:${ZSH_PROMPT_TIME}s"
       fi
   else
     if [[ "$AGNOSTERZAK_COMMAND_EXECUTION_TIME" == true ]] && [[ -n "$ZSH_COMMAND_TIME" ]]; then
       # timer_show=$(printf '%dh:%02dm:%02ds\n' $(($ZSH_COMMAND_TIME/3600)) $(($ZSH_COMMAND_TIME%3600/60)) $(($ZSH_COMMAND_TIME%60)))
-      prompt_time_msg="\uF252${ZSH_COMMAND_TIME}s"
+      prompt_time_msg="\uF252:${ZSH_COMMAND_TIME}s"
     fi
   fi
 
   # $'\uF252'   $'\uF120' 
   if [[ -n "$prompt_time_msg" ]]; then
-    prompt_segment black red "${prompt_time_msg}"
+    prompt_segment black yellow "${prompt_time_msg}"
   fi
 }
 
@@ -780,13 +780,13 @@ build_prompt() {
   RETVAL=$?
   echo -n "\n"
   prompt_os_icon
-  prompt_status_exitcode
   prompt_battery
   prompt_time_only
   prompt_user_host
   prompt_dir_blue
   prompt_git_fast
   prompt_hg
+  prompt_status_exitcode
   prompt_prompt_timer
   prompt_end
   CURRENT_BG='NONE'
@@ -799,7 +799,7 @@ build_prompt() {
 PROMPT='%{%f%b%k%}$(build_prompt) '
 
 # PROMPT2
-if [[ -n "$SSH_CLIENT" ]]; then
+if [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
   PROMPT2='%{$fg[magenta]%}❯%{$reset_color%} '
 else
   if [[ $UID -eq 0 ]]; then
