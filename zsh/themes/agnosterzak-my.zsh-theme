@@ -214,7 +214,6 @@ prompt_git() {
 
     # ☀	new untracked files
     local number_of_untracked_files=$(\grep -c "^??" <<< "${git_status}")
-    # if [[ $number_of_untracked_files -gt 0 ]]; then untracked=" $number_of_untracked_files◆"; fi
     if [[ $number_of_untracked_files -gt 0 ]]; then untracked=" $number_of_untracked_files☀"; fi
 
     # ✚	added files from the new untracked ones
@@ -280,7 +279,7 @@ prompt_git() {
     # ☊	branch has a stream, preceeded by his remote name
     # ↑	commits ahead on the current branch comparing to remote, preceeded by their number
     # ↓	commits behind on the current branch comparing to remote, preceeded by their number
-    local upstream=false
+    local has_upstream=false
     local upstream_prompt=''
     if [[ "$AGNOSTERZAK_GIT_SHOW_UPSTREAM" == true ]]; then
       upstream=$(git rev-parse --symbolic-full-name --abbrev-ref @{upstream} 2> /dev/null)
