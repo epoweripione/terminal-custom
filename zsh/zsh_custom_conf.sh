@@ -11,7 +11,7 @@ zstyle ':completion:*' hosts off
 
 
 # complete hard drives in MSYS2
-if [[ $ostype =~ "MSYS_NT" || $ostype =~ "CYGWIN_NT" ]]; then
+if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
   drives=$(mount | sed -rn 's#^[A-Z]: on /([a-z]).*#\1#p' | tr '\n' ' ')
   zstyle ':completion:*' fake-files /: "/:$drives"
   unset drives
@@ -71,7 +71,7 @@ fi
 
 
 # Extend variable in MSYS2 to use node,npm,php,composer... with winpty
-if [[ $ostype =~ "MSYS_NT" || $ostype =~ "CYGWIN_NT" ]]; then
+if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
   export PATH=$PATH:/c/nodejs:/c/Users/$USERNAME/AppData/Roaming/npm:/c/php/php7:/c/php/composer/vendor/bin
 
   # node,npm

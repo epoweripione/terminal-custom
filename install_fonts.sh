@@ -77,7 +77,7 @@ mkdir -p ~/patched-fonts/Iosevka && \
 curl -fSL https://github.com/ryanoasis/nerd-fonts/raw/master/install.sh -o ~/nerdfonts_installer.sh && chmod +x ~/nerdfonts_installer.sh
 
 colorEcho ${BLUE} "Installing Nerd fonts..."
-if [[ $ostype =~ "MSYS_NT" ]] || [[ $ostype =~ "CYGWIN_NT" ]]; then
+if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
   cd ~ && ./nerdfonts_install.sh --quiet --clean --use-single-width-glyphs --install-to-user-path
   colorEcho ${BLUE} "Please manual install fonts from $HOME/.local/share/fonts"
 else

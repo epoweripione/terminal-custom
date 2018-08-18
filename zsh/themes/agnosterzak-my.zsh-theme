@@ -603,8 +603,9 @@ prompt_indicator() {
 }
 
 prompt_prompt_timer_preexec() {
-  command_preexec_timer=${command_exec_timer:-$SECONDS}
-  export ZSH_PROMPT_TIME_PREEXEC="$SECONDS"
+  command_preexec_timer=${command_preexec_timer:-$SECONDS}
+  prompt_preexec_timer=$SECONDS
+  export ZSH_PROMPT_TIME_PREEXEC="$prompt_preexec_timer"
   export ZSH_COMMAND_EXECUTION_TIME=""
   export ZSH_PROMPT_TIME=""
 }
@@ -635,6 +636,10 @@ prompt_prompt_timer() {
     if [[ -n "$TTY" ]] && [[ $time_duration -ge ${AGNOSTERZAK_PROMPT_TIME_THRESHOLD:-5} ]]; then
       ZSH_PROMPT_TIME="$time_duration"
     fi
+  fi
+
+  if [[ $prompt_preexec_timer ]]; then
+    unset prompt_preexec_timer
   fi
 
   if [[ "$AGNOSTERZAK_PROMPT_TIME" == true ]] && [[ -n "$ZSH_PROMPT_TIME" ]]; then

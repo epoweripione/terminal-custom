@@ -51,7 +51,7 @@ POWERLEVEL9K_CHANGESET_HASH_LENGTH=6
 POWERLEVEL9K_VCS_SHOW_SUBMODULE_DIRTY=true
 POWERLEVEL9K_VCS_HIDE_TAGS=false
 
-if [[ $ostype =~ "MSYS_NT" || $ostype =~ "CYGWIN_NT" ]]; then
+if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
   POWERLEVEL9K_VCS_GIT_HOOKS=(vcs-detect-changes git-untracked git-remotebranch)
 else
   POWERLEVEL9K_VCS_GIT_HOOKS=(vcs-detect-changes git-untracked git-aheadbehind git-stash git-remotebranch git-tagname)

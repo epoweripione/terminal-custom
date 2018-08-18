@@ -1,6 +1,17 @@
 
 #!/bin/bash
 
+get_os_type() {
+    os=$(uname)
+    if [[ $os == "Darwin" ]]; then
+        ostype="darwin"
+    elif [[ $os =~ "MSYS_NT" || $os =~ "MINGW" || $os =~ "CYGWIN_NT" ]]; then
+        ostype="windows"
+    else
+        ostype=$(echo "$os" | sed 's/.*/\L&/')
+    fi
+}
+
 check_sys() {
     local checkType=$1
     local value=$2
@@ -8,6 +19,7 @@ check_sys() {
     local release=''
     local systemPackage=''
 
+    os=$(uname)
     if [[ -f /etc/redhat-release ]]; then
         release="centos"
         systemPackage="yum"
@@ -17,7 +29,7 @@ check_sys() {
     elif [[ -f /etc/arch-release ]]; then
         release="arch"
         systemPackage="pacman"
-    elif [[ $(uname) =~ "MSYS_NT" || $(uname) =~ "CYGWIN_NT" ]]; then
+    elif [[ $os =~ "MSYS_NT" || $os =~ "MINGW" || $os =~ "CYGWIN_NT" ]]; then
         release="MSYS"
         systemPackage="pacman"
     elif cat /etc/issue | grep -Eqi "debian"; then
@@ -72,17 +84,6 @@ get_arch() {
 			exit 1
 			;;
 	esac
-}
-
-get_os_type() {
-    os=$(uname)
-    if [[ $os == "Darwin" ]]; then
-        ostype="darwin"
-    elif [[ $os =~ "MSYS_NT" || $os =~ "CYGWIN_NT" ]]; then
-        ostype="windows"
-    else
-        ostype=$(echo "$os" | sed 's/.*/\L&/')
-    fi
 }
 
 get_os_icon() {

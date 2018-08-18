@@ -28,7 +28,7 @@ if [[ -d $HOME/neofetch ]]; then
   # cd $HOME/neofetch
   # if [[ $ostype == "Darwin" ]]; then
   #   make PREFIX=/usr/local install
-  # elif [[ $ostype =~ "MSYS_NT" ]] || [[ $ostype =~ "CYGWIN_NT" ]]; then
+  # elif [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
   #   make -i install
   # else
   #   make install

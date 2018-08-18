@@ -31,10 +31,11 @@ chmod +x ~/zsh_update.sh
 cp -f ~/terminal-custom/terminal_256colors.py ~
 
 # MSYS2
-if [[ $ostype =~ "MSYS_NT" ]]; then
+if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" ]]; then
     cp -f ~/terminal-custom/msys2/*.sh ~
     chmod +x ~/chromium_download.sh
     chmod +x ~/msys2_clean_cache.sh
+    chmod +x ~/msys2_git_for_windows.sh
     chmod +x ~/msys2_pacman_mirrors.sh
 fi
 
