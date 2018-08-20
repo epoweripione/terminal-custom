@@ -1,7 +1,8 @@
 #!/bin/bash
 
 ## How to use
-## Init: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_init.sh
+## Install zsh & oh-my-zsh first
+## Init: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh && ~/zsh_init.sh
 ## Update: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh
 
 ostype=$(uname)

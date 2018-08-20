@@ -73,7 +73,7 @@ sed -i "/^  profile_d zsh/a\  SHELL=\"\$(which zsh)\"" /etc/profile && \
 ## Install oh-my-zsh
 `sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"`
 
-## Run zsh default
+## Run zsh as default shell
 ```
 tee -a ~/.bashrc <<-'EOF'
 
