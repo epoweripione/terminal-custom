@@ -10,7 +10,7 @@ custom scripts for zsh, msys2, powershell, etc.
 [oh-my-zsh](https://ohmyz.sh/)
 
 ### 3. Init
-`source <(curl -sL https://git.io/fNpeJ) && ~/zsh_init.sh`
+`source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh && ~/zsh_init.sh`
 
 ### Update
 `source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh`
