@@ -5,31 +5,66 @@ https://github.com/msys2/msys2/wiki/MSYS2-installation
 https://github.com/msys2/msys2/wiki/MSYS2-reinstallation
 
 # Updating packages
-1. Run `pacman -Syuu`. Follow the instructions. 
-2. Repeat Run `pacman -Syuu` until it says there are no packages to update.
-3. Finally you can do an update of the remaining packages by issuing: `pacman -Suu`
+## 1. Run `pacman -Syuu`. Follow the instructions. 
+### pacman colors
+`sed -i "s/#Color/Color/g" /etc/pacman.conf`
 
-# ConEmu: How to call msys2 as tab?
-https://superuser.com/questions/1024301/conemu-how-to-call-msys2-as-tab
-
-# msys2 profile
-sed -i "/^  profile_d zsh/a\  SHELL=\"\$(which zsh)\"" /etc/profile
-sed -i '$a\\nexport MSYS=\"winsymlinks:lnk\"' /etc/profile
-
-# pacman colors
-sed -i "s/#Color/Color/g" /etc/pacman.conf
-
-# pacman mirrors in china
+### pacman mirrors in china(option)
 ```
 sed -i "1iServer = http://mirrors.ustc.edu.cn/msys2/mingw/i686" /etc/pacman.d/mirrorlist.mingw32 && \
   sed -i "1iServer = http://mirrors.ustc.edu.cn/msys2/mingw/x86_64" /etc/pacman.d/mirrorlist.mingw64 && \
   sed -i "1iServer = http://mirrors.ustc.edu.cn/msys2/msys/\$arch" /etc/pacman.d/mirrorlist.msys
 ```
+
+## 2. Repeat Run `pacman -Syuu` until it says there are no packages to update.
+## 3. Finally you can do an update of the remaining packages by issuing: `pacman -Suu`
+
+# ConEmu: How to call msys2 as tab?
+https://superuser.com/questions/1024301/conemu-how-to-call-msys2-as-tab
+
 # Install custom packages
 `pacman -S ccache coreutils crypt curl gcc gnu-netcat inetutils iperf3 lftp make man-db man-pages-posix nano openssh p7zip python python3-pip rsync screenfetch unrar unzip upx util-linux whois winpty zip zsh`
 
-# Install git
-# `pacman -S git git-extra`
+# git
+## ~~git for msys~~
+~~`pacman -S git git-extra`~~
 
-# Install oh-my-zsh
+## git for windows
+> https://github.com/valtron/llvm-stuff/wiki/Set-up-Windows-dev-environment-with-MSYS2  
+> https://github.com/git-for-windows/git/wiki/Install-inside-MSYS2-proper
+
+### Open an MSYS2 terminal.
+> Edit /etc/pacman.conf and just before [mingw32], add the git-for-windows packages repository:  
+> and optionally also the MINGW-only repository for the opposite architecture (i.e. MINGW32 for 64-bit SDK):
+```
+sed -i "/^\[mingw32\]/i\[git-for-windows]\nServer = https://wingit.blob.core.windows.net/x86-64\n" /etc/pacman.conf && \
+  sed -i "/^\[mingw32\]/i\[git-for-windows-mingw32]\nServer = https://wingit.blob.core.windows.net/i686\n" /etc/pacman.conf
+```
+
+### Authorize signing key (this step may have to be repeated occasionally until https://github.com/msys2/msys2/issues/62 is fixed)
+```
+curl -L https://raw.githubusercontent.com/git-for-windows/build-extra/master/git-for-windows-keyring/git-for-windows.gpg | pacman-key --add - && pacman-key --lsign-key 1A9F3986
+```
+
+### Then synchronize new repository
+`pacboy update`
+
+> This updates msys2-runtime and therefore will ask you to close the window (not just exit the pacman process). Don't panic, simply close all currently open MSYS2 shells and MSYS2 programs. Once all are closed, start a new terminal again.
+
+### Then synchronize again (updating the non-core part of the packages):
+`pacboy update`
+
+### And finally install the Git/cURL packages:
+`pacboy sync git:x git-doc-html:x git-doc-man:x git-extra: curl:x`
+
+> Finally, check that everything went well by doing git --version in a MINGW64 shell and it should output something like git version 2.18.1.windows.1 (or newer).
+
+# ZSH
+## msys2 profile
+```
+sed -i "/^  profile_d zsh/a\  SHELL=\"\$(which zsh)\"" /etc/profile && \
+  sed -i '$a\\nexport MSYS=\"winsymlinks:lnk\"' /etc/profile
+```
+
+## Install oh-my-zsh
 `sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"`
