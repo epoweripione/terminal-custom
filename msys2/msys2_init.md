@@ -72,3 +72,27 @@ sed -i "/^  profile_d zsh/a\  SHELL=\"\$(which zsh)\"" /etc/profile && \
 
 ## Install oh-my-zsh
 `sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"`
+
+## Run zsh default
+```
+tee -a ~/.bashrc <<-'EOF'
+
+# Launch Zsh 
+if [ -t 1 ]; then 
+exec zsh 
+fi
+EOF
+```
+
+## Setting task in conemu/cmder
+### MSYS2::MINGW64 as Admin
+**Task parameters:** `/icon "%SystemDrive%\msys64\msys2.ico"`  
+**Commands** `*set MSYSTEM=MINGW64 & set HOME=%SystemDrive%\msys64\home\%USERNAME% & cmd /c "%SystemDrive%\msys64\usr\bin\bash --login -i" -new_console:d:"%SystemDrive%\msys64\home\%USERNAME%":t:"MINGW64"`
+
+### MSYS2::MINGW32 as Admin
+**Task parameters:** `/icon "%SystemDrive%\msys64\msys2.ico"`  
+**Commands** `*set MSYSTEM=MINGW32 & set HOME=%SystemDrive%\msys64\home\%USERNAME% & cmd /c "%SystemDrive%\msys64\usr\bin\zsh --login -i" -new_console:d:"%SystemDrive%\msys64\home\%USERNAME%":t:"MINGW32"`
+
+### MSYS2::MSYS as Admin
+**Task parameters:** `/icon "%SystemDrive%\msys64\msys2.ico"`  
+**Commands** `*set MSYSTEM=MSYS & set HOME=%SystemDrive%\msys64\home\%USERNAME% & cmd /c "%SystemDrive%\msys64\usr\bin\bash --login -i" -new_console:d:"%SystemDrive%\msys64\home\%USERNAME%":t:"MSYS"`
