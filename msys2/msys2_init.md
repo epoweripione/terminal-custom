@@ -61,8 +61,11 @@ curl -L https://raw.githubusercontent.com/git-for-windows/build-extra/master/git
 > Finally, check that everything went well by doing `git --version` in a MINGW64 shell and it should output something like git version 2.18.1.windows.1 (or newer).
 
 # ZSH
-## Modify msys2 profile to fix soft link
-`sed -i '$a\\nexport MSYS=\"winsymlinks:lnk\"' /etc/profile`
+## Modify msys2 profile to fix SHELL & soft link
+```
+sed -i "/^  profile_d zsh/a\  SHELL=\"\$(which zsh)\"" /etc/profile && \
+  sed -i '$a\\nexport MSYS=\"winsymlinks:lnk\"' /etc/profile
+```
 
 ## Install zsh
 `pacman -S zsh`
