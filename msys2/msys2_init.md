@@ -6,6 +6,7 @@ https://github.com/msys2/msys2/wiki/MSYS2-reinstallation
 
 # Updating packages
 ## 1. Run `pacman -Syuu`. Follow the instructions. 
+## 2. Modify pacman config
 ### pacman colors
 `sed -i "s/#Color/Color/g" /etc/pacman.conf`
 
@@ -16,20 +17,20 @@ sed -i "1iServer = http://mirrors.ustc.edu.cn/msys2/mingw/i686" /etc/pacman.d/mi
   sed -i "1iServer = http://mirrors.ustc.edu.cn/msys2/msys/\$arch" /etc/pacman.d/mirrorlist.msys
 ```
 
-## 2. Repeat Run `pacman -Syuu` until it says there are no packages to update.
-## 3. Finally you can do an update of the remaining packages by issuing: `pacman -Suu`
+## 3. Repeat Run `pacman -Syuu` until it says there are no packages to update.
+## 4. Finally you can do an update of the remaining packages by issuing: `pacman -Suu`
 
 # ConEmu: How to call msys2 as tab?
 https://superuser.com/questions/1024301/conemu-how-to-call-msys2-as-tab
 
 # Install custom packages
-`pacman -S ccache coreutils crypt curl gcc gnu-netcat inetutils iperf3 lftp make man-db man-pages-posix nano openssh p7zip python python3-pip rsync screenfetch unrar unzip upx util-linux whois winpty zip zsh`
+`pacman -S ccache coreutils gcc gnu-netcat iperf3 lftp make man-db man-pages-posix nano openssh p7zip python python3-pip rsync screenfetch unrar unzip upx vim whois winpty zip`
 
 # git
 ## ~~git for msys~~
 ~~`pacman -S git git-extra`~~
 
-## git for windows
+## git for windows proper
 > https://github.com/valtron/llvm-stuff/wiki/Set-up-Windows-dev-environment-with-MSYS2  
 > https://github.com/git-for-windows/git/wiki/Install-inside-MSYS2-proper
 
@@ -57,14 +58,14 @@ curl -L https://raw.githubusercontent.com/git-for-windows/build-extra/master/git
 ### And finally install the Git/cURL packages:
 `pacboy sync git:x git-doc-html:x git-doc-man:x git-extra: curl:x`
 
-> Finally, check that everything went well by doing git --version in a MINGW64 shell and it should output something like git version 2.18.1.windows.1 (or newer).
+> Finally, check that everything went well by doing `git --version` in a MINGW64 shell and it should output something like git version 2.18.1.windows.1 (or newer).
 
 # ZSH
-## msys2 profile
-```
-sed -i "/^  profile_d zsh/a\  SHELL=\"\$(which zsh)\"" /etc/profile && \
-  sed -i '$a\\nexport MSYS=\"winsymlinks:lnk\"' /etc/profile
-```
+## Modify msys2 profile to fix soft link
+`sed -i '$a\\nexport MSYS=\"winsymlinks:lnk\"' /etc/profile`
+
+## Install zsh
+`pacman -S zsh`
 
 ## Install oh-my-zsh
 `sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"`
