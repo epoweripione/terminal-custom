@@ -419,7 +419,7 @@ get_os_icon() {
         OS='OSX'
         OS_ICON=$'\uF179'
         ;;
-        CYGWIN_NT-* | MSYS_NT-*)
+        MSYS_NT-* | MINGW* | CYGWIN_NT-*)
         OS='Windows'
         OS_ICON=$'\uF17A'
         ;;

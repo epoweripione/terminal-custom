@@ -39,6 +39,7 @@ alias -s bz2='tar -xjvf'
 
 # pip aliases
 alias pipupdateall='pip list -o | grep -E -v '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f 1 | xargs -n1 pip install -U'
+alias pip3updateall='pip3 list -o | grep -E -v '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f 1 | xargs -n1 pip3 install -U'
 
 # docker aliases
 alias dockerpullall='docker images | grep -v REPOSITORY | awk '"'"'{print $1,$2}'"'"' OFS='"'"':'"'"' | xargs -L1 docker pull'
