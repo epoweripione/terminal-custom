@@ -547,8 +547,12 @@ prompt_user_host() {
   else
     visual_user_icon+="%F{yellow}\uF415%f " # USER_ICON 
   fi
-
-  prompt_segment cyan default "${visual_user_icon}%F{yellow}$USER@%m%f"
+  
+  if [[ -n "$USER" ]]; then
+    prompt_segment cyan default "${visual_user_icon}%F{yellow}$USER@%m%f"
+  elif [[ -n "$USERNAME" ]]; then
+    prompt_segment cyan default "${visual_user_icon}%F{yellow}$USERNAME@%m%f"
+  fi
 }
 
 prompt_dir_blue() {
