@@ -4,7 +4,7 @@ https://docs.microsoft.com/zh-cn/windows/wsl/install-win10
 # Install Linux Distribution
 Install Debian from Microsoft Store
 
-# Update & Install Package
+# Update & Upgrade
 ```
 sed -i 's|deb.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
     sed -i 's|security.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list
@@ -13,8 +13,7 @@ apt update && apt install -y dialog apt-utils apt-transport-https
 
 sed -i 's|http://mirrors.ustc.edu.cn|https://mirrors.ustc.edu.cn|g' /etc/apt/sources.list
 
-apt update && \
-apt install -y net-tools dnsutils curl iproute2 lrzsz nano htop iotop git unzip p7zip psmisc di python3 python3-pip
+apt update && apt upgrade -y
 ```
 
 # ZSH
