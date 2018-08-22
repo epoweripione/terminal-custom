@@ -1,9 +1,12 @@
 #!/bin/zsh
 
-if [ "$ZSH_VERSION" ] ; then
+if [[ "$ZSH_VERSION" ]]; then
   rm -f ~/.zcompdump*
   autoload -U compinit && compinit
-  [ -e ~/.zcompdump ] && cp ~/.zcompdump ~/.zcompdump-$HOSTNAME-$ZSH_VERSION
+  if [[ -e ~/.zcompdump ]]; then
+    [[ -n "$HOST" ]] && cp ~/.zcompdump ~/.zcompdump-$HOST-$ZSH_VERSION
+    [[ -n "$HOSTNAME" ]] && cp ~/.zcompdump ~/.zcompdump-$HOSTNAME-$ZSH_VERSION
+  fi
 fi
 
 # recreate soft link
@@ -19,5 +22,5 @@ ln -s $ZSH/custom/themes/powerlevel9k/powerlevel9k.zsh-theme $ZSH/custom/themes/
 [[ -L $ZSH/custom/themes/agkozak.zsh-theme ]] && rm -f $ZSH/custom/themes/agkozak.zsh-theme
 ln -s $ZSH/custom/themes/agkozak/agkozak-zsh-prompt.plugin.zsh $ZSH/custom/themes/agkozak.zsh-theme
 
-[[ -L $ZSH/custom/themes/alien.zsh-theme ]] && rm -f $ZSH/custom/themes/alien.zsh-theme && \
+[[ -L $ZSH/custom/themes/alien.zsh-theme ]] && rm -f $ZSH/custom/themes/alien.zsh-theme
 ln -s $ZSH/custom/themes/alien/alien.plugin.zsh $ZSH/custom/themes/alien.zsh-theme

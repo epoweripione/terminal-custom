@@ -1,1 +1,0 @@
-fill_row () { for (( i = 0; i < COLUMNS; i++ )); do echo -n \#; done; }; fill_row; printf '\r'; fill_row

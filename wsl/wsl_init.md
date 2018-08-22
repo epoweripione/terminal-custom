@@ -116,3 +116,16 @@ conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/conda-for
     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/bioconda/ && \
     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
 ```
+
+# Uninstalling Anaconda or Miniconda
+Open a Terminal window.
+
+1. Remove the entire install directory & created hidden file and folders
+```
+rm -rf ~/anaconda*
+rm -rf ~/miniconda*
+rm -rf ~/.condarc ~/.conda ~/.continuum
+```
+
+2. OPTIONAL:
+Edit `~/.bashrc` or `~/.zshrc` to remove the Anaconda or Miniconda directory from your PATH environment variable.

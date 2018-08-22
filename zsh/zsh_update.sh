@@ -23,17 +23,21 @@ cd $ZSH && git pull
 colorEcho ${BLUE} "Updating neofetch..."
 if [[ -d $HOME/neofetch ]]; then
   cd $HOME/neofetch && git pull
-# else
-  # git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
-  # cd $HOME/neofetch
-  # if [[ $ostype == "Darwin" ]]; then
-  #   make PREFIX=/usr/local install
-  # elif [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
-  #   make -i install
-  # else
-  #   make install
-  #  fi
+else
+  git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+  
+  cd $HOME/neofetch
+  if [[ $ostype == "Darwin" ]]; then
+    make PREFIX=/usr/local install
+  elif [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
+    make -i install
+  else
+    if [[ $UID -eq 0 ]]; then
+      make install
+    fi
+  fi
 fi
+cp ~/terminal-custom/zsh/neofetch_config.conf ~/.config/neofetch/config.conf
 
 
 # custom plugins
