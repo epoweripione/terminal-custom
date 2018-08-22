@@ -2,7 +2,7 @@
 https://docs.microsoft.com/zh-cn/windows/wsl/install-win10
 
 # Install Linux Distribution
-Install Debian from Microsoft Store
+Install **Debian** from **Microsoft Store**
 
 # Update & Upgrade
 ```
@@ -38,8 +38,10 @@ EOF
 ```
 
 # Install custom packages
+```
 apt update && apt upgrade -y
 apt install -y build-essential curl di dnsutils git htop iproute2 lrzsz nano net-tools p7zip psmisc unzip
+```
 
 # Install python3
 ```
