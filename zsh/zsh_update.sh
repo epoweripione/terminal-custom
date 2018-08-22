@@ -24,20 +24,24 @@ colorEcho ${BLUE} "Updating neofetch..."
 if [[ -d $HOME/neofetch ]]; then
   cd $HOME/neofetch && git pull
 else
-  git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
-  
-  cd $HOME/neofetch
   if [[ $ostype == "Darwin" ]]; then
-    make PREFIX=/usr/local install
+    git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+    cd $HOME/neofetch && make PREFIX=/usr/local install
   elif [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
-    make -i install
+    git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+    cd $HOME/neofetch && make -i install
   else
     if [[ $UID -eq 0 ]]; then
-      make install
+      git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+      cd $HOME/neofetch && make install
     fi
   fi
 fi
-cp ~/terminal-custom/zsh/neofetch_config.conf ~/.config/neofetch/config.conf
+
+if [[ -x "$(command -v neofetch)" ]]; then 
+  mkdir -p ~/.config/neofetch/ && \
+    cp ~/terminal-custom/zsh/neofetch_config.conf ~/.config/neofetch/config.conf
+fi
 
 
 # custom plugins
@@ -139,5 +143,5 @@ fi
 ln -s $ZSH/custom/themes/alien/alien.plugin.zsh $ZSH/custom/themes/alien.zsh-theme
 
 
-colorEcho ${GREEN} "Update finished!"
 cd $HOME
+colorEcho ${GREEN} "Update finished!"
