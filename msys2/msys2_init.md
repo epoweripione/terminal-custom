@@ -78,8 +78,9 @@ sed -i "/^  profile_d zsh/a\  SHELL=\"\$(which zsh)\"" /etc/profile && \
 tee -a ~/.bashrc <<-'EOF'
 
 # Launch Zsh 
-if [ -t 1 ]; then 
-exec zsh 
+if [[ "${ZSH_VERSION:-unset}" = "unset" ]]; then
+  export SHELL=/bin/zsh
+  exec zsh
 fi
 EOF
 ```

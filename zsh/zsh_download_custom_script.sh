@@ -19,7 +19,6 @@ chmod +x ~/hosts_update.sh
 chmod +x ~/install_fonts.sh
 chmod +x ~/terminal_256colors.sh
 chmod +x ~/terminal_colors.sh
-chmod +x ~/terminal_fillrow.sh
 
 cp -f ~/terminal-custom/zsh/*.sh ~
 chmod +x ~/zsh_change_theme.sh
