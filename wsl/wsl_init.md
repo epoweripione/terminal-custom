@@ -71,7 +71,8 @@ pip3 list -o | grep -E -v '^-|^Package' | cut -d ' ' -f 1 | xargs -n1 pip3 insta
 # example: pip install -I pyxdg==0.26
 ```
 
-# Install Anaconda
+# Anaconda or Miniconda
+## Install Anaconda
 1. Download Anaconda from https://www.anaconda.com/download/#linux
 `curl -SL -O https://repo.anaconda.com/archive/Anaconda3-5.2.0-Linux-x86_64.sh`
 
@@ -94,7 +95,7 @@ conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/conda-for
     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
 ```
 
-# Install Miniconda
+## Install Miniconda
 1. Download Anaconda from https://www.anaconda.com/download/#linux
 `curl -SL -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh`
 
@@ -117,7 +118,7 @@ conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/conda-for
     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
 ```
 
-# Uninstalling Anaconda or Miniconda
+## Uninstalling Anaconda or Miniconda
 Open a Terminal window.
 
 1. Remove the entire install directory & created hidden file and folders
@@ -129,3 +130,39 @@ rm -rf ~/.condarc ~/.conda ~/.continuum
 
 2. OPTIONAL:
 Edit `~/.bashrc` or `~/.zshrc` to remove the Anaconda or Miniconda directory from your PATH environment variable.
+
+## Use conda
+https://conda.io/docs/user-guide/getting-started.html
+https://conda.io/docs/_downloads/conda-cheatsheet.pdf
+```
+conda info
+conda update conda
+conda install <PackageName>
+conda update <PackageName>
+
+conda create -n py36 python=3.6
+source activate py36
+source deactivate
+
+conda create -n py27 python=2.7
+conda activate py2.7
+conda deactivate
+```
+
+# Nerd Fonts Patcher
+https://github.com/ryanoasis/nerd-fonts#font-patcher
+
+```
+apt install -y python-configparser fontforge
+
+# run into fontforge built in python env
+# fontforge -lang=py -script
+
+git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git
+
+cd nerd-fonts
+# fontforge -script font-patcher -h
+
+# Patch Sarasa-Gothic https://github.com/be5invis/Sarasa-Gothic
+for font in ~/Sarasa-Gothic/*.ttf; do fontforge -script font-patcher -out ~/Sarasa-Gothic --careful --complete --progressbars --adjust-line-height "$font"; done
+```
