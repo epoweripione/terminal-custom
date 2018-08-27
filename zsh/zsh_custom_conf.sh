@@ -139,6 +139,9 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
 
   # start services upon WSL launch
   if [[ $UID -eq 0 ]]; then
-    service winbind start
+    # libnss-winbind
+    if (( $(ps -ef | grep -v grep | grep winbind | wc -l) == 0 )); then
+      service winbind start
+    fi
   fi
 fi
