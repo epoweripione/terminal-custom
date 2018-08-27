@@ -27,6 +27,13 @@ mountFsTab = false
 EOF
 ```
 
+# Enable broadcast WINS
+```
+apt update && apt install -y libnss-winbind
+sed -i 's/dns/wins dns/' /etc/nsswitch.conf
+/etc/init.d/winbind start
+```
+
 # ZSH
 ## Install zsh
 `apt install -y zsh`
