@@ -13,12 +13,15 @@ else
     git clone https://github.com/epoweripione/terminal-custom.git ~/terminal-custom
 fi
 
-# copy *.sh to HOME
+
+# copy shell script to HOME
 cp -f ~/terminal-custom/*.sh ~
 chmod +x ~/hosts_update.sh
 chmod +x ~/install_fonts.sh
 chmod +x ~/terminal_256colors.sh
 chmod +x ~/terminal_colors.sh
+
+cp -f ~/terminal-custom/terminal_256colors.py ~
 
 cp -f ~/terminal-custom/zsh/*.sh ~
 chmod +x ~/zsh_change_theme.sh
@@ -28,7 +31,9 @@ chmod +x ~/zsh_download_custom_script.sh
 chmod +x ~/zsh_init.sh
 chmod +x ~/zsh_update.sh
 
-cp -f ~/terminal-custom/terminal_256colors.py ~
+cp -f ~/terminal-custom/git/*.sh ~
+chmod +x ~/git_global_config.sh
+
 
 # MSYS2
 if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" ]]; then
@@ -38,6 +43,7 @@ if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" ]]; then
     chmod +x ~/msys2_git_for_windows.sh
     chmod +x ~/msys2_pacman_mirrors.sh
 fi
+
 
 # zsh custom plugins
 [ -d ~/terminal-custom/zsh/plugins ] && cp -f ~/terminal-custom/zsh/plugins/* $ZSH/custom/plugins

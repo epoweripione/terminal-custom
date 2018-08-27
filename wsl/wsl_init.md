@@ -16,6 +16,17 @@ sed -i 's|http://mirrors.ustc.edu.cn|https://mirrors.ustc.edu.cn|g' /etc/apt/sou
 apt update && apt upgrade -y
 ```
 
+# make drives mounted at /c or /e instead of /mnt/c and /mnt/e.
+```
+tee /etc/wsl.conf <<-'EOF'
+[automount]
+enabled = true
+root = /
+options = "metadata,umask=22,fmask=11"
+mountFsTab = false
+EOF
+```
+
 # ZSH
 ## Install zsh
 `apt install -y zsh`
@@ -43,14 +54,24 @@ apt update && apt upgrade -y
 apt install -y build-essential curl di dnsutils git htop iproute2 lrzsz nano net-tools p7zip psmisc unzip
 ```
 
+# SSH
+```
+mkdir ~/.ssh
+chmod 700 ~/.ssh/
+# gen ssh key
+# ssh-keygen -t ecdsa -b 521 -C "username@mail.com"
+# ssh-keygen -t rsa -C "$(whoami)@$(hostname)-$(date -I)"
+chmod 600 ~/.ssh/*
+```
+
 # Install python3
 ```
 # add testing repo
-echo "deb https://mirrors.ustc.edu.cn/debian/ testing main" >> /etc/apt/sources.list && \
-    echo 'APT::Default-Release "stable";' | sudo tee -a /etc/apt/apt.conf.d/00local
+# echo "deb https://mirrors.ustc.edu.cn/debian/ testing main" >> /etc/apt/sources.list && \
+#    echo 'APT::Default-Release "stable";' | sudo tee -a /etc/apt/apt.conf.d/00local
 
-# install python3.6, pip3
-apt update && apt install -y -t testing python3.6 python3-pip
+# install python3, pip3
+apt update && apt install -y -t testing python3 python3-pip
 
 # fix pip list warning
 mkdir -p ~/.pip && \
@@ -165,4 +186,30 @@ cd nerd-fonts
 
 # Patch Sarasa-Gothic https://github.com/be5invis/Sarasa-Gothic
 for font in ~/Sarasa-Gothic/*.ttf; do fontforge -script font-patcher -out ~/Sarasa-Gothic --careful --complete --progressbars --adjust-line-height "$font"; done
+```
+
+# Docker
+## Install docker-ce in WSL
+`chmod +x docker_install.sh && ./docker_install.sh`
+
+## Docker For Windows
+```
+tee -a ~/.zshrc <<-'EOF'
+
+# Docker For Windows
+# In the general settings, enable option "Expose daemon on tcp://localhost:2375 without TLS"
+export DOCKER_HOST=tcp://127.0.0.1:2375
+EOF
+```
+
+## Docker Toolbox
+```
+tee -a ~/.zshrc <<-'EOF'
+
+# Docker Toolbox
+export WINDOWS_USER=$(/c/Windows/System32/cmd.exe /c 'echo %USERNAME%' | sed -e 's/\r//g')
+export DOCKER_TLS_VERIFY=1
+export DOCKER_HOST=tcp://192.168.99.100:2376
+export DOCKER_CERT_PATH=/c/Users/$WINDOWS_USER/.docker/machine/certs
+EOF
 ```

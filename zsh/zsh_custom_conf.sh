@@ -24,18 +24,18 @@ alias ohmyzsh="nano ~/.oh-my-zsh"
 
 alias cls='clear'
 alias grep="grep --color=auto"
-alias -s html='nano'
-alias -s php='nano'
-alias -s rb='nano'
-alias -s py='nano'
-alias -s js='nano'
-alias -s c='nano'
-alias -s java='nano'
-alias -s txt='nano'
-alias -s gz='tar -xzvf'
-alias -s tgz='tar -xzvf'
-alias -s zip='unzip'
-alias -s bz2='tar -xjvf'
+# alias -s html='nano'
+# alias -s php='nano'
+# alias -s rb='nano'
+# alias -s py='nano'
+# alias -s js='nano'
+# alias -s c='nano'
+# alias -s java='nano'
+# alias -s txt='nano'
+# alias -s gz='tar -xzvf'
+# alias -s tgz='tar -xzvf'
+# alias -s zip='unzip'
+# alias -s bz2='tar -xjvf'
 
 # pip aliases
 alias pipupdateall='pip list -o | grep -E -v '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f 1 | xargs -n1 pip install -U'
@@ -106,6 +106,33 @@ if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; t
   alias psysh="winpty psysh.bat"
   alias var-dump-server="winpty var-dump-server.bat"
 
+  # Docker
+  alias dockertoolbox='exec "$DOCKER_TOOLBOX_INSTALL_PATH/start.sh"'
+  alias docker="winpty docker.exe"
+  alias docker-machine="winpty docker-machine.exe"
+  alias docker-compose="winpty docker-compose.exe"
+
   # other
   alias wmic="winpty wmic"
+fi
+
+# Docker for WSL
+if [[ $(uname -r) =~ "Microsoft" ]]; then
+  if [[ -d "/c/Program Files/Docker Toolbox" ]]; then
+    # export PATH="$PATH:/c/Program\ Files/Docker\ Toolbox"
+    export DOCKER_TOOLBOX_INSTALL_PATH='/c/Program\ Files/Docker\ Toolbox'
+
+    export WINDOWS_USER=$(/c/Windows/System32/cmd.exe /c 'echo %USERNAME%' | sed -e 's/\r//g')
+    export DOCKER_TLS_VERIFY=1
+    export DOCKER_HOST=tcp://192.168.99.100:2376
+    export DOCKER_CERT_PATH=/c/Users/$WINDOWS_USER/.docker/machine/certs
+
+     alias docker-machine="$DOCKER_TOOLBOX_INSTALL_PATH/docker-machine.exe"
+  else
+    # export PATH="$PATH:/mnt/c/Program\ Files/Docker/Docker/resources/bin"
+
+    export DOCKER_HOST=tcp://127.0.0.1:2375
+
+    alias docker-machine="/c/Program\ Files/Docker/Docker/resources/bin/docker-machine.exe"
+  fi
 fi
