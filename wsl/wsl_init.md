@@ -110,19 +110,6 @@ pip3 list -o | grep -E -v '^-|^Package' | cut -d ' ' -f 1 | xargs -n1 pip3 insta
 3. zsh: add Anaconda to PATH
 `echo -e "\nexport PATH=\"/root/anaconda3/bin:\$PATH\"" >> ~/.zshrc`
 
-4. conda repo mirrors in china
-```
-conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/free/ && \
-    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/main/ && \
-    conda config --set show_channel_urls yes
-
-# extra repo
-conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/ && \
-    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/msys2/ && \
-    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/bioconda/ && \
-    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
-```
-
 ## Install Miniconda
 1. Download Anaconda from https://www.anaconda.com/download/#linux
 `curl -SL -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh`
@@ -219,4 +206,35 @@ export DOCKER_TLS_VERIFY=1
 export DOCKER_HOST=tcp://192.168.99.100:2376
 export DOCKER_CERT_PATH=/c/Users/$WINDOWS_USER/.docker/machine/certs
 EOF
+```
+
+# nodejs
+## Install nvm
+https://github.com/creationix/nvm
+```
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+tee -a ~/.zshrc <<-'EOF'
+
+# load nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+EOF
+```
+## list available nodejs version
+`nvm ls-remote`
+
+## Install nodejs
+```
+nvm install stable
+nvm use stable
+```
+
+## Fix npm not found
+`ln -s $(which node) /usr/bin/node && ln -s $(which npm) /usr/bin/npm`
+
+# Install yarn
+```
+curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+apt update && apt install -y yarn
 ```
