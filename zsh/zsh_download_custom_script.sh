@@ -18,7 +18,7 @@ colorEcho() {
 
 ostype=$(uname)
 
-colorEcho ${BLUE} "Clone repository to HOME..."
+colorEcho ${BLUE} "Cloning custom shell script repository to HOME..."
 if [[ -d ~/terminal-custom ]]; then
     cd ~/terminal-custom && git pull && cd -
 else
@@ -27,7 +27,7 @@ fi
 
 
 # copy shell script to HOME
-colorEcho ${BLUE} "copy shell script to HOME..."
+colorEcho ${BLUE} "Copying shell script to HOME..."
 cp -f ~/terminal-custom/*.sh ~
 chmod +x ~/hosts_update.sh
 chmod +x ~/install_fonts.sh

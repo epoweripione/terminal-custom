@@ -24,16 +24,17 @@ colorEcho ${BLUE} "Updating neofetch..."
 if [[ -d $HOME/neofetch ]]; then
   cd $HOME/neofetch && git pull
 else
-  git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
-fi
-
-if [[ $ostype == "Darwin" ]]; then
-  cd $HOME/neofetch && make PREFIX=/usr/local install
-elif [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
-  cd $HOME/neofetch && make -i install
-else
-  if [[ $UID -eq 0 ]]; then
-    cd $HOME/neofetch && make install
+  if [[ $ostype == "Darwin" ]]; then
+    git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+    cd $HOME/neofetch && make PREFIX=/usr/local install
+  elif [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
+    git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+    cd $HOME/neofetch && make -i install
+  else
+    if [[ $UID -eq 0 ]]; then
+      git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+      cd $HOME/neofetch && make install
+    fi
   fi
 fi
 
