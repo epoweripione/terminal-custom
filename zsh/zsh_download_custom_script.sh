@@ -5,8 +5,20 @@
 ## Init: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh && ~/zsh_init.sh
 ## Update: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh
 
+#######color code########
+RED="31m"      # Error message
+GREEN="32m"    # Success message
+YELLOW="33m"   # Warning message
+BLUE="36m"     # Info message
+
+colorEcho() {
+    COLOR=$1
+    echo -e "\033[${COLOR}${@:2}\033[0m"
+}
+
 ostype=$(uname)
 
+colorEcho ${BLUE} "Clone repository to HOME..."
 if [[ -d ~/terminal-custom ]]; then
     cd ~/terminal-custom && git pull && cd -
 else
@@ -15,6 +27,7 @@ fi
 
 
 # copy shell script to HOME
+colorEcho ${BLUE} "copy shell script to HOME..."
 cp -f ~/terminal-custom/*.sh ~
 chmod +x ~/hosts_update.sh
 chmod +x ~/install_fonts.sh
@@ -34,6 +47,9 @@ chmod +x ~/zsh_update.sh
 cp -f ~/terminal-custom/git/*.sh ~
 chmod +x ~/git_global_config.sh
 
+cp -f ~/terminal-custom/nodejs/*.sh ~
+chmod +x ~/npm_packages_installer.sh
+
 
 # MSYS2
 if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" ]]; then
@@ -45,9 +61,12 @@ if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" ]]; then
 fi
 
 
+colorEcho ${BLUE} "copy zsh custom plugins & theme to ZSH/custom..."
 # zsh custom plugins
 [ -d ~/terminal-custom/zsh/plugins ] && cp -f ~/terminal-custom/zsh/plugins/* $ZSH/custom/plugins
 
-
 # zsh custom themes
 [ -d ~/terminal-custom/zsh/themes ] && cp -f ~/terminal-custom/zsh/themes/*.zsh-theme $ZSH/custom/themes
+
+cd $HOME
+colorEcho ${GREEN} "Custom shell script download finished!"

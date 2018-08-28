@@ -212,7 +212,8 @@ EOF
 ## Install nvm
 https://github.com/creationix/nvm
 ```
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+nvm_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/creationix/nvm/releases/latest | grep 'tag_name' | cut -d\" -f4)
+curl -o- https://raw.githubusercontent.com/creationix/nvm/$nvm_ver/install.sh | bash
 tee -a ~/.zshrc <<-'EOF'
 
 # load nvm
