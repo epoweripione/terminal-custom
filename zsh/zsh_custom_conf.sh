@@ -116,6 +116,13 @@ if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; t
   alias wmic="winpty wmic"
 fi
 
+# composer
+if [[ -x "$(command -v composer)" ]]; then
+  export COMPOSER_ALLOW_SUPERUSER=1
+  export COMPOSER_HOME=/usr/local/share/composer
+  export PATH=$PATH:/usr/local/share/composer/vendor/bin
+fi
+
 # WSL
 if [[ $(uname -r) =~ "Microsoft" ]]; then
   # Docker

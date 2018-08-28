@@ -278,6 +278,7 @@ apt update && apt install -y phpmyadmin
 ```
 export COMPOSER_ALLOW_SUPERUSER=1
 export COMPOSER_HOME=/usr/local/share/composer
+export PATH="$PATH:/usr/local/share/composer/vendor/bin"
 
 mkdir -p /usr/local/share/composer
 # curl -sS https://install.phpcomposer.com/installer | php -- --install-dir=/usr/bin/ --filename=composer
