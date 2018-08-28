@@ -9,7 +9,7 @@ Install **Debian** from **Microsoft Store**
 sed -i 's|deb.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
     sed -i 's|security.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list
 
-apt update && apt install -y dialog apt-utils apt-transport-https
+apt update && apt install -y dialog apt-utils apt-transport-https ca-certificates lsb-release
 
 sed -i 's|http://mirrors.ustc.edu.cn|https://mirrors.ustc.edu.cn|g' /etc/apt/sources.list
 
@@ -233,9 +233,65 @@ nvm use stable
 ## Fix npm not found
 `ln -s $(which node) /usr/bin/node && ln -s $(which npm) /usr/bin/npm`
 
-# Install yarn
+## Install yarn
 ```
 curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 apt update && apt install -y yarn
+```
+
+# PHP
+## Install PHP7.2
+```
+# wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+# echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
+
+wget -O /etc/apt/trusted.gpg.d/php.gpg https://mirror.xtom.com.hk/sury/php/apt.gpg
+echo "deb https://mirror.xtom.com.hk/sury/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
+
+apt update && apt install -y php7.2
+# Installing Some Additional Packages
+apt install -y php7.2-fpm php7.2-curl php7.2-gd php7.2-mbstring php7.2-mysql php7.2-pgsql php7.2-sqlite3 php7.2-xml php7.2-xsl
+```
+
+## opcache
+```
+{ \
+    echo 'opcache.memory_consumption=128'; \
+    echo 'opcache.interned_strings_buffer=8'; \
+    echo 'opcache.max_accelerated_files=4000'; \
+    echo 'opcache.revalidate_freq=60'; \
+    echo 'opcache.fast_shutdown=1'; \
+    echo 'opcache.enable_cli=1'; \
+    echo 'opcache.file_cache=/tmp'; \
+} > /etc/php/7.2/cli/conf.d/opcache-recommended.ini
+```
+
+## Install phpmyadmin
+```
+wget -qO - https://apt.blobfolio.com/public.gpg.key | sudo apt-key add -
+echo "deb [arch=amd64] https://apt.blobfolio.com/debian/ stretch main" | tee /etc/apt/sources.list.d/blobfolio.list
+apt update && apt install -y phpmyadmin
+```
+
+## Install composer
+```
+export COMPOSER_ALLOW_SUPERUSER=1
+export COMPOSER_HOME=/usr/local/share/composer
+
+mkdir -p /usr/local/share/composer
+# curl -sS https://install.phpcomposer.com/installer | php -- --install-dir=/usr/bin/ --filename=composer
+
+wget https://dl.laravel-china.org/composer.phar -O /usr/local/bin/composer
+chmod a+x /usr/local/bin/composer
+
+# Packagist mirror
+composer config -g repo.packagist composer https://packagist.laravel-china.org
+
+# Install packages
+composer g require "hirak/prestissimo:^0.3.7"
+composer g require friendsofphp/php-cs-fixer
+composer g require --dev phpunit/phpunit ^7
+composer g require psy/psysh:@stable
+mkdir -p ~/.local/share/psysh/ && curl -SL http://psysh.org/manual/zh/php_manual.sqlite -o ~/.local/share/psysh/php_manual.sqlite
 ```
