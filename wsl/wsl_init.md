@@ -48,9 +48,10 @@ sed -i 's/dns/wins dns/' /etc/nsswitch.conf
 ```
 tee -a ~/.bashrc <<-'EOF'
 
-# Launch Zsh 
-if [ -t 1 ]; then 
-exec zsh 
+# Launch Zsh
+if [[ "${ZSH_VERSION:-unset}" = "unset" ]]; then
+    export SHELL=/bin/zsh
+    exec zsh
 fi
 EOF
 ```
@@ -78,7 +79,7 @@ chmod 600 ~/.ssh/*
 #    echo 'APT::Default-Release "stable";' | sudo tee -a /etc/apt/apt.conf.d/00local
 
 # install python3, pip3
-apt update && apt install -y -t testing python3 python3-pip
+apt update && apt install -y python3 python3-pip
 
 # fix pip list warning
 mkdir -p ~/.pip && \
@@ -100,21 +101,21 @@ pip3 list -o | grep -E -v '^-|^Package' | cut -d ' ' -f 1 | xargs -n1 pip3 insta
 ```
 
 # Anaconda or Miniconda
-## Install Anaconda
+## Anaconda
 1. Download Anaconda from https://www.anaconda.com/download/#linux
 `curl -SL -O https://repo.anaconda.com/archive/Anaconda3-5.2.0-Linux-x86_64.sh`
 
-2. Install
+2. Install Anaconda
 `bash Anaconda3-5.2.0-Linux-x86_64.sh`
 
 3. zsh: add Anaconda to PATH
 `echo -e "\nexport PATH=\"/root/anaconda3/bin:\$PATH\"" >> ~/.zshrc`
 
-## Install Miniconda
-1. Download Anaconda from https://www.anaconda.com/download/#linux
+## Miniconda
+1. Download Miniconda from https://conda.io/miniconda.html
 `curl -SL -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh`
 
-2. Install
+2. Install Miniconda
 `bash Miniconda3-latest-Linux-x86_64.sh`
 
 3. zsh: add Miniconda to PATH
@@ -134,8 +135,6 @@ conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/conda-for
 ```
 
 ## Uninstalling Anaconda or Miniconda
-Open a Terminal window.
-
 1. Remove the entire install directory & created hidden file and folders
 ```
 rm -rf ~/anaconda*
@@ -221,6 +220,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 EOF
 ```
+
 ## list available nodejs version
 `nvm ls-remote`
 
@@ -250,11 +250,12 @@ wget -O /etc/apt/trusted.gpg.d/php.gpg https://mirror.xtom.com.hk/sury/php/apt.g
 echo "deb https://mirror.xtom.com.hk/sury/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
 
 apt update && apt install -y php7.2
+
 # Installing Some Additional Packages
 apt install -y php7.2-fpm php7.2-curl php7.2-gd php7.2-mbstring php7.2-mysql php7.2-pgsql php7.2-sqlite3 php7.2-xml php7.2-xsl
 ```
 
-## opcache
+## opcache options
 ```
 { \
     echo 'opcache.memory_consumption=128'; \
@@ -265,13 +266,6 @@ apt install -y php7.2-fpm php7.2-curl php7.2-gd php7.2-mbstring php7.2-mysql php
     echo 'opcache.enable_cli=1'; \
     echo 'opcache.file_cache=/tmp'; \
 } > /etc/php/7.2/cli/conf.d/opcache-recommended.ini
-```
-
-## Install phpmyadmin
-```
-wget -qO - https://apt.blobfolio.com/public.gpg.key | sudo apt-key add -
-echo "deb [arch=amd64] https://apt.blobfolio.com/debian/ stretch main" | tee /etc/apt/sources.list.d/blobfolio.list
-apt update && apt install -y phpmyadmin
 ```
 
 ## Install composer

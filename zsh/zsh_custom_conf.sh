@@ -116,12 +116,33 @@ if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; t
   alias wmic="winpty wmic"
 fi
 
+
 # composer
 if [[ -x "$(command -v composer)" ]]; then
   export COMPOSER_ALLOW_SUPERUSER=1
   export COMPOSER_HOME=/usr/local/share/composer
   export PATH=$PATH:/usr/local/share/composer/vendor/bin
 fi
+
+
+# nvm
+if [[ "$(command -v nvm)" ]]; then
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+fi
+
+
+# anaconda3
+if [[ -d "$HOME/anaconda3/bin" ]]; then
+  export PATH=$PATH:$HOME/anaconda3/bin
+fi
+
+
+# miniconda3
+if [[ -d "$HOME/miniconda3/bin" ]]; then
+  export PATH=$PATH:$HOME/miniconda3/bin
+fi
+
 
 # WSL
 if [[ $(uname -r) =~ "Microsoft" ]]; then
@@ -143,6 +164,7 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
 
     alias docker-machine="/c/Program\ Files/Docker/Docker/resources/bin/docker-machine.exe"
   fi
+
 
   # start services upon WSL launch
   if [[ $UID -eq 0 ]]; then
