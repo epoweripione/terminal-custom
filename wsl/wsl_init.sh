@@ -91,7 +91,7 @@ apt install -y build-essential di dnsutils g++ gcc git htop iproute2 make nano n
 colorEcho ${BLUE} "Enable broadcast WINS..."
 apt install -y libnss-winbind
 sed -i 's/dns/wins dns/' /etc/nsswitch.conf
-/etc/init.d/winbind start
+# /etc/init.d/winbind start
 
 
 # Docker
@@ -142,6 +142,10 @@ apt install -y php7.2-fpm php7.2-curl php7.2-gd php7.2-mbstring php7.2-mysql php
     echo 'opcache.enable_cli=1'; \
     echo 'opcache.file_cache=/tmp'; \
 } > /etc/php/7.2/cli/conf.d/opcache-recommended.ini
+
+# remove PHP version from the X-Powered-By HTTP header
+# test: curl -I -H "Accept-Encoding: gzip, deflate" https://www.yourdomain.com
+RUN echo 'expose_php = off' > /usr/local/etc/php/conf.d/hide-header-version.ini
 
 ## Install composer
 colorEcho ${BLUE} "Installing composer..."
