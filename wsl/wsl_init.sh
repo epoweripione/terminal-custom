@@ -11,21 +11,27 @@ colorEcho() {
     echo -e "\033[${COLOR}${@:2}\033[0m"
 }
 
-# Install WSL
+
+if [[ $(uname -r) =~ "Microsoft" ]]; then
+    if [[ $UID -ne 0 ]]; then
+        colorEcho ${RED} "Please run this script as root user!"
+        exit 0
+    fi
+else
+    colorEcho ${RED} "Please run this script in WSL(Windows Subsystem for Linux)!"
+    exit 0
+fi
+
+
+# Install WSL (Windows Subsystem for Linux)
 # https://docs.microsoft.com/zh-cn/windows/wsl/install-win10
 
 # Install Linux Distribution
 # Install **Debian** from **Microsoft Store**
 
-# Update & Upgrade
-colorEcho ${BLUE} "Update & Upgrade..."
-sed -i 's|deb.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
-    sed -i 's|security.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list
-apt update && apt install -y dialog apt-utils apt-transport-https ca-certificates lsb-release
-sed -i 's|http://mirrors.ustc.edu.cn|https://mirrors.ustc.edu.cn|g' /etc/apt/sources.list
-apt update && apt upgrade -y
-
-# make drives mounted at /c or /e instead of /mnt/c and /mnt/e.
+# Custom WSL settings
+colorEcho ${BLUE} "Custom WSL settings..."
+## make drives mounted at /c or /e instead of /mnt/c and /mnt/e.
 tee /etc/wsl.conf <<-'EOF'
 [automount]
 enabled = true
@@ -34,13 +40,51 @@ options = "metadata,umask=22,fmask=11"
 mountFsTab = false
 EOF
 
-# SSH
-mkdir ~/.ssh && chmod 700 ~/.ssh/
+## SSH
+mkdir -p ~/.ssh && chmod 700 ~/.ssh/
 
 
-# Install custom packages
-colorEcho ${BLUE} "Install custom packages..."
-apt update && apt install -y build-essential curl di dnsutils gcc g++ git htop iproute2 lrzsz make nano net-tools p7zip psmisc unzip
+# Update & Upgrade
+colorEcho ${BLUE} "Update & Upgrade..."
+sed -i 's|deb.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
+    sed -i 's|security.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list
+
+apt update && apt install -y apt-transport-https apt-utils ca-certificates curl lsb-release software-properties-common wget
+
+sed -i 's|http://mirrors.ustc.edu.cn|https://mirrors.ustc.edu.cn|g' /etc/apt/sources.list
+apt update && apt upgrade -y
+
+
+# Add custom repositories
+colorEcho ${BLUE} "Add custom repositories..."
+## docker
+if [[ ! $(grep "docker-ce" /etc/apt/sources.list) ]]; then
+    curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add -
+    add-apt-repository \
+        "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/$(. /etc/os-release; echo "$ID") \
+        $(lsb_release -cs) \
+        stable"
+fi
+
+## yarn
+if [[ ! -e /etc/apt/sources.list.d/yarn.list ]]; then
+    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+fi
+
+## php
+if [[ ! -e /etc/apt/sources.list.d/php.list ]]; then
+    wget -O /etc/apt/trusted.gpg.d/php.gpg https://mirror.xtom.com.hk/sury/php/apt.gpg
+    echo "deb https://mirror.xtom.com.hk/sury/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
+fi
+
+## update repositories
+apt update && apt upgrade -y
+
+
+# Install useful packages
+colorEcho ${BLUE} "Install useful packages..."
+apt install -y build-essential di dnsutils g++ gcc git htop iproute2 make nano net-tools p7zip psmisc unzip
 
 
 # Enable broadcast WINS
@@ -50,29 +94,9 @@ sed -i 's/dns/wins dns/' /etc/nsswitch.conf
 /etc/init.d/winbind start
 
 
-# Miniconda
-colorEcho ${BLUE} "Installing Miniconda3..."
-curl -SL -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-chmod +x Miniconda3-latest-Linux-x86_64.sh && ./Miniconda3-latest-Linux-x86_64.sh
-
-conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/free/ && \
-    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/main/ && \
-    conda config --set show_channel_urls yes
-
-conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/ && \
-    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/msys2/ && \
-    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/bioconda/ && \
-    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
-
-
 # Docker
 colorEcho ${BLUE} "Installing Docker..."
-curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add -
-add-apt-repository \
-    "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/$(. /etc/os-release; echo "$ID") \
-    $(lsb_release -cs) \
-    stable"
-apt update && apt install -y docker-ce
+apt install -y docker-ce
 
 ## Install Docker Compose
 colorEcho ${BLUE} "Installing Docker Compose..."
@@ -97,21 +121,16 @@ ln -s $(which node) /usr/bin/node && ln -s $(which npm) /usr/bin/npm
 
 ## Install yarn
 colorEcho ${BLUE} "Installing yarn..."
-curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-apt update && apt install -y yarn
+apt install -y yarn --no-install-recommends
 
 
 # PHP
 ## Install PHP7.2
 colorEcho ${BLUE} "Installing PHP7.2..."
-wget -O /etc/apt/trusted.gpg.d/php.gpg https://mirror.xtom.com.hk/sury/php/apt.gpg
-echo "deb https://mirror.xtom.com.hk/sury/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-
-apt update && apt install -y php7.2
+apt install -y php7.2
 
 ## Installing Some Additional Packages
-apt install -y php7.2-fpm php7.2-curl php7.2-gd php7.2-mbstring php7.2-mysql php7.2-pgsql php7.2-sqlite3 php7.2-xml php7.2-xsl
+apt install -y php7.2-fpm php7.2-curl php7.2-gd php7.2-mbstring php7.2-mysql php7.2-pgsql php7.2-sqlite3 php7.2-xml php7.2-xsl php7.2-zip
 
 ## opcache
 { \
@@ -145,11 +164,31 @@ composer g require psy/psysh:@stable
 mkdir -p ~/.local/share/psysh/ && curl -SL http://psysh.org/manual/zh/php_manual.sqlite -o ~/.local/share/psysh/php_manual.sqlite
 
 
+# Miniconda
+colorEcho ${BLUE} "Installing Miniconda3..."
+if [[ ! -d "$HOME/miniconda3" ]]; then
+    curl -SL -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    bash ./Miniconda3-latest-Linux-x86_64.sh
+
+    export PATH=$PATH:$HOME/miniconda3/bin
+
+    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/free/ && \
+        conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/main/ && \
+        conda config --set show_channel_urls yes
+
+    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/ && \
+        conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/msys2/ && \
+        conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/bioconda/ && \
+        conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
+fi
+
+
 # ZSH
 ## Install zsh
 colorEcho ${BLUE} "Installing ZSH..."
 apt install -y zsh
 
+if [[ ! $(grep "exec zsh" ~/.bashrc) ]]; then
 tee -a ~/.bashrc <<-'EOF'
 
 # Launch Zsh
@@ -158,10 +197,11 @@ if [[ "${ZSH_VERSION:-unset}" = "unset" ]]; then
     exec zsh
 fi
 EOF
+fi
 
 ## Install oh-my-zsh
 colorEcho ${BLUE} "Installing oh-my-zsh..."
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 
 colorEcho ${GREEN} "WSL init done, please restart WSL!"

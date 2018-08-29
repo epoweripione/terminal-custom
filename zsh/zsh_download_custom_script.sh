@@ -51,6 +51,13 @@ cp -f ~/terminal-custom/nodejs/*.sh ~
 chmod +x ~/npm_packages_installer.sh
 
 
+# WSL
+if [[ $(uname -r) =~ "Microsoft" ]]; then
+    cp -f ~/terminal-custom/wsl/wsl_init.sh ~
+    chmod +x ~/wsl_init.sh
+fi
+
+
 # MSYS2
 if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" ]]; then
     cp -f ~/terminal-custom/msys2/*.sh ~

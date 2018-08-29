@@ -1,4 +1,4 @@
-# Install WSL
+# Install WSL (Windows Subsystem for Linux)
 https://docs.microsoft.com/zh-cn/windows/wsl/install-win10
 
 # Install Linux Distribution
@@ -9,7 +9,7 @@ Install **Debian** from **Microsoft Store**
 sed -i 's|deb.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
     sed -i 's|security.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list
 
-apt update && apt install -y dialog apt-utils apt-transport-https ca-certificates lsb-release
+apt update && apt install -y apt-transport-https apt-utils ca-certificates curl lsb-release software-properties-common wget
 
 sed -i 's|http://mirrors.ustc.edu.cn|https://mirrors.ustc.edu.cn|g' /etc/apt/sources.list
 
@@ -59,13 +59,12 @@ EOF
 # Install custom packages
 ```
 apt update && apt upgrade -y
-apt install -y build-essential curl di dnsutils git htop iproute2 lrzsz nano net-tools p7zip psmisc unzip
+apt install -y build-essential di dnsutils git htop iproute2 nano net-tools p7zip psmisc unzip
 ```
 
 # SSH
 ```
-mkdir ~/.ssh
-chmod 700 ~/.ssh/
+mkdir -p ~/.ssh && chmod 700 ~/.ssh/
 # gen ssh key
 # ssh-keygen -t ecdsa -b 521 -C "username@mail.com"
 # ssh-keygen -t rsa -C "$(whoami)@$(hostname)-$(date -I)"
@@ -225,10 +224,7 @@ EOF
 `nvm ls-remote`
 
 ## Install nodejs
-```
-nvm install stable
-nvm use stable
-```
+`nvm install stable && nvm use stable`
 
 ## Fix npm not found
 `ln -s $(which node) /usr/bin/node && ln -s $(which npm) /usr/bin/npm`
@@ -237,7 +233,7 @@ nvm use stable
 ```
 curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-apt update && apt install -y yarn
+apt update && apt install -y yarn --no-install-recommends
 ```
 
 # PHP
@@ -252,7 +248,7 @@ echo "deb https://mirror.xtom.com.hk/sury/php/ $(lsb_release -sc) main" | tee /e
 apt update && apt install -y php7.2
 
 # Installing Some Additional Packages
-apt install -y php7.2-fpm php7.2-curl php7.2-gd php7.2-mbstring php7.2-mysql php7.2-pgsql php7.2-sqlite3 php7.2-xml php7.2-xsl
+apt install -y php7.2-fpm php7.2-curl php7.2-gd php7.2-mbstring php7.2-mysql php7.2-pgsql php7.2-sqlite3 php7.2-xml php7.2-xsl php7.2-zip
 ```
 
 ## opcache options
