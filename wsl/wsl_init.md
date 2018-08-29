@@ -152,6 +152,7 @@ conda info
 conda update conda
 conda install <PackageName>
 conda update <PackageName>
+conda update --all
 
 conda create -n py36 python=3.6
 source activate py36

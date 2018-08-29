@@ -180,6 +180,8 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
         conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/msys2/ && \
         conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/bioconda/ && \
         conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
+    
+    conda update --all
 fi
 
 
