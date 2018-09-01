@@ -161,11 +161,6 @@ export GOROOT_BOOTSTRAP=$GOROOT
 colorEcho ${BLUE} "Installing OpenJDK..."
 apt install -y default-jdk default-jre
 
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
-export JRE_HOME==$JAVA_HOME/jre/
-export CLASSPATH=$JAVA_HOME/lib/
-export PATH=$PATH:$JAVA_HOME/bin
-
 ## Oracle jdk
 ## http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 # colorEcho ${BLUE} "Installing Oracle JDK..."
@@ -179,11 +174,6 @@ export PATH=$PATH:$JAVA_HOME/bin
 # update-alternatives --install /usr/bin/java java /usr/lib/jvm/oracle-jdk8/bin/java 100
 # update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/oracle-jdk8/bin/javac 100
 
-# export JAVA_HOME=/usr/lib/jvm/oracle-jdk8/
-# export JRE_HOME==$JAVA_HOME/jre/
-# export CLASSPATH=$JAVA_HOME/lib/
-# export PATH=$PATH:$JAVA_HOME/bin
-
 # ## Remove the existing alternatives
 # # update-alternatives --remove java /usr/lib/jvm/oracle-jdk8/bin/java
 # # update-alternatives --remove javac /usr/lib/jvm/oracle-jdk8/bin/javac
@@ -191,6 +181,11 @@ export PATH=$PATH:$JAVA_HOME/bin
 # ## Change the default Java versions using the update-alternatives system:
 # # update-alternatives --config java
 # # update-alternatives --config javac
+
+export JAVA_HOME=$(readlink -f $(which java) | sed "s:/jre/bin/java::" | sed "s:/bin/java::")
+export JRE_HOME=$JAVA_HOME/jre
+export CLASSPATH=$JAVA_HOME/lib
+export PATH=$PATH:$JAVA_HOME/bin
 
 
 # PHP

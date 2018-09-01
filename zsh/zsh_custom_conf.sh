@@ -139,9 +139,9 @@ fi
 
 # java
 if [[ "$(command -v java)" ]]; then
-  export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
-  export JRE_HOME==$JAVA_HOME/jre/
-  export CLASSPATH=$JAVA_HOME/lib/
+  export JAVA_HOME=$(readlink -f $(which java) | sed "s:/jre/bin/java::" | sed "s:/bin/java::")
+  export JRE_HOME=$JAVA_HOME/jre
+  export CLASSPATH=$JAVA_HOME/lib
   export PATH=$PATH:$JAVA_HOME/bin
 fi
 
