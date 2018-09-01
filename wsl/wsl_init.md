@@ -246,10 +246,7 @@ apt update && apt install -y yarn --no-install-recommends
 wget -O /etc/apt/trusted.gpg.d/php.gpg https://mirror.xtom.com.hk/sury/php/apt.gpg
 echo "deb https://mirror.xtom.com.hk/sury/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
 
-apt update && apt install -y php7.2
-
-# Installing Some Additional Packages
-apt install -y php7.2-fpm php7.2-curl php7.2-gd php7.2-mbstring php7.2-mysql php7.2-pgsql php7.2-sqlite3 php7.2-xml php7.2-xsl php7.2-zip
+apt update && apt install -y php7.2 php7.2-fpm php7.2-curl php7.2-dev php7.2-gd php7.2-mbstring php7.2-mysql php7.2-pgsql php7.2-sqlite3 php7.2-xml php7.2-xsl php7.2-zip
 ```
 
 ## opcache options

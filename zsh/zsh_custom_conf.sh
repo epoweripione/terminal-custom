@@ -131,6 +131,19 @@ if [[ "$(command -v nvm)" ]]; then
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 fi
 
+# gvm
+if [[ -d "$HOME/.gvm/scripts/gvm" ]]; then
+  source $HOME/.gvm/scripts/gvm
+  export GOROOT_BOOTSTRAP=$GOROOT
+fi
+
+# java
+if [[ "$(command -v java)" ]]; then
+  export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
+  export JRE_HOME==$JAVA_HOME/jre/
+  export CLASSPATH=$JAVA_HOME/lib/
+  export PATH=$PATH:$JAVA_HOME/bin
+fi
 
 # anaconda3
 if [[ -d "$HOME/anaconda3/bin" ]]; then
