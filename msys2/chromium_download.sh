@@ -3,9 +3,10 @@
 
 get_os_type() {
     os=$(uname)
+    os_wsl=$(uname -r)
     if [[ $os == "Darwin" ]]; then
         ostype="darwin"
-    elif [[ $os =~ "MSYS_NT" || $os =~ "MINGW" || $os =~ "CYGWIN_NT" ]]; then
+    elif [[ $os_wsl =~ "Microsoft" || $os =~ "MSYS_NT" || $os =~ "MINGW" || $os =~ "CYGWIN_NT" ]]; then
         ostype="windows"
     else
         ostype=$(echo "$os" | sed 's/.*/\L&/')
@@ -226,6 +227,8 @@ if [[ $ostype == "windows" ]]; then
         chromium_ver=$chromium_ver2
     fi
 
-    echo "Downloading Chromium Dev $ostype-$spruce_type-r$chromium_ver"
-    curl --socks5-hostname 127.0.0.1:55880 -fSL ${url}/${chromium_ver}/chrome-win32.zip -o /d/Downloads/chrome-$ver-$chromium_ver.zip
+    if [[ -d /d/Downloads ]]; then
+        echo "Downloading Chromium Dev $ostype-$spruce_type-r$chromium_ver"
+        curl --socks5-hostname 127.0.0.1:55880 -fSL ${url}/${chromium_ver}/chrome-win32.zip -o /d/Downloads/chrome-$ver-$chromium_ver.zip
+    fi
 fi
