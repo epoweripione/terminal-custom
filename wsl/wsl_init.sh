@@ -283,25 +283,4 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
 fi
 
 
-# ZSH
-## Install zsh
-colorEcho ${BLUE} "Installing ZSH..."
-apt install -y zsh
-
-if [[ ! $(grep "exec zsh" ~/.bashrc) ]]; then
-tee -a ~/.bashrc <<-'EOF'
-
-# Launch Zsh
-if [[ "${ZSH_VERSION:-unset}" = "unset" ]]; then
-    export SHELL=/bin/zsh
-    exec zsh
-fi
-EOF
-fi
-
-## Install oh-my-zsh
-colorEcho ${BLUE} "Installing oh-my-zsh..."
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-
-
 colorEcho ${GREEN} "WSL init done, please restart WSL!"

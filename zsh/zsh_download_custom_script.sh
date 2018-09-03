@@ -2,7 +2,7 @@
 
 ## How to use
 ## Install zsh & oh-my-zsh first
-## Init: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh && ~/zsh_init.sh
+## Init: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_installer.sh && ~/zsh_update.sh && ~/zsh_init.sh
 ## Update: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh
 
 #######color code########
@@ -42,6 +42,7 @@ chmod +x ~/zsh_clean_history.sh
 chmod +x ~/zsh_compinit.sh
 chmod +x ~/zsh_download_custom_script.sh
 chmod +x ~/zsh_init.sh
+chmod +x ~/zsh_installer.sh
 chmod +x ~/zsh_update.sh
 
 cp -f ~/terminal-custom/git/*.sh ~
