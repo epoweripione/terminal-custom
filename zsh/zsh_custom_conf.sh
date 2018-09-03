@@ -153,7 +153,8 @@ fi
 
 # miniconda3
 if [[ -d "$HOME/miniconda3/bin" ]]; then
-  export PATH=$PATH:$HOME/miniconda3/bin
+  # export PATH=$PATH:$HOME/miniconda3/bin
+  source $HOME/miniconda3/bin/activate
 fi
 
 

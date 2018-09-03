@@ -44,7 +44,7 @@ fi
 
 ## SSH
 if [[ ! -d ~/.ssh ]]; then
-    mkdir -p ~/.ssh && chmod 700 ~/.ssh/
+    mkdir -p ~/.ssh && chmod 700 ~/.ssh/ && chmod 600 ~/.ssh/*
 fi
 
 
@@ -189,6 +189,29 @@ export CLASSPATH=$JAVA_HOME/lib
 export PATH=$PATH:$JAVA_HOME/bin
 
 
+# go
+colorEcho ${BLUE} "Installing gvm & go..."
+## Install gvm
+## https://github.com/moovweb/gvm
+if [[ ! -d "$HOME/.gvm" ]]; then
+    apt install -y bison && \
+        bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+    source ~/.gvm/scripts/gvm
+
+    ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
+    ## gvm install go1.4 -B && gvm use go1.4
+    proxychains4 gvm install go1.4 -B && gvm use go1.4
+
+    ## Install latest go version
+    ## go_ver=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
+    ## gvm install $go_ver && gvm use $go_ver --default
+    go_ver=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
+    proxychains4 gvm install $go_ver && gvm use $go_ver --default
+
+    export GOROOT_BOOTSTRAP=$GOROOT
+fi
+
+
 # PHP
 ## Install PHP7.2
 colorEcho ${BLUE} "Installing PHP7.2..."
@@ -252,12 +275,12 @@ if [[ ! -e /etc/php/7.2/cli/conf.d/90-imagick.ini ]]; then
         curl -SL http://pecl.php.net/get/redis -o redis.tgz && \
         curl -SL http://pecl.php.net/get/oauth -o oauth.tgz && \
         curl -SL http://pecl.php.net/get/xdebug -o xdebug.tgz && \
-        pecl install imagick.tgz && \
-        pecl install memcached.tgz && \
-        pecl install mongodb.tgz && \
-        pecl install redis.tgz && \
-        pecl install oauth.tgz && \
-        pecl install xdebug.tgz && \
+        printf "\n" | pecl install imagick.tgz && \
+        printf "\n" | pecl install memcached.tgz && \
+        printf "\n" | pecl install mongodb.tgz && \
+        printf "\n" | pecl install redis.tgz && \
+        printf "\n" | pecl install oauth.tgz && \
+        printf "\n" | pecl install xdebug.tgz && \
         echo 'extension=imagick.so' > /etc/php/7.2/cli/conf.d/90-imagick.ini && \
         echo 'extension=memcached.so' > /etc/php/7.2/cli/conf.d/90-memcached.ini && \
         echo 'extension=mongodb.so' > /etc/php/7.2/cli/conf.d/90-mongodb.ini && \
@@ -271,9 +294,10 @@ fi
 colorEcho ${BLUE} "Installing Miniconda3..."
 if [[ ! -d "$HOME/miniconda3" ]]; then
     curl -SL -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-    bash ./Miniconda3-latest-Linux-x86_64.sh
+    bash ./Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
 
-    export PATH=$PATH:$HOME/miniconda3/bin
+    # export PATH=$PATH:$HOME/miniconda3/bin
+    source $HOME/miniconda3/bin/activate
 
     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/free/ && \
         conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/main/ && \
@@ -285,29 +309,6 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
         conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
     
     conda update --all
-fi
-
-
-# go
-colorEcho ${BLUE} "Installing gvm & go..."
-## Install gvm
-## https://github.com/moovweb/gvm
-if [[ ! -d "$HOME/.gvm" ]]; then
-    apt install -y bison && \
-        bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-    source ~/.gvm/scripts/gvm
-
-    ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
-    ## gvm install go1.4 -B && gvm use go1.4
-    proxychains4 gvm install go1.4 -B && gvm use go1.4
-
-    ## Install latest go version
-    ## go_ver=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
-    ## gvm install $go_ver && gvm use $go_ver --default
-    go_ver=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
-    proxychains4 gvm install $go_ver && gvm use $go_ver --default
-
-    export GOROOT_BOOTSTRAP=$GOROOT
 fi
 
 
