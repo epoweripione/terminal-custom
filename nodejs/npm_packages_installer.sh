@@ -1,3 +1,5 @@
+#!/bin/zsh
+
 #######color code########
 RED="31m"      # Error message
 GREEN="32m"    # Success message
