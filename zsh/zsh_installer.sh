@@ -34,8 +34,8 @@ fi
 
 ## Install oh-my-zsh
 if [[ -d ~/.oh-my-zsh ]]; then
-    # colorEcho ${BLUE} "Updating oh-my-zsh..."
-    # cd ~/.oh-my-zsh && git pull && cd ~
+    colorEcho ${BLUE} "Updating oh-my-zsh..."
+    cd ~/.oh-my-zsh && git pull && cd ~
 else
     colorEcho ${BLUE} "Installing oh-my-zsh..."
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
