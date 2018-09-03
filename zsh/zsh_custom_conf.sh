@@ -126,13 +126,13 @@ fi
 
 
 # nvm
-if [[ "$(command -v nvm)" ]]; then
+if [[ -d "$HOME/.nvm" ]]; then
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 fi
 
 # gvm
-if [[ -d "$HOME/.gvm/scripts/gvm" ]]; then
+if [[ -d "$HOME/.gvm" ]]; then
   source $HOME/.gvm/scripts/gvm
   export GOROOT_BOOTSTRAP=$GOROOT
 fi
@@ -183,7 +183,9 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
   if [[ $UID -eq 0 ]]; then
     # libnss-winbind
     if (( $(ps -ef | grep -v grep | grep winbind | wc -l) == 0 )); then
-      service winbind start
+      if systemctl list-unit-files --type=service 2>&1 | grep enabled | grep winbind.service; then
+        service winbind start
+      fi
     fi
   fi
 fi

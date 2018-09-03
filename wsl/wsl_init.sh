@@ -94,66 +94,67 @@ apt install -y binutils build-essential di dnsutils g++ gcc git htop iproute2 ma
 # Enable broadcast WINS
 colorEcho ${BLUE} "Enable broadcast WINS..."
 apt install -y libnss-winbind
-sed -i 's/dns/wins dns/' /etc/nsswitch.conf
-# /etc/init.d/winbind start
+
+if [[ ! $(grep "wins" /etc/nsswitch.conf) ]]; then
+    sed -i 's/dns/wins dns/' /etc/nsswitch.conf
+fi
+service winbind start # /etc/init.d/winbind start
 
 
 # proxychains
-git clone https://github.com/rofl0r/proxychains-ng.git && \
-    cd proxychains-ng && \
-    ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
-    make && make install && make install-config && \
-    cp /etc/proxychains/proxychains.conf /etc/proxychains/proxychains.conf.bak && \
-    sed -i 's/socks4/# socks4/g' /etc/proxychains/proxychains.conf && \
-    echo 'socks5 127.0.0.1 55880' >> /etc/proxychains/proxychains.conf && \
-    cd ~
-
+if [[ ! -x "$(command -v proxychains4)" ]]; then
+    colorEcho ${BLUE} "Install proxychains..."
+    git clone https://github.com/rofl0r/proxychains-ng.git && \
+        cd proxychains-ng && \
+        ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
+        make && make install && make install-config && \
+        cp /etc/proxychains/proxychains.conf /etc/proxychains/proxychains.conf.bak && \
+        sed -i 's/socks4/# socks4/g' /etc/proxychains/proxychains.conf && \
+        echo 'socks5 127.0.0.1 55880' >> /etc/proxychains/proxychains.conf && \
+        cd ~
+fi
 
 # Docker
 colorEcho ${BLUE} "Installing Docker..."
 apt install -y docker-ce
 
 ## Install Docker Compose
-colorEcho ${BLUE} "Installing Docker Compose..."
-docker_compose_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d\" -f4)
-if [[ -n "$docker_compose_ver" ]]; then
-    curl -SL https://github.com/docker/compose/releases/download/$docker_compose_ver/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && \
-    chmod +x /usr/local/bin/docker-compose
+if [[ ! -x "$(command -v docker-compose)" ]]; then
+    colorEcho ${BLUE} "Installing Docker Compose..."
+    docker_compose_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d\" -f4)
+    if [[ -n "$docker_compose_ver" ]]; then
+        curl -SL https://github.com/docker/compose/releases/download/$docker_compose_ver/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && \
+        chmod +x /usr/local/bin/docker-compose
+    fi
 fi
 
 
 # nodejs
 colorEcho ${BLUE} "Installing nvm & nodejs..."
 ## Install nvm
-nvm_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/creationix/nvm/releases/latest | grep 'tag_name' | cut -d\" -f4)
-if [[ -n "$nvm_ver" ]]; then
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/$nvm_ver/install.sh | bash
+if [[ ! -d "$HOME/.nvm" ]]; then
+    nvm_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/creationix/nvm/releases/latest | grep 'tag_name' | cut -d\" -f4)
+    if [[ -n "$nvm_ver" ]]; then
+        curl -o- https://raw.githubusercontent.com/creationix/nvm/$nvm_ver/install.sh | bash
+    fi
 fi
 
 ## Install nodejs
-if [[ "$(command -v nvm)" ]]; then
-    nvm install stable && nvm use stable
+if [[ -d "$HOME/.nvm" ]]; then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 fi
 
-## Fix npm not found
-ln -s $(which node) /usr/bin/node && ln -s $(which npm) /usr/bin/npm
+if [[ "$(command -v nvm)" ]]; then
+    nvm install stable && nvm use stable
+
+    ## Fix npm not found
+    ln -s $(which node) /usr/bin/node && ln -s $(which npm) /usr/bin/npm
+fi
 
 ## Install yarn
 colorEcho ${BLUE} "Installing yarn..."
 apt install -y yarn --no-install-recommends
-
-
-# go
-colorEcho ${BLUE} "Installing gvm..."
-## Install gvm
-## https://github.com/moovweb/gvm
-apt install -y bison && \
-    bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-source ~/.gvm/scripts/gvm
-
-# In order to compile Go 1.5+, make sure Go 1.4 is installed first.
-gvm install go1.4 -B && gvm use go1.4
-export GOROOT_BOOTSTRAP=$GOROOT
 
 
 # Java
@@ -209,25 +210,27 @@ apt install -y php7.2 php7.2-fpm php7.2-curl php7.2-dev php7.2-gd php7.2-mbstrin
 echo 'expose_php = off' > /etc/php/7.2/cli/conf.d/hide-header-version.ini
 
 ## Install composer
-colorEcho ${BLUE} "Installing composer..."
-export COMPOSER_ALLOW_SUPERUSER=1 && \
-    export COMPOSER_HOME=/usr/local/share/composer && \
-    mkdir -p /usr/local/share/composer && \
-    wget https://dl.laravel-china.org/composer.phar -O /usr/local/bin/composer && \
-    chmod a+x /usr/local/bin/composer
+if [[ ! -x "$(command -v composer)" ]]; then
+    colorEcho ${BLUE} "Installing composer..."
+    export COMPOSER_ALLOW_SUPERUSER=1 && \
+        export COMPOSER_HOME=/usr/local/share/composer && \
+        mkdir -p /usr/local/share/composer && \
+        wget https://dl.laravel-china.org/composer.phar -O /usr/local/bin/composer && \
+        chmod a+x /usr/local/bin/composer
 
-### Packagist mirror
-composer config -g repo.packagist composer https://packagist.laravel-china.org
+    ### Packagist mirror
+    composer config -g repo.packagist composer https://packagist.laravel-china.org
 
-### Install composer packages
-colorEcho ${BLUE} "Installing composer packages..."
-composer g require "hirak/prestissimo:^0.3.7" && \
-    composer g require friendsofphp/php-cs-fixer && \
-    composer g require --dev phpunit/phpunit ^7 && \
-    composer g require psy/psysh:@stable
+    ### Install composer packages
+    colorEcho ${BLUE} "Installing composer packages..."
+    composer g require "hirak/prestissimo:^0.3.7" && \
+        composer g require friendsofphp/php-cs-fixer && \
+        composer g require --dev phpunit/phpunit ^7 && \
+        composer g require psy/psysh:@stable
 
-mkdir -p ~/.local/share/psysh/ && \
-    curl -SL http://psysh.org/manual/zh/php_manual.sqlite -o ~/.local/share/psysh/php_manual.sqlite
+    mkdir -p ~/.local/share/psysh/ && \
+        curl -SL http://psysh.org/manual/zh/php_manual.sqlite -o ~/.local/share/psysh/php_manual.sqlite
+fi
 
 ## pear
 apt install -y pkg-config && pecl update-channels && rm -rf /tmp/pear ~/.pearrc
@@ -238,29 +241,31 @@ sed -i 's/& func_get_args/func_get_args/' /usr/share/php/Archive/Tar.php
 ### pear install Archive_Tar
 
 ## Install extension using pecl
+colorEcho ${BLUE} "Installing php extension using pecl..."
 ## pecl install imagick memcached mongodb oauth xdebug
-apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recommends && \
-    cd /tmp && \
-    curl -SL http://pecl.php.net/get/imagick -o imagick.tgz && \
-    curl -SL http://pecl.php.net/get/memcached -o memcached.tgz && \
-    curl -SL http://pecl.php.net/get/mongodb -o mongodb.tgz && \
-    curl -SL http://pecl.php.net/get/redis -o redis.tgz && \
-    curl -SL http://pecl.php.net/get/oauth -o oauth.tgz && \
-    curl -SL http://pecl.php.net/get/xdebug -o xdebug.tgz && \
-    pecl install imagick.tgz && \
-    pecl install memcached.tgz && \
-    pecl install mongodb.tgz && \
-    pecl install redis.tgz && \
-    pecl install oauth.tgz && \
-    pecl install xdebug.tgz && \
-    echo 'extension=imagick.so' > /etc/php/7.2/cli/conf.d/90-imagick.ini && \
-    echo 'extension=memcached.so' > /etc/php/7.2/cli/conf.d/90-memcached.ini && \
-    echo 'extension=mongodb.so' > /etc/php/7.2/cli/conf.d/90-mongodb.ini && \
-    echo 'extension=redis.so' > /etc/php/7.2/cli/conf.d/90-redis.ini && \
-    echo 'extension=oauth.so' > /etc/php/7.2/cli/conf.d/90-oauth.ini && \
-    echo 'zend_extension=/usr/lib/php/20170718/xdebug.so' > /etc/php/7.2/cli/conf.d/90-xdebug.ini && \
-    rm -rf /tmp/* && cd ~
-
+if [[ ! -e /etc/php/7.2/cli/conf.d/90-imagick.ini ]]; then
+    apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recommends && \
+        cd /tmp && \
+        curl -SL http://pecl.php.net/get/imagick -o imagick.tgz && \
+        curl -SL http://pecl.php.net/get/memcached -o memcached.tgz && \
+        curl -SL http://pecl.php.net/get/mongodb -o mongodb.tgz && \
+        curl -SL http://pecl.php.net/get/redis -o redis.tgz && \
+        curl -SL http://pecl.php.net/get/oauth -o oauth.tgz && \
+        curl -SL http://pecl.php.net/get/xdebug -o xdebug.tgz && \
+        pecl install imagick.tgz && \
+        pecl install memcached.tgz && \
+        pecl install mongodb.tgz && \
+        pecl install redis.tgz && \
+        pecl install oauth.tgz && \
+        pecl install xdebug.tgz && \
+        echo 'extension=imagick.so' > /etc/php/7.2/cli/conf.d/90-imagick.ini && \
+        echo 'extension=memcached.so' > /etc/php/7.2/cli/conf.d/90-memcached.ini && \
+        echo 'extension=mongodb.so' > /etc/php/7.2/cli/conf.d/90-mongodb.ini && \
+        echo 'extension=redis.so' > /etc/php/7.2/cli/conf.d/90-redis.ini && \
+        echo 'extension=oauth.so' > /etc/php/7.2/cli/conf.d/90-oauth.ini && \
+        echo 'zend_extension=/usr/lib/php/20170718/xdebug.so' > /etc/php/7.2/cli/conf.d/90-xdebug.ini && \
+        rm -rf /tmp/* && cd ~
+fi
 
 # Miniconda
 colorEcho ${BLUE} "Installing Miniconda3..."
@@ -280,6 +285,29 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
         conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
     
     conda update --all
+fi
+
+
+# go
+colorEcho ${BLUE} "Installing gvm & go..."
+## Install gvm
+## https://github.com/moovweb/gvm
+if [[ ! -d "$HOME/.gvm" ]]; then
+    apt install -y bison && \
+        bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+    source ~/.gvm/scripts/gvm
+
+    ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
+    ## gvm install go1.4 -B && gvm use go1.4
+    proxychains4 gvm install go1.4 -B && gvm use go1.4
+
+    ## Install latest go version
+    ## go_ver=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
+    ## gvm install $go_ver && gvm use $go_ver --default
+    go_ver=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
+    proxychains4 gvm install $go_ver && gvm use $go_ver --default
+
+    export GOROOT_BOOTSTRAP=$GOROOT
 fi
 
 
