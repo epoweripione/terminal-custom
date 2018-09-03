@@ -44,7 +44,7 @@ fi
 
 ## SSH
 if [[ ! -d ~/.ssh ]]; then
-    mkdir -p ~/.ssh && chmod 700 ~/.ssh/ && chmod 600 ~/.ssh/*
+    mkdir -p ~/.ssh && chmod 700 ~/.ssh/ # && chmod 600 ~/.ssh/*
 fi
 
 
@@ -193,6 +193,7 @@ export PATH=$PATH:$JAVA_HOME/bin
 colorEcho ${BLUE} "Installing gvm & go..."
 ## Install gvm
 ## https://github.com/moovweb/gvm
+## Please turn on proxy in china (replace the IP and Port to fit your proxy server)
 if [[ ! -d "$HOME/.gvm" ]]; then
     apt install -y bison && \
         bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
@@ -296,8 +297,8 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
     curl -SL -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
     bash ./Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
 
-    # export PATH=$PATH:$HOME/miniconda3/bin
-    source $HOME/miniconda3/bin/activate
+    export PATH=$PATH:$HOME/miniconda3/bin
+    # source $HOME/miniconda3/bin/activate
 
     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/free/ && \
         conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/main/ && \
@@ -308,7 +309,7 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
         conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/bioconda/ && \
         conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
     
-    conda update --all
+    conda update -y --all
 fi
 
 

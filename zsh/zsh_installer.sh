@@ -1,5 +1,9 @@
 #!/bin/bash
 
+## How to use
+## 1. Install curl first
+## 2. Install zsh and oh-my-zsh: source <(curl -sL https://git.io/fA8Jb)
+
 #######color code########
 RED="31m"      # Error message
 GREEN="32m"    # Success message
