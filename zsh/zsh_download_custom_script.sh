@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## How to use
-## Install zsh & oh-my-zsh first
+## Install curl & git first
 ## Init: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_installer.sh && ~/zsh_update.sh && ~/zsh_init.sh
 ## Update: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh
 
@@ -16,7 +16,15 @@ colorEcho() {
     echo -e "\033[${COLOR}${@:2}\033[0m"
 }
 
+
+if [[ ! "$(command -v git)" ]]; then
+    colorEcho ${RED} "git is not installed! Please install git first!"
+    exit
+fi
+
+
 ostype=$(uname)
+
 
 colorEcho ${BLUE} "Cloning custom shell script repository to HOME..."
 if [[ -d ~/terminal-custom ]]; then
