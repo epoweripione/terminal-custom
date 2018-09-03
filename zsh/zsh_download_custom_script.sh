@@ -1,9 +1,10 @@
 #!/bin/bash
 
 ## How to use
-## Install curl & git first
-## Init: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_installer.sh && ~/zsh_update.sh && ~/zsh_init.sh
-## Update: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh
+## 1. Install curl first
+## 2. Install zsh and oh-my-zsh: source <(curl -sL https://git.io/fA8Jb)
+## 3. Init: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh && ~/zsh_init.sh
+## 4. Update: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh
 
 #######color code########
 RED="31m"      # Error message
@@ -78,11 +79,14 @@ fi
 
 
 colorEcho ${BLUE} "copy zsh custom plugins & theme to ZSH/custom..."
-# zsh custom plugins
-[ -d ~/terminal-custom/zsh/plugins ] && cp -f ~/terminal-custom/zsh/plugins/* $ZSH/custom/plugins
+if [[ -d $ZSH/custom ]]; then
+    # zsh custom plugins
+    [ -d ~/terminal-custom/zsh/plugins ] && cp -f ~/terminal-custom/zsh/plugins/* $ZSH/custom/plugins
 
-# zsh custom themes
-[ -d ~/terminal-custom/zsh/themes ] && cp -f ~/terminal-custom/zsh/themes/*.zsh-theme $ZSH/custom/themes
+    # zsh custom themes
+    [ -d ~/terminal-custom/zsh/themes ] && cp -f ~/terminal-custom/zsh/themes/*.zsh-theme $ZSH/custom/themes
+fi
+
 
 cd $HOME
 colorEcho ${GREEN} "Custom shell script download finished!"
