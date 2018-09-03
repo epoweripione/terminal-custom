@@ -48,19 +48,20 @@ if [[ ! -d ~/.ssh ]]; then
 fi
 
 
-# Update & Upgrade
-colorEcho ${BLUE} "Update & Upgrade..."
+# Install packages
+## Use USTC mirror & Install prerequest packages
+colorEcho ${BLUE} "Use USTC mirror & Install prerequest packages..."
 sed -i 's|deb.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
     sed -i 's|security.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list
 
 apt update && apt install -y apt-transport-https apt-utils ca-certificates curl lsb-release software-properties-common wget
 
-sed -i 's|http://mirrors.ustc.edu.cn|https://mirrors.ustc.edu.cn|g' /etc/apt/sources.list
-apt update && apt upgrade -y
-
 
 # Add custom repositories
 colorEcho ${BLUE} "Add custom repositories..."
+## Use https mirror
+sed -i 's|http://mirrors.ustc.edu.cn|https://mirrors.ustc.edu.cn|g' /etc/apt/sources.list
+
 ## docker
 if [[ ! $(grep "docker-ce" /etc/apt/sources.list) ]]; then
     curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add -
@@ -82,7 +83,8 @@ if [[ ! -e /etc/apt/sources.list.d/php.list ]]; then
     echo "deb https://mirror.xtom.com.hk/sury/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
 fi
 
-## update repositories
+## Update all repositories & Upgrade
+colorEcho ${BLUE} "Update all repositories & Upgrade..."
 apt update && apt upgrade -y
 
 
@@ -146,10 +148,11 @@ if [[ -d "$HOME/.nvm" ]]; then
 fi
 
 if [[ "$(command -v nvm)" ]]; then
-    nvm install stable && nvm use stable
-
-    ## Fix npm not found
-    ln -s $(which node) /usr/bin/node && ln -s $(which npm) /usr/bin/npm
+    if [[ ! "$(command -v node)" ]]; then
+        nvm install stable && nvm use stable
+        ## Fix npm not found
+        ln -s $(which node) /usr/bin/node && ln -s $(which npm) /usr/bin/npm
+    fi
 fi
 
 ## Install yarn
@@ -256,7 +259,7 @@ if [[ ! -x "$(command -v composer)" ]]; then
         curl -SL http://psysh.org/manual/zh/php_manual.sqlite -o ~/.local/share/psysh/php_manual.sqlite
 fi
 
-## pear
+## Install pear
 apt install -y pkg-config && pecl update-channels && rm -rf /tmp/pear ~/.pearrc
 
 ### fix PHP Fatal error: Cannot use result of built-in function in write context in /usr/share/php/Archive/Tar.php on line 639
@@ -290,6 +293,36 @@ if [[ ! -e /etc/php/7.2/cli/conf.d/90-imagick.ini ]]; then
         echo 'zend_extension=/usr/lib/php/20170718/xdebug.so' > /etc/php/7.2/cli/conf.d/90-xdebug.ini && \
         rm -rf /tmp/* && cd ~
 fi
+
+## Install swoole
+## https://github.com/swoole/swoole-src
+## hiredis( for swoole )
+## https://github.com/redis/hiredis
+colorEcho ${BLUE} "Installing php extension swoole..."
+if [[ ! -e /etc/php/7.2/cli/conf.d/90-swoole.ini ]]; then
+    apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
+        mkdir -p /tmp/downloads && cd /tmp && \
+        curl -o ./downloads/hiredis.tar.gz https://github.com/redis/hiredis/archive/master.tar.gz -L && \
+        tar zxvf ./downloads/hiredis.tar.gz && \
+        mv hiredis* hiredis && cd hiredis && \
+        make -j && make install && ldconfig && \
+        cd /tmp && \
+        curl -o ./downloads/swoole.tar.gz https://github.com/swoole/swoole-src/archive/master.tar.gz -L && \
+        tar zxvf ./downloads/swoole.tar.gz && \
+        mv swoole-src* swoole-src && cd swoole-src && \
+        phpize && \
+        ./configure \
+            --enable-openssl \
+            --enable-http2  \
+            --enable-async-redis \
+            --enable-sockets \
+            --enable-mysqlnd \
+            --enable-coroutine-postgresql && \
+        make clean && make && make install && \
+        echo 'extension=swoole.so' > /etc/php/7.2/cli/conf.d/90-swoole.ini && \
+        rm -rf /tmp/*
+fi
+
 
 # Miniconda
 colorEcho ${BLUE} "Installing Miniconda3..."
