@@ -90,7 +90,7 @@ apt update && apt upgrade -y
 
 # Install useful packages
 colorEcho ${BLUE} "Install useful packages..."
-apt install -y binutils build-essential di dnsutils g++ gcc git htop iproute2 make nano net-tools p7zip psmisc unzip
+apt install -y binutils build-essential di dnsutils g++ gcc git htop iproute2 make nano net-tools p7zip psmisc unzip zip
 
 
 # Enable broadcast WINS
@@ -141,15 +141,16 @@ if [[ ! -d "$HOME/.nvm" ]]; then
     fi
 fi
 
-## Install nodejs
 if [[ -d "$HOME/.nvm" ]]; then
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
 fi
 
+## Install nodejs
 if [[ "$(command -v nvm)" ]]; then
     if [[ ! "$(command -v node)" ]]; then
-        nvm install stable && nvm use stable
+        nvm install node && nvm use node
         ## Fix npm not found
         ln -s $(which node) /usr/bin/node && ln -s $(which npm) /usr/bin/npm
     fi
@@ -190,6 +191,18 @@ export JAVA_HOME=$(readlink -f $(which java) | sed "s:/jre/bin/java::" | sed "s:
 export JRE_HOME=$JAVA_HOME/jre
 export CLASSPATH=$JAVA_HOME/lib
 export PATH=$PATH:$JAVA_HOME/bin
+
+## Install Software Development Kits for the JVM such as Java, Groovy, Scala, Kotlin and Ceylon. Ant, Gradle, Grails, Maven, SBT, Spark, Spring Boot, Vert.x and many others also supported.
+## https://sdkman.io/
+## To get a listing of available Candidates: sdk list
+## To see what is currently in use for all Candidates: sdk current
+colorEcho ${BLUE} "Installing sdkman..."
+if [[ ! -d "$HOME/.sdkman" ]]; then
+    curl -s "https://get.sdkman.io" | bash
+fi
+
+colorEcho ${BLUE} "Installing maven gradle kotlin using sdkman..."
+sdk install maven && sdk install gradle && sdk install kotlin
 
 
 # go

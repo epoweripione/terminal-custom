@@ -129,6 +129,7 @@ fi
 if [[ -d "$HOME/.nvm" ]]; then
   export NVM_DIR="$HOME/.nvm"
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
 fi
 
 # gvm
@@ -144,6 +145,12 @@ if [[ "$(command -v java)" ]]; then
   export CLASSPATH=$JAVA_HOME/lib
   export PATH=$PATH:$JAVA_HOME/bin
 fi
+
+# sdkman
+# if [[ -d "$HOME/.sdkman" ]]; then
+#   export SDKMAN_DIR="/root/.sdkman"
+#   [[ -s "/root/.sdkman/bin/sdkman-init.sh" ]] && source "/root/.sdkman/bin/sdkman-init.sh"
+# fi
 
 # anaconda3
 if [[ -d "$HOME/anaconda3/bin" ]]; then
