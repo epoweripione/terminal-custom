@@ -83,6 +83,16 @@ if [[ ! -e /etc/apt/sources.list.d/php.list ]]; then
     echo "deb https://mirror.xtom.com.hk/sury/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
 fi
 
+## .NET Core SDK
+if [[ ! -e /etc/apt/sources.list.d/microsoft-prod.list ]]; then
+    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg && \
+        mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/ && \
+        wget -q https://packages.microsoft.com/config/debian/9/prod.list && \
+        mv prod.list /etc/apt/sources.list.d/microsoft-prod.list && \
+        chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg && \
+        chown root:root /etc/apt/sources.list.d/microsoft-prod.list
+fi
+
 ## Update all repositories & Upgrade
 colorEcho ${BLUE} "Update all repositories & Upgrade..."
 apt update && apt upgrade -y
@@ -159,6 +169,13 @@ fi
 ## Install yarn
 colorEcho ${BLUE} "Installing yarn..."
 apt install -y yarn --no-install-recommends
+
+
+# .NET Core SDK
+## https://www.microsoft.com/net/download/linux-package-manager/debian9/sdk-current
+## How to use: dotnet --help
+colorEcho ${BLUE} "Installing .NET Core SDK..."
+apt-get install -y dotnet-sdk-2.1
 
 
 # Java
