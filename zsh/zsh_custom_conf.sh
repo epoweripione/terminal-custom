@@ -191,7 +191,7 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
   if [[ $UID -eq 0 ]]; then
     # libnss-winbind
     if (( $(ps -ef | grep -v grep | grep winbind | wc -l) == 0 )); then
-      if systemctl list-unit-files --type=service 2>&1 | grep enabled | grep winbind.service; then
+      if systemctl list-unit-files --type=service 2>&1 | grep winbind.service; then
         service winbind start
       fi
     fi
