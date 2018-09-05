@@ -53,6 +53,7 @@ chmod +x ~/zsh_download_custom_script.sh
 chmod +x ~/zsh_init.sh
 chmod +x ~/zsh_installer.sh
 chmod +x ~/zsh_update.sh
+chmod +x ~/zsh_upgrade_all_packages.sh
 
 cp -f ~/terminal-custom/git/*.sh ~
 chmod +x ~/git_global_config.sh

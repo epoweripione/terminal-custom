@@ -127,7 +127,7 @@ tee -a ~/.bashrc <<-'EOF'
 
 # Launch ZSH
 if [[ "${ZSH_VERSION:-unset}" = "unset" ]]; then
-    export SHELL=/bin/zsh
+    export SHELL=$(which zsh)
     exec zsh
 fi
 EOF

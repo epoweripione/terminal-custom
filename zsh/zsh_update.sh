@@ -11,6 +11,13 @@ colorEcho() {
   echo -e "\033[${COLOR}${@:2}\033[0m"
 }
 
+
+if [[ -z "$ZSH" ]]; then
+  colorEcho ${RED} "Please install ZSH & Oh-my-zsh first!"
+  exit 0
+fi
+
+
 ostype=$(uname)
 
 # ZSH

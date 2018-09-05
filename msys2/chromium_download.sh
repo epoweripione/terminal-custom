@@ -1,22 +1,35 @@
 
 #!/bin/bash
 
-# Load functions
-source "./custom_functions.sh"
-
+# Load custom functions
+if [[ -e "$HOME/custom_functions.sh" ]]; then
+    source "$HOME/custom_functions.sh"
+else
+    echo "$HOME/custom_functions.sh not exist!"
+    exit 0
+fi
 
 if [[ -z "$spruce_type" ]]; then
     get_os_type
     get_arch
 fi
 
-# if check_release_package_manager packageManager yum; then
-#     yum update -y && yum  -y -q install curl
-# elif check_release_package_manager packageManager apt; then
-#     apt update && apt -y install curl
-# elif check_release_package_manager packageManager pacman; then
-#     pacman -Sy && pacman -S curl
-# fi
+
+if [[ ! "$(command -v curl)" ]]; then
+    if check_release_package_manager packageManager yum; then
+        yum update -y && yum -y -q install curl
+    elif check_release_package_manager packageManager apt; then
+        apt update && apt -y install curl
+    elif check_release_package_manager packageManager pacman; then
+        pacman -Sy && pacman -S curl
+    fi
+fi
+
+if [[ ! "$(command -v curl)" ]]; then
+    colorEcho ${RED} "curl is not installed! Please install curl first!"
+    exit
+fi
+
 
 if [[ $ostype == "windows" ]]; then
     if [[ $spruce_type == "amd64" ]]; then
