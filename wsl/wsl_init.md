@@ -172,13 +172,13 @@ apt install -y python-configparser fontforge
 # run into fontforge built in python env
 # fontforge -lang=py -script
 
+# nerd-fonts
 git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git
-
-cd nerd-fonts
-# fontforge -script font-patcher -h
+# cd nerd-fonts && fontforge -script font-patcher -h
 
 # Patch Sarasa-Gothic https://github.com/be5invis/Sarasa-Gothic
-for font in ~/Sarasa-Gothic/*.ttf; do fontforge -script font-patcher -out ~/Sarasa-Gothic --careful --complete --progressbars --adjust-line-height "$font"; done
+cd nerd-fonts
+for font in ~/Sarasa-Gothic/*.ttf; do fontforge -script font-patcher -out ~/Sarasa-Gothic/patched --careful --complete --progressbars --adjust-line-height "$font"; done
 ```
 
 # Docker
