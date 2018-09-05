@@ -70,6 +70,19 @@ if [[ "$(command -v sdk)" ]]; then
 fi
 
 
+if [[ "$(command -v conda)" ]]; then
+    colorEcho ${BLUE} "Updating conda..."
+    conda update -y --all
+fi
+
+
+# if [[ "$(command -v pear)" ]]; then
+#     colorEcho ${BLUE} "Updating pear..."
+#     pear upgrade --force PEAR && pear upgrade -all
+#     # pecl update-channels && rm -rf /tmp/pear ~/.pearrc
+# fi
+
+
 if [[ -n "$ZSH" ]]; then
     if [[ -e "$HOME/zsh_update.sh" ]]; then
         colorEcho ${BLUE} "Updating oh-my-zsh & custom stuff..."

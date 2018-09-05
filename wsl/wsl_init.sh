@@ -277,8 +277,9 @@ apt install -y pkg-config && pecl update-channels && rm -rf /tmp/pear ~/.pearrc
 
 ### fix PHP Fatal error: Cannot use result of built-in function in write context in /usr/share/php/Archive/Tar.php on line 639
 ### https://www.dotkernel.com/php-troubleshooting/fix-installing-pear-packages-with-php-7-2/
-sed -i 's/& func_get_args/func_get_args/' /usr/share/php/Archive/Tar.php
-### pear install Archive_Tar
+sed -i 's/& func_get_args/func_get_args/' /usr/share/php/Archive/Tar.php # && pear install Archive_Tar
+### fix Warning: Invalid argument supplied for foreach() in Command.php on line 249
+sed -i 's/exec $PHP -C -n -q/exec $PHP -C -q/' /usr/bin/pecl
 
 ## Install extension using pecl
 colorEcho ${BLUE} "Installing php extension using pecl..."
