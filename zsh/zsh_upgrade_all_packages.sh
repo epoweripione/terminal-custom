@@ -18,7 +18,7 @@ colorEcho ${BLUE} "Updating system packages..."
 if check_release_package_manager packageManager yum; then
     yum update -y
 elif check_release_package_manager packageManager apt; then
-    apt update && apt upgarde -y
+    apt update && apt upgrade -y
 elif check_release_package_manager packageManager pacman; then
     pacman -Syyu
 fi
@@ -28,7 +28,7 @@ if [[ -d "$HOME/proxychains-ng" ]]; then
     colorEcho ${BLUE} "Updating proxychains4..."
     cd proxychains-ng && git pull && \
         ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
-        make && make install && make install-config && \
+        make && make install && \
         cd $HOME
 fi
 
