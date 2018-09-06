@@ -84,6 +84,10 @@ if [[ ! $(grep "  fast-syntax-highlighting" ~/.zshrc) ]]; then
   sed -i '/^  git/a\  fast-syntax-highlighting' ~/.zshrc
 fi
 
+if [[ ! $(grep "  git-flow-completion" ~/.zshrc) ]]; then
+  sed -i '/^  git/a\  git-flow-completion' ~/.zshrc
+fi
+
 
 # nano color settings
 tee ~/.nanorc <<-'EOF'

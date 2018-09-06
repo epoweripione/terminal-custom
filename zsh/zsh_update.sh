@@ -89,6 +89,14 @@ else
   git clone https://github.com/popstas/zsh-command-time.git $ZSH/custom/plugins/command-time
 fi
 
+# zsh-command-time
+colorEcho ${BLUE} "Updating git-flow-completion..."
+if [[ -d $ZSH/custom/plugins/git-flow-completion ]]; then
+  cd $ZSH/custom/plugins/git-flow-completion && git pull
+else
+  git clone https://github.com/petervanderdoes/git-flow-completion.git $ZSH/custom/plugins/git-flow-completion
+fi
+
 
 # custom themes
 colorEcho ${BLUE} "Updating custom themes..."

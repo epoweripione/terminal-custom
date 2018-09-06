@@ -113,8 +113,18 @@ fi
 service winbind start # /etc/init.d/winbind start
 
 
+# git-flow (AVH Edition)
+## https://github.com/petervanderdoes/gitflow-avh
+## How to use
+## http://danielkummer.github.io/git-flow-cheatsheet/index.zh_CN.html
+## https://github.com/mylxsw/growing-up/blob/master/doc/%E7%A0%94%E5%8F%91%E5%9B%A2%E9%98%9FGIT%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B%E6%96%B0%E4%BA%BA%E5%AD%A6%E4%B9%A0%E6%8C%87%E5%8D%97.md
+colorEcho ${BLUE} "Installing git-flow (AVH Edition)..."
+wget --no-check-certificate -q  https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh && sudo bash gitflow-installer.sh install develop; rm gitflow-installer.sh
+
+
 # Micro editor
 ## https://micro-editor.github.io/index.html
+colorEcho ${BLUE} "Installing Micro editor..."
 apt install -y xclip && cd /usr/local/bin && curl https://getmic.ro | bash && cd $HOME
 
 ## Install Micro Plugins
@@ -125,7 +135,7 @@ apt install -y xclip && cd /usr/local/bin && curl https://getmic.ro | bash && cd
 
 # proxychains
 if [[ ! -x "$(command -v proxychains4)" ]]; then
-    colorEcho ${BLUE} "Install proxychains..."
+    colorEcho ${BLUE} "Installing proxychains..."
     git clone https://github.com/rofl0r/proxychains-ng.git && \
         cd proxychains-ng && \
         ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
