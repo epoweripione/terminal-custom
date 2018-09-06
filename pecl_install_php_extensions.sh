@@ -21,12 +21,12 @@ apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recomm
     curl -SL http://pecl.php.net/get/redis -o redis.tgz && \
     curl -SL http://pecl.php.net/get/oauth -o oauth.tgz && \
     curl -SL http://pecl.php.net/get/xdebug -o xdebug.tgz && \
-    printf "\n" | pecl install imagick.tgz && \
-    printf "\n" | pecl install memcached.tgz && \
-    printf "\n" | pecl install mongodb.tgz && \
-    printf "\n" | pecl install redis.tgz && \
-    printf "\n" | pecl install oauth.tgz && \
-    printf "\n" | pecl install xdebug.tgz && \
+    printf "\n" | pecl install --force imagick.tgz && \
+    printf "\n" | pecl install --force memcached.tgz && \
+    printf "\n" | pecl install --force mongodb.tgz && \
+    printf "\n" | pecl install --force redis.tgz && \
+    printf "\n" | pecl install --force oauth.tgz && \
+    printf "\n" | pecl install --force xdebug.tgz && \
     echo 'extension=imagick.so' > /etc/php/7.2/cli/conf.d/90-imagick.ini && \
     echo 'extension=memcached.so' > /etc/php/7.2/cli/conf.d/90-memcached.ini && \
     echo 'extension=mongodb.so' > /etc/php/7.2/cli/conf.d/90-mongodb.ini && \
