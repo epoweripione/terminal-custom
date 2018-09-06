@@ -146,7 +146,7 @@ if [[ "$(command -v java)" ]]; then
   export PATH=$PATH:$JAVA_HOME/bin
 fi
 
-sdkman
+# sdkman
 if [[ -d "$HOME/.sdkman" ]]; then
   if [[ ! "$(command -v sdk)" ]]; then
     export SDKMAN_DIR="/root/.sdkman"
