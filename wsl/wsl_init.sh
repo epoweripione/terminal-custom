@@ -204,10 +204,12 @@ apt install -y default-jdk default-jre
 # # update-alternatives --config java
 # # update-alternatives --config javac
 
-export JAVA_HOME=$(readlink -f $(which java) | sed "s:/jre/bin/java::" | sed "s:/bin/java::")
-export JRE_HOME=$JAVA_HOME/jre
-export CLASSPATH=$JAVA_HOME/lib
-export PATH=$PATH:$JAVA_HOME/bin
+if [[ "$(command -v java)" ]]; then
+    export JAVA_HOME=$(readlink -f $(which java) | sed "s:/jre/bin/java::" | sed "s:/bin/java::")
+    export JRE_HOME=$JAVA_HOME/jre
+    export CLASSPATH=$JAVA_HOME/lib
+    export PATH=$PATH:$JAVA_HOME/bin
+fi
 
 ## Install Software Development Kits for the JVM such as Java, Groovy, Scala, Kotlin and Ceylon. Ant, Gradle, Grails, Maven, SBT, Spark, Spring Boot, Vert.x and many others also supported.
 ## https://sdkman.io/
@@ -249,7 +251,7 @@ fi
 # PHP
 ## Install PHP7.2
 colorEcho ${BLUE} "Installing PHP7.2..."
-apt install -y php7.2 php7.2-fpm php7.2-curl php7.2-dev php7.2-gd php7.2-mbstring php7.2-mysql php7.2-pgsql php7.2-sqlite3 php7.2-xml php7.2-xsl php7.2-zip
+apt install -y pkg-config php7.2 php7.2-fpm php7.2-curl php7.2-dev php7.2-gd php7.2-mbstring php7.2-mysql php7.2-pgsql php7.2-sqlite3 php7.2-xml php7.2-xsl php7.2-zip
 
 ## opcache
 { \
@@ -289,8 +291,8 @@ if [[ ! -x "$(command -v composer)" ]]; then
         curl -SL http://psysh.org/manual/zh/php_manual.sqlite -o ~/.local/share/psysh/php_manual.sqlite
 fi
 
-## Install pear
-apt install -y pkg-config && pecl update-channels && rm -rf /tmp/pear ~/.pearrc
+## pear
+pecl update-channels && rm -rf /tmp/pear ~/.pearrc
 
 ### fix PHP Fatal error: Cannot use result of built-in function in write context in /usr/share/php/Archive/Tar.php on line 639
 ### https://www.dotkernel.com/php-troubleshooting/fix-installing-pear-packages-with-php-7-2/
@@ -299,59 +301,9 @@ sed -i 's/& func_get_args/func_get_args/' /usr/share/php/Archive/Tar.php # && pe
 sed -i 's/exec $PHP -C -n -q/exec $PHP -C -q/' /usr/bin/pecl
 
 ## Install extension using pecl
-colorEcho ${BLUE} "Installing php extension using pecl..."
-## pecl install imagick memcached mongodb oauth xdebug
-if [[ ! -e /etc/php/7.2/cli/conf.d/90-imagick.ini ]]; then
-    apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recommends && \
-        cd /tmp && \
-        curl -SL http://pecl.php.net/get/imagick -o imagick.tgz && \
-        curl -SL http://pecl.php.net/get/memcached -o memcached.tgz && \
-        curl -SL http://pecl.php.net/get/mongodb -o mongodb.tgz && \
-        curl -SL http://pecl.php.net/get/redis -o redis.tgz && \
-        curl -SL http://pecl.php.net/get/oauth -o oauth.tgz && \
-        curl -SL http://pecl.php.net/get/xdebug -o xdebug.tgz && \
-        printf "\n" | pecl install imagick.tgz && \
-        printf "\n" | pecl install memcached.tgz && \
-        printf "\n" | pecl install mongodb.tgz && \
-        printf "\n" | pecl install redis.tgz && \
-        printf "\n" | pecl install oauth.tgz && \
-        printf "\n" | pecl install xdebug.tgz && \
-        echo 'extension=imagick.so' > /etc/php/7.2/cli/conf.d/90-imagick.ini && \
-        echo 'extension=memcached.so' > /etc/php/7.2/cli/conf.d/90-memcached.ini && \
-        echo 'extension=mongodb.so' > /etc/php/7.2/cli/conf.d/90-mongodb.ini && \
-        echo 'extension=redis.so' > /etc/php/7.2/cli/conf.d/90-redis.ini && \
-        echo 'extension=oauth.so' > /etc/php/7.2/cli/conf.d/90-oauth.ini && \
-        echo 'zend_extension=/usr/lib/php/20170718/xdebug.so' > /etc/php/7.2/cli/conf.d/90-xdebug.ini && \
-        rm -rf /tmp/* && cd ~
-fi
-
-## Install swoole
-## https://github.com/swoole/swoole-src
-## hiredis( for swoole )
-## https://github.com/redis/hiredis
-colorEcho ${BLUE} "Installing php extension swoole..."
-if [[ ! -e /etc/php/7.2/cli/conf.d/90-swoole.ini ]]; then
-    apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
-        mkdir -p /tmp/downloads && cd /tmp && \
-        curl -o ./downloads/hiredis.tar.gz https://github.com/redis/hiredis/archive/master.tar.gz -L && \
-        tar zxvf ./downloads/hiredis.tar.gz && \
-        mv hiredis* hiredis && cd hiredis && \
-        make -j && make install && ldconfig && \
-        cd /tmp && \
-        curl -o ./downloads/swoole.tar.gz https://github.com/swoole/swoole-src/archive/master.tar.gz -L && \
-        tar zxvf ./downloads/swoole.tar.gz && \
-        mv swoole-src* swoole-src && cd swoole-src && \
-        phpize && \
-        ./configure \
-            --enable-openssl \
-            --enable-http2  \
-            --enable-async-redis \
-            --enable-sockets \
-            --enable-mysqlnd \
-            --enable-coroutine-postgresql && \
-        make clean && make && make install && \
-        echo 'extension=swoole.so' > /etc/php/7.2/cli/conf.d/90-swoole.ini && \
-        rm -rf /tmp/*
+if [[ -e "$HOME/pecl_install_php_extensions.sh" ]]; then
+    colorEcho ${BLUE} "Installing php extension using pecl..."
+    source "$HOME/pecl_install_php_extensions.sh"
 fi
 
 

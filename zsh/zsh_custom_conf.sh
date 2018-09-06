@@ -146,11 +146,13 @@ if [[ "$(command -v java)" ]]; then
   export PATH=$PATH:$JAVA_HOME/bin
 fi
 
-# sdkman
-# if [[ -d "$HOME/.sdkman" ]]; then
-#   export SDKMAN_DIR="/root/.sdkman"
-#   [[ -s "/root/.sdkman/bin/sdkman-init.sh" ]] && source "/root/.sdkman/bin/sdkman-init.sh"
-# fi
+sdkman
+if [[ -d "$HOME/.sdkman" ]]; then
+  if [[ ! "$(command -v sdk)" ]]; then
+    export SDKMAN_DIR="/root/.sdkman"
+    [[ -s "/root/.sdkman/bin/sdkman-init.sh" ]] && source "/root/.sdkman/bin/sdkman-init.sh"
+  fi
+fi
 
 # anaconda3
 if [[ -d "$HOME/anaconda3/bin" ]]; then
@@ -180,10 +182,11 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
     alias docker-machine="$DOCKER_TOOLBOX_INSTALL_PATH/docker-machine.exe"
   else
     # export PATH="$PATH:/mnt/c/Program\ Files/Docker/Docker/resources/bin"
+    export DOCKER_INSTALL_PATH='/c/Program\ Files/Docker/Docker'
 
     export DOCKER_HOST=tcp://127.0.0.1:2375
 
-    alias docker-machine="/c/Program\ Files/Docker/Docker/resources/bin/docker-machine.exe"
+    alias docker-machine="$DOCKER_INSTALL_PATH/resources/bin/docker-machine.exe"
   fi
 
 
@@ -191,7 +194,7 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
   if [[ $UID -eq 0 ]]; then
     # libnss-winbind
     if (( $(ps -ef | grep -v grep | grep winbind | wc -l) == 0 )); then
-      if systemctl list-unit-files --type=service 2>&1 | grep winbind.service; then
+      if systemctl list-unit-files --type=service 2>&1 | grep winbind.service | grep enabled; then
         service winbind start
       fi
     fi
