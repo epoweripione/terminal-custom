@@ -35,7 +35,7 @@ fi
 
 if [[ -x "$(command -v docker-compose)" ]]; then
     colorEcho ${BLUE} "Updating docker-compose..."
-    CURRENT_VERSION=$(docker-compose -v | cut -d',' -f 1 | cut -d' ' -f 3)
+    CURRENT_VERSION=$(docker-compose -v | cut -d',' -f1 | cut -d' ' -f3)
     REMOTE_VERSION=$(wget --no-check-certificate -qO- https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d\" -f4)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         curl -SL https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && \
@@ -73,6 +73,16 @@ fi
 if [[ "$(command -v conda)" ]]; then
     colorEcho ${BLUE} "Updating conda..."
     conda update -y --all
+fi
+
+
+if [[ "$(command -v micro)" ]]; then
+    colorEcho ${BLUE} "Updating Micro editor..."
+    CURRENT_VERSION=$(micro -version | grep Version | cut -d',' -f2)
+    REMOTE_VERSION=$(wget --no-check-certificate -qO- https://api.github.com/repos/zyedidia/micro/releases/latest | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        cd /usr/local/bin && curl https://getmic.ro | bash && cd $HOME
+    fi
 fi
 
 

@@ -113,6 +113,16 @@ fi
 service winbind start # /etc/init.d/winbind start
 
 
+# Micro editor
+## https://micro-editor.github.io/index.html
+apt install -y xclip && cd /usr/local/bin && curl https://getmic.ro | bash && cd $HOME
+
+## Install Micro Plugins
+## open micro from your CLI, press [Crtl + E] then run the command line below. Once you are done, restart micro.
+## plugin install vcs comment editorconfig go snippets wc gotham-colors fmt filemanager manipulator monokai-dark
+## set colorscheme monokai-dark
+
+
 # proxychains
 if [[ ! -x "$(command -v proxychains4)" ]]; then
     colorEcho ${BLUE} "Install proxychains..."
@@ -125,6 +135,7 @@ if [[ ! -x "$(command -v proxychains4)" ]]; then
         echo 'socks5 127.0.0.1 55880' >> /etc/proxychains/proxychains.conf && \
         cd ~
 fi
+
 
 # Docker
 colorEcho ${BLUE} "Installing Docker..."
