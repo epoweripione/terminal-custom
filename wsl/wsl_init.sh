@@ -12,6 +12,19 @@ colorEcho() {
 }
 
 
+# 1.Install WSL (Windows Subsystem for Linux)
+## https://docs.microsoft.com/zh-cn/windows/wsl/install-win10
+
+# 2.Install Linux Distribution
+## Install **Debian** from **Microsoft Store**
+
+
+# 3.How to change dash to bash
+# update-alternatives --install /bin/sh sh /bin/bash 100
+# update-alternatives --install /bin/sh sh /bin/dash 200
+# update-alternatives --config sh
+
+
 if [[ $(uname -r) =~ "Microsoft" ]]; then
     if [[ $UID -ne 0 ]]; then
         colorEcho ${RED} "Please run this script as root user!"
@@ -21,13 +34,6 @@ else
     colorEcho ${RED} "Please run this script in WSL(Windows Subsystem for Linux)!"
     exit 0
 fi
-
-
-# Install WSL (Windows Subsystem for Linux)
-# https://docs.microsoft.com/zh-cn/windows/wsl/install-win10
-
-# Install Linux Distribution
-# Install **Debian** from **Microsoft Store**
 
 # Custom WSL settings
 colorEcho ${BLUE} "Custom WSL settings..."
