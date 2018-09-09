@@ -51,7 +51,7 @@ apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recomm
     echo 'zend_extension=xdebug.so' > $PHP_INI_DIR/90-xdebug.ini && \
     rm -rf /tmp/*
 
-## Install swoole
+## swoole
 ## https://github.com/swoole/swoole-src
 ## hiredis( for swoole )
 ## https://github.com/redis/hiredis
@@ -75,6 +75,17 @@ apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
         --enable-coroutine-postgresql && \
     make clean && make && make install && \
     echo 'extension=swoole.so' > $PHP_INI_DIR/90-swoole.ini && \
+    rm -rf /tmp/*
+
+## Phalcon
+## https://github.com/phalcon/cphalcon
+apt install -y php7.2-dev libpcre3-dev gcc make re2c --no-install-recommends && \
+    mkdir -p /tmp/downloads && cd /tmp && \
+    curl -o ./downloads/cphalcon.tar.gz https://github.com/phalcon/cphalcon/archive/master.tar.gz -L && \
+    tar zxvf ./downloads/cphalcon.tar.gz && \
+    mv cphalcon* cphalcon && cd cphalcon/build && \
+    ./install --phpize /usr/bin/phpize7.2 --php-config /usr/bin/php-config7.2 && \
+    echo 'extension=phalcon.so' > $PHP_INI_DIR/90-phalcon.ini && \
     rm -rf /tmp/*
 
 ## PDFlib
@@ -112,7 +123,7 @@ mkdir -p /opt/oracle && cd /opt/oracle && \
     export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2 && \
     export PATH=$PATH:$LD_LIBRARY_PATH && \
     : && \
-    apt install -y build-essential libaio1 && \
+    apt install -y build-essential libaio1 --no-install-recommends && \
     cd /tmp && \
     curl -SL http://pecl.php.net/get/oci8 -o oci8.tgz && \
     printf "instantclient,$LD_LIBRARY_PATH\n" | pecl install --force oci8.tgz && \
@@ -135,7 +146,7 @@ mkdir -p /opt/oracle && cd /opt/oracle && \
 #     export LD_LIBRARY_PATH=/opt/oracle/instantclient_18_3 && \
 #     export PATH=$PATH:$LD_LIBRARY_PATH && \
 #     : && \
-#     apt install -y build-essential libaio1 && \
+#     apt install -y build-essential libaio1 --no-install-recommends && \
 #     cd /tmp && \
 #     curl -SL http://pecl.php.net/get/oci8 -o oci8.tgz && \
 #     printf "instantclient,$LD_LIBRARY_PATH\n" | pecl install --force oci8.tgz && \
