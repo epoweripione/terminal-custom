@@ -116,6 +116,14 @@ if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; t
   alias wmic="winpty wmic"
 fi
 
+# PHP
+if [[ "$(command -v php)" ]]; then
+  export PHP_INI_DIR=$(php --ini | grep "Scan for additional .ini files in" | cut -d':' -f2 | cut -d' ' -f2)
+fi
+
+if [[ "$(command -v php-config)" ]]; then
+  export PHP_EXT_DIR=$(php-config --extension-dir)
+fi
 
 # composer
 if [[ -x "$(command -v composer)" ]]; then
@@ -164,6 +172,20 @@ fi
 if [[ -d "$HOME/miniconda3/bin" ]]; then
   export PATH=$PATH:$HOME/miniconda3/bin
   # source $HOME/miniconda3/bin/activate
+fi
+
+
+# Oracle Instant Client 12.2
+if [[ -d "/opt/oracle/instantclient_12_2" ]]; then
+  export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2
+  export PATH=$PATH:$LD_LIBRARY_PATH
+fi
+
+
+# Oracle Instant Client 18.3
+if [[ -d "/opt/oracle/nstantclient_18_3" ]]; then
+  export LD_LIBRARY_PATH=/opt/oracle/instantclient_18_3
+  export PATH=$PATH:$LD_LIBRARY_PATH
 fi
 
 

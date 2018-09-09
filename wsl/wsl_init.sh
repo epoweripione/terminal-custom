@@ -68,6 +68,11 @@ colorEcho ${BLUE} "Add custom repositories..."
 ## Use https mirror
 sed -i 's|http://mirrors.ustc.edu.cn|https://mirrors.ustc.edu.cn|g' /etc/apt/sources.list
 
+## git lfs
+if [[ ! -e /etc/apt/sources.list.d/github_git-lfs.list ]]; then
+    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+fi
+
 ## docker
 if [[ ! $(grep "docker-ce" /etc/apt/sources.list) ]]; then
     curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add -
@@ -107,6 +112,23 @@ apt update && apt upgrade -y
 # Install useful packages
 colorEcho ${BLUE} "Install useful packages..."
 apt install -y binutils build-essential di dnsutils g++ gcc git htop iproute2 make nano net-tools p7zip psmisc unzip zip
+
+
+# Install git lfs
+## https://github.com/git-lfs/git-lfs/wiki/Tutorial
+colorEcho ${BLUE} "Install git lfs..."
+apt install -y git-lfs && git lfs install
+
+## setting a track pattern
+## find ./ -size +100M
+
+# git lfs track "name_of_a_giant_file"
+# git lfs track "*.exe"
+# git lfs track "Framework/*"
+
+# # add .gitattributes to repository
+# git add .gitattributes
+
 
 
 # Enable broadcast WINS

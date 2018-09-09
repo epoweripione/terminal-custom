@@ -1,6 +1,16 @@
 #!/bin/bash
 
 
+if [[ ! "$(command -v php)" ]]; then
+    echo "pear is not installed! Please install php first!"
+    exit 0
+fi
+
+if [[ ! "$(command -v php-config)" ]]; then
+    echo "pear is not installed! Please install php-config first!"
+    exit 0
+fi
+
 if [[ ! "$(command -v pecl)" ]]; then
     echo "pear is not installed! Please install pear first!"
     exit 0
@@ -38,7 +48,7 @@ apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recomm
     echo 'extension=mongodb.so' > $PHP_INI_DIR/90-mongodb.ini && \
     echo 'extension=oauth.so' > $PHP_INI_DIR/90-oauth.ini && \
     echo 'extension=redis.so' > $PHP_INI_DIR/90-redis.ini && \
-    echo 'zend_extension=/usr/lib/php/20170718/xdebug.so' > $PHP_INI_DIR/90-xdebug.ini && \
+    echo 'zend_extension=xdebug.so' > $PHP_INI_DIR/90-xdebug.ini && \
     rm -rf /tmp/*
 
 ## Install swoole
@@ -81,24 +91,62 @@ cd /tmp && \
 ## https://gist.github.com/hewerthomn/81eea2935051eb2500941a9309bca703
 ## Download the Oracle Instant Client and SDK from Oracle website. (Need to login in Oracle page)
 ## http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html
-# mkdir -p /opt/oracle && cd /opt/oracle && \
-#     unzip instantclient-basic-linux.x64-12.2.0.1.0.zip && \
-#     unzip instantclient-sdk-linux.x64-12.2.0.1.0.zip && \
-#     ln -s /opt/oracle/instantclient_12_2/libclntsh.so.12.1 /opt/oracle/instantclient_12_2/libclntsh.so && \
-#     ln -s /opt/oracle/instantclient_12_2/libocci.so.12.1 /opt/oracle/instantclient_12_2/libocci.so && \
-#     echo /opt/oracle/instantclient_12_2 > /etc/ld.so.conf.d/oracle-instantclient && \
-#     ldconfig
+## or download from 
+## https://github.com/bumpx/oracle-instantclient
+## How to use sqlplus
+## export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2
+## export PATH=$PATH:$LD_LIBRARY_PATH
+## sqlplus scott/tiger@//myhost.example.com:1521/myservice
+mkdir -p /opt/oracle && cd /opt/oracle && \
+    curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-basic-linux.x64-12.2.0.1.0.zip && \
+    curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-sdk-linux.x64-12.2.0.1.0.zip && \
+    curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip && \
+    unzip instantclient-basic-linux.x64-12.2.0.1.0.zip && \
+    unzip instantclient-sdk-linux.x64-12.2.0.1.0.zip && \
+    unzip instantclient-sqlplus-linux.x64-12.2.0.1.0.zip && \
+    ln -s /opt/oracle/instantclient_12_2/libclntsh.so.12.1 /opt/oracle/instantclient_12_2/libclntsh.so && \
+    ln -s /opt/oracle/instantclient_12_2/libocci.so.12.1 /opt/oracle/instantclient_12_2/libocci.so && \
+    echo /opt/oracle/instantclient_12_2 > /etc/ld.so.conf.d/oracle-instantclient12.2 && \
+    ldconfig && \
+    : && \
+    export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2 && \
+    export PATH=$PATH:$LD_LIBRARY_PATH && \
+    : && \
+    apt install -y build-essential libaio1 && \
+    cd /tmp && \
+    curl -SL http://pecl.php.net/get/oci8 -o oci8.tgz && \
+    printf "instantclient,$LD_LIBRARY_PATH\n" | pecl install --force oci8.tgz && \
+    echo 'extension=oci8.so' > $PHP_INI_DIR/90-oci8.ini && \
+    : && \
+    rm -rf /opt/oracle/*.zip && \
+    rm -rf /tmp/*
 
+
+# mkdir -p /opt/oracle && cd /opt/oracle && \
+#     curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-basic-linux.x64-18.3.0.0.0dbru.zip && \
+#     curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-sdk-linux.x64-18.3.0.0.0dbru.zip && \
+#     curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-sqlplus-linux.x64-18.3.0.0.0dbru.zip && \
 #     unzip instantclient-basic-linux.x64-18.3.0.0.0dbru.zip && \
 #     unzip instantclient-sdk-linux.x64-18.3.0.0.0dbru.zip && \
-#     echo /opt/oracle/instantclient_18_3 > /etc/ld.so.conf.d/oracle-instantclient && \
-#     ldconfig
+#     unzip instantclient-sqlplus-linux.x64-18.3.0.0.0dbru.zip && \
+#     echo /opt/oracle/instantclient_18_3 > /etc/ld.so.conf.d/oracle-instantclient18.3 && \
+#     ldconfig && \
+#     : && \
+#     export LD_LIBRARY_PATH=/opt/oracle/instantclient_18_3 && \
+#     export PATH=$PATH:$LD_LIBRARY_PATH && \
+#     : && \
+#     apt install -y build-essential libaio1 && \
+#     cd /tmp && \
+#     curl -SL http://pecl.php.net/get/oci8 -o oci8.tgz && \
+#     printf "instantclient,$LD_LIBRARY_PATH\n" | pecl install --force oci8.tgz && \
+#     echo 'extension=oci8.so' > $PHP_INI_DIR/90-oci8.ini && \
+#     : && \
+#     rm -rf /opt/oracle/*.zip && \
+#     rm -rf /tmp/*
 #     # ln -s /opt/oracle/instantclient_18_3/libclntsh.so.18.1 /opt/oracle/instantclient_18_3/libclntsh.so
 #     # ln -s /opt/oracle/instantclient_18_3/libocci.so.18.1 /opt/oracle/instantclient_18_3/libocci.so
 
-# apt install -y php-dev php-pear build-essential libaio1 && \
-#     curl -SL http://pecl.php.net/get/oci8 -o oci8.tgz && \
-#     pecl install --force oci8.tgz && \
-#     echo 'extension=oci8.so' > $PHP_INI_DIR/90-oci8.ini
+## How to check php extensions which shared libraries depends on
+## ldd $PHP_EXT_DIR/oci8.so
 
 cd ~
