@@ -82,13 +82,13 @@ apt update && apt install -y python3 python3-pip
 
 # fix pip list warning
 mkdir -p ~/.pip && \
-cat >> ~/.pip/pip.conf <EOF
+cat >> ~/.pip/pip.conf <<EOF
 [global]
 format=columns
 EOF
 
 # fix TypeError: '>' not supported between instances of 'Version' and 'Version'
-pip3 install --ignore-installed pip
+pip3 install --force pip3
 
 # upgrade outdated packages
 pip3 list -o | grep -E -v '^-|^Package' | cut -d ' ' -f 1 | xargs -n1 pip3 install -U

@@ -114,6 +114,15 @@ colorEcho ${BLUE} "Install useful packages..."
 apt install -y binutils build-essential di dnsutils g++ gcc git htop iproute2 make nano net-tools p7zip psmisc unzip zip
 
 
+# Install dev packages
+colorEcho ${BLUE} "Install dev packages..."
+apt install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libicu-dev \
+    libxml2-dev libxslt-dev libbz2-dev libpspell-dev aspell-en \
+    libcurl3 libcurl4-openssl-dev libssl-dev libc-client-dev libkrb5-dev \
+    libpcre3 libpcre3-dev libmagickwand-dev libmemcached-dev zlib1g-dev \
+    libgirepository1.0-dev libpq-dev nghttp2 libnghttp2-dev --no-install-recommends
+
+
 # Install git lfs
 ## https://github.com/git-lfs/git-lfs/wiki/Tutorial
 colorEcho ${BLUE} "Install git lfs..."
