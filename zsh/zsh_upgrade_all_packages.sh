@@ -93,7 +93,8 @@ fi
 # fi
 
 
-if [[ "$(command -v java)" ]]; then
+if [[ "$(command -v fuck)" ]]; then
+    colorEcho ${BLUE} "Updating thefuck..."
     pip3 install thefuck --upgrade
 fi
 
