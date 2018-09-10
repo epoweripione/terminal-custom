@@ -389,7 +389,19 @@ fi
 
 # The Fuck
 ## https://github.com/nvbn/thefuck
-apt install -y python3-dev python3-pip && pip3 install thefuck
+apt install -y python3-dev python3-pip && \
+    hash -r && \
+    pip3 install thefuck
+
+# fix TypeError: '>' not supported between instances of 'Version' and 'Version'
+pip3 install --ignore-installed pip && hash -r
+
+## fix `pip3 list` warning
+mkdir -p ~/.pip && \
+cat >> ~/.pip/pip.conf <<EOF
+[global]
+format=columns
+EOF
 
 
 colorEcho ${GREEN} "WSL init done, please restart WSL!"

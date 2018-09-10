@@ -78,7 +78,7 @@ chmod 600 ~/.ssh/*
 #    echo 'APT::Default-Release "stable";' | sudo tee -a /etc/apt/apt.conf.d/00local
 
 # install python3, pip3
-apt update && apt install -y python3 python3-pip
+apt update && apt install -y python3 python3-pip && hash -r
 
 # fix pip list warning
 mkdir -p ~/.pip && \
@@ -88,7 +88,7 @@ format=columns
 EOF
 
 # fix TypeError: '>' not supported between instances of 'Version' and 'Version'
-pip3 install --force pip3
+pip3 install --ignore-installed pip && hash -r
 
 # upgrade outdated packages
 pip3 list -o | grep -E -v '^-|^Package' | cut -d ' ' -f 1 | xargs -n1 pip3 install -U
