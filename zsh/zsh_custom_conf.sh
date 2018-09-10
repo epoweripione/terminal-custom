@@ -9,6 +9,9 @@ ostype=$(uname)
 # disable hosts auto completion
 zstyle ':completion:*' hosts off
 
+# custom bindkey
+bindkey \^U backward-kill-line
+
 
 # complete hard drives in MSYS2
 if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
