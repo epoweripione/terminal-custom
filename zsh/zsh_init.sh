@@ -72,6 +72,12 @@ colorEcho ${BLUE} "enable plugins..."
 #   sed -i '/^  git/a\  command-time' ~/.zshrc
 # fi
 
+if [[ "$(command -v fuck)" ]]; then
+  if [[ ! $(grep "  thefuck" ~/.zshrc) ]]; then
+    sed -i '/^  git/a\  thefuck' ~/.zshrc
+  fi
+fi
+
 if [[ ! $(grep "  colored-man-pages" ~/.zshrc) ]]; then
   sed -i '/^  git/a\  colored-man-pages' ~/.zshrc
 fi
@@ -90,6 +96,8 @@ fi
 
 
 # nano color settings
+if [[ ! -e ~/.nanorc ]]; then
+colorEcho ${BLUE} "nano color settings..."
 tee ~/.nanorc <<-'EOF'
 
 set titlecolor brightwhite,red
@@ -101,5 +109,7 @@ set functioncolor magenta
 
 include "/usr/share/nano/*.nanorc"
 EOF
+fi
+
 
 colorEcho ${GREEN} "ZSH init done, please restart ZSH!"

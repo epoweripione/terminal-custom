@@ -93,6 +93,11 @@ fi
 # fi
 
 
+if [[ "$(command -v java)" ]]; then
+    pip3 install thefuck --upgrade
+fi
+
+
 if [[ -n "$ZSH" ]]; then
     if [[ -e "$HOME/zsh_update.sh" ]]; then
         colorEcho ${BLUE} "Updating oh-my-zsh & custom stuff..."

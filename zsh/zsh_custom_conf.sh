@@ -12,6 +12,15 @@ zstyle ':completion:*' hosts off
 # custom bindkey
 bindkey \^U backward-kill-line
 
+# not confirm a rm *
+setopt localoptions rmstarsilent
+
+# # Colors
+# autoload -U colors && colors
+# export CLICOLOR=1
+# export LSCOLORS='gxfxcxdxbxegedabagacad'
+# export LS_COLORS="di=36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43"
+
 
 # complete hard drives in MSYS2
 if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
@@ -27,6 +36,8 @@ alias ohmyzsh="nano ~/.oh-my-zsh"
 
 alias cls='clear'
 alias grep="grep --color=auto"
+
+# Auto files
 # alias -s html='nano'
 # alias -s php='nano'
 # alias -s rb='nano'

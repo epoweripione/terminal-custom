@@ -9,9 +9,10 @@ function colorEcho() {
     echo -e "\033[${COLOR}${@:2}\033[0m"
 }
 
+## get os type & release info
 function get_os_type() {
-    os=$(uname)
-    os_wsl=$(uname -r)
+    local os=$(uname)
+    local os_wsl=$(uname -r)
     if [[ $os == "Darwin" ]]; then
         ostype="darwin"
     elif [[ $os_wsl =~ "Microsoft" || $os =~ "MSYS_NT" || $os =~ "MINGW" || $os =~ "CYGWIN_NT" ]]; then
@@ -80,7 +81,7 @@ function check_release_package_manager() {
 }
 
 function get_arch() {
-	architecture=$(uname -m)
+	local architecture=$(uname -m)
 	case "$architecture" in
 		amd64|x86_64)
 			spruce_type='amd64'
@@ -227,4 +228,46 @@ function version_compare() {
     if version_ge $VERSION1 $VERSION2; then
         echo "$VERSION1 is greater than or equal to $VERSION2"
     fi
+}
+
+
+## Proxy functions
+export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
+function set_proxy() {
+    export http_proxy=http://127.0.0.1:55881
+    export https_proxy=http://127.0.0.1:55881
+}
+
+function clr_proxy() {
+    export http_proxy=
+    export https_proxy=
+}
+
+function proxy() {
+    if [[ -n $* ]]; then
+        local COLOR='\033[0;35m'
+        local NOCOLOR='\033[0m'
+        set_proxy && echo -e "${COLOR}[proxy] set${NOCOLOR}"
+        $*
+        clr_proxy && echo -e "${COLOR}[proxy] clear${NOCOLOR}"
+    else
+        echo "Set proxy for specific command."
+    fi
+}
+
+# SET_PROXY_FOR=('brew' 'git' 'apm')
+# for cmd in $SET_PROXY_FOR; do
+#     hash ${cmd} > /dev/null 2>&1 && alias ${cmd}="proxy ${cmd}"
+# done
+
+# Query IP address
+function myip() {
+    # https://stackoverflow.com/questions/13322485/how-to-get-the-primary-ip-address-of-the-local-machine-on-linux-and-os-x
+    # LOCAL_NET_IP=$(hostname -I | cut -d' ' -f1)
+    LOCAL_NET_IF=`netstat -rn | awk '/^0.0.0.0/ {thif=substr($0,74,10); print thif;} /^default.*UG/ {thif=substr($0,65,10); print thif;}'`
+    LOCAL_NET_IP=`ifconfig ${LOCAL_NET_IF} | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
+
+    WAN_NET_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
+
+    echo -e "Local IP: ${LOCAL_NET_IP}\nPublic IP: ${WAN_NET_IP}"
 }

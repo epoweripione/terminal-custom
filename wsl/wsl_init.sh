@@ -378,4 +378,9 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
 fi
 
 
+# The Fuck
+## https://github.com/nvbn/thefuck
+apt install -y python3-dev python3-pip && pip3 install thefuck
+
+
 colorEcho ${GREEN} "WSL init done, please restart WSL!"
