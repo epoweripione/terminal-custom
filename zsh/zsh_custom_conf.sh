@@ -131,16 +131,12 @@ if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; t
 fi
 
 
-# Oracle Instant Client 12.2
-if [[ -d "/opt/oracle/instantclient_12_2" ]]; then
-  export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2
-  export PATH=$PATH:$LD_LIBRARY_PATH
-fi
-
-
-# Oracle Instant Client 18.3
-if [[ -d "/opt/oracle/nstantclient_18_3" ]]; then
+# Oracle Instant Client
+if [[ -d "/opt/oracle/instantclient_18_3" ]]; then
   export LD_LIBRARY_PATH=/opt/oracle/instantclient_18_3
+  export PATH=$PATH:$LD_LIBRARY_PATH
+elif [[ -d "/opt/oracle/instantclient_12_2" ]]; then
+  export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2
   export PATH=$PATH:$LD_LIBRARY_PATH
 fi
 
