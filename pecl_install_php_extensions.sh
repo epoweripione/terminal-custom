@@ -147,13 +147,13 @@ if [[ $ORACLE_INSTANT_CLIENT=="18c" ]]; then
         ldconfig && \
         : && \
         export ORACLE_HOME="/opt/oracle/instantclient_18_3" && \
-        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME && \
+        if [[ -z "$LD_LIBRARY_PATH" ]]; then export LD_LIBRARY_PATH=$ORACLE_HOME; else export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME; fi && \
         export PATH=$PATH:$ORACLE_HOME && \
         : && \
         apt install -y build-essential libaio1 --no-install-recommends && \
         cd /tmp && \
         curl -SL http://pecl.php.net/get/oci8 -o oci8.tgz && \
-        printf "instantclient,$LD_LIBRARY_PATH\n" | pecl install --force oci8.tgz && \
+        printf "instantclient,$ORACLE_HOME\n" | pecl install --force oci8.tgz && \
         echo 'extension=oci8.so' > $PHP_INI_DIR/90-oci8.ini && \
         : && \
         rm -rf /opt/oracle/*.zip && \
@@ -176,13 +176,13 @@ else
         ldconfig && \
         : && \
         export ORACLE_HOME="/opt/oracle/instantclient_12_2" && \
-        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME && \
+        if [[ -z "$LD_LIBRARY_PATH" ]]; then export LD_LIBRARY_PATH=$ORACLE_HOME; else export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME; fi && \
         export PATH=$PATH:$ORACLE_HOME && \
         : && \
         apt install -y build-essential libaio1 --no-install-recommends && \
         cd /tmp && \
         curl -SL http://pecl.php.net/get/oci8 -o oci8.tgz && \
-        printf "instantclient,$LD_LIBRARY_PATH\n" | pecl install --force oci8.tgz && \
+        printf "instantclient,$ORACLE_HOME\n" | pecl install --force oci8.tgz && \
         echo 'extension=oci8.so' > $PHP_INI_DIR/90-oci8.ini && \
         : && \
         rm -rf /opt/oracle/*.zip && \

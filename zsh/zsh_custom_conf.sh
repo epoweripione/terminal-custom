@@ -140,8 +140,14 @@ fi
 
 if [[ -n "$ORACLE_HOME" ]]; then
   export ORACLE_HOME="/opt/oracle/instantclient_18_3"
-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME
+  if [[ -z "$LD_LIBRARY_PATH" ]]; then
+    export LD_LIBRARY_PATH=$ORACLE_HOME
+  else
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME
+  fi
+
   export PATH=$PATH:$ORACLE_HOME
+
   if [[ -x "$(command -v rlwrap)" ]]; then
     alias sqlplus="rlwrap sqlplus"
   fi
