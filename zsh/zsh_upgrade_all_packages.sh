@@ -20,7 +20,11 @@ if check_release_package_manager packageManager yum; then
 elif check_release_package_manager packageManager apt; then
     apt update && apt upgrade -y
 elif check_release_package_manager packageManager pacman; then
-    pacman -Syyu
+    if [[ "$(command -v yay)" ]]; then
+        yay -Syu
+    else
+        pacman -Syyu
+    fi
 fi
 
 
