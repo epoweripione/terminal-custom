@@ -123,6 +123,16 @@ apt install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libicu-dev \
     libgirepository1.0-dev libpq-dev nghttp2 libnghttp2-dev --no-install-recommends
 
 
+# Enable broadcast WINS
+colorEcho ${BLUE} "Enable broadcast WINS..."
+apt install -y libnss-winbind
+
+if [[ ! $(grep "wins" /etc/nsswitch.conf) ]]; then
+    sed -i 's/dns/wins dns/' /etc/nsswitch.conf
+fi
+service winbind start # /etc/init.d/winbind start
+
+
 # Install git lfs
 ## https://github.com/git-lfs/git-lfs/wiki/Tutorial
 colorEcho ${BLUE} "Install git lfs..."
@@ -135,19 +145,8 @@ apt install -y git-lfs && git lfs install
 # git lfs track "*.exe"
 # git lfs track "Framework/*"
 
-# # add .gitattributes to repository
+## add .gitattributes to repository
 # git add .gitattributes
-
-
-
-# Enable broadcast WINS
-colorEcho ${BLUE} "Enable broadcast WINS..."
-apt install -y libnss-winbind
-
-if [[ ! $(grep "wins" /etc/nsswitch.conf) ]]; then
-    sed -i 's/dns/wins dns/' /etc/nsswitch.conf
-fi
-service winbind start # /etc/init.d/winbind start
 
 
 # git-flow (AVH Edition)
