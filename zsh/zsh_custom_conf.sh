@@ -133,11 +133,18 @@ fi
 
 # Oracle Instant Client
 if [[ -d "/opt/oracle/instantclient_18_3" ]]; then
-  export LD_LIBRARY_PATH=/opt/oracle/instantclient_18_3
-  export PATH=$PATH:$LD_LIBRARY_PATH
+  export ORACLE_HOME="/opt/oracle/instantclient_18_3"
 elif [[ -d "/opt/oracle/instantclient_12_2" ]]; then
-  export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2
-  export PATH=$PATH:$LD_LIBRARY_PATH
+  export ORACLE_HOME="/opt/oracle/instantclient_12_2"
+fi
+
+if [[ -n "$ORACLE_HOME" ]]; then
+  export ORACLE_HOME="/opt/oracle/instantclient_18_3"
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME
+  export PATH=$PATH:$ORACLE_HOME
+  if [[ -x "$(command -v rlwrap)" ]]; then
+    alias sqlplus="rlwrap sqlplus"
+  fi
 fi
 
 # PHP

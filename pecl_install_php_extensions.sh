@@ -100,14 +100,37 @@ cd /tmp && \
 
 ## How to install OCI8
 ## https://gist.github.com/hewerthomn/81eea2935051eb2500941a9309bca703
+
 ## Download the Oracle Instant Client and SDK from Oracle website. (Need to login in Oracle page)
 ## http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html
 ## or download from 
 ## https://github.com/bumpx/oracle-instantclient
+
 ## How to use sqlplus
 ## export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2
 ## export PATH=$PATH:$LD_LIBRARY_PATH
 ## sqlplus scott/tiger@//myhost.example.com:1521/myservice
+## sqlplus system/\"sYs-p@ssw0rd\"@//debian:1521/ORCLCDB
+
+## fix error: ORA-65096: invalid common user or role name
+## select con_id,dbid,NAME,OPEN_MODE from v$pdbs;
+## alter pluggable database ORCLPDB1 open;
+## alter session set container=ORCLPDB1;
+## select sys_context ('USERENV', 'CON_NAME') from dual;
+
+## fix error: ORA-01950: no privileges on tablespace 'USERS'
+## use QUOTA when create user
+## CREATE USER test IDENTIFIED BY test DEFAULT TABLESPACE users QUOTA UNLIMITED ON users;
+## or
+## ALTER USER test QUOTA UNLIMITED ON USERS;
+
+## sqlplus LANGUAGE
+## SELECT USERENV('LANGUAGE') FROM DUAL;
+## export NLS_LANG="AMERICAN_AMERICA.AL32UTF8"
+
+## fix arrow keys are not functional in sqlplus
+apt install -y rlwrap && alias sqlplus="rlwrap sqlplus"
+
 ORACLE_INSTANT_CLIENT="18c"
 
 if [[ $ORACLE_INSTANT_CLIENT=="18c" ]]; then
@@ -123,8 +146,9 @@ if [[ $ORACLE_INSTANT_CLIENT=="18c" ]]; then
         echo /opt/oracle/instantclient_18_3 > /etc/ld.so.conf.d/oracle-instantclient18.3 && \
         ldconfig && \
         : && \
-        export LD_LIBRARY_PATH=/opt/oracle/instantclient_18_3 && \
-        export PATH=$PATH:$LD_LIBRARY_PATH && \
+        export ORACLE_HOME="/opt/oracle/instantclient_18_3" && \
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME && \
+        export PATH=$PATH:$ORACLE_HOME && \
         : && \
         apt install -y build-essential libaio1 --no-install-recommends && \
         cd /tmp && \
@@ -151,8 +175,9 @@ else
         echo /opt/oracle/instantclient_12_2 > /etc/ld.so.conf.d/oracle-instantclient12.2 && \
         ldconfig && \
         : && \
-        export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2 && \
-        export PATH=$PATH:$LD_LIBRARY_PATH && \
+        export ORACLE_HOME="/opt/oracle/instantclient_12_2" && \
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME && \
+        export PATH=$PATH:$ORACLE_HOME && \
         : && \
         apt install -y build-essential libaio1 --no-install-recommends && \
         cd /tmp && \
