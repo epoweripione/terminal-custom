@@ -387,21 +387,27 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
 fi
 
 
-# The Fuck
-## https://github.com/nvbn/thefuck
-apt install -y python3-dev python3-pip && \
-    hash -r && \
-    pip3 install thefuck
+# pip3
+## fix `pip3 list` warning
+colorEcho ${BLUE} "Installing pip3..."
+if [[ ! $(grep "format=columns" ~/.pip/pip.conf) ]]; then
+mkdir -p ~/.pip && \
+tee ~/.pip/pip.conf <<-'EOF'
+[global]
+format=columns
+EOF
+fi
+
+apt install -y python3-dev python3-pip && hash -r
 
 # fix TypeError: '>' not supported between instances of 'Version' and 'Version'
 pip3 install --ignore-installed pip && hash -r
 
-## fix `pip3 list` warning
-mkdir -p ~/.pip && \
-cat >> ~/.pip/pip.conf <<EOF
-[global]
-format=columns
-EOF
+
+# The Fuck
+## https://github.com/nvbn/thefuck
+colorEcho ${BLUE} "Installing thefuck..."
+pip3 install thefuck
 
 
 colorEcho ${GREEN} "WSL init done, please restart WSL!"

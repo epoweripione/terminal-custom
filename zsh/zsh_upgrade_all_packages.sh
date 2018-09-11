@@ -20,7 +20,7 @@ if check_release_package_manager packageManager yum; then
 elif check_release_package_manager packageManager apt; then
     apt update && apt upgrade -y
 elif check_release_package_manager packageManager pacman; then
-    if [[ "$(command -v yay)" ]]; then
+    if [[ $UID -ne 0 && "$(command -v yay)" ]]; then
         yay -Syu
     else
         pacman -Syyu
@@ -37,7 +37,7 @@ if [[ -d "$HOME/proxychains-ng" ]]; then
 fi
 
 
-if [[ -x "$(command -v docker-compose)" ]]; then
+if [[ $UID -eq 0 && -x "$(command -v docker-compose)" ]]; then
     colorEcho ${BLUE} "Updating docker-compose..."
     CURRENT_VERSION=$(docker-compose -v | cut -d',' -f1 | cut -d' ' -f3)
     REMOTE_VERSION=$(wget --no-check-certificate -qO- https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d\" -f4)
@@ -58,11 +58,11 @@ fi
 
 if [[ "$(command -v npm-check)" ]]; then
     colorEcho ${BLUE} "Updating npm global packages..."
-    npm-check -g -y
+    npm-check -y -g
 fi
 
 
-if [[ -x "$(command -v composer)" ]]; then
+if [[ $UID -eq 0 && -x "$(command -v composer)" ]]; then
     colorEcho ${BLUE} "Updating composer & composer global packages..."
     composer selfupdate && composer g update
 fi
@@ -80,7 +80,7 @@ if [[ "$(command -v conda)" ]]; then
 fi
 
 
-if [[ "$(command -v micro)" ]]; then
+if [[ $UID -eq 0 && "$(command -v micro)" ]]; then
     colorEcho ${BLUE} "Updating Micro editor..."
     CURRENT_VERSION=$(micro -version | grep Version | cut -d',' -f2)
     REMOTE_VERSION=$(wget --no-check-certificate -qO- https://api.github.com/repos/zyedidia/micro/releases/latest | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
