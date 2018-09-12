@@ -31,7 +31,11 @@ colorEcho ${BLUE} "Updating neofetch..."
 if [[ -d $HOME/neofetch ]]; then
   cd $HOME/neofetch && git pull
 else
-  git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+  if [[ $ostype == "Darwin" || $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
+    git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+  elif [[ $UID -eq 0 ]]; then
+    git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+  fi
 fi
 
 if [[ $ostype == "Darwin" ]]; then
