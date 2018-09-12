@@ -16,14 +16,14 @@ fi
 
 colorEcho ${BLUE} "Updating system packages..."
 if check_release_package_manager packageManager yum; then
-    yum update -y
+    sudo yum update -y
 elif check_release_package_manager packageManager apt; then
-    apt update && apt upgrade -y
+    sudo apt update && sudo apt upgrade -y
 elif check_release_package_manager packageManager pacman; then
     if [[ $UID -ne 0 && "$(command -v yay)" ]]; then
         yay -Syu
     else
-        pacman -Syyu
+        sudo pacman -Syyu
     fi
 fi
 
