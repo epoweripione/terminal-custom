@@ -128,7 +128,7 @@ cd /tmp && \
 ## SELECT USERENV('LANGUAGE') FROM DUAL;
 ## export NLS_LANG="AMERICAN_AMERICA.AL32UTF8"
 
-# echo "SELECT USERENV('LANGUAGE') FROM DUAL;" > sqlplus_query_nls_lang.sql && \
+# echo -e "SET HEAD OFF;\nSELECT USERENV('LANGUAGE') FROM DUAL;\nexit;" > sqlplus_query_nls_lang.sql && \
 #     sqlplus -S system/\"sYs-p@ssw0rd\"@//debian:1521/ORCLCDB @sqlplus_query_nls_lang.sql > NLS_LANG && \
 #     while IFS= read -r line; do if [[ -n "$line" ]]; then export "NLS_LANG=$line"; fi; done < NLS_LANG
 
