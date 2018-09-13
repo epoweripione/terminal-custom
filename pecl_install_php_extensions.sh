@@ -2,12 +2,12 @@
 
 
 if [[ ! -x "$(command -v php)" ]]; then
-    echo "pear is not installed! Please install php first!"
+    echo "php is not installed! Please install php first!"
     exit 0
 fi
 
 if [[ ! -x "$(command -v php-config)" ]]; then
-    echo "pear is not installed! Please install php-config first!"
+    echo "php-config is not installed! Please install php-config first!"
     exit 0
 fi
 
@@ -107,8 +107,6 @@ cd /tmp && \
 ## https://github.com/bumpx/oracle-instantclient
 
 ## How to use sqlplus
-## export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2
-## export PATH=$PATH:$LD_LIBRARY_PATH
 ## sqlplus scott/tiger@//myhost.example.com:1521/myservice
 ## sqlplus system/\"sYs-p@ssw0rd\"@//debian:1521/ORCLCDB
 
@@ -116,7 +114,7 @@ cd /tmp && \
 ## select con_id,dbid,NAME,OPEN_MODE from v$pdbs;
 ## alter pluggable database ORCLPDB1 open;
 ## alter session set container=ORCLPDB1;
-## select sys_context ('USERENV', 'CON_NAME') from dual;
+## select sys_context('USERENV','CON_NAME') from dual;
 
 ## fix error: ORA-01950: no privileges on tablespace 'USERS'
 ## use QUOTA when create user
@@ -137,7 +135,7 @@ apt install -y rlwrap && alias sqlplus="rlwrap sqlplus"
 
 ORACLE_INSTANT_CLIENT="18c"
 
-if [[ $ORACLE_INSTANT_CLIENT=="18c" ]]; then
+if [[ $ORACLE_INSTANT_CLIENT == "18c" ]]; then
     mkdir -p /opt/oracle && cd /opt/oracle && \
         curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-basic-linux.x64-18.3.0.0.0dbru.zip && \
         curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sdk-linux.x64-18.3.0.0.0dbru.zip && \
@@ -162,8 +160,6 @@ if [[ $ORACLE_INSTANT_CLIENT=="18c" ]]; then
         : && \
         rm -rf /opt/oracle/*.zip && \
         rm -rf /tmp/*
-        # ln -s /opt/oracle/instantclient_18_3/libclntsh.so.18.1 /opt/oracle/instantclient_18_3/libclntsh.so
-        # ln -s /opt/oracle/instantclient_18_3/libocci.so.18.1 /opt/oracle/instantclient_18_3/libocci.so
 else
     mkdir -p /opt/oracle && cd /opt/oracle && \
         curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-basic-linux.x64-12.2.0.1.0.zip && \
