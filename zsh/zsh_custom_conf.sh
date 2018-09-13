@@ -193,7 +193,9 @@ fi
 
 # sdkman
 if [[ -d "$HOME/.sdkman" ]]; then
-  if [[ ! "$(command -v sdk)" ]]; then
+  if type 'sdk' 2>/dev/null | grep -q 'function'; then
+    :
+  else
     export SDKMAN_DIR="/root/.sdkman"
     [[ -s "/root/.sdkman/bin/sdkman-init.sh" ]] && source "/root/.sdkman/bin/sdkman-init.sh"
   fi
