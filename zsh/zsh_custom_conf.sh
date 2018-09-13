@@ -89,6 +89,10 @@ fi
 if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
   export PATH=$PATH:/c/nodejs:/c/Users/$USERNAME/AppData/Roaming/npm:/c/php/php7:/c/php/composer/vendor/bin
 
+  #java
+  alias java="winpty java"
+  alias java="winpty javac"
+
   # node,npm
   alias node="winpty node"
   alias npm="winpty npm.cmd"
@@ -139,7 +143,6 @@ elif [[ -d "/opt/oracle/instantclient_12_2" ]]; then
 fi
 
 if [[ -n "$ORACLE_HOME" ]]; then
-  export ORACLE_HOME="/opt/oracle/instantclient_18_3"
   if [[ -z "$LD_LIBRARY_PATH" ]]; then
     export LD_LIBRARY_PATH=$ORACLE_HOME
   else
@@ -154,11 +157,11 @@ if [[ -n "$ORACLE_HOME" ]]; then
 fi
 
 # PHP
-if [[ "$(command -v php)" ]]; then
+if [[ -x "$(command -v php)" ]]; then
   export PHP_INI_DIR=$(php --ini | grep "Scan for additional .ini files in" | cut -d':' -f2 | cut -d' ' -f2)
 fi
 
-if [[ "$(command -v php-config)" ]]; then
+if [[ -x "$(command -v php-config)" ]]; then
   export PHP_EXT_DIR=$(php-config --extension-dir)
 fi
 
@@ -184,7 +187,7 @@ if [[ -d "$HOME/.gvm" ]]; then
 fi
 
 # java
-if [[ "$(command -v java)" ]]; then
+if [[ -x "$(command -v java)" ]]; then
   export JAVA_HOME=$(readlink -f $(which java) | sed "s:/jre/bin/java::" | sed "s:/bin/java::")
   export JRE_HOME=$JAVA_HOME/jre
   export CLASSPATH=$JAVA_HOME/lib
