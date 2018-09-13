@@ -30,10 +30,30 @@ fi
 
 if [[ -d "$HOME/proxychains-ng" ]]; then
     colorEcho ${BLUE} "Updating proxychains4..."
-    cd proxychains-ng && git pull && \
-        ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
-        make && make install && \
-        cd $HOME
+
+    if [[ "$(command -v proxychains4)" ]]; then
+        cd $HOME/proxychains-ng && git pull
+        # only recompile if update
+        # git_latest_update=$(git log -1 --format="%at" | xargs -I{} date -d @{} +'%Y-%m-%d %H:%M:%S')
+        git_latest_update=$(git log -1 --format="%at" | xargs -I{} date -d @{})
+        proxychains4_date=$(date -d "$(stat --printf='%y\n' $(which proxychains4))")
+        # if [[ $(date -d "$git_latest_update") > $(date --date='7 day ago') ]]; then
+        if [[ $(date -d "$git_latest_update") > $(date -d "$proxychains4_date") ]]; then
+            ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
+                make && make install && \
+                cd $HOME
+        fi
+    else
+        cd $HOME && \
+        git clone https://github.com/rofl0r/proxychains-ng.git && \
+            cd proxychains-ng && \
+            ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
+            make && make install && make install-config && \
+            cp /etc/proxychains/proxychains.conf /etc/proxychains/proxychains.conf.bak && \
+            sed -i 's/socks4/# socks4/g' /etc/proxychains/proxychains.conf && \
+            echo 'socks5 127.0.0.1 55880' >> /etc/proxychains/proxychains.conf && \
+            cd $HOME
+    fi
 fi
 
 
@@ -70,7 +90,7 @@ fi
 
 if [[ "$(command -v sdk)" ]]; then
     colorEcho ${BLUE} "Updating sdk using sdkman..."
-    sdk selfupdate && sdk update
+    sdk selfupdate && sdk update && printf "Y\n" | sdk upgrade
 fi
 
 
@@ -93,7 +113,7 @@ fi
 # if [[ "$(command -v pear)" ]]; then
 #     colorEcho ${BLUE} "Updating pear..."
 #     pear upgrade --force PEAR && pear upgrade -all
-#     # pecl update-channels && rm -rf /tmp/pear ~/.pearrc
+#     # pecl update-channels && rm -rf /tmp/pear $HOME/.pearrc
 # fi
 
 

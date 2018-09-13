@@ -49,8 +49,8 @@ EOF
 fi
 
 ## SSH
-if [[ ! -d ~/.ssh ]]; then
-    mkdir -p ~/.ssh && chmod 700 ~/.ssh/ # && chmod 600 ~/.ssh/*
+if [[ ! -d $HOME/.ssh ]]; then
+    mkdir -p $HOME/.ssh && chmod 700 $HOME/.ssh/ # && chmod 600 $HOME/.ssh/*
 fi
 
 
@@ -174,14 +174,15 @@ apt install -y xclip && cd /usr/local/bin && curl https://getmic.ro | bash && cd
 # proxychains
 if [[ ! -x "$(command -v proxychains4)" ]]; then
     colorEcho ${BLUE} "Installing proxychains..."
-    git clone https://github.com/rofl0r/proxychains-ng.git && \
+    cd $HOME && \
+        git clone https://github.com/rofl0r/proxychains-ng.git && \
         cd proxychains-ng && \
         ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
         make && make install && make install-config && \
         cp /etc/proxychains/proxychains.conf /etc/proxychains/proxychains.conf.bak && \
         sed -i 's/socks4/# socks4/g' /etc/proxychains/proxychains.conf && \
         echo 'socks5 127.0.0.1 55880' >> /etc/proxychains/proxychains.conf && \
-        cd ~
+        cd $HOME
 fi
 
 
@@ -249,7 +250,7 @@ apt install -y default-jdk default-jre
 #     wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz && \
 #     tar -zxvf jdk-8u181-linux-x64.tar.gz && \
 #     ln -s /usr/lib/jvm/jdk1.8.0_181/ /usr/lib/jvm/oracle-jdk8 && \
-#     rm -f jdk-8u181-linux-x64.tar.gz && cd ~
+#     rm -f jdk-8u181-linux-x64.tar.gz && cd $HOME
 
 # ## Install new JDK alternatives
 # update-alternatives --install /usr/bin/java java /usr/lib/jvm/oracle-jdk8/bin/java 100
@@ -291,7 +292,7 @@ colorEcho ${BLUE} "Installing gvm & go..."
 if [[ ! -d "$HOME/.gvm" ]]; then
     apt install -y bison && \
         bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-    source ~/.gvm/scripts/gvm
+    source $HOME/.gvm/scripts/gvm
 
     ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
     ## gvm install go1.4 -B && gvm use go1.4
@@ -346,12 +347,12 @@ if [[ ! -x "$(command -v composer)" ]]; then
         composer g require --dev phpunit/phpunit ^7 && \
         composer g require psy/psysh:@stable
 
-    mkdir -p ~/.local/share/psysh/ && \
-        curl -SL http://psysh.org/manual/zh/php_manual.sqlite -o ~/.local/share/psysh/php_manual.sqlite
+    mkdir -p $HOME/.local/share/psysh/ && \
+        curl -SL http://psysh.org/manual/zh/php_manual.sqlite -o $HOME/.local/share/psysh/php_manual.sqlite
 fi
 
 ## pear
-pecl update-channels && rm -rf /tmp/pear ~/.pearrc
+pecl update-channels && rm -rf /tmp/pear $HOME/.pearrc
 
 ### fix PHP Fatal error: Cannot use result of built-in function in write context in /usr/share/php/Archive/Tar.php on line 639
 ### https://www.dotkernel.com/php-troubleshooting/fix-installing-pear-packages-with-php-7-2/
@@ -391,9 +392,9 @@ fi
 # pip3
 ## fix `pip3 list` warning
 colorEcho ${BLUE} "Installing pip3..."
-if [[ ! $(grep "format=columns" ~/.pip/pip.conf) ]]; then
-mkdir -p ~/.pip && \
-tee ~/.pip/pip.conf <<-'EOF'
+if [[ ! $(grep "format=columns" $HOME/.pip/pip.conf) ]]; then
+mkdir -p $HOME/.pip && \
+tee $HOME/.pip/pip.conf <<-'EOF'
 [global]
 format=columns
 EOF

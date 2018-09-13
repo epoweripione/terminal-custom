@@ -196,4 +196,4 @@ fi
 ## How to check php extensions which shared libraries depends on
 ## ldd $PHP_EXT_DIR/oci8.so
 
-cd ~
+cd $HOME
