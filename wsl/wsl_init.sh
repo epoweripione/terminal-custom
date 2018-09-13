@@ -264,7 +264,7 @@ apt install -y default-jdk default-jre
 # # update-alternatives --config java
 # # update-alternatives --config javac
 
-if [[ "$(command -v java)" ]]; then
+if [[ -x "$(command -v java)" ]]; then
     export JAVA_HOME=$(readlink -f $(which java) | sed "s:/jre/bin/java::" | sed "s:/bin/java::")
     export JRE_HOME=$JAVA_HOME/jre
     export CLASSPATH=$JAVA_HOME/lib
@@ -280,8 +280,10 @@ if [[ ! -d "$HOME/.sdkman" ]]; then
     curl -s "https://get.sdkman.io" | bash
 fi
 
-colorEcho ${BLUE} "Installing maven gradle kotlin using sdkman..."
-sdk install maven && sdk install gradle && sdk install kotlin
+if [[ "$(command -v sdk)" ]]; then
+    colorEcho ${BLUE} "Installing maven gradle kotlin using sdkman..."
+    sdk install maven && sdk install gradle && sdk install kotlin
+fi
 
 
 # go
@@ -351,14 +353,17 @@ if [[ ! -x "$(command -v composer)" ]]; then
         curl -SL http://psysh.org/manual/zh/php_manual.sqlite -o $HOME/.local/share/psysh/php_manual.sqlite
 fi
 
-## pear
-pecl update-channels && rm -rf /tmp/pear $HOME/.pearrc
+## pear & pecl
+if [[ -x "$(command -v pecl)" ]]; then
+    pecl update-channels && rm -rf /tmp/pear $HOME/.pearrc
 
-### fix PHP Fatal error: Cannot use result of built-in function in write context in /usr/share/php/Archive/Tar.php on line 639
-### https://www.dotkernel.com/php-troubleshooting/fix-installing-pear-packages-with-php-7-2/
-sed -i 's/& func_get_args/func_get_args/' /usr/share/php/Archive/Tar.php # && pear install Archive_Tar
-### fix Warning: Invalid argument supplied for foreach() in Command.php on line 249
-sed -i 's/exec $PHP -C -n -q/exec $PHP -C -q/' /usr/bin/pecl
+    ### fix PHP Fatal error: Cannot use result of built-in function in write context in /usr/share/php/Archive/Tar.php on line 639
+    ### https://www.dotkernel.com/php-troubleshooting/fix-installing-pear-packages-with-php-7-2/
+    sed -i 's/& func_get_args/func_get_args/' /usr/share/php/Archive/Tar.php # && pear install Archive_Tar
+    
+    ### fix Warning: Invalid argument supplied for foreach() in Command.php on line 249
+    sed -i 's/exec $PHP -C -n -q/exec $PHP -C -q/' /usr/bin/pecl
+fi
 
 ## Install extension using pecl
 if [[ -e "$HOME/pecl_install_php_extensions.sh" ]]; then

@@ -1,17 +1,17 @@
 #!/bin/bash
 
 
-if [[ ! "$(command -v php)" ]]; then
+if [[ ! -x "$(command -v php)" ]]; then
     echo "pear is not installed! Please install php first!"
     exit 0
 fi
 
-if [[ ! "$(command -v php-config)" ]]; then
+if [[ ! -x "$(command -v php-config)" ]]; then
     echo "pear is not installed! Please install php-config first!"
     exit 0
 fi
 
-if [[ ! "$(command -v pecl)" ]]; then
+if [[ ! -x "$(command -v pecl)" ]]; then
     echo "pear is not installed! Please install pear first!"
     exit 0
 fi

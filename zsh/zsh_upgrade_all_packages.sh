@@ -31,7 +31,7 @@ fi
 if [[ -d "$HOME/proxychains-ng" ]]; then
     colorEcho ${BLUE} "Updating proxychains4..."
 
-    if [[ "$(command -v proxychains4)" ]]; then
+    if [[ -x "$(command -v proxychains4)" ]]; then
         cd $HOME/proxychains-ng && git pull
         # only recompile if update
         # git_latest_update=$(git log -1 --format="%at" | xargs -I{} date -d @{} +'%Y-%m-%d %H:%M:%S')
@@ -76,7 +76,7 @@ if [[ -d "$HOME/.nvm" ]]; then
 fi
 
 
-if [[ "$(command -v npm-check)" ]]; then
+if [[ -x "$(command -v npm-check)" ]]; then
     colorEcho ${BLUE} "Updating npm global packages..."
     npm-check -y -g
 fi
@@ -101,13 +101,13 @@ if [[ -d "$HOME/.sdkman" ]]; then
 fi
 
 
-if [[ "$(command -v conda)" ]]; then
+if [[ -x "$(command -v conda)" ]]; then
     colorEcho ${BLUE} "Updating conda..."
     conda update -y --all
 fi
 
 
-if [[ $UID -eq 0 && "$(command -v micro)" ]]; then
+if [[ $UID -eq 0 && -x "$(command -v micro)" ]]; then
     colorEcho ${BLUE} "Updating Micro editor..."
     CURRENT_VERSION=$(micro -version | grep Version | cut -d',' -f2)
     REMOTE_VERSION=$(wget --no-check-certificate -qO- https://api.github.com/repos/zyedidia/micro/releases/latest | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
@@ -117,7 +117,7 @@ if [[ $UID -eq 0 && "$(command -v micro)" ]]; then
 fi
 
 
-# if [[ "$(command -v pear)" ]]; then
+# if [[ -x "$(command -v pear)" ]]; then
 #     colorEcho ${BLUE} "Updating pear..."
 #     pear upgrade --force PEAR && pear upgrade -all
 #     # pecl update-channels && rm -rf /tmp/pear $HOME/.pearrc
