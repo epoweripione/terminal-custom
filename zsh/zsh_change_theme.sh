@@ -19,7 +19,7 @@ changeTheme() {
     # custom theme
     sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" ~/.zshrc
 
-    # custom theme configuration 
+    # custom theme configuration
     sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
     if [[ -e ~/${custom_theme}.sh ]]; then
         sed -i "/^ZSH_THEME=.*/a\source ~/${custom_theme}.sh" ~/.zshrc
@@ -28,7 +28,7 @@ changeTheme() {
     # .zshenv
     [[ -e ~/.zshenv ]] && rm -f ~/.zshenv
 
-    if [[ "$theme" == "powerlevel9k" ]]; then
+    if [[ "$theme" == "powerlevel9k" && $(tput colors) -ne 256 ]]; then
         cp ~/zsh_custom_env_xterm.sh ~/.zshenv
         # sed -i '/^  command-time.*/d' ~/.zshrc
     else
@@ -47,15 +47,14 @@ changeTheme() {
 
 PARAMS_NUM=$#
 
-#######get params#########
+# get params
 while [[ $# > 0 ]]; do
     theme="$1"
     sed -i "s/[#]*[ ]*ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" ~/.zshrc
     shift # past argument or value
 done
-#############################
 
-##有参数输入操作一波后就结束
+# if pass a valid param then exit
 [[ $PARAMS_NUM > 0 ]] && exit
 
 echo -e ""
