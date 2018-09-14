@@ -537,7 +537,7 @@ prompt_user_host() {
   local visual_user_icon
 
   if [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
-    visual_user_icon="%F{magenta}\uF489%f " # SSH_ICON 
+    visual_user_icon="%F{magenta}%B\uF489%f%b " # SSH_ICON 
   fi
 
   if [[ $(print -P "%#") == '#' ]]; then
@@ -549,9 +549,9 @@ prompt_user_host() {
   fi
   
   if [[ -n "$USER" ]]; then
-    prompt_segment cyan default "${visual_user_icon}%F{yellow}$USER@%m%f"
+    prompt_segment cyan default "${visual_user_icon}%F{yellow}%B$USER%f%b%F{white}@%f%F{green}%B%m%f%b"
   elif [[ -n "$USERNAME" ]]; then
-    prompt_segment cyan default "${visual_user_icon}%F{yellow}$USERNAME@%m%f"
+    prompt_segment cyan default "${visual_user_icon}%F{yellow}%B$USERNAME%f%b%F{white}@%f%F{green}%B%m%f%b"
   fi
 }
 
