@@ -60,9 +60,11 @@ if [[ ! $(grep "set functioncolor" ~/.nanorc) ]]; then
     echo "set functioncolor magenta" >> ~/.nanorc
 fi
 
-if [[ -d ~/.nano ]]; then
+if [[ -d ~/.local/share/nano ]]; then
     if [[ ! $(grep "\~/.local/share/nano/\*\.nanorc" ~/.nanorc) ]]; then
-        # echo "include \"/usr/share/nano/nano-syntax-highlighting/*.nanorc\"" >> ~/.nanorc
         echo "include \"~/.local/share/nano/*.nanorc\"" >> ~/.nanorc
     fi
+    # if [[ ! $(grep "/usr/share/nano/nano-syntax-highlighting/\*\.nanorc" ~/.nanorc) ]]; then
+    #     echo "include \"/usr/share/nano/nano-syntax-highlighting/*.nanorc\"" >> ~/.nanorc
+    # fi
 fi
