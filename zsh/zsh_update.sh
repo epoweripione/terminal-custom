@@ -190,21 +190,45 @@ if [[ ! $(grep "  git-flow-completion" ~/.zshrc) ]]; then
 fi
 
 
-# nano color settings
-if [[ ! -e ~/.nanorc ]]; then
-colorEcho ${BLUE} "nano color settings..."
-tee ~/.nanorc <<-'EOF'
-
-set titlecolor brightwhite,red
-set statuscolor brightwhite,red
-# set selectedcolor brightwhite,cyan
-set numbercolor magenta
-set keycolor brightmagenta
-set functioncolor magenta
-
-include "/usr/share/nano/*.nanorc"
-EOF
+# nano
+colorEcho ${BLUE} "Updating nano-syntax-highlighting..."
+if [[ -d ~/.local/share/nano ]]; then
+  cd ~/.local/share/nano && git pull
+else
+  git clone https://github.com/scopatz/nanorc.git ~/.local/share/nano
 fi
+
+colorEcho ${BLUE} "nano settings..."
+if [[ ! $(grep "set titlecolor" ~/.nanorc) ]]; then
+  echo "set titlecolor brightwhite,red" >> ~/.nanorc
+fi
+
+if [[ ! $(grep "set statuscolor" ~/.nanorc) ]]; then
+  echo "set statuscolor brightwhite,red" >> ~/.nanorc
+fi
+
+if [[ ! $(grep "set selectedcolor" ~/.nanorc) ]]; then
+  echo "set selectedcolor brightwhite,cyan" >> ~/.nanorc
+fi
+
+if [[ ! $(grep "set numbercolor" ~/.nanorc) ]]; then
+  echo "set numbercolor magenta" >> ~/.nanorc
+fi
+
+if [[ ! $(grep "set keycolor" ~/.nanorc) ]]; then
+  echo "set keycolor brightmagenta" >> ~/.nanorc
+fi
+
+if [[ ! $(grep "set functioncolor" ~/.nanorc) ]]; then
+  echo "set functioncolor magenta" >> ~/.nanorc
+fi
+
+if [[ -d ~/.nano ]]; then
+  if [[ ! $(grep "\~/.local/share/nano/\*\.nanorc" ~/.nanorc) ]]; then
+    echo "include \"~/.local/share/nano/*.nanorc\"" >> ~/.nanorc
+  fi
+fi
+
 
 cd $HOME
 colorEcho ${GREEN} "Update finished!"

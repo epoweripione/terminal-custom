@@ -113,7 +113,7 @@ apt update && apt upgrade -y
 
 # Install useful packages
 colorEcho ${BLUE} "Install useful packages..."
-apt install -y binutils build-essential di dnsutils g++ gcc git htop iproute2 make nano net-tools p7zip psmisc unzip zip
+apt install -y binutils build-essential di dnsutils g++ gcc git htop iproute2 make net-tools p7zip psmisc unzip zip
 
 
 # Install dev packages
@@ -160,10 +160,20 @@ colorEcho ${BLUE} "Installing git-flow (AVH Edition)..."
 wget --no-check-certificate -q  https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh && sudo bash gitflow-installer.sh install develop; rm gitflow-installer.sh
 
 
+# nano editor
+if [[ -e "$HOME/nano_installer.sh" ]]; then
+    colorEcho ${BLUE} "Installing nano from source..."
+    source "$HOME/nano_installer.sh"
+else
+    colorEcho ${BLUE} "Installing nano..."
+    apt install -y nano
+fi
+
+
 # Micro editor
 ## https://micro-editor.github.io/index.html
-colorEcho ${BLUE} "Installing Micro editor..."
-apt install -y xclip && cd /usr/local/bin && curl https://getmic.ro | bash && cd $HOME
+# colorEcho ${BLUE} "Installing Micro editor..."
+# apt install -y xclip && cd /usr/local/bin && curl https://getmic.ro | bash && cd $HOME
 
 ## Install Micro Plugins
 ## open micro from your CLI, press [Crtl + E] then run the command line below. Once you are done, restart micro.

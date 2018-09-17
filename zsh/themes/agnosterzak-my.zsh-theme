@@ -537,7 +537,7 @@ prompt_user_host() {
   local visual_user_icon
 
   if [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
-    visual_user_icon="%F{magenta}%B\uF489%f%b " # SSH_ICON 
+    visual_user_icon="%F{white}\uF489%f " # SSH_ICON 
   fi
 
   if [[ $(print -P "%#") == '#' ]]; then
