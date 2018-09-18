@@ -28,41 +28,48 @@ elif check_release_package_manager packageManager pacman; then
 fi
 
 
-if [[ -d "$HOME/proxychains-ng" ]]; then
-    colorEcho ${BLUE} "Updating proxychains4..."
-
-    if [[ -x "$(command -v proxychains4)" ]]; then
+if [[ -x "$(command -v proxychains4)" ]]; then
+    if [[ -d "$HOME/proxychains-ng" ]]; then
         cd $HOME/proxychains-ng && git pull
         # only recompile if update
+        local git_latest_update proxychains4_date
         # git_latest_update=$(git log -1 --format="%at" | xargs -I{} date -d @{} +'%Y-%m-%d %H:%M:%S')
         git_latest_update=$(git log -1 --format="%at" | xargs -I{} date -d @{})
         proxychains4_date=$(date -d "$(stat --printf='%y\n' $(which proxychains4))")
         # if [[ $(date -d "$git_latest_update") > $(date --date='7 day ago') ]]; then
         if [[ $(date -d "$git_latest_update") > $(date -d "$proxychains4_date") ]]; then
+            colorEcho ${BLUE} "Updating proxychains4..."
             ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
-                make && make install && \
-                cd $HOME
+                make && make install
         fi
-    else
-        cd $HOME && \
-        git clone https://github.com/rofl0r/proxychains-ng.git && \
-            cd proxychains-ng && \
-            ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
-            make && make install && make install-config && \
-            cp /etc/proxychains/proxychains.conf /etc/proxychains/proxychains.conf.bak && \
-            sed -i 's/socks4/# socks4/g' /etc/proxychains/proxychains.conf && \
-            echo 'socks5 127.0.0.1 55880' >> /etc/proxychains/proxychains.conf && \
-            cd $HOME
+        cd $HOME
     fi
+elif [[ $UID -eq 0 ]]; then
+    colorEcho ${BLUE} "Installing proxychains..."
+    cd $HOME && \
+    git clone https://github.com/rofl0r/proxychains-ng.git && \
+        cd proxychains-ng && \
+        ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
+        make && make install && make install-config && \
+        cp /etc/proxychains/proxychains.conf /etc/proxychains/proxychains.conf.bak && \
+        sed -i 's/socks4/# socks4/g' /etc/proxychains/proxychains.conf && \
+        echo 'socks5 127.0.0.1 55880' >> /etc/proxychains/proxychains.conf
 fi
 
 
+
+local CHECK_URL DOWNLOAD_URL CURRENT_VERSION REMOTE_VERSION
 if [[ $UID -eq 0 && -x "$(command -v docker-compose)" ]]; then
     colorEcho ${BLUE} "Updating docker-compose..."
+
+    CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
+
     CURRENT_VERSION=$(docker-compose -v | cut -d',' -f1 | cut -d' ' -f3)
-    REMOTE_VERSION=$(wget --no-check-certificate -qO- https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d\" -f4)
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        curl -SL https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && \
+        DOWNLOAD_URL=https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`
+        curl -SL $DOWNLOAD_URL -o /usr/local/bin/docker-compose && \
         chmod +x /usr/local/bin/docker-compose
     fi
 fi
@@ -109,8 +116,11 @@ fi
 
 if [[ $UID -eq 0 && -x "$(command -v micro)" ]]; then
     colorEcho ${BLUE} "Updating Micro editor..."
+
+    CHECK_URL="https://api.github.com/repos/zyedidia/micro/releases/latest"
+
     CURRENT_VERSION=$(micro -version | grep Version | cut -d',' -f2)
-    REMOTE_VERSION=$(wget --no-check-certificate -qO- https://api.github.com/repos/zyedidia/micro/releases/latest | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         cd /usr/local/bin && curl https://getmic.ro | bash && cd $HOME
     fi
@@ -135,7 +145,9 @@ if [[ -n "$ZSH" ]]; then
         colorEcho ${BLUE} "Updating oh-my-zsh & custom stuff..."
         source "$HOME/zsh_update.sh"
         # -i : Force shell to be interactive
-        # Then, if the shell is interactive, commands are read from /etc/zshrc and then $ZDOTDIR/.zshrc (this is usually your $HOME/.zshrc)
+        # Then, if the shell is interactive, 
+        # commands are read from /etc/zshrc 
+        # and then $ZDOTDIR/.zshrc (this is usually your $HOME/.zshrc)
         # -c : Run a command in this shell
         # zsh -i -c "$HOME/zsh_update.sh"
     fi

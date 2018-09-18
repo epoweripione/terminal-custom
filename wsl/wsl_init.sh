@@ -191,8 +191,7 @@ if [[ ! -x "$(command -v proxychains4)" ]]; then
         make && make install && make install-config && \
         cp /etc/proxychains/proxychains.conf /etc/proxychains/proxychains.conf.bak && \
         sed -i 's/socks4/# socks4/g' /etc/proxychains/proxychains.conf && \
-        echo 'socks5 127.0.0.1 55880' >> /etc/proxychains/proxychains.conf && \
-        cd $HOME
+        echo 'socks5 127.0.0.1 55880' >> /etc/proxychains/proxychains.conf
 fi
 
 
