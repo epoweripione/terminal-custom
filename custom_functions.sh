@@ -271,3 +271,15 @@ function myip() {
 
     echo -e "Local IP: ${LOCAL_NET_IP}\nPublic IP: ${WAN_NET_IP}"
 }
+
+
+# Dateutils
+# http://www.fresse.org/dateutils/
+# apt install -y dateutils
+# dateutils.dadd 2018-05-22 +120d
+function date_diff() {
+    # 20180522 20180918
+    if [[ $# -eq 2 ]]; then
+        echo $(( ($(date -d "$1" +%s) - $(date -d "$2" +%s) )/(60*60*24) ))
+    fi
+}
