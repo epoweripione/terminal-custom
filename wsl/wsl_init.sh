@@ -60,7 +60,9 @@ colorEcho ${BLUE} "Use USTC mirror & Install prerequest packages..."
 sed -i 's|deb.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
     sed -i 's|security.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list
 
-apt update && apt install -y apt-transport-https apt-utils ca-certificates curl lsb-release software-properties-common wget
+apt update && \
+    apt install -y apt-transport-https apt-utils ca-certificates \
+        curl lsb-release software-properties-common wget
 
 
 # Add custom repositories
@@ -113,7 +115,8 @@ apt update && apt upgrade -y
 
 # Install useful packages
 colorEcho ${BLUE} "Install useful packages..."
-apt install -y binutils build-essential di dnsutils g++ gcc git htop iproute2 make net-tools p7zip psmisc unzip zip
+apt install -y binutils build-essential di dnsutils g++ gcc \
+    git htop iproute2 make net-tools p7zip psmisc unzip zip
 
 
 # Install dev packages
@@ -135,6 +138,7 @@ fi
 service winbind start # /etc/init.d/winbind start
 
 
+local CHECK_URL DOWNLOAD_URL CURRENT_VERSION REMOTE_VERSION
 # Install git lfs
 ## https://github.com/git-lfs/git-lfs/wiki/Tutorial
 colorEcho ${BLUE} "Install git lfs..."
@@ -157,7 +161,9 @@ apt install -y git-lfs && git lfs install
 ## http://danielkummer.github.io/git-flow-cheatsheet/index.zh_CN.html
 ## https://github.com/mylxsw/growing-up/blob/master/doc/%E7%A0%94%E5%8F%91%E5%9B%A2%E9%98%9FGIT%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B%E6%96%B0%E4%BA%BA%E5%AD%A6%E4%B9%A0%E6%8C%87%E5%8D%97.md
 colorEcho ${BLUE} "Installing git-flow (AVH Edition)..."
-wget --no-check-certificate -q  https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh && sudo bash gitflow-installer.sh install develop; rm gitflow-installer.sh
+DOWNLOAD_URL=https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh
+wget --no-check-certificate -q $DOWNLOAD_URL && \
+    sudo bash gitflow-installer.sh install develop; rm gitflow-installer.sh
 
 
 # nano editor
@@ -202,9 +208,12 @@ apt install -y docker-ce
 ## Install Docker Compose
 if [[ ! -x "$(command -v docker-compose)" ]]; then
     colorEcho ${BLUE} "Installing Docker Compose..."
-    docker_compose_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d\" -f4)
-    if [[ -n "$docker_compose_ver" ]]; then
-        curl -SL https://github.com/docker/compose/releases/download/$docker_compose_ver/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && \
+
+    CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+    if [[ -n "$REMOTE_VERSION" ]]; then
+        DOWNLOAD_URL=https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`
+        curl -SL $DOWNLOAD_URL -o /usr/local/bin/docker-compose && \
         chmod +x /usr/local/bin/docker-compose
     fi
 fi
@@ -214,9 +223,11 @@ fi
 colorEcho ${BLUE} "Installing nvm & nodejs..."
 ## Install nvm
 if [[ ! -d "$HOME/.nvm" ]]; then
-    nvm_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/creationix/nvm/releases/latest | grep 'tag_name' | cut -d\" -f4)
-    if [[ -n "$nvm_ver" ]]; then
-        curl -o- https://raw.githubusercontent.com/creationix/nvm/$nvm_ver/install.sh | bash
+
+    CHECK_URL="https://api.github.com/repos/creationix/nvm/releases/latest"
+    REMOTE_VERSION=$(wget --no-check-certificate -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+    if [[ -n "$REMOTE_VERSION" ]]; then
+        curl -o- https://raw.githubusercontent.com/creationix/nvm/$REMOTE_VERSION/install.sh | bash
     fi
 fi
 
@@ -303,17 +314,24 @@ colorEcho ${BLUE} "Installing gvm & go..."
 if [[ ! -d "$HOME/.gvm" ]]; then
     apt install -y bison && \
         bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+    
     source $HOME/.gvm/scripts/gvm
 
     ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
-    ## gvm install go1.4 -B && gvm use go1.4
-    proxychains4 gvm install go1.4 -B && gvm use go1.4
+    if [[ -x "$(command -v proxychains4)" ]]; then
+        proxychains4 gvm install go1.4 -B && gvm use go1.4
+    else
+        gvm install go1.4 -B && gvm use go1.4
+    fi
 
     ## Install latest go version
-    ## go_ver=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
-    ## gvm install $go_ver && gvm use $go_ver --default
-    go_ver=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
-    proxychains4 gvm install $go_ver && gvm use $go_ver --default
+    if [[ -x "$(command -v proxychains4)" ]]; then
+        REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
+        proxychains4 gvm install $REMOTE_VERSION && gvm use $REMOTE_VERSION --default
+    else
+        REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
+        gvm install $REMOTE_VERSION && gvm use $REMOTE_VERSION --default
+    fi
 
     export GOROOT_BOOTSTRAP=$GOROOT
 fi

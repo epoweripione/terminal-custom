@@ -5,26 +5,57 @@ if [[ $UID -ne 0 ]]; then
     exit 0
 fi
 
-# https://www.nano-editor.org/dist/v1.2/faq.html#1.3
+# Load custom functions
+if [[ -e "$HOME/custom_functions.sh" ]]; then
+    source "$HOME/custom_functions.sh"
+else
+    echo "$HOME/custom_functions.sh not exist!"
+    exit 0
+fi
+
+# https://www.nano-editor.org/dist/latest/faq.html
 # http://mybookworld.wikidot.com/compile-nano-from-source
-# install nano
-if [[ ! -x "$(command -v nano)" ]]; then
+
+
+# apt install -y libncurses5-dev libncursesw5-dev
+# yum install ncurses-devel
+# dnf install ncurses-devel
+# pacman -S ncurses
+if check_release_package_manager packageManager yum; then
+    yum update -y && yum -y -q install ncurses-devel
+elif check_release_package_manager packageManager apt; then
+    apt update && apt -y install libncurses5-dev libncursesw5-dev
+elif check_release_package_manager packageManager pacman; then
+    pacman -Sy && pacman -S ncurses
+fi
+
+
+# ncurses
+# cd /tmp && \
+#     curl -SL http://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz -o ncurses.tar.gz && \
+#     tar zxvf ncurses.tar.gz && \
+#     mv ncurses-* ncurses && cd ncurses && \
+#     ./configure --prefix=/opt/ncurses && \
+#     make && make install && \
+#     rm -rf /tmp/*
+
+
+# compile & install nano
+local CURRENT_VERSION REMOTE_VERSION DIST_VERSION
+
+CURRENT_VERSION=$(nano -V | grep -m 1 -o 'version \([0-9]\)\+\.\([0-9]\)\+' | cut -d' ' -f2)
+REMOTE_VERSION=$(curl -s https://www.nano-editor.org/download.php | grep -m 1 -o 'nano-\([0-9]\)\+\.\([0-9]\)\+' | cut -d'-' -f2)
+DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
+
+if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     cd /tmp && \
-        curl -SL http://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz -o ncurses.tar.gz && \
-        tar zxvf ncurses.tar.gz && \
-        mv ncurses-* ncurses && cd ncurses && \
-        ./configure && \
-        make && make install && \
-        : && \
-        cd /tmp && \
-        curl -SL https://www.nano-editor.org/dist/v3/nano-3.0.tar.gz -o nano.tar.gz && \
+        curl -SL https://www.nano-editor.org/dist/v$DIST_VERSION/nano-$REMOTE_VERSION.tar.gz -o nano.tar.gz && \
         tar zxvf nano.tar.gz && \
         mv nano-* nano && cd nano && \
-        ./configure --prefix=/usr --enable-all && \
+        ./configure --prefix=/usr --enable-utf8 && \
         make && make install && \
         rm -rf /tmp/*
 fi
-
 
 # nano-syntax-highlighting
 if [[ -d ~/.local/share/nano ]]; then
@@ -68,3 +99,5 @@ if [[ -d ~/.local/share/nano ]]; then
     #     echo "include \"/usr/share/nano/nano-syntax-highlighting/*.nanorc\"" >> ~/.nanorc
     # fi
 fi
+
+cd $HOME
