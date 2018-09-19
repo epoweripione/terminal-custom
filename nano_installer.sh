@@ -47,7 +47,8 @@ else
     CURRENT_VERSION=0.0
 fi
 
-REMOTE_VERSION=$(curl -s https://www.nano-editor.org/download.php | grep -m 1 -o 'nano-\([0-9]\)\+\.\([0-9]\)\+' | cut -d'-' -f2)
+REMOTE_VERSION=$(curl -s -N https://www.nano-editor.org/download.php \
+    | grep -m 1 -o 'nano-\([0-9]\)\+\.\([0-9]\)\+' | cut -d'-' -f2)
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
