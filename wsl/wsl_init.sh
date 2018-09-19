@@ -138,7 +138,6 @@ fi
 service winbind start # /etc/init.d/winbind start
 
 
-local CHECK_URL DOWNLOAD_URL CURRENT_VERSION REMOTE_VERSION
 # Install git lfs
 ## https://github.com/git-lfs/git-lfs/wiki/Tutorial
 colorEcho ${BLUE} "Install git lfs..."
@@ -340,7 +339,9 @@ fi
 # PHP
 ## Install PHP7.2
 colorEcho ${BLUE} "Installing PHP7.2..."
-apt install -y pkg-config php7.2 php7.2-fpm php7.2-curl php7.2-dev php7.2-gd php7.2-mbstring php7.2-mysql php7.2-pgsql php7.2-sqlite3 php7.2-xml php7.2-xsl php7.2-zip
+apt install -y pkg-config php7.2 php7.2-fpm php7.2-curl php7.2-dev \
+    php7.2-gd php7.2-mbstring php7.2-mysql php7.2-pgsql \
+    php7.2-sqlite3 php7.2-xml php7.2-xsl php7.2-zip
 
 ## opcache
 { \
@@ -435,7 +436,16 @@ fi
 apt install -y python3-dev python3-pip && hash -r
 
 # fix TypeError: '>' not supported between instances of 'Version' and 'Version'
+# fix TypeError: unorderable types: Version() > SetuptoolsVersion()
 pip3 install --ignore-installed pip && hash -r
+
+# fix for pyxdg, pygobject, pycurl, etc.
+apt install -y libgirepository1.0-dev libssl-dev libcurl4-openssl-dev libcairo2-dev --no-install-recommends
+# pip install -I pygobject==3.30.1 && \
+#     pip install -I pyxdg==0.26 && \
+#     pip install -I python-debianbts==2.7.3 && \
+#     pip install -I httplib2==0.11.3 && \
+#     pip install -I pycurl==7.43.0.2
 
 
 # The Fuck

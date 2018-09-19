@@ -28,14 +28,12 @@ elif check_release_package_manager packageManager pacman; then
 fi
 
 
-local isUpgrade isNewInstall
 if [[ -x "$(command -v proxychains4)" && -d "$HOME/proxychains-ng" && $UID -eq 0 ]]; then isUpgrade="yes"; fi
 if [[ ! -x "$(command -v proxychains4)" && ! -d "$HOME/proxychains-ng" && $UID -eq 0 ]]; then isNewInstall="yes"; fi
 
 if [[ "$isUpgrade" == "yes" ]]; then
     cd $HOME/proxychains-ng && git pull
     # only recompile if update
-    local git_latest_update proxychains4_date
     # git_latest_update=$(git log -1 --format="%at" | xargs -I{} date -d @{} +'%Y-%m-%d %H:%M:%S')
     git_latest_update=$(git log -1 --format="%at" | xargs -I{} date -d @{})
     proxychains4_date=$(date -d "$(stat --printf='%y\n' $(which proxychains4))")
@@ -59,7 +57,6 @@ elif [[ "$isNewInstall" == "yes" ]]; then
 fi
 
 
-local CHECK_URL DOWNLOAD_URL CURRENT_VERSION REMOTE_VERSION
 if [[ $UID -eq 0 && -x "$(command -v docker-compose)" ]]; then
     colorEcho ${BLUE} "Updating docker-compose..."
 
@@ -136,15 +133,22 @@ fi
 # fi
 
 
-if [[ -x "$(command -v pip)" ]]; then
-    colorEcho ${BLUE} "Updating pip packages..."
-    pip list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | xargs -n1 pip install -U
+# fix `pip list` warning
+if [[ ! $(grep "format=columns" $HOME/.pip/pip.conf) ]]; then
+mkdir -p $HOME/.pip && \
+tee $HOME/.pip/pip.conf <<-'EOF'
+[global]
+format=columns
+EOF
 fi
 
 
 if [[ -x "$(command -v pip3)" ]]; then
     colorEcho ${BLUE} "Updating pip3 packages..."
     pip3 list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | xargs -n1 pip3 install -U
+elif [[ -x "$(command -v pip)" ]]; then
+    colorEcho ${BLUE} "Updating pip packages..."
+    pip list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | xargs -n1 pip install -U
 fi
 
 

@@ -41,8 +41,6 @@ fi
 
 
 # compile & install nano
-local CURRENT_VERSION REMOTE_VERSION DIST_VERSION
-
 CURRENT_VERSION=$(nano -V | grep -m 1 -o 'version \([0-9]\)\+\.\([0-9]\)\+' | cut -d' ' -f2)
 REMOTE_VERSION=$(curl -s https://www.nano-editor.org/download.php | grep -m 1 -o 'nano-\([0-9]\)\+\.\([0-9]\)\+' | cut -d'-' -f2)
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
@@ -101,3 +99,4 @@ if [[ -d ~/.local/share/nano ]]; then
 fi
 
 cd $HOME
+colorEcho ${GREEN} "Done!"
