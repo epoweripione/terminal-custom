@@ -92,7 +92,12 @@ fi
 
 if [[ -d "$HOME/.gvm" ]]; then
     colorEcho ${BLUE} "Updating gvm & go..."
-    REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
+    if [[ -x "$(command -v proxychains4)" ]]; then
+        REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
+    else
+        REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
+    fi
+
     if [[ ! "$(gvm list | grep $REMOTE_VERSION)" ]]; then
         if [[ -x "$(command -v proxychains4)" ]]; then
             proxychains4 gvm install $REMOTE_VERSION && gvm use $REMOTE_VERSION --default
