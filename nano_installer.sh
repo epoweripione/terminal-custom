@@ -41,7 +41,12 @@ fi
 
 
 # compile & install nano
-CURRENT_VERSION=$(nano -V | grep -m 1 -o 'version \([0-9]\)\+\.\([0-9]\)\+' | cut -d' ' -f2)
+if [[ -x "$(command -v nano)" ]]; then
+    CURRENT_VERSION=$(nano -V | grep -m 1 -o 'version \([0-9]\)\+\.\([0-9]\)\+' | cut -d' ' -f2)
+else
+    CURRENT_VERSION=0.0
+fi
+
 REMOTE_VERSION=$(curl -s https://www.nano-editor.org/download.php | grep -m 1 -o 'nano-\([0-9]\)\+\.\([0-9]\)\+' | cut -d'-' -f2)
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
 
