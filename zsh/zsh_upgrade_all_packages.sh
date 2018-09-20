@@ -92,7 +92,7 @@ if [[ -d "$HOME/.gvm" ]]; then
 
     ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
     if [[ ! "$(gvm list | grep 'go1.4')" ]]; then
-        if [[ -n "$GVM_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+        if [[ -z "$GVM_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
             proxychains4 gvm install go1.4 -B && gvm use go1.4
         else
             gvm install go1.4 -B && gvm use go1.4
@@ -100,14 +100,14 @@ if [[ -d "$HOME/.gvm" ]]; then
     fi
 
     # Install latest go version
-    if [[ -n "$GVM_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+    if [[ -z "$GVM_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
         REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
     else
         REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
     fi
 
-    if [[ ! "$(gvm list | grep $REMOTE_VERSION)" ]]; then
-        if [[ -n "$GVM_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+    if [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
+        if [[ -z "$GVM_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
             proxychains4 gvm install $REMOTE_VERSION && gvm use $REMOTE_VERSION --default
         else
             gvm install $REMOTE_VERSION && gvm use $REMOTE_VERSION --default

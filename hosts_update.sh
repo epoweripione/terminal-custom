@@ -1,7 +1,5 @@
 #!/bin/bash
 
-local ostype DOWNLOAD_URL
-
 ostype=$(uname)
 DOWNLOAD_URL=https://raw.githubusercontent.com/googlehosts/hosts/master/hosts-files/hosts
 
