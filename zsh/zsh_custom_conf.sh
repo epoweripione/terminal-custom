@@ -88,6 +88,9 @@ fi
 # Extend variable in MSYS2 to use node,npm,php,composer... with winpty
 if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
   export PATH=$PATH:/c/nodejs:/c/Users/$USERNAME/AppData/Roaming/npm:/c/php/php7:/c/php/composer/vendor/bin
+  
+  # dotnet
+  alias dotnet="winpty dotnet"
 
   #java
   alias java="winpty java"
@@ -194,16 +197,6 @@ if [[ -x "$(command -v java)" ]]; then
   export PATH=$PATH:$JAVA_HOME/bin
 fi
 
-# sdkman
-if [[ -d "$HOME/.sdkman" ]]; then
-  if type 'sdk' 2>/dev/null | grep -q 'function'; then
-    :
-  else
-    export SDKMAN_DIR="/root/.sdkman"
-    [[ -s "/root/.sdkman/bin/sdkman-init.sh" ]] && source "/root/.sdkman/bin/sdkman-init.sh"
-  fi
-fi
-
 # anaconda3
 if [[ -d "$HOME/anaconda3/bin" ]]; then
   export PATH=$PATH:$HOME/anaconda3/bin
@@ -214,6 +207,17 @@ fi
 if [[ -d "$HOME/miniconda3/bin" ]]; then
   export PATH=$PATH:$HOME/miniconda3/bin
   # source $HOME/miniconda3/bin/activate
+fi
+
+# sdkman
+# THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+if [[ -d "$HOME/.sdkman" ]]; then
+  if type 'sdk' 2>/dev/null | grep -q 'function'; then
+    :
+  else
+    export SDKMAN_DIR="$HOME/.sdkman"
+    [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+  fi
 fi
 
 
