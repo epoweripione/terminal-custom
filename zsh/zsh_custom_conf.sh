@@ -254,3 +254,11 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
     fi
   fi
 fi
+
+
+# macOS
+if [[ $ostype == "Darwin" ]]; then
+  if [[ -x "$(command -v greadlink)" ]]; then
+    alias readlink=greadlink
+  fi
+fi

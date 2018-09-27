@@ -14,16 +14,46 @@ fi
 # fi
 
 
+# pacapt - An Arch's pacman-like package manager for some Unices
+# https://github.com/icy/pacapt
+if [[ -x "$(command -v pacapt)" ]]; then
+    CHECK_URL="https://api.github.com/repos/icy/pacapt/releases/latest"
+
+    CURRENT_VERSION=$(pacapt -V | grep 'version' | cut -d"'" -f2)
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        colorEcho ${BLUE} "Updating pacapt - An Arch's pacman-like package manager for some Unices..."
+        sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /usr/bin/pacapt && \
+            sudo chmod 755 /usr/bin/pacapt && \
+            sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
+    fi
+else
+    colorEcho ${BLUE} "Installing pacapt - An Arch's pacman-like package manager for some Unices..."
+    sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /usr/bin/pacapt && \
+        sudo chmod 755 /usr/bin/pacapt && \
+        sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
+fi
+
+
 colorEcho ${BLUE} "Updating system packages..."
-if check_release_package_manager packageManager yum; then
-    sudo yum update -y
-elif check_release_package_manager packageManager apt; then
-    sudo apt update && sudo apt upgrade -y
-elif check_release_package_manager packageManager pacman; then
+if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     if [[ $UID -ne 0 && "$(command -v yay)" ]]; then
         yay -Syu
     else
-        sudo pacman -Syyu
+        sudo pacman -Syu
+    fi
+else
+    if check_release_package_manager packageManager yum; then
+        sudo yum update -y
+    elif check_release_package_manager packageManager apt; then
+        sudo apt update && sudo apt upgrade -y
+    elif check_release_package_manager packageManager pacman; then
+        if [[ $UID -ne 0 && "$(command -v yay)" ]]; then
+            yay -Syu
+        else
+            sudo pacman -Syu
+        fi
     fi
 fi
 
