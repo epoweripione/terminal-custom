@@ -52,13 +52,20 @@ alias grep="grep --color=auto"
 # alias -s bz2='tar -xjvf'
 
 # pip aliases
-alias pipupdateall='pip list -o | grep -E -v '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f 1 | xargs -n1 pip install -U'
-alias pip3updateall='pip3 list -o | grep -E -v '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f 1 | xargs -n1 pip3 install -U'
+if [[ -x "$(command -v pip)" ]]; then
+  alias pipupdateall='pip list -o | grep -E -v '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f 1 | xargs -n1 pip install -U'
+fi
+
+if [[ -x "$(command -v pip3)" ]]; then
+  alias pip3updateall='pip3 list -o | grep -E -v '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f 1 | xargs -n1 pip3 install -U'
+fi
 
 # docker aliases
-alias dockerpullall='docker images | grep -v REPOSITORY | awk '"'"'{print $1,$2}'"'"' OFS='"'"':'"'"' | xargs -L1 docker pull'
-alias dockerps='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}"'
-alias dockerpsall='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}\t{{.Ports}}\t{{.Networks}}\t{{.Command}}\t{{.Size}}"'
+if [[ -x "$(command -v docker)" ]]; then
+  alias dockerpullall='docker images | grep -v REPOSITORY | awk '"'"'{print $1,$2}'"'"' OFS='"'"':'"'"' | xargs -L1 docker pull'
+  alias dockerps='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}"'
+  alias dockerpsall='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}\t{{.Ports}}\t{{.Networks}}\t{{.Command}}\t{{.Size}}"'
+fi
 
 
 # zsh-command-time
@@ -81,6 +88,14 @@ else
     else
       ZSH_COMMAND_TIME_COLOR="yellow"
     fi
+  fi
+fi
+
+
+# macOS
+if [[ $ostype == "Darwin" ]]; then
+  if [[ -x "$(command -v greadlink)" ]]; then
+    alias readlink=greadlink
   fi
 fi
 
@@ -252,13 +267,5 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
         service winbind start
       fi
     fi
-  fi
-fi
-
-
-# macOS
-if [[ $ostype == "Darwin" ]]; then
-  if [[ -x "$(command -v greadlink)" ]]; then
-    alias readlink=greadlink
   fi
 fi
