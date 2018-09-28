@@ -258,24 +258,47 @@ apt install -y dotnet-sdk-2.1
 
 
 # Java
-## OpenJDK
-colorEcho ${BLUE} "Installing OpenJDK..."
-apt install -y default-jdk default-jre
+## Install jabba
+colorEcho ${BLUE} "Installing jabba..."
+curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
+    . ~/.jabba/jabba.sh
 
-## Oracle jdk
+## OpenJDK
+colorEcho ${BLUE} "Installing OpenJDK 11..."
+jabba install openjdk@1.11 && jabba alias default openjdk@1.11
+# apt install -y default-jdk default-jre
+
+## Oracle jdk 8
 ## http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-# colorEcho ${BLUE} "Installing Oracle JDK..."
+# colorEcho ${BLUE} "Installing Oracle JDK 8..."
 # mkdir -p /usr/lib/jvm && cd /usr/lib/jvm && \
-#     wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz && \
+#     wget --no-check-certificate --no-cookies \
+#         --header "Cookie: oraclelicense=accept-securebackup-cookie" \
+#         http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz && \
 #     tar -zxvf jdk-8u181-linux-x64.tar.gz && \
 #     ln -s /usr/lib/jvm/jdk1.8.0_181/ /usr/lib/jvm/oracle-jdk8 && \
 #     rm -f jdk-8u181-linux-x64.tar.gz && cd $HOME
 
+## Oracle jdk 11
+## https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html
+# colorEcho ${BLUE} "Installing Oracle JDK 11..."
+# mkdir -p /usr/lib/jvm && cd /usr/lib/jvm && \
+#     wget --no-check-certificate --no-cookies \
+#         --header "Cookie: oraclelicense=accept-securebackup-cookie" \
+#         http://download.oracle.com/otn-pub/java/jdk/11+28/55eed80b163941c8885ad9298e6d786a/jdk-11_linux-x64_bin.tar.gz && \
+#     tar -zxvf jdk-11_linux-x64_bin.tar.gz && \
+#     ln -s /usr/lib/jvm/jdk-11/ /usr/lib/jvm/oracle-jdk11 && \
+#     rm -f jdk-11_linux-x64_bin.tar.gz && cd $HOME
+
 # ## Install new JDK alternatives
-# update-alternatives --install /usr/bin/java java /usr/lib/jvm/oracle-jdk8/bin/java 100
-# update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/oracle-jdk8/bin/javac 100
+# update-alternatives --install /usr/bin/java java /usr/lib/jvm/oracle-jdk11/bin/java 100
+# update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/oracle-jdk11/bin/javac 100
+# update-alternatives --install /usr/bin/java java /usr/lib/jvm/oracle-jdk8/bin/java 200
+# update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/oracle-jdk8/bin/javac 200
 
 # ## Remove the existing alternatives
+# # update-alternatives --remove java /usr/lib/jvm/oracle-jdk11/bin/java
+# # update-alternatives --remove javac /usr/lib/jvm/oracle-jdk11/bin/javac
 # # update-alternatives --remove java /usr/lib/jvm/oracle-jdk8/bin/java
 # # update-alternatives --remove javac /usr/lib/jvm/oracle-jdk8/bin/javac
 

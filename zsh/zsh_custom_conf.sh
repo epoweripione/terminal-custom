@@ -204,12 +204,23 @@ if [[ -d "$HOME/.gvm" ]]; then
   export GOROOT_BOOTSTRAP=$GOROOT
 fi
 
+# jabba
+if [[ -d "$HOME/.jabba" ]]; then
+  if type 'jabba' 2>/dev/null | grep -q 'function'; then
+    :
+  else
+    [ -s "$HOME/.jabba/jabba.sh" ] && source "$HOME/.jabba/jabba.sh"
+  fi
+fi
+
 # java
 if [[ -x "$(command -v java)" ]]; then
-  export JAVA_HOME=$(readlink -f $(which java) | sed "s:/jre/bin/java::" | sed "s:/bin/java::")
-  export JRE_HOME=$JAVA_HOME/jre
-  export CLASSPATH=$JAVA_HOME/lib
-  export PATH=$PATH:$JAVA_HOME/bin
+  if [[ -z "$JAVA_HOME" ]]; then
+    export JAVA_HOME=$(readlink -f $(which java) | sed "s:/jre/bin/java::" | sed "s:/bin/java::")
+    export JRE_HOME=$JAVA_HOME/jre
+    export CLASSPATH=$JAVA_HOME/lib
+    export PATH=$PATH:$JAVA_HOME/bin
+  fi
 fi
 
 # anaconda3

@@ -186,16 +186,31 @@ fi
 
 if [[ -x "$(command -v pip3)" ]]; then
     colorEcho ${BLUE} "Updating pip3 packages..."
-    pip3 list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | xargs -n1 pip3 install -U
+    sudo pip3 list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | sudo xargs -n1 pip3 install -U
 elif [[ -x "$(command -v pip)" ]]; then
     colorEcho ${BLUE} "Updating pip packages..."
-    pip list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | xargs -n1 pip install -U
+    sudo pip list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | sudo xargs -n1 pip install -U
 fi
 
 
 if [[ "$(command -v fuck)" && -x "$(command -v pip3)" ]]; then
     colorEcho ${BLUE} "Updating thefuck..."
-    pip3 install thefuck --upgrade
+    sudo pip3 install thefuck --upgrade
+fi
+
+
+if [[ "$(command -v jabba)" ]]; then
+    colorEcho ${BLUE} "Updating jabba..."
+
+    CHECK_URL="https://api.github.com/repos/shyiko/jabba/releases/latest"
+
+    CURRENT_VERSION=$(jabba --version | cut -d' ' -f2)
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
+            . ~/.jabba/jabba.sh && \
+            cd $HOME
+    fi
 fi
 
 
