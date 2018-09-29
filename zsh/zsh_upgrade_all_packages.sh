@@ -107,13 +107,19 @@ if [[ -d "$HOME/.nvm" ]]; then
     colorEcho ${BLUE} "Updating nvm & node..."
     cd "$NVM_DIR" && git pull && cd $HOME
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    nvm install node && nvm use node
+    nvm install node --reinstall-packages-from=node && nvm use node
 fi
 
 
 if [[ -x "$(command -v npm-check)" ]]; then
     colorEcho ${BLUE} "Updating npm global packages..."
     npm-check -y -g
+fi
+
+
+if [[ -x "$(command -v yarn)" ]]; then
+    colorEcho ${BLUE} "Updating yarn global packages..."
+    yarn global upgrade --latest
 fi
 
 
