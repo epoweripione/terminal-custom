@@ -11,6 +11,11 @@ colorEcho() {
     echo -e "\033[${COLOR}${@:2}\033[0m"
 }
 
+if [[ ! -x "$(command -v npm)" ]]; then
+    colorEcho ${RED} "npm is not installed! Please install node & npm first!"
+    exit 0
+fi
+
 # npm config
 colorEcho ${BLUE} "Setting npm config..."
 npm config set user 0
@@ -33,27 +38,15 @@ npm set node_inspector_cdnurl https://npm.taobao.org/mirrors/node-inspector # no
 # npm install -g nrm
 # nrm use taobao
 
-# Install custom packages
-colorEcho ${BLUE} "Installing nrm npm-check es-checker eslint tslint jslint jshint standard..."
-npm install -g nrm npm-check es-checker eslint tslint jslint jshint standard
+# Install global packages with binaries
+colorEcho ${BLUE} "Installing npm-check es-checker eslint tslint jslint jshint standard..."
+npm install -g npm-check es-checker eslint tslint jslint jshint standard
 
 colorEcho ${BLUE} "Installing typescript..."
 npm install -g typescript
 
 colorEcho ${BLUE} "Installing angular/cli..."
 npm install -g @angular/cli
-
-colorEcho ${BLUE} "Installing puppeteer..."
-npm install -g puppeteer
-
-colorEcho ${BLUE} "Installing jquery popper.js bootstrap..."
-npm install -g jquery popper.js bootstrap
-
-colorEcho ${BLUE} "Installing mdbootstrap..."
-npm install -g mdbootstrap
-
-colorEcho ${BLUE} "Installing echarts echarts-gl..."
-npm install -g echarts echarts-gl
 
 colorEcho ${BLUE} "Installing parcel-bundler..."
 npm install -g parcel-bundler
@@ -63,6 +56,19 @@ npm install -g cordova ionic
 
 colorEcho ${BLUE} "Installing electron..."
 npm install -g electron
+
+# Install global packages without binaries
+# colorEcho ${BLUE} "Installing puppeteer..."
+# npm install -g puppeteer
+
+# colorEcho ${BLUE} "Installing jquery popper.js bootstrap..."
+# npm install -g jquery popper.js bootstrap
+
+# colorEcho ${BLUE} "Installing mdbootstrap..."
+# npm install -g mdbootstrap
+
+# colorEcho ${BLUE} "Installing echarts echarts-gl..."
+# npm install -g echarts echarts-gl
 
 # Clean npm cache
 # npm cache clean --force
