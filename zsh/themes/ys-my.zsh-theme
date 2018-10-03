@@ -65,13 +65,13 @@ my_git_prompt_info() {
     git_pompt="$(agnoster_fast_git_prompt_info)"
 
     if [ -z "$git_pompt" ]; then
-       echo -n "%{$fg[blue]$bg[black]%}$SEGMENT_SEPARATOR%{$reset_color%}"
+      echo -n "%{$fg[blue]$bg[black]%}$SEGMENT_SEPARATOR%{$reset_color%}"
     else
-       # echo -n "%{$fg[blue]$bg[yellow]%}$SEGMENT_SEPARATOR%{$reset_color%}"
-       # echo -n "%{$bg[yellow]%}%{$fg_bold[black]%} ${git_pompt} %{$reset_color%}"
-       # echo -n "%{$fg[yellow]$bg[black]%}$SEGMENT_SEPARATOR%{$reset_color%}"
-       echo -n "%{$fg[blue]%}$SEGMENT_SEPARATOR%{$reset_color%}"
-       echo -n " ${git_pompt} %{$reset_color%}"
+      # echo -n "%{$fg[blue]$bg[yellow]%}$SEGMENT_SEPARATOR%{$reset_color%}"
+      # echo -n "%{$bg[yellow]%}%{$fg_bold[black]%} ${git_pompt} %{$reset_color%}"
+      # echo -n "%{$fg[yellow]$bg[black]%}$SEGMENT_SEPARATOR%{$reset_color%}"
+      echo -n "%{$fg[blue]%}$SEGMENT_SEPARATOR%{$reset_color%}"
+      echo -n " ${git_pompt} %{$reset_color%}"
     fi
 }
 
