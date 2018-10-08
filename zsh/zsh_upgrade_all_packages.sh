@@ -106,7 +106,13 @@ fi
 if [[ -d "$HOME/.nvm" ]]; then
     colorEcho ${BLUE} "Updating nvm & node..."
     cd "$NVM_DIR" && git pull && cd $HOME
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+    if type 'nvm' 2>/dev/null | grep -q 'function'; then
+        :
+    else
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    fi
+
     nvm install node --reinstall-packages-from=node && nvm use node
 fi
 

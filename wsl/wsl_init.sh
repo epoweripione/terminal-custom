@@ -237,7 +237,7 @@ if [[ -d "$HOME/.nvm" ]]; then
 fi
 
 ## Install nodejs
-if [[ "$(command -v nvm)" ]]; then
+if type 'nvm' 2>/dev/null | grep -q 'function'; then
     if [[ ! "$(command -v node)" ]]; then
         nvm install node && nvm use node
         ## Fix npm not found
