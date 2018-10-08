@@ -119,7 +119,7 @@ fi
 
 if [[ -x "$(command -v yarn)" ]]; then
     colorEcho ${BLUE} "Updating yarn global packages..."
-    yarn global upgrade --latest
+    yarn global upgrade # yarn global upgrade --latest
 fi
 
 
@@ -137,9 +137,9 @@ if [[ -d "$HOME/.gvm" ]]; then
 
     # Install latest go version
     if [[ -z "$GVM_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-        REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
+        REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
     else
-        REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+')
+        REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
     fi
 
     if [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
