@@ -201,7 +201,19 @@ fi
 # gvm
 if [[ -d "$HOME/.gvm" ]]; then
   source $HOME/.gvm/scripts/gvm
-  export GOROOT_BOOTSTRAP=$GOROOT
+
+  if [[ "$(gvm list | grep 'go1.4')" ]]; then
+    CURRENT_VERSION=$(gvm list | grep '=>' | cut -d' ' -f2)
+
+    # Set GOROOT_BOOTSTRAP to compile Go 1.5+
+    gvm use go1.4
+    export GOROOT_BOOTSTRAP=$GOROOT
+
+    # Set default go version
+    if [[ -n "$CURRENT_VERSION" ]]; then
+      gvm use $CURRENT_VERSION --default
+    fi
+  fi
 fi
 
 # jabba

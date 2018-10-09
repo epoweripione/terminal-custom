@@ -135,27 +135,42 @@ if [[ -d "$HOME/.gvm" ]]; then
     ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
     if [[ ! "$(gvm list | grep 'go1.4')" ]]; then
         if [[ -z "$GVM_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-            proxychains4 gvm install go1.4 -B && gvm use go1.4
+            proxychains4 gvm install go1.4 -B
         else
-            gvm install go1.4 -B && gvm use go1.4
+            gvm install go1.4 -B
         fi
     fi
 
-    # Install latest go version
-    if [[ -z "$GVM_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-        REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
-    else
-        REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
-    fi
-
-    if [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
-        if [[ -z "$GVM_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-            proxychains4 gvm install $REMOTE_VERSION && gvm use $REMOTE_VERSION --default
-        else
-            gvm install $REMOTE_VERSION && gvm use $REMOTE_VERSION --default
-        fi
-
+    CURRENT_VERSION=$(gvm list | grep '=>' | cut -d' ' -f2)
+    if [[ "$(gvm list | grep 'go1.4')" ]]; then
+        # Set GOROOT_BOOTSTRAP to compile Go 1.5+
+        gvm use go1.4
         export GOROOT_BOOTSTRAP=$GOROOT
+
+        # Install latest go version
+        if [[ -z "$GVM_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+            REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
+        else
+            REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
+        fi
+
+        if [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
+            if [[ -z "$GVM_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+                proxychains4 gvm install $REMOTE_VERSION
+            else
+                gvm install $REMOTE_VERSION
+            fi
+        fi
+
+        # Set default go version
+        if [[ -n "$REMOTE_VERSION" ]]; then
+            if [[ "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
+                gvm use $REMOTE_VERSION --default
+            fi
+        elif [[ -n "$CURRENT_VERSION" ]]; then
+            gvm use $CURRENT_VERSION --default
+            fi
+        fi
     fi
 fi
 
