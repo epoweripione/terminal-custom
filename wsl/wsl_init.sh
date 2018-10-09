@@ -336,7 +336,9 @@ colorEcho ${BLUE} "Installing gvm & go..."
 if [[ ! -d "$HOME/.gvm" ]]; then
     apt install -y bison && \
         bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-    
+fi
+
+if [[ -d "$HOME/.gvm" ]]; then
     source $HOME/.gvm/scripts/gvm
 
     ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
@@ -359,7 +361,7 @@ if [[ ! -d "$HOME/.gvm" ]]; then
             REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
             gvm install $REMOTE_VERSION
         fi
-        
+
         # Set default go version
         if [[ -n "$REMOTE_VERSION" ]]; then
             if [[ "$(gvm list | grep "$REMOTE_VERSION")" ]]; then

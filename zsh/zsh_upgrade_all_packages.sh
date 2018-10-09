@@ -113,7 +113,12 @@ if [[ -d "$HOME/.nvm" ]]; then
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     fi
 
-    nvm install node --reinstall-packages-from=node && nvm use node
+    CURRENT_VERSION=$(nvm version)
+    REMOTE_VERSION=$(nvm version-remote)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        nvm install node --reinstall-packages-from=node
+        # nvm use node
+    fi
 fi
 
 
@@ -131,6 +136,7 @@ fi
 
 if [[ -d "$HOME/.gvm" ]]; then
     colorEcho ${BLUE} "Updating gvm & go..."
+    source $HOME/.gvm/scripts/gvm
 
     ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
     if [[ ! "$(gvm list | grep 'go1.4')" ]]; then
@@ -169,7 +175,6 @@ if [[ -d "$HOME/.gvm" ]]; then
             fi
         elif [[ -n "$CURRENT_VERSION" ]]; then
             gvm use $CURRENT_VERSION --default
-            fi
         fi
     fi
 fi
