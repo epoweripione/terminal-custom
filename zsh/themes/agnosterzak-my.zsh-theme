@@ -180,7 +180,7 @@ prompt_battery() {
 
 # Git: branch/detached head, dirty status
 prompt_git() {
-#«»±˖˗‑‐‒ ━ ✚‐↔←↑↓→↭⇎⇔⋆━◂▸◄►◆☀★☗✔✖❮❯⚑⚙
+# «»±˖˗‑‐‒ ━ ✚‐↔←↑↓→↭⇎⇔⋆━◂▸◄►◆☀★✔✖❮❯⚑⚙
   local PL_BRANCH_CHAR
   () {
     local LC_ALL="" LC_CTYPE="en_US.UTF-8"
@@ -252,11 +252,11 @@ prompt_git() {
       deleted=" ‒$number_added_deleted±"
     fi
 
-    # ☗	tag name at current commit
+    # 	tag name at current commit
     local tag_at_current_commit
     if [[ "$AGNOSTERZAK_GIT_SHOW_TAGS" == true ]]; then
       tag_at_current_commit=$(git describe --exact-match --tags $current_commit_hash 2> /dev/null)
-      if [[ -n $tag_at_current_commit ]]; then tagged=" ☗$tag_at_current_commit "; fi
+      if [[ -n $tag_at_current_commit ]]; then tagged=" $tag_at_current_commit "; fi
     fi
 
     # ⚙	sets of stashed files
@@ -742,7 +742,7 @@ preexec_functions+=(prompt_prompt_timer_preexec)
 
 ## Icon	Meaning
 # ✔	clean directory
-# ☗	tag name at current commit
+# 	tag name at current commit
 # ☀	new untracked files preceeded by their number
 # ✚	added files from the new untracked ones preceeded by their number
 # ‒	deleted files preceeded by their number
