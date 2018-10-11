@@ -593,14 +593,16 @@ prompt_status_exitcode() {
 }
 
 prompt_indicator() {
-  local indicator # ❯ ❮ ➤ ➜ ᐅ $'\u276F' $'\u276E' $'\u27A4' $'\u279C' $'\u1405'
+  #                       ❯           ❮         ➤        ➜        ᐅ
+  # $'\uE0B0' $'\uE602' $'\u276F' $'\u276E' $'\u27A4' $'\u279C' $'\u1405'
+  local indicator
   if [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
-    indicator="%{%F{magenta}%}\uF178"
+    indicator="%{%F{magenta}%}\uE602"
   else
     if [[ $UID -eq 0 ]]; then
-      indicator="%{%F{red}%}\uF178"
+      indicator="%{%F{red}%}\uE602"
     else
-      indicator="%{%F{yellow}%}\uF178"
+      indicator="%{%F{yellow}%}\uE602"
     fi
   fi
   prompt_segment default default "$indicator"
