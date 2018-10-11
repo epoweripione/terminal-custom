@@ -180,11 +180,11 @@ prompt_battery() {
 
 # Git: branch/detached head, dirty status
 prompt_git() {
-#«»±˖˗‑‐‒ ━ ✚‐↔←↑↓→↭⇎⇔⋆━◂▸◄►◆☀★☗☊✔✖❮❯⚑⚙
+#«»±˖˗‑‐‒ ━ ✚‐↔←↑↓→↭⇎⇔⋆━◂▸◄►◆☀★☗✔✖❮❯⚑⚙
   local PL_BRANCH_CHAR
   () {
     local LC_ALL="" LC_CTYPE="en_US.UTF-8"
-    PL_BRANCH_CHAR=$'\ue0a0'         # 
+    PL_BRANCH_CHAR=$'\uE0A0'         # 
   }
   local ref dirty mode repo_path clean has_upstream
   local modified untracked added deleted tagged stashed
@@ -276,7 +276,7 @@ prompt_git() {
     # ⚑	ready to commit
     if [[ $number_added -gt 0 || $number_added_modified -gt 0 || $number_added_deleted -gt 0 ]]; then ready_commit=' ⚑'; fi
 
-    # ☊	branch has a stream, preceeded by his remote name
+    # 	branch has a stream, preceeded by his remote name
     # ↑	commits ahead on the current branch comparing to remote, preceeded by their number
     # ↓	commits behind on the current branch comparing to remote, preceeded by their number
     local has_upstream=false
@@ -291,7 +291,7 @@ prompt_git() {
       commits_ahead=$(\grep -c "^<" <<< "$commits_diff")
       commits_behind=$(\grep -c "^>" <<< "$commits_diff")
       upstream_prompt="$(git rev-parse --symbolic-full-name --abbrev-ref @{upstream} 2> /dev/null)"
-      upstream_prompt=$(sed -e 's/\/.*$/ ☊ /g' <<< "$upstream_prompt")
+      upstream_prompt=$(sed -e 's/\/.*$/  /g' <<< "$upstream_prompt")
     fi
 
     has_diverged=false
@@ -595,12 +595,12 @@ prompt_status_exitcode() {
 prompt_indicator() {
   local indicator # ❯ ❮ ➤ ➜ ᐅ $'\u276F' $'\u276E' $'\u27A4' $'\u279C' $'\u1405'
   if [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
-    indicator="%{%F{magenta}%}\u27A4"
+    indicator="%{%F{magenta}%}\uF178"
   else
     if [[ $UID -eq 0 ]]; then
-      indicator="%{%F{red}%}\u27A4"
+      indicator="%{%F{red}%}\uF178"
     else
-      indicator="%{%F{yellow}%}\u27A4"
+      indicator="%{%F{yellow}%}\uF178"
     fi
   fi
   prompt_segment default default "$indicator"
@@ -748,7 +748,7 @@ preexec_functions+=(prompt_prompt_timer_preexec)
 # ±	added files from the modifies or delete ones preceeded by their number
 # ⚑	ready to commit
 # ⚙	sets of stashed files preceeded by their number
-# ☊	branch has a stream, preceeded by his remote name
+# 	branch has a stream, preceeded by his remote name
 # ↑	commits ahead on the current branch comparing to remote, preceeded by their number
 # ↓	commits behind on the current branch comparing to remote, preceeded by their number
 # <B>	bisect state on the current branch
