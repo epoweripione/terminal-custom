@@ -81,7 +81,7 @@ $sl.PromptSymbols.StartSymbol = ' '
 #                 ❯      ❮    ➤       ➜    ᐅ
 # 0xE0B0 0xE602 0x276F 0x276E 0x27A4 0x279C 0x1405
 $sl.PromptSymbols.PromptIndicator = [char]::ConvertFromUtf32(0xE602)
-$sl.PromptSymbols.SegmentForwardSymbol = [char]::ConvertFromUtf32(0xE0B0)
+$sl.PromptSymbols.SegmentForwardSymbol = [char]::ConvertFromUtf32(0xE0B4)
 $sl.Colors.PromptForegroundColor = [ConsoleColor]::White
 $sl.Colors.PromptSymbolColor = [ConsoleColor]::White
 $sl.Colors.PromptHighlightColor = [ConsoleColor]::DarkBlue

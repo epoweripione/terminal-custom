@@ -38,7 +38,7 @@ ostype=$(uname)
 
 colorEcho ${BLUE} "Cloning custom shell script repository to HOME..."
 if [[ -d ~/terminal-custom ]]; then
-    cd ~/terminal-custom && git pull && cd -
+    cd ~/terminal-custom && git pull
 else
     git clone https://github.com/epoweripione/terminal-custom.git ~/terminal-custom
 fi
@@ -101,5 +101,5 @@ if [[ -d $ZSH/custom ]]; then
 fi
 
 
-cd $HOME
+cd -
 colorEcho ${GREEN} "Custom shell script download finished!"
