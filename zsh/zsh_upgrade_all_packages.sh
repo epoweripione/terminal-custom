@@ -113,12 +113,19 @@ if [[ -d "$HOME/.nvm" ]]; then
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     fi
 
+    colorEcho ${BLUE} "Getting node version..."
     CURRENT_VERSION=$(nvm version)
     REMOTE_VERSION=$(nvm version-remote)
+    
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "Updating node..."
         nvm install node --reinstall-packages-from=node
         # nvm use node
+        nvm alias default node
+        ## Fix node & npm not found
+        [ -L "/usr/bin/node" ] && rm -f /usr/bin/node
+        [ -L "/usr/bin/npm" ] && rm -f /usr/bin/npm
+        ln -s "$(which node)" /usr/bin/node && ln -s "$(which npm)" /usr/bin/npm
     fi
 fi
 

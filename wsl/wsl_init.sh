@@ -239,9 +239,13 @@ fi
 ## Install nodejs
 if type 'nvm' 2>/dev/null | grep -q 'function'; then
     if [[ ! "$(command -v node)" ]]; then
-        nvm install node && nvm use node
-        ## Fix npm not found
-        ln -s $(which node) /usr/bin/node && ln -s $(which npm) /usr/bin/npm
+        nvm install node
+        # nvm use node
+        nvm alias default node
+        ## Fix node & npm not found
+        [ -L "/usr/bin/node" ] && rm -f /usr/bin/node
+        [ -L "/usr/bin/npm" ] && rm -f /usr/bin/npm
+        ln -s "$(which node)" /usr/bin/node && ln -s "$(which npm)" /usr/bin/npm
     fi
 fi
 

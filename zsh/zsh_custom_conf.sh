@@ -292,6 +292,7 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
     export DOCKER_TOOLBOX_INSTALL_PATH='/c/Program\ Files/Docker\ Toolbox'
 
     export WINDOWS_USER=$(/c/Windows/System32/cmd.exe /c 'echo %USERNAME%' | sed -e 's/\r//g')
+    # export WINDOWS_USER=$(/c/Windows/System32/cmd.exe /c "whoami" | sed -E s/'^.+\\([^\\]*)$'/'\1'/)
     export DOCKER_TLS_VERIFY=1
     export DOCKER_HOST=tcp://192.168.99.100:2376
     export DOCKER_CERT_PATH=/c/Users/$WINDOWS_USER/.docker/machine/certs
