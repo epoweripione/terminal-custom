@@ -103,46 +103,6 @@ if [[ $UID -eq 0 && -x "$(command -v docker-compose)" ]]; then
 fi
 
 
-if [[ -d "$HOME/.nvm" ]]; then
-    colorEcho ${BLUE} "Updating nvm..."
-    if type 'nvm' 2>/dev/null | grep -q 'function'; then
-        :
-    else
-        export NVM_DIR="$HOME/.nvm"
-        [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
-    fi
-    
-    cd "$NVM_DIR" && git pull && cd $HOME
-
-    colorEcho ${BLUE} "Getting node version..."
-    CURRENT_VERSION=$(nvm version)
-    REMOTE_VERSION=$(nvm version-remote)
-    
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        colorEcho ${BLUE} "Updating node..."
-        nvm install node --reinstall-packages-from=node
-        # nvm use node
-        nvm alias default node
-        ## Fix node & npm not found
-        [ -L "/usr/bin/node" ] && rm -f /usr/bin/node
-        [ -L "/usr/bin/npm" ] && rm -f /usr/bin/npm
-        ln -s "$(which node)" /usr/bin/node && ln -s "$(which npm)" /usr/bin/npm
-    fi
-fi
-
-
-if [[ -x "$(command -v npm-check)" ]]; then
-    colorEcho ${BLUE} "Updating npm global packages..."
-    npm-check -y -g
-fi
-
-
-if [[ -x "$(command -v yarn)" ]]; then
-    colorEcho ${BLUE} "Updating yarn global packages..."
-    yarn global upgrade # yarn global upgrade --latest
-fi
-
-
 if [[ -d "$HOME/.gvm" ]]; then
     colorEcho ${BLUE} "Updating gvm & go..."
     if type 'gvm' 2>/dev/null | grep -q 'function'; then
@@ -259,6 +219,7 @@ if [[ -d "$HOME/.jabba" ]]; then
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
             . ~/.jabba/jabba.sh && \
+            sed -i "/jabba.sh/d" ~/.zshrc && \
             cd $HOME
     fi
 fi
@@ -279,10 +240,50 @@ fi
 
 if [[ -x "$(command -v conda)" ]]; then
     colorEcho ${BLUE} "Updating conda..."
-    conda update conda
+    conda update -y conda
 
     colorEcho ${BLUE} "Updating all installed conda packages..."
     conda update -y --all
+fi
+
+
+if [[ -d "$HOME/.nvm" ]]; then
+    colorEcho ${BLUE} "Updating nvm..."
+    if type 'nvm' 2>/dev/null | grep -q 'function'; then
+        :
+    else
+        export NVM_DIR="$HOME/.nvm"
+        [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+    fi
+    
+    cd "$NVM_DIR" && git pull && cd $HOME
+
+    colorEcho ${BLUE} "Getting node version..."
+    CURRENT_VERSION=$(nvm version)
+    REMOTE_VERSION=$(nvm version-remote)
+    
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        colorEcho ${BLUE} "Updating node..."
+        nvm install node --reinstall-packages-from=node
+        # nvm use node
+        nvm alias default node
+        ## Fix node & npm not found
+        [ -L "/usr/bin/node" ] && rm -f /usr/bin/node
+        [ -L "/usr/bin/npm" ] && rm -f /usr/bin/npm
+        ln -s "$(which node)" /usr/bin/node && ln -s "$(which npm)" /usr/bin/npm
+    fi
+fi
+
+
+if [[ -x "$(command -v npm-check)" ]]; then
+    colorEcho ${BLUE} "Updating npm global packages..."
+    npm-check -y -g
+fi
+
+
+if [[ -x "$(command -v yarn)" ]]; then
+    colorEcho ${BLUE} "Updating yarn global packages..."
+    yarn global upgrade # yarn global upgrade --latest
 fi
 
 
