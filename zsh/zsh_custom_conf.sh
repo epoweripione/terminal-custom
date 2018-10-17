@@ -255,29 +255,29 @@ if [[ -d "$HOME/.nvm" ]]; then
 
   export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
 
-  # use specified node version for the current directory with .nvmrc
-  # echo "lts/*" > .nvmrc # to default to the latest LTS version
-  # echo "node" > .nvmrc # to default to the latest version
-  autoload -U add-zsh-hook
-  load-nvmrc() {
-      local node_version="$(nvm version)"
-      local nvmrc_path="$(nvm_find_nvmrc)"
+  # # use specified node version for the current directory with .nvmrc
+  # # echo "lts/*" > .nvmrc # to default to the latest LTS version
+  # # echo "node" > .nvmrc # to default to the latest version
+  # autoload -U add-zsh-hook
+  # load-nvmrc() {
+  #     local node_version="$(nvm version)"
+  #     local nvmrc_path="$(nvm_find_nvmrc)"
 
-      if [[ -n "$nvmrc_path" ]]; then
-          local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+  #     if [[ -n "$nvmrc_path" ]]; then
+  #         local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
 
-          if [[ "$nvmrc_node_version" == "N/A" ]]; then
-              nvm install
-          elif [[ "$nvmrc_node_version" != "$node_version" ]]; then
-              nvm use
-          fi
-      elif [[ "$node_version" != "$(nvm version default)" ]]; then
-          # echo "Reverting to nvm default version"
-          nvm use default
-      fi
-  }
-  add-zsh-hook chpwd load-nvmrc
-  load-nvmrc
+  #         if [[ "$nvmrc_node_version" == "N/A" ]]; then
+  #             nvm install
+  #         elif [[ "$nvmrc_node_version" != "$node_version" ]]; then
+  #             nvm use
+  #         fi
+  #     elif [[ "$node_version" != "$(nvm version default)" ]]; then
+  #         # echo "Reverting to nvm default version"
+  #         nvm use default
+  #     fi
+  # }
+  # add-zsh-hook chpwd load-nvmrc
+  # load-nvmrc
 fi
 
 
