@@ -193,8 +193,12 @@ fi
 
 # nvm
 if [[ -d "$HOME/.nvm" ]]; then
-  export NVM_DIR="$HOME/.nvm"
-  [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+  if type 'nvm' 2>/dev/null | grep -q 'function'; then
+    :
+  else
+    export NVM_DIR="$HOME/.nvm"
+    [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+  fi
 
   export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
 
@@ -225,7 +229,11 @@ fi
 
 # gvm
 if [[ -d "$HOME/.gvm" ]]; then
-  [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+  if type 'gvm' 2>/dev/null | grep -q 'function'; then
+    :
+  else
+    [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+  fi
 
   if [[ "$(gvm list | grep 'go1.4')" ]]; then
     CURRENT_VERSION=$(gvm list | grep '=>' | cut -d' ' -f2)

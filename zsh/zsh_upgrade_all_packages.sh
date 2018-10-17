@@ -105,13 +105,14 @@ fi
 
 if [[ -d "$HOME/.nvm" ]]; then
     colorEcho ${BLUE} "Updating nvm..."
-    cd "$NVM_DIR" && git pull && cd $HOME
-
     if type 'nvm' 2>/dev/null | grep -q 'function'; then
         :
     else
+        export NVM_DIR="$HOME/.nvm"
         [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
     fi
+    
+    cd "$NVM_DIR" && git pull && cd $HOME
 
     colorEcho ${BLUE} "Getting node version..."
     CURRENT_VERSION=$(nvm version)
@@ -144,7 +145,11 @@ fi
 
 if [[ -d "$HOME/.gvm" ]]; then
     colorEcho ${BLUE} "Updating gvm & go..."
-    [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+    if type 'gvm' 2>/dev/null | grep -q 'function'; then
+        :
+    else
+        [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+    fi
 
     ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
     if [[ ! "$(gvm list | grep 'go1.4')" ]]; then
@@ -239,8 +244,13 @@ if [[ "$(command -v fuck)" && -x "$(command -v pip3)" ]]; then
 fi
 
 
-if [[ "$(command -v jabba)" ]]; then
+if [[ -d "$HOME/.jabba" ]]; then
     colorEcho ${BLUE} "Updating jabba..."
+    if type 'jabba' 2>/dev/null | grep -q 'function'; then
+        :
+    else
+        [[ -s "$HOME/.jabba/jabba.sh" ]] && source "$HOME/.jabba/jabba.sh"
+    fi
 
     CHECK_URL="https://api.github.com/repos/shyiko/jabba/releases/latest"
 
@@ -255,6 +265,7 @@ fi
 
 
 if [[ -d "$HOME/.sdkman" ]]; then
+    colorEcho ${BLUE} "Updating sdk using sdkman..."
     if type 'sdk' 2>/dev/null | grep -q 'function'; then
         :
     else
@@ -262,13 +273,15 @@ if [[ -d "$HOME/.sdkman" ]]; then
         [[ -s "/root/.sdkman/bin/sdkman-init.sh" ]] && source "/root/.sdkman/bin/sdkman-init.sh"
     fi
 
-    colorEcho ${BLUE} "Updating sdk using sdkman..."
     sdk selfupdate && sdk update && printf "Y\n" | sdk upgrade
 fi
 
 
 if [[ -x "$(command -v conda)" ]]; then
     colorEcho ${BLUE} "Updating conda..."
+    conda update conda
+
+    colorEcho ${BLUE} "Updating all installed conda packages..."
     conda update -y --all
 fi
 
