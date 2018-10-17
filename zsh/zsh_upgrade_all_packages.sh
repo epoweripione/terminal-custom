@@ -110,7 +110,7 @@ if [[ -d "$HOME/.nvm" ]]; then
     if type 'nvm' 2>/dev/null | grep -q 'function'; then
         :
     else
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
     fi
 
     colorEcho ${BLUE} "Getting node version..."
@@ -144,7 +144,7 @@ fi
 
 if [[ -d "$HOME/.gvm" ]]; then
     colorEcho ${BLUE} "Updating gvm & go..."
-    source $HOME/.gvm/scripts/gvm
+    [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 
     ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
     if [[ ! "$(gvm list | grep 'go1.4')" ]]; then

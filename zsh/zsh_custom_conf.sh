@@ -194,7 +194,7 @@ fi
 # nvm
 if [[ -d "$HOME/.nvm" ]]; then
   export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
 
   export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
 
@@ -215,7 +215,7 @@ if [[ -d "$HOME/.nvm" ]]; then
               nvm use
           fi
       elif [[ "$node_version" != "$(nvm version default)" ]]; then
-          # Reverting to nvm default version
+          # echo "Reverting to nvm default version"
           nvm use default
       fi
   }
@@ -225,7 +225,7 @@ fi
 
 # gvm
 if [[ -d "$HOME/.gvm" ]]; then
-  source $HOME/.gvm/scripts/gvm
+  [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 
   if [[ "$(gvm list | grep 'go1.4')" ]]; then
     CURRENT_VERSION=$(gvm list | grep '=>' | cut -d' ' -f2)
@@ -246,7 +246,7 @@ if [[ -d "$HOME/.jabba" ]]; then
   if type 'jabba' 2>/dev/null | grep -q 'function'; then
     :
   else
-    [ -s "$HOME/.jabba/jabba.sh" ] && source "$HOME/.jabba/jabba.sh"
+    [[ -s "$HOME/.jabba/jabba.sh" ]] && source "$HOME/.jabba/jabba.sh"
   fi
 fi
 

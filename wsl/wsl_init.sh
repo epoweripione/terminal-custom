@@ -232,7 +232,8 @@ fi
 
 if [[ -d "$HOME/.nvm" ]]; then
     export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+
     export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
 fi
 
@@ -343,7 +344,7 @@ if [[ ! -d "$HOME/.gvm" ]]; then
 fi
 
 if [[ -d "$HOME/.gvm" ]]; then
-    source $HOME/.gvm/scripts/gvm
+    [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 
     ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
     if [[ -n "$GVM_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
@@ -412,7 +413,7 @@ if [[ ! -x "$(command -v composer)" ]]; then
 
     ### Install composer packages
     colorEcho ${BLUE} "Installing composer packages..."
-    composer g require "hirak/prestissimo:^0.3.7" && \
+    composer g require "hirak/prestissimo" && \
         composer g require friendsofphp/php-cs-fixer && \
         composer g require --dev phpunit/phpunit ^7 && \
         composer g require psy/psysh:@stable
