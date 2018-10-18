@@ -249,19 +249,19 @@ fi
 
 if [[ -d "$HOME/.nvm" ]]; then
     colorEcho ${BLUE} "Updating nvm..."
+    cd "$HOME/.nvm" && git pull && cd $HOME
+
     if type 'nvm' 2>/dev/null | grep -q 'function'; then
         :
     else
         # export NVM_DIR="$HOME/.nvm"
         [[ -s "$HOME/.nvm/nvm.sh" ]] && source "$HOME/.nvm/nvm.sh"
     fi
-    
-    cd "$HOME/.nvm" && git pull && cd $HOME
 
     colorEcho ${BLUE} "Getting node version..."
     CURRENT_VERSION=$(nvm version)
     REMOTE_VERSION=$(nvm version-remote)
-    
+
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "Updating node..."
         nvm install node --reinstall-packages-from=node

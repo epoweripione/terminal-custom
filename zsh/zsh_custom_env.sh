@@ -7,3 +7,6 @@ if [[ $terminal_colors -eq 256 ]]; then
   export TERM="xterm-256color"
   PROMPT_EOL_MARK=""
 fi
+
+# load-nvmrc: use specified node version for the current directory with .nvmrc
+NVM_LOAD_NVMRC_IN_CURRENT_DIRECTORY=false
