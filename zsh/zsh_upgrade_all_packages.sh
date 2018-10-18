@@ -230,8 +230,8 @@ if [[ -d "$HOME/.sdkman" ]]; then
     if type 'sdk' 2>/dev/null | grep -q 'function'; then
         :
     else
-        export SDKMAN_DIR="/root/.sdkman"
-        [[ -s "/root/.sdkman/bin/sdkman-init.sh" ]] && source "/root/.sdkman/bin/sdkman-init.sh"
+        # export SDKMAN_DIR="$HOME/.sdkman"
+        [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
     fi
 
     sdk selfupdate && sdk update && printf "Y\n" | sdk upgrade
@@ -252,11 +252,11 @@ if [[ -d "$HOME/.nvm" ]]; then
     if type 'nvm' 2>/dev/null | grep -q 'function'; then
         :
     else
-        export NVM_DIR="$HOME/.nvm"
-        [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+        # export NVM_DIR="$HOME/.nvm"
+        [[ -s "$HOME/.nvm/nvm.sh" ]] && source "$HOME/.nvm/nvm.sh"
     fi
     
-    cd "$NVM_DIR" && git pull && cd $HOME
+    cd "$HOME/.nvm" && git pull && cd $HOME
 
     colorEcho ${BLUE} "Getting node version..."
     CURRENT_VERSION=$(nvm version)
