@@ -53,6 +53,7 @@ chmod +x ~/terminal_256colors.sh
 chmod +x ~/terminal_colors.sh
 chmod +x ~/nano_installer.sh
 chmod +x ~/pecl_install_php_extensions.sh
+chmod +x ~/ssl-cert-info.sh
 
 cp -f ~/terminal-custom/terminal_256colors.py ~
 
