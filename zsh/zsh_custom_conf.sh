@@ -228,6 +228,10 @@ if [[ -x "$(command -v java)" ]]; then
     export JRE_HOME=$JAVA_HOME/jre
     export CLASSPATH=$JAVA_HOME/lib
     export PATH=$PATH:$JAVA_HOME/bin
+  else
+    if [[ -z "$CLASSPATH" ]]; then
+      export CLASSPATH=$JAVA_HOME/lib
+    fi
   fi
 fi
 
