@@ -298,6 +298,24 @@ if [[ -d "$HOME/.sdkman" ]]; then
 fi
 
 
+# proxychains4 aliases
+if [[ -x "$(command -v proxychains4)" ]]; then
+  alias proxywan='proxychains4'
+  alias proxylan='proxychains4 -f /etc/proxychains/proxychains_lan.conf'
+fi
+
+
+# multi-v2ray
+if [[ -d "/usr/local/multi-v2ray" ]]; then
+  if [[ -z "$PYTHONPATH" ]]; then
+    export PYTHONPATH=/usr/local/multi-v2ray
+  else
+    export PYTHONPATH=$PYTHONPATH:/usr/local/multi-v2ray
+  fi
+  export PYTHONIOENCODING=utf-8
+fi
+
+
 # WSL
 if [[ $(uname -r) =~ "Microsoft" ]]; then
   # Docker
