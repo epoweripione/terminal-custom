@@ -116,7 +116,7 @@ apt update && apt upgrade -y
 # Install useful packages
 colorEcho ${BLUE} "Install useful packages..."
 apt install -y binutils build-essential di dnsutils g++ gcc \
-    git htop iproute2 make net-tools p7zip psmisc unzip zip
+    git htop iproute2 make net-tools p7zip psmisc tree unzip zip
 
 
 # Install dev packages
@@ -269,9 +269,10 @@ curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
     . ~/.jabba/jabba.sh
 
 ## OpenJDK
-colorEcho ${BLUE} "Installing OpenJDK 11..."
-jabba install openjdk@1.11.0-1 && jabba alias default openjdk@1.11.0-1
+colorEcho ${BLUE} "Installing JDK 11..."
 # apt install -y default-jdk default-jre
+# jabba install openjdk@1.11.0-1 && jabba alias default openjdk@1.11.0-1
+jabba install 1.11.0-1 && jabba alias default 1.11.0-1
 
 ## Oracle jdk 8
 ## http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html

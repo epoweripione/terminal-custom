@@ -6,6 +6,13 @@ ostype=$(uname)
 # export PS2="> "
 
 
+# fix duplicate environment variables "SHELL=/usr/bin/zsh"
+if (( $(env | grep SHELL | wc -l) > 1 )); then
+  unset SHELL
+  export SHELL=$(which zsh)
+fi
+
+
 # disable hosts auto completion
 zstyle ':completion:*' hosts off
 
@@ -225,7 +232,9 @@ fi
 if [[ -x "$(command -v java)" ]]; then
   if [[ -z "$JAVA_HOME" ]]; then
     export JAVA_HOME=$(readlink -f $(which java) | sed "s:/jre/bin/java::" | sed "s:/bin/java::")
-    export JRE_HOME=$JAVA_HOME/jre
+    if [[ -d "$JAVA_HOME/jre" ]]; then
+      export JRE_HOME=$JAVA_HOME/jre
+    fi
     export CLASSPATH=$JAVA_HOME/lib
     export PATH=$PATH:$JAVA_HOME/bin
   else

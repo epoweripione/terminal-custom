@@ -106,12 +106,16 @@ function get_arch() {
 
 # Install ZSH Shell
 colorEcho ${BLUE} "Installing ZSH..."
-if check_release_package_manager packageManager yum; then
-    yum update -y && yum -y -q install git zsh
-elif check_release_package_manager packageManager apt; then
-    apt update && apt -y install git zsh
-elif check_release_package_manager packageManager pacman; then
+if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     pacman -Sy && pacman -S git zsh
+else
+    if check_release_package_manager packageManager yum; then
+        yum update -y && yum -y -q install git zsh
+    elif check_release_package_manager packageManager apt; then
+        apt update && apt -y install git zsh
+    elif check_release_package_manager packageManager pacman; then
+        pacman -Sy && pacman -S git zsh
+    fi
 fi
 
 
@@ -122,16 +126,16 @@ fi
 
 
 # Launch ZSH in BASH
-if [[ ! $(grep "exec zsh" ~/.bashrc) ]]; then
-tee -a ~/.bashrc <<-'EOF'
+# if [[ ! $(grep "exec zsh" ~/.bashrc) ]]; then
+# tee -a ~/.bashrc <<-'EOF'
 
-# Launch ZSH
-if [[ "${ZSH_VERSION:-unset}" = "unset" ]]; then
-    export SHELL=$(which zsh)
-    exec zsh
-fi
-EOF
-fi
+# # Launch ZSH
+# if [[ "${ZSH_VERSION:-unset}" = "unset" ]]; then
+#     export SHELL=$(which zsh)
+#     exec zsh
+# fi
+# EOF
+# fi
 
 
 ## Install oh-my-zsh
