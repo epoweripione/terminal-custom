@@ -283,7 +283,7 @@ fi
 
 if [[ -x "$(command -v yarn)" ]]; then
     colorEcho ${BLUE} "Updating yarn global packages..."
-    yarn global upgrade # yarn global upgrade --latest
+    yarn global upgrade --latest
 fi
 
 
