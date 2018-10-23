@@ -451,15 +451,19 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
     export PATH=$PATH:$HOME/miniconda3/bin
     # source $HOME/miniconda3/bin/activate
 
-    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/free/ && \
-        conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/main/ && \
-        conda config --set show_channel_urls yes
+    ## Use mirror channels
+    # conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/free/ && \
+    #     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/main/ && \
+    #     conda config --set show_channel_urls yes
 
-    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/ && \
-        conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/msys2/ && \
-        conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/bioconda/ && \
-        conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
+    # conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/ && \
+    #     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/msys2/ && \
+    #     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/bioconda/ && \
+    #     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
     
+    ## Use default channels
+    # conda config --remove-key channels
+
     conda update -y --all
 fi
 

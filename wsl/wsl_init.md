@@ -42,6 +42,9 @@ sed -i 's/dns/wins dns/' /etc/nsswitch.conf
 `sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"`
 
 ## Run zsh as default shell
+`sudo usermod -s $(which zsh) <username>`
+
+**or**  
 `chsh -s $(which zsh)`
 
 **or**  
@@ -59,13 +62,15 @@ EOF
 # Install custom packages
 ```
 apt update && apt upgrade -y
-apt install -y build-essential di dnsutils git htop iproute2 nano net-tools p7zip psmisc unzip
+apt install -y binutils build-essential di dnsutils g++ gcc \
+    git htop iproute2 make net-tools p7zip psmisc tree unzip zip
 ```
 
 # SSH
 ```
 mkdir -p ~/.ssh && chmod 700 ~/.ssh/
 # gen ssh key
+# ssh-keygen -o -a 100 -t ed25519 -C "username@mail.com"
 # ssh-keygen -t ecdsa -b 521 -C "username@mail.com"
 # ssh-keygen -t rsa -C "$(whoami)@$(hostname)-$(date -I)"
 chmod 600 ~/.ssh/*
@@ -102,10 +107,10 @@ pip3 list -o | grep -E -v '^-|^Package' | cut -d ' ' -f 1 | xargs -n1 pip3 insta
 # Anaconda or Miniconda
 ## Anaconda
 1. Download Anaconda from https://www.anaconda.com/download/#linux
-`curl -SL -O https://repo.anaconda.com/archive/Anaconda3-5.2.0-Linux-x86_64.sh`
+`curl -SL -O https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh`
 
 2. Install Anaconda
-`bash Anaconda3-5.2.0-Linux-x86_64.sh`
+`bash Anaconda3-5.3.0-Linux-x86_64.sh`
 
 3. zsh: add Anaconda to PATH
 `echo -e "\nexport PATH=\"/root/anaconda3/bin:\$PATH\"" >> ~/.zshrc`
@@ -122,6 +127,7 @@ pip3 list -o | grep -E -v '^-|^Package' | cut -d ' ' -f 1 | xargs -n1 pip3 insta
 
 4. conda repo mirrors in china
 ```
+## Use mirror channels
 conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/free/ && \
     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/main/ && \
     conda config --set show_channel_urls yes
@@ -130,7 +136,10 @@ conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/free/ && \
 conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/ && \
     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/msys2/ && \
     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/bioconda/ && \
-    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
+    conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/    
+
+## Use default channels
+# conda config --remove-key channels
 ```
 
 ## Uninstalling Anaconda or Miniconda
@@ -149,18 +158,21 @@ https://conda.io/docs/user-guide/getting-started.html
 https://conda.io/docs/_downloads/conda-cheatsheet.pdf
 ```
 conda info
-conda update conda
+conda update -y conda
 conda install <PackageName>
 conda update <PackageName>
-conda update --all
+conda update -y --all
 
-conda create -n py36 python=3.6
-source activate py36
+conda clean --tarballs
+conda clean --all
+
+conda create -n py37 python=3.7
+source activate py37
 source deactivate
 
 conda create -n py27 python=2.7
-conda activate py2.7
-conda deactivate
+source activate py2.7
+source deactivate
 ```
 
 # Nerd Fonts Patcher
@@ -279,7 +291,7 @@ chmod a+x /usr/local/bin/composer
 composer config -g repo.packagist composer https://packagist.laravel-china.org
 
 # Install packages
-composer g require "hirak/prestissimo:^0.3.7"
+composer g require "hirak/prestissimo"
 composer g require friendsofphp/php-cs-fixer
 composer g require --dev phpunit/phpunit ^7
 composer g require psy/psysh:@stable
