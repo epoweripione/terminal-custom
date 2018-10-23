@@ -57,6 +57,11 @@ npm install -g cordova ionic
 colorEcho ${BLUE} "Installing electron..."
 npm install -g electron
 
+colorEcho ${BLUE} "Installing arch-wiki-man..."
+# arch-wiki-man
+## https://github.com/greg-js/arch-wiki-man
+npm install -g arch-wiki-man
+
 # Install global packages without binaries
 # colorEcho ${BLUE} "Installing puppeteer..."
 # npm install -g puppeteer

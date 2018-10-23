@@ -72,6 +72,11 @@ yarn global add cordova ionic
 colorEcho ${BLUE} "Installing electron..."
 yarn global add electron
 
+colorEcho ${BLUE} "Installing arch-wiki-man..."
+# arch-wiki-man
+## https://github.com/greg-js/arch-wiki-man
+yarn global add arch-wiki-man
+
 # Install global packages without binaries
 # colorEcho ${BLUE} "Installing puppeteer..."
 # yarn global add puppeteer
