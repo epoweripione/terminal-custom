@@ -339,7 +339,7 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
     export DOCKER_CERT_PATH=/c/Users/$WINDOWS_USER/.docker/machine/certs
 
     alias docker-machine="$DOCKER_TOOLBOX_INSTALL_PATH/docker-machine.exe"
-  else
+  elif [[ -d "/c/Program Files/Docker/Docker" ]]; then
     # export PATH="$PATH:/mnt/c/Program\ Files/Docker/Docker/resources/bin"
     export DOCKER_INSTALL_PATH='/c/Program\ Files/Docker/Docker'
 

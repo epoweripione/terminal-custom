@@ -238,6 +238,27 @@ if [[ -d "$HOME/.sdkman" ]]; then
 fi
 
 
+if [[ -x "$(command -v proxy)" ]]; then
+    colorEcho ${BLUE} "Updating goproxy..."
+    # https://github.com/snail007/goproxy
+
+    CHECK_URL="https://api.github.com/repos/snail007/goproxy/releases/latest"
+
+    CURRENT_VERSION=$(proxy --version 2>&1 | cut -d'_' -f1)
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        curl -SL https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh | bash
+    fi
+fi
+
+
+if [[ -x "$(command -v v2ray)" ]]; then
+    colorEcho ${BLUE} "Updating multi-v2ray..."
+    # https://github.com/Jrohy/multi-v2ray
+    v2ray update
+fi
+
+
 if [[ -x "$(command -v conda)" ]]; then
     colorEcho ${BLUE} "Updating conda..."
     conda update -y conda
@@ -256,6 +277,16 @@ if [[ -d "$HOME/.nvm" ]]; then
     else
         # export NVM_DIR="$HOME/.nvm"
         [[ -s "$HOME/.nvm/nvm.sh" ]] && source "$HOME/.nvm/nvm.sh"
+    fi
+
+    colorEcho ${BLUE} "Getting node LTS version..."
+    CURRENT_VERSION=$(nvm version lts/*)
+    REMOTE_VERSION=$(nvm version-remote lts/*)
+
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        colorEcho ${BLUE} "Updating node LTS..."
+        nvm install --lts
+        # nvm install --lts=dubnium --reinstall-packages-from=lts/dubnium
     fi
 
     colorEcho ${BLUE} "Getting node version..."
