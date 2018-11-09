@@ -13,6 +13,10 @@ if (( $(env | grep SHELL | wc -l) > 1 )); then
 fi
 
 
+# compinit
+[[ ! -s "$HOME/.zcompdump" ]] && source "$HOME/zsh_compinit.sh"
+
+
 # disable hosts auto completion
 zstyle ':completion:*' hosts off
 

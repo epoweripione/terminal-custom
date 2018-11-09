@@ -78,13 +78,13 @@ if [[ ! -e /etc/apt/sources.list.d/github_git-lfs.list ]]; then
 fi
 
 ## docker
-if [[ ! $(grep "docker-ce" /etc/apt/sources.list) ]]; then
-    curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add -
-    add-apt-repository \
-        "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/$(. /etc/os-release; echo "$ID") \
-        $(lsb_release -cs) \
-        stable"
-fi
+# if [[ ! $(grep "docker-ce" /etc/apt/sources.list) ]]; then
+#     curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/$(. /etc/os-release; echo "$ID")/gpg | apt-key add -
+#     add-apt-repository \
+#         "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/$(. /etc/os-release; echo "$ID") \
+#         $(lsb_release -cs) \
+#         stable"
+# fi
 
 ## yarn
 if [[ ! -e /etc/apt/sources.list.d/yarn.list ]]; then
@@ -202,7 +202,10 @@ fi
 
 # Docker
 colorEcho ${BLUE} "Installing Docker..."
-apt install -y docker-ce
+# apt install -y docker-ce
+# https://github.com/docker/docker-install
+curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+
 
 ## Install Docker Compose
 if [[ ! -x "$(command -v docker-compose)" ]]; then
@@ -213,7 +216,7 @@ if [[ ! -x "$(command -v docker-compose)" ]]; then
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL=https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`
         curl -SL $DOWNLOAD_URL -o /usr/local/bin/docker-compose && \
-        chmod +x /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
     fi
 fi
 
