@@ -90,20 +90,24 @@ apt install -y php7.2-dev libpcre3-dev gcc make re2c --no-install-recommends && 
 
 ## PDFlib
 ## https://www.pdflib.com/download/pdflib-product-family/
-cd /tmp && \
-    curl -o pdflib.tar.gz https://www.pdflib.com/binaries/PDFlib/912/PDFlib-9.1.2p1-Linux-x86_64-php.tar.gz -L && \
-    tar -xvf pdflib.tar.gz && \
-    mv PDFlib-* pdflib && cd pdflib && \
-    cp bind/php/php-720-nts/php_pdflib.so $PHP_EXT_DIR && \
-    echo 'extension=php_pdflib.so' > $PHP_INI_DIR/90-pdflib.ini && \
-    rm -rf /tmp/*
+PDFlib_REMOTE_VER="9.1.2p1"
+PDFlib_CURRENT_VER=$(php --ri pdflib | grep "Binary-Version" | cut -d'>' -f2 | cut -d' ' -f2)
+if [[ "$PDFlib_CURRENT_VER" != "$PDFlib_REMOTE_VER" ]]; then
+    cd /tmp && \
+        curl -o pdflib.tar.gz https://www.pdflib.com/binaries/PDFlib/912/PDFlib-9.1.2p1-Linux-x86_64-php.tar.gz -L && \
+        tar -xvf pdflib.tar.gz && \
+        mv PDFlib-* pdflib && cd pdflib && \
+        cp bind/php/php-720-nts/php_pdflib.so $PHP_EXT_DIR && \
+        echo 'extension=php_pdflib.so' > $PHP_INI_DIR/90-pdflib.ini && \
+        rm -rf /tmp/*
+fi
 
 ## How to install OCI8
 ## https://gist.github.com/hewerthomn/81eea2935051eb2500941a9309bca703
 
 ## Download the Oracle Instant Client and SDK from Oracle website. (Need to login in Oracle page)
 ## http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html
-## or download from 
+## or download from
 ## https://github.com/bumpx/oracle-instantclient
 
 ## How to use sqlplus
@@ -133,9 +137,15 @@ cd /tmp && \
 ## fix arrow keys are not functional in sqlplus
 apt install -y rlwrap && alias sqlplus="rlwrap sqlplus"
 
+if ls /etc/ld.so.conf.d/oracle-instantclient* >/dev/null 2>&1; then
+    ORACLE_INSTANT_EXIST="yes"
+else
+    ORACLE_INSTANT_EXIST="no"
+fi
+
 ORACLE_INSTANT_CLIENT="18c"
 
-if [[ $ORACLE_INSTANT_CLIENT == "18c" ]]; then
+if [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "18c" ]]; then
     mkdir -p /opt/oracle && cd /opt/oracle && \
         curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-basic-linux.x64-18.3.0.0.0dbru.zip && \
         curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sdk-linux.x64-18.3.0.0.0dbru.zip && \
@@ -160,7 +170,7 @@ if [[ $ORACLE_INSTANT_CLIENT == "18c" ]]; then
         : && \
         rm -rf /opt/oracle/*.zip && \
         rm -rf /tmp/*
-else
+elif [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "12c" ]]; then
     mkdir -p /opt/oracle && cd /opt/oracle && \
         curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-basic-linux.x64-12.2.0.1.0.zip && \
         curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-sdk-linux.x64-12.2.0.1.0.zip && \

@@ -223,6 +223,10 @@ if [[ ! $(grep "set functioncolor" ~/.nanorc) ]]; then
   echo "set functioncolor magenta" >> ~/.nanorc
 fi
 
+if [[ ! $(grep "set linenumbers" ~/.nanorc) ]]; then
+  echo "set linenumbers" >> ~/.nanorc
+fi
+
 if [[ -d ~/.local/share/nano ]]; then
   if [[ ! $(grep "\~/.local/share/nano/\*\.nanorc" ~/.nanorc) ]]; then
     echo "include \"~/.local/share/nano/*.nanorc\"" >> ~/.nanorc
