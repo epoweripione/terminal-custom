@@ -278,31 +278,44 @@ if [[ -d "$HOME/.nvm" ]]; then
         # export NVM_DIR="$HOME/.nvm"
         [[ -s "$HOME/.nvm/nvm.sh" ]] && source "$HOME/.nvm/nvm.sh"
     fi
+    
+    colorEcho ${BLUE} "Updating node LTS..."
+    nvm install --lts
 
-    colorEcho ${BLUE} "Getting node LTS version..."
-    CURRENT_VERSION=$(nvm version lts/*)
-    REMOTE_VERSION=$(nvm version-remote lts/*)
+    colorEcho ${BLUE} "Updating node latest..."
+    nvm install node --reinstall-packages-from=node
 
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        colorEcho ${BLUE} "Updating node LTS..."
-        nvm install --lts
-        # nvm install --lts=dubnium --reinstall-packages-from=lts/dubnium
-    fi
+    # nvm use node
+    nvm alias default node
+    ## Fix node & npm not found
+    [ -L "/usr/bin/node" ] && rm -f /usr/bin/node
+    [ -L "/usr/bin/npm" ] && rm -f /usr/bin/npm
+    ln -s "$(which node)" /usr/bin/node && ln -s "$(which npm)" /usr/bin/npm
 
-    colorEcho ${BLUE} "Getting node version..."
-    CURRENT_VERSION=$(nvm version)
-    REMOTE_VERSION=$(nvm version-remote)
+    # colorEcho ${BLUE} "Getting node LTS version..."
+    # CURRENT_VERSION=$(nvm version lts/*)
+    # REMOTE_VERSION=$(nvm version-remote lts/*)
 
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        colorEcho ${BLUE} "Updating node..."
-        nvm install node --reinstall-packages-from=node
-        # nvm use node
-        nvm alias default node
-        ## Fix node & npm not found
-        [ -L "/usr/bin/node" ] && rm -f /usr/bin/node
-        [ -L "/usr/bin/npm" ] && rm -f /usr/bin/npm
-        ln -s "$(which node)" /usr/bin/node && ln -s "$(which npm)" /usr/bin/npm
-    fi
+    # if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+    #     colorEcho ${BLUE} "Updating node LTS..."
+    #     nvm install --lts
+    #     # nvm install --lts=dubnium --reinstall-packages-from=lts/dubnium
+    # fi
+
+    # colorEcho ${BLUE} "Getting node version..."
+    # CURRENT_VERSION=$(nvm version)
+    # REMOTE_VERSION=$(nvm version-remote)
+
+    # if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+    #     colorEcho ${BLUE} "Updating node latest..."
+    #     nvm install node --reinstall-packages-from=node
+    #     # nvm use node
+    #     nvm alias default node
+    #     ## Fix node & npm not found
+    #     [ -L "/usr/bin/node" ] && rm -f /usr/bin/node
+    #     [ -L "/usr/bin/npm" ] && rm -f /usr/bin/npm
+    #     ln -s "$(which node)" /usr/bin/node && ln -s "$(which npm)" /usr/bin/npm
+    # fi
 fi
 
 
