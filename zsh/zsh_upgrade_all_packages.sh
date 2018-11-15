@@ -124,7 +124,7 @@ if [[ -d "$HOME/.gvm" ]]; then
     if [[ "$(gvm list | grep 'go1.4')" ]]; then
         # Set GOROOT_BOOTSTRAP to compile Go 1.5+
         gvm use go1.4
-        export GOROOT_BOOTSTRAP=$GOROOT
+        GOROOT_BOOTSTRAP=$GOROOT
 
         # Install latest go version
         if [[ -z "$GVM_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
@@ -230,7 +230,7 @@ if [[ -d "$HOME/.sdkman" ]]; then
     if type 'sdk' 2>/dev/null | grep -q 'function'; then
         :
     else
-        # export SDKMAN_DIR="$HOME/.sdkman"
+        SDKMAN_DIR="$HOME/.sdkman"
         [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
     fi
 
@@ -275,10 +275,12 @@ if [[ -d "$HOME/.nvm" ]]; then
     if type 'nvm' 2>/dev/null | grep -q 'function'; then
         :
     else
-        # export NVM_DIR="$HOME/.nvm"
+        NVM_DIR="$HOME/.nvm"
         [[ -s "$HOME/.nvm/nvm.sh" ]] && source "$HOME/.nvm/nvm.sh"
     fi
-    
+
+    NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
+
     colorEcho ${BLUE} "Updating node LTS..."
     nvm install --lts
 
