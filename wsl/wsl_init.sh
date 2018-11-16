@@ -234,7 +234,7 @@ if [[ ! -d "$HOME/.nvm" ]]; then
 fi
 
 if [[ -d "$HOME/.nvm" ]]; then
-    export NVM_DIR="${XDG_CONFIG_HOME/:-$HOME/.}nvm"
+    export NVM_DIR="${XDG_CONFIG_HOME:-$HOME}/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
     export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node

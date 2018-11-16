@@ -275,13 +275,12 @@ if [[ -d "$HOME/.nvm" ]]; then
     if type 'nvm' 2>/dev/null | grep -q 'function'; then
         :
     else
-        export NVM_DIR="${XDG_CONFIG_HOME/:-$HOME/.}nvm"
+        export NVM_DIR="${XDG_CONFIG_HOME:-$HOME}/.nvm"
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     fi
 
     colorEcho ${BLUE} "Updating node LTS..."
-    # nvm install --lts
-    NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node nvm install --lts=dubnium --reinstall-packages-from=lts/dubnium
+    NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node nvm install --lts
 
     colorEcho ${BLUE} "Updating node latest..."
     NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node nvm install node --reinstall-packages-from=node
@@ -299,8 +298,7 @@ if [[ -d "$HOME/.nvm" ]]; then
 
     # if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     #     colorEcho ${BLUE} "Updating node LTS..."
-    #     # nvm install --lts
-    #     nvm install --lts=dubnium --reinstall-packages-from=lts/dubnium
+    #     nvm install --lts --latest-npm
     # fi
 
     # colorEcho ${BLUE} "Getting node version..."
@@ -309,7 +307,7 @@ if [[ -d "$HOME/.nvm" ]]; then
 
     # if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     #     colorEcho ${BLUE} "Updating node latest..."
-    #     nvm install node --reinstall-packages-from=node
+    #     nvm install node --reinstall-packages-from=node --latest-npm
     #     # nvm use node
     #     nvm alias default node
     #     ## Fix node & npm not found
