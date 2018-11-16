@@ -7,14 +7,14 @@ YELLOW="33m"   # Warning message
 BLUE="36m"     # Info message
 
 colorEcho() {
-  COLOR=$1
-  echo -e "\033[${COLOR}${@:2}\033[0m"
+    COLOR=$1
+    echo -e "\033[${COLOR}${@:2}\033[0m"
 }
 
 
 if [[ -z "$ZSH" ]]; then
-  colorEcho ${RED} "Please install ZSH & Oh-my-zsh first!"
-  exit 0
+    colorEcho ${RED} "Please install ZSH & Oh-my-zsh first!"
+    exit 0
 fi
 
 
@@ -29,28 +29,28 @@ cd $ZSH && git pull
 # neofetch
 colorEcho ${BLUE} "Updating neofetch..."
 if [[ -d $HOME/neofetch ]]; then
-  cd $HOME/neofetch && git pull
+    cd $HOME/neofetch && git pull
 else
-  if [[ $ostype == "Darwin" || $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
-    git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
-  elif [[ $UID -eq 0 ]]; then
-    git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
-  fi
+    if [[ $ostype == "Darwin" || $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
+        git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+    elif [[ $UID -eq 0 ]]; then
+        git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+    fi
 fi
 
 if [[ $ostype == "Darwin" ]]; then
-  cd $HOME/neofetch && make PREFIX=/usr/local install
+    cd $HOME/neofetch && make PREFIX=/usr/local install
 elif [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
-  cd $HOME/neofetch && make -i install
+    cd $HOME/neofetch && make -i install
 else
-  if [[ $UID -eq 0 ]]; then
-    cd $HOME/neofetch && make install
-  fi
+    if [[ $UID -eq 0 ]]; then
+        cd $HOME/neofetch && make install
+    fi
 fi
 
 if [[ -x "$(command -v neofetch)" ]]; then
-  mkdir -p ~/.config/neofetch/ && \
-    cp ~/terminal-custom/zsh/neofetch_config.conf ~/.config/neofetch/config.conf
+    mkdir -p ~/.config/neofetch/ && \
+        cp ~/terminal-custom/zsh/neofetch_config.conf ~/.config/neofetch/config.conf
 fi
 
 
@@ -64,41 +64,41 @@ colorEcho ${BLUE} "Updating custom plugins..."
 # fast-syntax-highlighting
 colorEcho ${BLUE} "Updating fast-syntax-highlighting..."
 if [[ -d $ZSH/custom/plugins/fast-syntax-highlighting ]]; then
-  cd $ZSH/custom/plugins/fast-syntax-highlighting && git pull
+    cd $ZSH/custom/plugins/fast-syntax-highlighting && git pull
 else
-  git clone https://github.com/zdharma/fast-syntax-highlighting.git $ZSH/custom/plugins/fast-syntax-highlighting
+    git clone https://github.com/zdharma/fast-syntax-highlighting.git $ZSH/custom/plugins/fast-syntax-highlighting
 fi
 
 # zsh-syntax-highlighting
 colorEcho ${BLUE} "Updating zsh-syntax-highlighting..."
 if [[ -d $ZSH/custom/plugins/zsh-syntax-highlighting ]]; then
-  cd $ZSH/custom/plugins/zsh-syntax-highlighting && git pull
+    cd $ZSH/custom/plugins/zsh-syntax-highlighting && git pull
 else
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting
 fi
 
 # zsh-autosuggestions
 colorEcho ${BLUE} "Updating zsh-autosuggestions..."
 if [[ -d $ZSH/custom/plugins/zsh-autosuggestions ]]; then
-  cd $ZSH/custom/plugins/zsh-autosuggestions && git pull
+    cd $ZSH/custom/plugins/zsh-autosuggestions && git pull
 else
-  git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH/custom/plugins/zsh-autosuggestions
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH/custom/plugins/zsh-autosuggestions
 fi
 
 # zsh-command-time
 colorEcho ${BLUE} "Updating zsh-command-time..."
 if [[ -d $ZSH/custom/plugins/command-time ]]; then
-  cd $ZSH/custom/plugins/command-time && git pull
+    cd $ZSH/custom/plugins/command-time && git pull
 else
-  git clone https://github.com/popstas/zsh-command-time.git $ZSH/custom/plugins/command-time
+    git clone https://github.com/popstas/zsh-command-time.git $ZSH/custom/plugins/command-time
 fi
 
 # zsh-command-time
 colorEcho ${BLUE} "Updating git-flow-completion..."
 if [[ -d $ZSH/custom/plugins/git-flow-completion ]]; then
-  cd $ZSH/custom/plugins/git-flow-completion && git pull
+    cd $ZSH/custom/plugins/git-flow-completion && git pull
 else
-  git clone https://github.com/petervanderdoes/git-flow-completion.git $ZSH/custom/plugins/git-flow-completion
+    git clone https://github.com/petervanderdoes/git-flow-completion.git $ZSH/custom/plugins/git-flow-completion
 fi
 
 
@@ -108,9 +108,9 @@ colorEcho ${BLUE} "Updating custom themes..."
 # agnosterzak
 colorEcho ${BLUE} "Updating agnosterzak..."
 if [[ -d $ZSH/custom/themes/agnosterzak ]]; then
-  cd $ZSH/custom/themes/agnosterzak && git pull
+    cd $ZSH/custom/themes/agnosterzak && git pull
 else
-  git clone https://github.com/zakaziko99/agnosterzak-ohmyzsh-theme.git $ZSH/custom/themes/agnosterzak
+    git clone https://github.com/zakaziko99/agnosterzak-ohmyzsh-theme.git $ZSH/custom/themes/agnosterzak
 fi
 
 [[ -L $ZSH/custom/themes/agnosterzak.zsh-theme ]] && rm -f $ZSH/custom/themes/agnosterzak.zsh-theme
@@ -119,9 +119,9 @@ ln -s $ZSH/custom/themes/agnosterzak/agnosterzak.zsh-theme $ZSH/custom/themes/ag
 # spaceship-prompt
 colorEcho ${BLUE} "Updating spaceship-prompt..."
 if [[ -d $ZSH/custom/themes/spaceship-prompt ]]; then
-  cd $ZSH/custom/themes/spaceship-prompt && git pull
+    cd $ZSH/custom/themes/spaceship-prompt && git pull
 else
-  git clone https://github.com/denysdovhan/spaceship-prompt.git $ZSH/custom/themes/spaceship-prompt
+    git clone https://github.com/denysdovhan/spaceship-prompt.git $ZSH/custom/themes/spaceship-prompt
 fi
 
 [[ -L $ZSH/custom/themes/spaceship.zsh-theme ]] && rm -f $ZSH/custom/themes/spaceship.zsh-theme
@@ -130,9 +130,9 @@ ln -s $ZSH/custom/themes/spaceship-prompt/spaceship.zsh-theme $ZSH/custom/themes
 # powerlevel9k
 colorEcho ${BLUE} "Updating powerlevel9k..."
 if [[ -d $ZSH/custom/themes/powerlevel9k ]]; then
-  cd $ZSH/custom/themes/powerlevel9k && git pull
+    cd $ZSH/custom/themes/powerlevel9k && git pull
 else
-  git clone https://github.com/bhilburn/powerlevel9k.git $ZSH/custom/themes/powerlevel9k
+    git clone https://github.com/bhilburn/powerlevel9k.git $ZSH/custom/themes/powerlevel9k
 fi
 
 [[ -L $ZSH/custom/themes/powerlevel9k.zsh-theme ]] && rm -f $ZSH/custom/themes/powerlevel9k.zsh-theme
@@ -141,9 +141,9 @@ ln -s $ZSH/custom/themes/powerlevel9k/powerlevel9k.zsh-theme $ZSH/custom/themes/
 # agkozak
 colorEcho ${BLUE} "Updating agkozak..."
 if [[ -d $ZSH/custom/themes/agkozak ]]; then
-  cd $ZSH/custom/themes/agkozak && git pull
+    cd $ZSH/custom/themes/agkozak && git pull
 else
-  git clone https://github.com/agkozak/agkozak-zsh-prompt.git $ZSH/custom/themes/agkozak
+    git clone https://github.com/agkozak/agkozak-zsh-prompt.git $ZSH/custom/themes/agkozak
 fi
 
 [[ -L $ZSH/custom/themes/agkozak.zsh-theme ]] && rm -f $ZSH/custom/themes/agkozak.zsh-theme
@@ -152,9 +152,9 @@ ln -s $ZSH/custom/themes/agkozak/agkozak-zsh-prompt.plugin.zsh $ZSH/custom/theme
 # alien
 colorEcho ${BLUE} "Updating alien..."
 if [[ -d $ZSH/custom/themes/alien ]]; then
-  cd $ZSH/custom/themes/alien && git pull
+    cd $ZSH/custom/themes/alien && git pull
 else
-  git clone https://github.com/eendroroy/alien.git $ZSH/custom/themes/alien
+    git clone https://github.com/eendroroy/alien.git $ZSH/custom/themes/alien
 fi
 
 [[ -L $ZSH/custom/themes/alien.zsh-theme ]] && rm -f $ZSH/custom/themes/alien.zsh-theme && \
@@ -168,69 +168,69 @@ colorEcho ${BLUE} "enable plugins..."
 # fi
 
 if [[ "$(command -v fuck)" ]]; then
-  if [[ ! $(grep "  thefuck" ~/.zshrc) ]]; then
-    sed -i '/^  git/a\  thefuck' ~/.zshrc
-  fi
+    if [[ ! $(grep "  thefuck" ~/.zshrc) ]]; then
+        sed -i '/^  git/a\  thefuck' ~/.zshrc
+    fi
 fi
 
 if [[ ! $(grep "  colored-man-pages" ~/.zshrc) ]]; then
-  sed -i '/^  git/a\  colored-man-pages' ~/.zshrc
+    sed -i '/^  git/a\  colored-man-pages' ~/.zshrc
 fi
 
 if [[ ! $(grep "  zsh-autosuggestions" ~/.zshrc) ]]; then
-  sed -i '/^  git/a\  zsh-autosuggestions' ~/.zshrc
+    sed -i '/^  git/a\  zsh-autosuggestions' ~/.zshrc
 fi
 
 if [[ ! $(grep "  fast-syntax-highlighting" ~/.zshrc) ]]; then
-  sed -i '/^  git/a\  fast-syntax-highlighting' ~/.zshrc
+    sed -i '/^  git/a\  fast-syntax-highlighting' ~/.zshrc
 fi
 
 if [[ ! $(grep "  git-flow-completion" ~/.zshrc) ]]; then
-  sed -i '/^  git/a\  git-flow-completion' ~/.zshrc
+    sed -i '/^  git/a\  git-flow-completion' ~/.zshrc
 fi
 
 
 # nano
 colorEcho ${BLUE} "Updating nano-syntax-highlighting..."
 if [[ -d ~/.local/share/nano ]]; then
-  cd ~/.local/share/nano && git pull
+    cd ~/.local/share/nano && git pull
 else
-  git clone https://github.com/scopatz/nanorc.git ~/.local/share/nano
+    git clone https://github.com/scopatz/nanorc.git ~/.local/share/nano
 fi
 
 colorEcho ${BLUE} "nano settings..."
 if [[ ! $(grep "set titlecolor" ~/.nanorc) ]]; then
-  echo "set titlecolor brightwhite,red" >> ~/.nanorc
+    echo "set titlecolor brightwhite,red" >> ~/.nanorc
 fi
 
 if [[ ! $(grep "set statuscolor" ~/.nanorc) ]]; then
-  echo "set statuscolor brightwhite,red" >> ~/.nanorc
+    echo "set statuscolor brightwhite,red" >> ~/.nanorc
 fi
 
 if [[ ! $(grep "set selectedcolor" ~/.nanorc) ]]; then
-  echo "set selectedcolor brightwhite,cyan" >> ~/.nanorc
+    echo "set selectedcolor brightwhite,cyan" >> ~/.nanorc
 fi
 
 if [[ ! $(grep "set numbercolor" ~/.nanorc) ]]; then
-  echo "set numbercolor magenta" >> ~/.nanorc
+    echo "set numbercolor magenta" >> ~/.nanorc
 fi
 
 if [[ ! $(grep "set keycolor" ~/.nanorc) ]]; then
-  echo "set keycolor brightmagenta" >> ~/.nanorc
+    echo "set keycolor brightmagenta" >> ~/.nanorc
 fi
 
 if [[ ! $(grep "set functioncolor" ~/.nanorc) ]]; then
-  echo "set functioncolor magenta" >> ~/.nanorc
+    echo "set functioncolor magenta" >> ~/.nanorc
 fi
 
 if [[ ! $(grep "set linenumbers" ~/.nanorc) ]]; then
-  echo "set linenumbers" >> ~/.nanorc
+    echo "set linenumbers" >> ~/.nanorc
 fi
 
 if [[ -d ~/.local/share/nano ]]; then
-  if [[ ! $(grep "\~/.local/share/nano/\*\.nanorc" ~/.nanorc) ]]; then
-    echo "include \"~/.local/share/nano/*.nanorc\"" >> ~/.nanorc
-  fi
+    if [[ ! $(grep "\~/.local/share/nano/\*\.nanorc" ~/.nanorc) ]]; then
+        echo "include \"~/.local/share/nano/*.nanorc\"" >> ~/.nanorc
+    fi
 fi
 
 

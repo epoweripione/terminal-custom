@@ -7,8 +7,8 @@ YELLOW="33m"   # Warning message
 BLUE="36m"     # Info message
 
 colorEcho() {
-  COLOR=$1
-  echo -e "\033[${COLOR}${@:2}\033[0m"
+	COLOR=$1
+	echo -e "\033[${COLOR}${@:2}\033[0m"
 }
 
 ostype=$(uname)
@@ -31,18 +31,18 @@ ostype=$(uname)
 # https://github.com/ryanoasis/nerd-fonts
 
 if [[ ! -n $(which unzip) ]]; then
-  colorEcho ${RED} "Please install unzip first!"
-  exit 0
+	colorEcho ${RED} "Please install unzip first!"
+	exit 0
 fi
 
 if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
-  :
+	:
 else
-  # if ((${EUID:-0} || "$(id -u)")); then
-  if [[ $UID -ne 0 ]]; then
-    colorEcho ${RED} "Please run this script as root user!"
-    exit 0
-  fi
+	# if ((${EUID:-0} || "$(id -u)")); then
+	if [[ $UID -ne 0 ]]; then
+		colorEcho ${RED} "Please run this script as root user!"
+		exit 0
+	fi
 fi
 
 
@@ -76,17 +76,17 @@ mkdir -p ~/patched-fonts
 colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono 2.0.1..."
 curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.0.1/iosevka-term-ss05-nerd-2.0.1.zip -o ~/patched-fonts/iosevka-term-ss05-nerd.zip
 mkdir -p ~/patched-fonts/iosevka-term-ss05-nerd && \
-  unzip -q ~/patched-fonts/iosevka-term-ss05-nerd.zip -d ~/patched-fonts/iosevka-term-ss05-nerd && \
-  rm -f ~/patched-fonts/iosevka-term-ss05-nerd.zip
+	unzip -q ~/patched-fonts/iosevka-term-ss05-nerd.zip -d ~/patched-fonts/iosevka-term-ss05-nerd && \
+	rm -f ~/patched-fonts/iosevka-term-ss05-nerd.zip
 
 # Install Script
 curl -fSL https://github.com/ryanoasis/nerd-fonts/raw/master/install.sh -o ~/nerdfonts_installer.sh && chmod +x ~/nerdfonts_installer.sh
 
 colorEcho ${BLUE} "Installing Nerd fonts..."
 if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
-  cd ~ && ./nerdfonts_installer.sh --quiet --clean --use-single-width-glyphs --install-to-user-path
-  colorEcho ${BLUE} "Please manual install fonts from $HOME/.local/share/fonts"
+	cd ~ && ./nerdfonts_installer.sh --quiet --clean --use-single-width-glyphs --install-to-user-path
+	colorEcho ${BLUE} "Please manual install fonts from $HOME/.local/share/fonts"
 else
-  cd ~ && ./nerdfonts_installer.sh --quiet --clean --use-single-width-glyphs --install-to-system-path
-  colorEcho ${GREEN} "Nerd fonts install complete!"
+	cd ~ && ./nerdfonts_installer.sh --quiet --clean --use-single-width-glyphs --install-to-system-path
+	colorEcho ${GREEN} "Nerd fonts install complete!"
 fi

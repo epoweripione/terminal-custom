@@ -1,12 +1,12 @@
 #!/bin/zsh
 
 if [[ "$ZSH_VERSION" ]]; then
-  rm -f ~/.zcompdump*
-  autoload -U compinit && compinit
-  if [[ -e ~/.zcompdump ]]; then
-    [[ -n "$HOST" ]] && cp ~/.zcompdump ~/.zcompdump-$HOST-$ZSH_VERSION
-    [[ -n "$HOSTNAME" ]] && cp ~/.zcompdump ~/.zcompdump-$HOSTNAME-$ZSH_VERSION
-  fi
+    rm -f ~/.zcompdump*
+    autoload -U compinit && compinit
+    if [[ -e ~/.zcompdump ]]; then
+        [[ -n "$HOST" ]] && cp ~/.zcompdump ~/.zcompdump-$HOST-$ZSH_VERSION
+        [[ -n "$HOSTNAME" ]] && cp ~/.zcompdump ~/.zcompdump-$HOSTNAME-$ZSH_VERSION
+    fi
 fi
 
 # recreate soft link

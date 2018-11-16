@@ -7,23 +7,23 @@ YELLOW="33m"   # Warning message
 BLUE="36m"     # Info message
 
 colorEcho() {
-  COLOR=$1
-  echo -e "\033[${COLOR}${@:2}\033[0m"
+    COLOR=$1
+    echo -e "\033[${COLOR}${@:2}\033[0m"
 }
 
 # Determine which desktop environment is installed from the shell
 # desktop=$(ps -e | grep -E -i "gnome|kde|mate|cinnamon|lxde|xfce|jwm")
 if [[ -n "$XDG_CURRENT_DESKTOP" ]]; then
-  desktop=$(echo "$XDG_DATA_DIRS" | sed 's/.*\(gnome\|kde\|mate\|cinnamon\|lxde\|xfce\|jwm\).*/\1/')
+    desktop=$(echo "$XDG_DATA_DIRS" | sed 's/.*\(gnome\|kde\|mate\|cinnamon\|lxde\|xfce\|jwm\).*/\1/')
 else
-  desktop=$XDG_CURRENT_DESKTOP
+    desktop=$XDG_CURRENT_DESKTOP
 fi
 
 
 # custom configuration
 colorEcho ${BLUE} "custom configuration..."
 if [[ ! $(grep "zsh_custom_conf.sh" ~/.zshrc) ]]; then
-  echo -e "\n# Custom configuration\nsource ~/zsh_custom_conf.sh" >> ~/.zshrc
+    echo -e "\n# Custom configuration\nsource ~/zsh_custom_conf.sh" >> ~/.zshrc
 fi
 # tee -a ~/.zshrc <<-'EOF'
 
@@ -48,7 +48,7 @@ sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" ~/.zshrc
 
 sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
 if [[ -e ~/${custom_theme}.sh ]]; then
-  sed -i "/^ZSH_THEME=.*/a\source ~/${custom_theme}.sh" ~/.zshrc
+    sed -i "/^ZSH_THEME=.*/a\source ~/${custom_theme}.sh" ~/.zshrc
 fi
 
 # if [[ -n "$desktop" ]]; then
