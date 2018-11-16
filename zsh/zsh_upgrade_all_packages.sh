@@ -230,7 +230,7 @@ if [[ -d "$HOME/.sdkman" ]]; then
     if type 'sdk' 2>/dev/null | grep -q 'function'; then
         :
     else
-        SDKMAN_DIR="$HOME/.sdkman"
+        export SDKMAN_DIR="$HOME/.sdkman"
         [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
     fi
 
@@ -275,17 +275,16 @@ if [[ -d "$HOME/.nvm" ]]; then
     if type 'nvm' 2>/dev/null | grep -q 'function'; then
         :
     else
-        NVM_DIR="$HOME/.nvm"
-        [[ -s "$HOME/.nvm/nvm.sh" ]] && source "$HOME/.nvm/nvm.sh"
+        export NVM_DIR="${XDG_CONFIG_HOME/:-$HOME/.}nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     fi
 
-    NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
-
     colorEcho ${BLUE} "Updating node LTS..."
-    nvm install --lts
+    # nvm install --lts
+    NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node nvm install --lts=dubnium --reinstall-packages-from=lts/dubnium
 
     colorEcho ${BLUE} "Updating node latest..."
-    nvm install node --reinstall-packages-from=node
+    NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node nvm install node --reinstall-packages-from=node
 
     # nvm use node
     nvm alias default node
@@ -300,8 +299,8 @@ if [[ -d "$HOME/.nvm" ]]; then
 
     # if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     #     colorEcho ${BLUE} "Updating node LTS..."
-    #     nvm install --lts
-    #     # nvm install --lts=dubnium --reinstall-packages-from=lts/dubnium
+    #     # nvm install --lts
+    #     nvm install --lts=dubnium --reinstall-packages-from=lts/dubnium
     # fi
 
     # colorEcho ${BLUE} "Getting node version..."
