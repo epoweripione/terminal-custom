@@ -53,6 +53,9 @@ yarn config set emoji true
 # `yarn global bin` will output the location where Yarn will install symlinks to your installed executables
 # mkdir -p ~/.yarn && yarn config set prefix ~/.yarn
 
+# `yarn global dir` will print the output of the global installation folder that houses the global node_modules.
+# By default that will be: ~/.config/yarn/global
+
 # Install global packages with binaries
 colorEcho ${BLUE} "Installing es-checker eslint tslint jslint jshint standard..."
 yarn global add es-checker eslint tslint jslint jshint standard
@@ -72,10 +75,10 @@ yarn global add cordova ionic
 colorEcho ${BLUE} "Installing electron..."
 yarn global add electron
 
-colorEcho ${BLUE} "Installing arch-wiki-man..."
-# arch-wiki-man
-## https://github.com/greg-js/arch-wiki-man
-yarn global add arch-wiki-man
+# colorEcho ${BLUE} "Installing arch-wiki-man..."
+# # arch-wiki-man
+# ## https://github.com/greg-js/arch-wiki-man
+# yarn global add arch-wiki-man
 
 # Install global packages without binaries
 # colorEcho ${BLUE} "Installing puppeteer..."

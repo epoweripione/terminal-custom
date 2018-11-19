@@ -57,23 +57,23 @@ npm install -g cordova ionic
 colorEcho ${BLUE} "Installing electron..."
 npm install -g electron
 
-colorEcho ${BLUE} "Installing arch-wiki-man..."
-# arch-wiki-man
-## https://github.com/greg-js/arch-wiki-man
-npm install -g arch-wiki-man
+# colorEcho ${BLUE} "Installing arch-wiki-man..."
+# # arch-wiki-man
+# ## https://github.com/greg-js/arch-wiki-man
+# npm install -g arch-wiki-man
 
 # Install global packages without binaries
-# colorEcho ${BLUE} "Installing puppeteer..."
-# npm install -g puppeteer
+colorEcho ${BLUE} "Installing puppeteer..."
+npm install -g puppeteer
 
-# colorEcho ${BLUE} "Installing jquery popper.js bootstrap..."
-# npm install -g jquery popper.js bootstrap
+colorEcho ${BLUE} "Installing jquery popper.js bootstrap..."
+npm install -g jquery popper.js bootstrap
 
-# colorEcho ${BLUE} "Installing mdbootstrap..."
-# npm install -g mdbootstrap
+colorEcho ${BLUE} "Installing mdbootstrap..."
+npm install -g mdbootstrap
 
-# colorEcho ${BLUE} "Installing echarts echarts-gl..."
-# npm install -g echarts echarts-gl
+colorEcho ${BLUE} "Installing echarts echarts-gl..."
+npm install -g echarts echarts-gl
 
 # Clean npm cache
 # npm cache clean --force
