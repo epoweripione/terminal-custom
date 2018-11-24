@@ -20,6 +20,22 @@ fi
 
 ostype=$(uname)
 
+
+# pacapt - An Arch's pacman-like package manager for some Unices
+# https://github.com/icy/pacapt
+if [[ ! -x "$(command -v pacapt)" ]]; then
+    colorEcho ${BLUE} "Installing pacapt - An Arch's pacman-like package manager for some Unices..."
+    sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /usr/bin/pacapt && \
+        sudo chmod 755 /usr/bin/pacapt && \
+        sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
+fi
+
+# install pre-request packages
+if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+    pacman -S curl wget g++ gcc make git zip unzip
+fi
+
+
 # ZSH
 colorEcho ${BLUE} "Updating Oh-my-zsh..."
 # upgrade_oh_my_zsh
@@ -223,9 +239,9 @@ if [[ ! $(grep "set functioncolor" ~/.nanorc) ]]; then
     echo "set functioncolor magenta" >> ~/.nanorc
 fi
 
-if [[ ! $(grep "set linenumbers" ~/.nanorc) ]]; then
-    echo "set linenumbers" >> ~/.nanorc
-fi
+# if [[ ! $(grep "set linenumbers" ~/.nanorc) ]]; then
+#     echo "set linenumbers" >> ~/.nanorc
+# fi
 
 if [[ -d ~/.local/share/nano ]]; then
     if [[ ! $(grep "\~/.local/share/nano/\*\.nanorc" ~/.nanorc) ]]; then

@@ -39,6 +39,9 @@ npm set node_inspector_cdnurl https://npm.taobao.org/mirrors/node-inspector # no
 # nrm use taobao
 
 # Install global packages with binaries
+colorEcho ${BLUE} "Installing cnpm..."
+npm install -g cnpm
+
 colorEcho ${BLUE} "Installing npm-check es-checker eslint tslint jslint jshint standard..."
 npm install -g npm-check es-checker eslint tslint jslint jshint standard
 
@@ -56,6 +59,9 @@ npm install -g cordova ionic
 
 colorEcho ${BLUE} "Installing electron..."
 npm install -g electron
+
+colorEcho ${BLUE} "Installing express-generator..."
+npm install -g express-generator
 
 # colorEcho ${BLUE} "Installing arch-wiki-man..."
 # # arch-wiki-man
