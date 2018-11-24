@@ -26,9 +26,13 @@ if [[ ! -x "$(command -v pacapt)" ]]; then
 fi
 
 # Install ZSH Shell
-colorEcho ${BLUE} "Installing Git & ZSH..."
+colorEcho ${BLUE} "Installing Git & ZSH & pre-request packages..."
 if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
-    pacman -Sy && pacman -S git zsh
+    pacman -Sy
+    # git & zsh
+    pacman -S git zsh
+    # install pre-request packages
+    pacman -S wget g++ gcc make zip unzip
 fi
 
 
