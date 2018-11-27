@@ -56,9 +56,11 @@ fi
 
 # Install packages
 ## Use USTC mirror & Install prerequest packages
-colorEcho ${BLUE} "Use USTC mirror & Install prerequest packages..."
-sed -i 's|deb.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
-    sed -i 's|security.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list
+if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
+    colorEcho ${BLUE} "Use USTC mirror & Install prerequest packages..."
+    sed -i 's|deb.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
+        sed -i 's|security.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list
+fi
 
 apt update && \
     apt install -y apt-transport-https apt-utils ca-certificates \
@@ -67,8 +69,10 @@ apt update && \
 
 # Add custom repositories
 colorEcho ${BLUE} "Add custom repositories..."
-## Use https mirror
-sed -i 's|http://mirrors.ustc.edu.cn|https://mirrors.ustc.edu.cn|g' /etc/apt/sources.list
+if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
+    ## Use https mirror
+    sed -i 's|http://mirrors.ustc.edu.cn|https://mirrors.ustc.edu.cn|g' /etc/apt/sources.list
+fi
 
 ## git lfs
 if [[ ! -e /etc/apt/sources.list.d/github_git-lfs.list ]]; then
@@ -167,7 +171,6 @@ wget --no-check-certificate -q $DOWNLOAD_URL && \
 
 # nano editor
 if [[ -e "$HOME/nano_installer.sh" ]]; then
-    colorEcho ${BLUE} "Installing nano from source..."
     source "$HOME/nano_installer.sh"
 else
     colorEcho ${BLUE} "Installing nano..."
@@ -187,76 +190,22 @@ fi
 
 
 # proxychains
-if [[ ! -x "$(command -v proxychains4)" ]]; then
-    colorEcho ${BLUE} "Installing proxychains..."
-    cd $HOME && \
-        git clone https://github.com/rofl0r/proxychains-ng.git && \
-        cd proxychains-ng && \
-        ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
-        make && make install && make install-config && \
-        cp /etc/proxychains/proxychains.conf /etc/proxychains/proxychains.conf.bak && \
-        sed -i 's/socks4/# socks4/g' /etc/proxychains/proxychains.conf && \
-        echo 'socks5 127.0.0.1 55880' >> /etc/proxychains/proxychains.conf
+if [[ -e "$HOME/proxychains_installer.sh" ]]; then
+    source "$HOME/proxychains_installer.sh"
 fi
 
 
 # Docker
-colorEcho ${BLUE} "Installing Docker..."
-# apt install -y docker-ce
-# https://github.com/docker/docker-install
-curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
-
-
-## Install Docker Compose
-if [[ ! -x "$(command -v docker-compose)" ]]; then
-    colorEcho ${BLUE} "Installing Docker Compose..."
-
-    CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
-    if [[ -n "$REMOTE_VERSION" ]]; then
-        DOWNLOAD_URL=https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`
-        curl -SL $DOWNLOAD_URL -o /usr/local/bin/docker-compose && \
-            chmod +x /usr/local/bin/docker-compose
-    fi
+if [[ -e "$HOME/docker_installer.sh" ]]; then
+    source "$HOME/docker_installer.sh"
 fi
 
 
-# nodejs
-colorEcho ${BLUE} "Installing nvm & nodejs..."
-## Install nvm
-if [[ ! -d "$HOME/.nvm" ]]; then
-
-    CHECK_URL="https://api.github.com/repos/creationix/nvm/releases/latest"
-    REMOTE_VERSION=$(wget --no-check-certificate -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
-    if [[ -n "$REMOTE_VERSION" ]]; then
-        curl -o- https://raw.githubusercontent.com/creationix/nvm/$REMOTE_VERSION/install.sh | bash
-    fi
+# nvm & nodejs
+if [[ -e "$HOME/nvm_node_installer.sh" ]]; then
+    source "$HOME/nvm_node_installer.sh"
 fi
 
-if [[ -d "$HOME/.nvm" ]]; then
-    export NVM_DIR="${XDG_CONFIG_HOME:-$HOME}/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-    export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
-fi
-
-## Install nodejs
-if type 'nvm' 2>/dev/null | grep -q 'function'; then
-    if [[ ! "$(command -v node)" ]]; then
-        nvm install node
-        nvm install --lts
-
-        nvm use node
-        nvm alias default node
-        # nvm use --lts
-        # nvm alias default lts/*
-
-        ## Fix node & npm not found
-        [ -L "/usr/bin/node" ] && rm -f /usr/bin/node
-        [ -L "/usr/bin/npm" ] && rm -f /usr/bin/npm
-        ln -s "$(which node)" /usr/bin/node && ln -s "$(which npm)" /usr/bin/npm
-    fi
-fi
 
 ## Install yarn
 colorEcho ${BLUE} "Installing yarn..."
@@ -270,119 +219,21 @@ colorEcho ${BLUE} "Installing .NET Core SDK..."
 apt install -y dotnet-sdk-2.1
 
 
-# Java
-## Install jabba
-colorEcho ${BLUE} "Installing jabba..."
-curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
-    . ~/.jabba/jabba.sh
-
-## OpenJDK
-colorEcho ${BLUE} "Installing JDK 11..."
-# apt install -y default-jdk default-jre
-# jabba install openjdk@1.11.0-1 && jabba alias default openjdk@1.11.0-1
-jabba install 1.11.0-1 && jabba alias default 1.11.0-1
-
-## Oracle jdk 8
-## http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-# colorEcho ${BLUE} "Installing Oracle JDK 8..."
-# mkdir -p /usr/lib/jvm && cd /usr/lib/jvm && \
-#     wget --no-check-certificate --no-cookies \
-#         --header "Cookie: oraclelicense=accept-securebackup-cookie" \
-#         http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz && \
-#     tar -zxvf jdk-8u181-linux-x64.tar.gz && \
-#     ln -s /usr/lib/jvm/jdk1.8.0_181/ /usr/lib/jvm/oracle-jdk8 && \
-#     rm -f jdk-8u181-linux-x64.tar.gz && cd $HOME
-
-## Oracle jdk 11
-## https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html
-# colorEcho ${BLUE} "Installing Oracle JDK 11..."
-# mkdir -p /usr/lib/jvm && cd /usr/lib/jvm && \
-#     wget --no-check-certificate --no-cookies \
-#         --header "Cookie: oraclelicense=accept-securebackup-cookie" \
-#         http://download.oracle.com/otn-pub/java/jdk/11+28/55eed80b163941c8885ad9298e6d786a/jdk-11_linux-x64_bin.tar.gz && \
-#     tar -zxvf jdk-11_linux-x64_bin.tar.gz && \
-#     ln -s /usr/lib/jvm/jdk-11/ /usr/lib/jvm/oracle-jdk11 && \
-#     rm -f jdk-11_linux-x64_bin.tar.gz && cd $HOME
-
-# ## Install new JDK alternatives
-# update-alternatives --install /usr/bin/java java /usr/lib/jvm/oracle-jdk11/bin/java 100
-# update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/oracle-jdk11/bin/javac 100
-# update-alternatives --install /usr/bin/java java /usr/lib/jvm/oracle-jdk8/bin/java 200
-# update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/oracle-jdk8/bin/javac 200
-
-# ## Remove the existing alternatives
-# # update-alternatives --remove java /usr/lib/jvm/oracle-jdk11/bin/java
-# # update-alternatives --remove javac /usr/lib/jvm/oracle-jdk11/bin/javac
-# # update-alternatives --remove java /usr/lib/jvm/oracle-jdk8/bin/java
-# # update-alternatives --remove javac /usr/lib/jvm/oracle-jdk8/bin/javac
-
-# ## Change the default Java versions using the update-alternatives system:
-# # update-alternatives --config java
-# # update-alternatives --config javac
-
-if [[ -x "$(command -v java)" ]]; then
-    export JAVA_HOME=$(readlink -f $(which java) | sed "s:/jre/bin/java::" | sed "s:/bin/java::")
-    export JRE_HOME=$JAVA_HOME/jre
-    export CLASSPATH=$JAVA_HOME/lib
-    export PATH=$PATH:$JAVA_HOME/bin
-fi
-
-## Install Software Development Kits for the JVM such as Java, Groovy, Scala, Kotlin and Ceylon. Ant, Gradle, Grails, Maven, SBT, Spark, Spring Boot, Vert.x and many others also supported.
-## https://sdkman.io/
-## To get a listing of available Candidates: sdk list
-## To see what is currently in use for all Candidates: sdk current
-colorEcho ${BLUE} "Installing sdkman..."
-if [[ ! -d "$HOME/.sdkman" ]]; then
-    curl -s "https://get.sdkman.io" | bash
-fi
-
-if [[ "$(command -v sdk)" ]]; then
-    colorEcho ${BLUE} "Installing maven gradle kotlin using sdkman..."
-    sdk install maven && sdk install gradle && sdk install kotlin
+# jabba & JDK
+if [[ -e "$HOME/jabba_jdk_installer.sh" ]]; then
+    source "$HOME/jabba_jdk_installer.sh"
 fi
 
 
-# go
-colorEcho ${BLUE} "Installing gvm & go..."
-## Install gvm
-## https://github.com/moovweb/gvm
-## Please turn on proxy in china (replace the IP and Port to fit your proxy server)
-if [[ ! -d "$HOME/.gvm" ]]; then
-    apt install -y bison && \
-        bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+# sdkman
+if [[ -e "$HOME/sdkman_installer.sh" ]]; then
+    source "$HOME/sdkman_installer.sh"
 fi
 
-if [[ -d "$HOME/.gvm" ]]; then
-    [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 
-    ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
-    if [[ -n "$GVM_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-        proxychains4 gvm install go1.4 -B
-    else
-        gvm install go1.4 -B
-    fi
-
-    if [[ "$(gvm list | grep 'go1.4')" ]]; then
-        # Set GOROOT_BOOTSTRAP to compile Go 1.5+
-        gvm use go1.4
-        export GOROOT_BOOTSTRAP=$GOROOT
-
-        ## Install latest go version
-        if [[ -n "$GVM_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-            REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
-            proxychains4 gvm install $REMOTE_VERSION
-        else
-            REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
-            gvm install $REMOTE_VERSION
-        fi
-
-        # Set default go version
-        if [[ -n "$REMOTE_VERSION" ]]; then
-            if [[ "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
-                gvm use $REMOTE_VERSION --default
-            fi
-        fi
-    fi
+# gvm & go
+if [[ -e "$HOME/gvm_go_installer.sh" ]]; then
+    source "$HOME/gvm_go_installer.sh"
 fi
 
 
@@ -450,29 +301,9 @@ if [[ -e "$HOME/pecl_install_php_extensions.sh" ]]; then
 fi
 
 
-# Miniconda
-colorEcho ${BLUE} "Installing Miniconda3..."
-if [[ ! -d "$HOME/miniconda3" ]]; then
-    curl -SL -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-    bash ./Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
-
-    export PATH=$PATH:$HOME/miniconda3/bin
-    # source $HOME/miniconda3/bin/activate
-
-    ## Use mirror channels
-    # conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/free/ && \
-    #     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/main/ && \
-    #     conda config --set show_channel_urls yes
-
-    # conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/ && \
-    #     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/msys2/ && \
-    #     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/bioconda/ && \
-    #     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
-    
-    ## Use default channels
-    # conda config --remove-key channels
-
-    conda update -y --all
+# conda & python
+if [[ -e "$HOME/conda_python_installer.sh" ]]; then
+    source "$HOME/conda_python_installer.sh"
 fi
 
 
@@ -504,8 +335,8 @@ apt install -y libgirepository1.0-dev libssl-dev libcurl4-openssl-dev libcairo2-
 
 # The Fuck
 ## https://github.com/nvbn/thefuck
-colorEcho ${BLUE} "Installing thefuck..."
-pip3 install thefuck
+# colorEcho ${BLUE} "Installing thefuck..."
+# pip3 install thefuck
 
 
 colorEcho ${GREEN} "WSL init done, please restart WSL!"

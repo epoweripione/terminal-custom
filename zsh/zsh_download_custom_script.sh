@@ -51,10 +51,22 @@ chmod +x ~/hosts_update.sh
 chmod +x ~/install_fonts.sh
 chmod +x ~/terminal_256colors.sh
 chmod +x ~/terminal_colors.sh
-chmod +x ~/nano_installer.sh
-chmod +x ~/pecl_install_php_extensions.sh
+
 chmod +x ~/ssl-cert-info.sh
 chmod +x ~/ssl-check-expire-date.sh
+
+chmod +x ~/conda_python_installer.sh
+chmod +x ~/docker_installer.sh
+chmod +x ~/gvm_go_installer.sh
+chmod +x ~/jabba_jdk_installer.sh
+chmod +x ~/nano_installer.sh
+chmod +x ~/proxychains_installer.sh
+chmod +x ~/sdkman_installer.sh
+
+chmod +x ~/pecl_install_php_extensions.sh
+
+chmod +x ~/frp_installer.sh
+chmod +x ~/goproxy_installer.sh
 
 cp -f ~/terminal-custom/terminal_256colors.py ~
 
@@ -72,6 +84,7 @@ cp -f ~/terminal-custom/git/*.sh ~
 chmod +x ~/git_global_config.sh
 
 cp -f ~/terminal-custom/nodejs/*.sh ~
+chmod +x ~/nvm_node_installer.sh
 chmod +x ~/nvm_node_update.sh
 chmod +x ~/npm_packages_installer.sh
 chmod +x ~/yarn_packages_installer.sh

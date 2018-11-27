@@ -1,5 +1,18 @@
 #!/bin/zsh
 
+# Load custom functions
+if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
+    :
+else
+    if [[ -e "$HOME/custom_functions.sh" ]]; then
+        source "$HOME/custom_functions.sh"
+    else
+        echo "$HOME/custom_functions.sh not exist!"
+        exit 0
+    fi
+fi
+
+
 if [[ -z "$NVM_NOT_UPDATE" && -d "$HOME/.nvm" ]]; then
     colorEcho ${BLUE} "Updating nvm..."
     cd "$HOME/.nvm" && git pull && cd $HOME

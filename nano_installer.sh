@@ -6,21 +6,20 @@ if [[ $UID -ne 0 ]]; then
 fi
 
 # Load custom functions
-if [[ -e "$HOME/custom_functions.sh" ]]; then
-    source "$HOME/custom_functions.sh"
+if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
+    :
 else
-    echo "$HOME/custom_functions.sh not exist!"
-    exit 0
+    if [[ -e "$HOME/custom_functions.sh" ]]; then
+        source "$HOME/custom_functions.sh"
+    else
+        echo "$HOME/custom_functions.sh not exist!"
+        exit 0
+    fi
 fi
+
 
 # https://www.nano-editor.org/dist/latest/faq.html
 # http://mybookworld.wikidot.com/compile-nano-from-source
-
-
-# apt install -y libncurses5-dev libncursesw5-dev
-# yum install ncurses-devel
-# dnf install ncurses-devel
-# pacman -S ncurses
 if check_release_package_manager packageManager yum; then
     yum update -y && yum -y -q install ncurses-devel
 elif check_release_package_manager packageManager apt; then
@@ -52,6 +51,7 @@ REMOTE_VERSION=$(curl -s -N https://www.nano-editor.org/download.php \
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+    colorEcho ${BLUE} "Installing nano from source..."
     cd /tmp && \
         curl -SL https://www.nano-editor.org/dist/v$DIST_VERSION/nano-$REMOTE_VERSION.tar.gz -o nano.tar.gz && \
         tar zxvf nano.tar.gz && \
@@ -104,5 +104,5 @@ if [[ -d ~/.local/share/nano ]]; then
     # fi
 fi
 
-cd $HOME
-colorEcho ${GREEN} "Done!"
+# cd $HOME
+# colorEcho ${GREEN} "Done!"

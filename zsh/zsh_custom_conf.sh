@@ -67,9 +67,9 @@ if [[ -x "$(command -v pip)" ]]; then
     alias pipupdateall='pip list -o | grep -E -v '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f 1 | xargs -n1 pip install -U'
 fi
 
-if [[ -x "$(command -v pip3)" ]]; then
-    alias pip3updateall='pip3 list -o | grep -E -v '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f 1 | xargs -n1 pip3 install -U'
-fi
+# if [[ -x "$(command -v pip3)" ]]; then
+#     alias pip3updateall='pip3 list -o | grep -E -v '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f 1 | xargs -n1 pip3 install -U'
+# fi
 
 # docker aliases
 if [[ -x "$(command -v docker)" ]]; then
