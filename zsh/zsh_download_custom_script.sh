@@ -72,6 +72,7 @@ cp -f ~/terminal-custom/git/*.sh ~
 chmod +x ~/git_global_config.sh
 
 cp -f ~/terminal-custom/nodejs/*.sh ~
+chmod +x ~/nvm_node_update.sh
 chmod +x ~/npm_packages_installer.sh
 chmod +x ~/yarn_packages_installer.sh
 
