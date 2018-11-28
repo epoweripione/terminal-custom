@@ -1,12 +1,19 @@
 #!/bin/zsh
 
 # Load custom functions
-if [[ -e "$HOME/custom_functions.sh" ]]; then
-    source "$HOME/custom_functions.sh"
+if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
+    :
 else
-    echo "$HOME/custom_functions.sh not exist!"
-    exit 0
+    if [[ -e "$HOME/custom_functions.sh" ]]; then
+        source "$HOME/custom_functions.sh"
+    else
+        echo "$HOME/custom_functions.sh not exist!"
+        exit 0
+    fi
 fi
+
+# Set proxy or mirrors env in china
+set_proxy_mirrors_env
 
 # if [[ -z "$spruce_type" ]]; then
 #     get_os_type
@@ -113,7 +120,7 @@ if [[ -d "$HOME/.gvm" ]]; then
 
     ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
     if [[ ! "$(gvm list | grep 'go1.4')" ]]; then
-        if [[ -z "$GVM_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+        if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
             proxychains4 gvm install go1.4 -B
         else
             gvm install go1.4 -B
@@ -127,14 +134,14 @@ if [[ -d "$HOME/.gvm" ]]; then
         GOROOT_BOOTSTRAP=$GOROOT
 
         # Install latest go version
-        if [[ -z "$GVM_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+        if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
             REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
         else
             REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
         fi
 
         if [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
-            if [[ -z "$GVM_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+            if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
                 proxychains4 gvm install $REMOTE_VERSION
             else
                 gvm install $REMOTE_VERSION

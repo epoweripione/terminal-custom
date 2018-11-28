@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [[ $UID -ne 0 ]]; then
-    echo "Please run this script as root user!"
-    exit 0
-fi
-
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
@@ -16,6 +11,9 @@ else
         exit 0
     fi
 fi
+
+# Set proxy or mirrors env in china
+set_proxy_mirrors_env
 
 
 colorEcho ${BLUE} "Installing gvm & go..."
@@ -31,7 +29,7 @@ if [[ -d "$HOME/.gvm" ]]; then
     [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 
     ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
-    if [[ -n "$GVM_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+    if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
         proxychains4 gvm install go1.4 -B
     else
         gvm install go1.4 -B
@@ -43,7 +41,7 @@ if [[ -d "$HOME/.gvm" ]]; then
         export GOROOT_BOOTSTRAP=$GOROOT
 
         ## Install latest go version
-        if [[ -n "$GVM_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+        if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && && -x "$(command -v proxychains4)" ]]; then
             REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
             proxychains4 gvm install $REMOTE_VERSION
         else

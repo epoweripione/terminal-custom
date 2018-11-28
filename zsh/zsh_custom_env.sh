@@ -10,3 +10,11 @@ fi
 
 # load-nvmrc: use specified node version for the current directory with .nvmrc
 NVM_LOAD_NVMRC_IN_CURRENT_DIRECTORY=false
+
+
+# env for installer
+# APT_NOT_USE_MIRRORS=true
+# DOCKER_INSTALLER_NOT_USE_MIRROR=true
+# GVM_INSTALLER_NOT_USE_PROXY=true
+# NVM_INSTALLER_NOT_USE_MIRROR=true
+# NPM_INSTALLER_NOT_USE_MIRROR=true

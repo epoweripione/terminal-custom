@@ -17,12 +17,19 @@ else
     fi
 fi
 
+# Set proxy or mirrors env in china
+set_proxy_mirrors_env
+
 
 # Docker
 colorEcho ${BLUE} "Installing Docker..."
 # apt install -y docker-ce
 # https://github.com/docker/docker-install
-curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+if [[ -z "$DOCKER_INSTALLER_NOT_USE_MIRROR" ]]; then
+    curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+else
+    curl -fsSL https://get.docker.com | bash -s docker
+fi
 
 
 ## Install Docker Compose
@@ -37,3 +44,6 @@ if [[ ! -x "$(command -v docker-compose)" ]]; then
             chmod +x /usr/local/bin/docker-compose
     fi
 fi
+
+# Allow your user to access the Docker CLI without needing root.
+# sudo usermod -aG docker $USER

@@ -12,6 +12,9 @@ else
     fi
 fi
 
+# Set proxy or mirrors env in china
+set_proxy_mirrors_env
+
 
 if [[ -z "$NVM_NOT_UPDATE" && -d "$HOME/.nvm" ]]; then
     colorEcho ${BLUE} "Updating nvm..."
@@ -24,11 +27,15 @@ if [[ -z "$NVM_NOT_UPDATE" && -d "$HOME/.nvm" ]]; then
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     fi
 
+    if [[ -z "$NVM_INSTALLER_NOT_USE_MIRROR" ]]; then
+        export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
+    fi
+
     colorEcho ${BLUE} "Updating node LTS..."
-    NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node nvm install --lts
+    nvm install --lts
 
     colorEcho ${BLUE} "Updating node latest..."
-    NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node nvm install node --reinstall-packages-from=node
+    nvm install node --reinstall-packages-from=node
 
     # nvm use node
     nvm alias default node

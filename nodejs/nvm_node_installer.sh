@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [[ $UID -ne 0 ]]; then
-    echo "Please run this script as root user!"
-    exit 0
-fi
-
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
@@ -16,6 +11,9 @@ else
         exit 0
     fi
 fi
+
+# Set proxy or mirrors env in china
+set_proxy_mirrors_env
 
 
 # nodejs
@@ -33,7 +31,9 @@ if [[ -d "$HOME/.nvm" ]]; then
     export NVM_DIR="${XDG_CONFIG_HOME:-$HOME}/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-    export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
+    if [[ -z "$NVM_INSTALLER_NOT_USE_MIRROR" ]]; then
+        export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
+    fi
 fi
 
 ## Install nodejs

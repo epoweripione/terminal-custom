@@ -57,6 +57,7 @@ chmod +x ~/ssl-check-expire-date.sh
 
 chmod +x ~/conda_python_installer.sh
 chmod +x ~/docker_installer.sh
+chmod +x ~/geoip_installer.sh
 chmod +x ~/gvm_go_installer.sh
 chmod +x ~/jabba_jdk_installer.sh
 chmod +x ~/nano_installer.sh

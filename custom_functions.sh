@@ -260,7 +260,7 @@ function proxy() {
 #     hash ${cmd} > /dev/null 2>&1 && alias ${cmd}="proxy ${cmd}"
 # done
 
-# Query IP address
+## Query IP address
 function myip() {
     # https://stackoverflow.com/questions/13322485/how-to-get-the-primary-ip-address-of-the-local-machine-on-linux-and-os-x
     # LOCAL_NET_IP=$(hostname -I | cut -d' ' -f1)
@@ -272,13 +272,58 @@ function myip() {
     echo -e "Local IP: ${LOCAL_NET_IP}\nPublic IP: ${WAN_NET_IP}"
 }
 
+function myip_local() {
+    LOCAL_NET_IF=`netstat -rn | awk '/^0.0.0.0/ {thif=substr($0,74,10); print thif;} /^default.*UG/ {thif=substr($0,65,10); print thif;}'`
+    LOCAL_NET_IP=`ifconfig ${LOCAL_NET_IF} | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
 
-# Dateutils
+    echo -e "Local IP: ${LOCAL_NET_IP}"
+}
+
+function myip_wan() {
+    WAN_NET_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
+
+    echo -e "Public IP: ${WAN_NET_IP}"
+}
+
+function myip_wan_geo() {
+    if [[ -x "$(command -v geoiplookup)" ]]; then
+        WAN_NET_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
+        WAN_NET_IP_GEO=`geoiplookup ${WAN_NET_IP}`
+        echo -e "Public IP: ${WAN_NET_IP}\n${WAN_NET_IP_GEO}"
+    else
+        echo "Can't get GEO by WAN IP!"
+    fi
+}
+
+
+## Set proxy or mirrors env in china
+function set_proxy_mirrors_env() {
+    if [[ -z "$WAN_NET_IP_GEO" ]]; then
+        myip_wan_geo >/dev/null 2>&1
+    fi
+
+    if [[ ${WAN_NET_IP_GEO:-null} =~ 'CN, China' ]]; then
+        unset APT_NOT_USE_MIRRORS
+        unset DOCKER_INSTALLER_NOT_USE_MIRROR
+        unset GVM_INSTALLER_NOT_USE_PROXY
+        unset NVM_INSTALLER_NOT_USE_MIRROR
+        unset NPM_INSTALLER_NOT_USE_MIRROR
+    else
+        APT_NOT_USE_MIRRORS=true
+        DOCKER_INSTALLER_NOT_USE_MIRROR=true
+        GVM_INSTALLER_NOT_USE_PROXY=true
+        NVM_INSTALLER_NOT_USE_MIRROR=true
+        NPM_INSTALLER_NOT_USE_MIRROR=true
+    fi
+}
+
+
+## Dateutils
 # http://www.fresse.org/dateutils/
 # apt install -y dateutils
 # dateutils.dadd 2018-05-22 +120d
 function date_diff() {
-    # 20180522 20180918
+    # date_diff 20180522 20180918
     if [[ $# -eq 2 ]]; then
         echo $(( ($(date -d "$1" +%s) - $(date -d "$2" +%s) )/(60*60*24) ))
     fi

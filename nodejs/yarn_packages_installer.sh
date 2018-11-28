@@ -1,15 +1,20 @@
 #!/bin/zsh
 
-#######color code########
-RED="31m"      # Error message
-GREEN="32m"    # Success message
-YELLOW="33m"   # Warning message
-BLUE="36m"     # Info message
+# Load custom functions
+if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
+    :
+else
+    if [[ -e "$HOME/custom_functions.sh" ]]; then
+        source "$HOME/custom_functions.sh"
+    else
+        echo "$HOME/custom_functions.sh not exist!"
+        exit 0
+    fi
+fi
 
-colorEcho() {
-    COLOR=$1
-    echo -e "\033[${COLOR}${@:2}\033[0m"
-}
+# Set proxy or mirrors env in china
+set_proxy_mirrors_env
+
 
 if [[ ! -x "$(command -v yarn)" ]]; then
     colorEcho ${RED} "yarn is not installed! Please install yarn first!"
