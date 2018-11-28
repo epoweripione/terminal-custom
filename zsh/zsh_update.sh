@@ -251,4 +251,4 @@ fi
 
 
 cd $HOME
-colorEcho ${GREEN} "Update finished!"
+# colorEcho ${GREEN} "Update finished!"
