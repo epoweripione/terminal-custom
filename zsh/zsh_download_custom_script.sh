@@ -56,7 +56,7 @@ chmod +x ~/ssl-cert-info.sh
 chmod +x ~/ssl-check-expire-date.sh
 
 chmod +x ~/conda_python_installer.sh
-chmod +x ~/cross_gfw_installer.sh
+# chmod +x ~/cross_gfw_installer.sh
 chmod +x ~/docker_installer.sh
 chmod +x ~/geoip_installer.sh
 chmod +x ~/gvm_go_installer.sh
