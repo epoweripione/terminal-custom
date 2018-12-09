@@ -41,6 +41,15 @@ if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; t
 fi
 
 
+# Load custom functions
+if [[ -e "$HOME/custom_functions.sh" ]]; then
+    source "$HOME/custom_functions.sh"
+
+    # Set proxy or mirrors env in china
+    set_proxy_mirrors_env
+fi
+
+
 # aliases
 alias zshconfig="nano ~/.zshrc"
 alias ohmyzsh="nano ~/.oh-my-zsh"
@@ -270,7 +279,9 @@ if [[ -d "$HOME/.nvm" ]]; then
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     fi
 
-    export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
+    if [[ -z "$NVM_INSTALLER_NOT_USE_MIRROR" ]]; then
+        export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
+    fi
 
     if [[ "$NVM_LOAD_NVMRC_IN_CURRENT_DIRECTORY" == true ]]; then
         # use specified node version for the current directory with .nvmrc

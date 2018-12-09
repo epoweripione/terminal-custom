@@ -32,7 +32,7 @@ else
 fi
 
 
-## Install Docker Compose
+## Docker Compose
 if [[ ! -x "$(command -v docker-compose)" ]]; then
     colorEcho ${BLUE} "Installing Docker Compose..."
 
@@ -47,3 +47,22 @@ fi
 
 # Allow your user to access the Docker CLI without needing root.
 # sudo usermod -aG docker $USER
+
+
+## ctop
+if [[ ! -x "$(command -v ctop)" ]]; then
+    colorEcho ${BLUE} "Installing ctop..."
+    if uname -m | grep -Eqi "amd64|x86_64"; then
+        file_suffix='linux-amd64'
+    else
+        file_suffix='linux-386'
+    fi
+
+    CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+    if [[ -n "$REMOTE_VERSION" ]]; then
+        DOWNLOAD_URL=https://github.com/bcicen/ctop/releases/download/$REMOTE_VERSION/ctop-`echo $REMOTE_VERSION | cut -c2-`-$file_suffix
+        curl -SL $DOWNLOAD_URL -o /usr/local/bin/ctop && \
+            chmod +x /usr/local/bin/ctop
+    fi
+fi
