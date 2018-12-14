@@ -232,10 +232,17 @@ function version_compare() {
 
 
 ## Proxy functions
-export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
 function set_proxy() {
-    export http_proxy=http://127.0.0.1:55881
-    export https_proxy=http://127.0.0.1:55881
+    local proxy_url=$1
+    local proxy_port=$2
+
+    [[ -z "$proxy_url" ]] && proxy_url="127.0.0.1"
+    [[ -z "$proxy_port" ]] && proxy_url="8080"
+
+    export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
+
+    export http_proxy=http://${proxy_url}:${proxy_port}
+    export https_proxy=http://${proxy_url}:${proxy_port}
 }
 
 function clr_proxy() {
@@ -243,7 +250,7 @@ function clr_proxy() {
     export https_proxy=
 }
 
-function proxy() {
+function proxy_local() {
     if [[ -n $* ]]; then
         local COLOR='\033[0;35m'
         local NOCOLOR='\033[0m'

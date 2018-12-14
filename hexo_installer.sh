@@ -28,9 +28,17 @@ fi
 # https://hexo.io/zh-cn/docs/commands.html
 npm install hexo-cli -g
 
+# init
 cd /srv
 hexo init hexo-blog
 
 cd /srv/hexo-blog
+
+# themes
+git clone https://github.com/theme-next/hexo-theme-next themes/next
+
+# install npm packages
 npm install
+
+# serve
 hexo server
