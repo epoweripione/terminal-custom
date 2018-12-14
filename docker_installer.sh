@@ -53,15 +53,15 @@ fi
 if [[ ! -x "$(command -v ctop)" ]]; then
     colorEcho ${BLUE} "Installing ctop..."
     if uname -m | grep -Eqi "amd64|x86_64"; then
-        file_suffix='linux-amd64'
+        DOWNLOAD_FILE_SUFFIX='linux-amd64'
     else
-        file_suffix='linux-386'
+        DOWNLOAD_FILE_SUFFIX='linux-386'
     fi
 
     CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
     if [[ -n "$REMOTE_VERSION" ]]; then
-        DOWNLOAD_URL=https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-$REMOTE_VERSION-$file_suffix
+        DOWNLOAD_URL=https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}
         curl -SL $DOWNLOAD_URL -o /usr/local/bin/ctop && \
             chmod +x /usr/local/bin/ctop
     fi

@@ -101,11 +101,10 @@ if [[ $UID -eq 0 && -x "$(command -v docker-compose)" ]]; then
 
     CURRENT_VERSION=$(docker-compose -v | cut -d',' -f1 | cut -d' ' -f3)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
-
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         DOWNLOAD_URL=https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`
-        curl -SL $DOWNLOAD_URL -o /usr/local/bin/docker-compose
-        chmod +x /usr/local/bin/docker-compose
+        curl -SL $DOWNLOAD_URL -o /usr/local/bin/docker-compose && \
+            chmod +x /usr/local/bin/docker-compose
     fi
 fi
 
@@ -113,20 +112,19 @@ fi
 if [[ $UID -eq 0 && -x "$(command -v ctop)" ]]; then
     colorEcho ${BLUE} "Updating ctop..."
     if uname -m | grep -Eqi "amd64|x86_64"; then
-        file_suffix='linux-amd64'
+        DOWNLOAD_FILE_SUFFIX='linux-amd64'
     else
-        file_suffix='linux-386'
+        DOWNLOAD_FILE_SUFFIX='linux-386'
     fi
 
     CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
 
     CURRENT_VERSION=$(ctop -v | cut -d',' -f1 | cut -d' ' -f3)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
-
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        DOWNLOAD_URL=https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-$REMOTE_VERSION-$file_suffix
-        curl -SL $DOWNLOAD_URL -o /usr/local/bin/ctop
-        chmod +x /usr/local/bin/ctop
+        DOWNLOAD_URL=https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}
+        curl -SL $DOWNLOAD_URL -o /usr/local/bin/ctop && \
+            chmod +x /usr/local/bin/ctop
     fi
 fi
 

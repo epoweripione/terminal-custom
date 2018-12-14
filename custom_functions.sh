@@ -245,18 +245,18 @@ function set_proxy() {
     export https_proxy=http://${proxy_url}:${proxy_port}
 }
 
-function clr_proxy() {
+function clear_proxy() {
     export http_proxy=
     export https_proxy=
 }
 
-function proxy_local() {
+function proxy_cmd() {
     if [[ -n $* ]]; then
         local COLOR='\033[0;35m'
         local NOCOLOR='\033[0m'
         set_proxy && echo -e "${COLOR}[proxy] set${NOCOLOR}"
         $*
-        clr_proxy && echo -e "${COLOR}[proxy] clear${NOCOLOR}"
+        clear_proxy && echo -e "${COLOR}[proxy] clear${NOCOLOR}"
     else
         echo "Set proxy for specific command."
     fi
