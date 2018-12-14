@@ -4,7 +4,7 @@
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
 else
-    if [[ -e "$HOME/custom_functions.sh" ]]; then
+    if [[ -s "$HOME/custom_functions.sh" ]]; then
         source "$HOME/custom_functions.sh"
     else
         echo "$HOME/custom_functions.sh not exist!"
@@ -13,7 +13,7 @@ else
 fi
 
 if [[ ! "$(command -v node)" ]]; then
-    if [[ -e "$HOME/nvm_node_installer.sh" ]]; then
+    if [[ -s "$HOME/nvm_node_installer.sh" ]]; then
         source "$HOME/nvm_node_installer.sh"
     else
         colorEcho ${RED} "node is not installed! Please install node first!"

@@ -42,7 +42,7 @@ fi
 
 
 # Load custom functions
-if [[ -e "$HOME/custom_functions.sh" ]]; then
+if [[ -s "$HOME/custom_functions.sh" ]]; then
     source "$HOME/custom_functions.sh"
 
     # Set proxy or mirrors env in china

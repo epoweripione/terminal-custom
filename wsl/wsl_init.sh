@@ -4,7 +4,7 @@
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
 else
-    if [[ -e "$HOME/custom_functions.sh" ]]; then
+    if [[ -s "$HOME/custom_functions.sh" ]]; then
         source "$HOME/custom_functions.sh"
     else
         echo "$HOME/custom_functions.sh not exist!"
@@ -174,7 +174,7 @@ wget --no-check-certificate -q $DOWNLOAD_URL && \
 
 
 # nano editor
-if [[ -e "$HOME/nano_installer.sh" ]]; then
+if [[ -s "$HOME/nano_installer.sh" ]]; then
     source "$HOME/nano_installer.sh"
 else
     colorEcho ${BLUE} "Installing nano..."
@@ -194,19 +194,19 @@ fi
 
 
 # proxychains
-if [[ -e "$HOME/proxychains_installer.sh" ]]; then
+if [[ -s "$HOME/proxychains_installer.sh" ]]; then
     source "$HOME/proxychains_installer.sh"
 fi
 
 
 # Docker
-if [[ -e "$HOME/docker_installer.sh" ]]; then
+if [[ -s "$HOME/docker_installer.sh" ]]; then
     source "$HOME/docker_installer.sh"
 fi
 
 
 # nvm & nodejs
-if [[ -e "$HOME/nvm_node_installer.sh" ]]; then
+if [[ -s "$HOME/nvm_node_installer.sh" ]]; then
     source "$HOME/nvm_node_installer.sh"
 fi
 
@@ -224,19 +224,19 @@ apt install -y dotnet-sdk-2.1
 
 
 # jabba & JDK
-if [[ -e "$HOME/jabba_jdk_installer.sh" ]]; then
+if [[ -s "$HOME/jabba_jdk_installer.sh" ]]; then
     source "$HOME/jabba_jdk_installer.sh"
 fi
 
 
 # sdkman
-if [[ -e "$HOME/sdkman_installer.sh" ]]; then
+if [[ -s "$HOME/sdkman_installer.sh" ]]; then
     source "$HOME/sdkman_installer.sh"
 fi
 
 
 # gvm & go
-if [[ -e "$HOME/gvm_go_installer.sh" ]]; then
+if [[ -s "$HOME/gvm_go_installer.sh" ]]; then
     source "$HOME/gvm_go_installer.sh"
 fi
 
@@ -299,14 +299,14 @@ if [[ -x "$(command -v pecl)" ]]; then
 fi
 
 ## Install extension using pecl
-if [[ -e "$HOME/pecl_install_php_extensions.sh" ]]; then
+if [[ -s "$HOME/pecl_install_php_extensions.sh" ]]; then
     colorEcho ${BLUE} "Installing php extension using pecl..."
     source "$HOME/pecl_install_php_extensions.sh"
 fi
 
 
 # conda & python
-if [[ -e "$HOME/conda_python_installer.sh" ]]; then
+if [[ -s "$HOME/conda_python_installer.sh" ]]; then
     source "$HOME/conda_python_installer.sh"
 fi
 

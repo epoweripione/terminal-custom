@@ -4,7 +4,7 @@
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
 else
-    if [[ -e "$HOME/custom_functions.sh" ]]; then
+    if [[ -s "$HOME/custom_functions.sh" ]]; then
         source "$HOME/custom_functions.sh"
     else
         echo "$HOME/custom_functions.sh not exist!"
@@ -15,10 +15,10 @@ fi
 # Set proxy or mirrors env in china
 set_proxy_mirrors_env
 
-# if [[ -z "$spruce_type" ]]; then
-#     get_os_type
-#     get_arch
-# fi
+if [[ -z "$spruce_type" ]]; then
+    get_os_type
+    get_arch
+fi
 
 
 # pacapt - An Arch's pacman-like package manager for some Unices
@@ -276,6 +276,40 @@ if [[ -x "$(command -v proxy)" ]]; then
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         curl -SL https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh | bash
+    fi
+fi
+
+
+if [[ -d "/srv/frp" ]]; then
+    colorEcho ${BLUE} "Updating frp..."
+    # https://github.com/fatedier/frp
+
+    CHECK_URL="https://api.github.com/repos/fatedier/frp/releases/latest"
+
+    CURRENT_VERSION=$(/srv/frp/frps --version 2>&1)
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        if pgrep -f "frps" 2>&1; then
+            pkill -f "frps"
+        fi
+
+        DOWNLOAD_URL=https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_${ostype}_${spruce_type}.tar.gz
+        curl -SL $DOWNLOAD_URL -o frp.tar.gz && \
+            tar -zxPf frp.tar.gz -C /srv/ && \
+            rm frp.tar.gz && \
+            mkdir -p /srv/backup_frp && \
+            cp -f /srv/frp/*.ini /srv/backup_frp && \
+            rm -f /srv/backup_frp/frpc_full.ini && \
+            rm -f /srv/backup_frp/frps_full.ini && \
+            rm -rf /srv/frp && \
+            mkdir -p /srv/frp && \
+            cp -rf /srv/frp_*/* /srv/frp && \
+            cp -f /srv/backup_frp/*.ini /srv/frp && \
+            rm -rf /srv/frp_*
+        
+        if [[ -s "/srv/frp/frps.ini" ]]; then
+            nohup /srv/frp/frps -c /srv/frp/frps.ini >/dev/null 2>&1 & disown
+        fi
     fi
 fi
 

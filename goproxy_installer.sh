@@ -9,7 +9,7 @@ fi
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
 else
-    if [[ -e "$HOME/custom_functions.sh" ]]; then
+    if [[ -s "$HOME/custom_functions.sh" ]]; then
         source "$HOME/custom_functions.sh"
     else
         echo "$HOME/custom_functions.sh not exist!"

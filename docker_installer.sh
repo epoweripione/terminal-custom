@@ -9,7 +9,7 @@ fi
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
 else
-    if [[ -e "$HOME/custom_functions.sh" ]]; then
+    if [[ -s "$HOME/custom_functions.sh" ]]; then
         source "$HOME/custom_functions.sh"
     else
         echo "$HOME/custom_functions.sh not exist!"
@@ -59,9 +59,9 @@ if [[ ! -x "$(command -v ctop)" ]]; then
     fi
 
     CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
     if [[ -n "$REMOTE_VERSION" ]]; then
-        DOWNLOAD_URL=https://github.com/bcicen/ctop/releases/download/$REMOTE_VERSION/ctop-`echo $REMOTE_VERSION | cut -c2-`-$file_suffix
+        DOWNLOAD_URL=https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-$REMOTE_VERSION-$file_suffix
         curl -SL $DOWNLOAD_URL -o /usr/local/bin/ctop && \
             chmod +x /usr/local/bin/ctop
     fi

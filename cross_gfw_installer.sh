@@ -4,7 +4,7 @@
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
 else
-    if [[ -e "$HOME/custom_functions.sh" ]]; then
+    if [[ -s "$HOME/custom_functions.sh" ]]; then
         source "$HOME/custom_functions.sh"
     else
         echo "$HOME/custom_functions.sh not exist!"
@@ -18,8 +18,10 @@ fi
 # ShadowsocksR: /etc/shadowsocks-r/config.json
 # Shadowsocks-Go：/etc/shadowsocks-go/config.json
 # Shadowsocks-libev：/etc/shadowsocks-libev/config.json
+
+# ./shadowsocks_exec.sh start | stop | restart | status
 if [[ ! -e "$HOME/shadowsocks_exec.sh" ]]; then
-cat > shadowsocks_exec.sh <<EOF
+    cat > shadowsocks_exec.sh <<EOF
 #!/bin/bash
 
 [ -e /etc/init.d/shadowsocks-r ] && /etc/init.d/shadowsocks-r \$1
@@ -31,20 +33,20 @@ if [ -x "\$(command -v supervisorctl)" ]; then
     supervisorctl \$1 kcptun
 fi
 EOF
+
+    chmod +x shadowsocks_exec.sh
 fi
 
-chmod +x shadowsocks_exec.sh
-# ./shadowsocks_exec.sh start | stop | restart | status
 
-if [[ -e "$HOME/shadowsocks-all.sh" ]]; then
+if [[ -s "$HOME/shadowsocks-all.sh" ]]; then
     source "$HOME/shadowsocks_exec.sh stop"
-    source "$HOME//shadowsocks-all.sh uninstall"
+    source "$HOME/shadowsocks-all.sh uninstall"
     rm -fr shadowsocks-all* && rm -fr mbedtls-* libsodium-*
 fi
 
 wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-all.sh && \
-chmod +x shadowsocks-all.sh && \
-./shadowsocks-all.sh 2>&1 | tee shadowsocks-all.log
+    chmod +x shadowsocks-all.sh && \
+    ./shadowsocks-all.sh 2>&1 | tee shadowsocks-all.log
 
 
 # Multi-V2Ray

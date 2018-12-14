@@ -47,7 +47,7 @@ custom_theme="zsh_custom_theme_${theme}"
 sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" ~/.zshrc
 
 sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
-if [[ -e ~/${custom_theme}.sh ]]; then
+if [[ -s ~/${custom_theme}.sh ]]; then
     sed -i "/^ZSH_THEME=.*/a\source ~/${custom_theme}.sh" ~/.zshrc
 fi
 
