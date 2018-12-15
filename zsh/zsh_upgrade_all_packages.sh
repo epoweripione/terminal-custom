@@ -312,19 +312,20 @@ if [[ -d "/srv/frp" ]]; then
 fi
 
 
-if systemctl list-unit-files --type=service | grep v2ray.service | grep enabled >/dev/null 2>&1; then
-    colorEcho ${BLUE} "Updating v2ray-core..."
-    # https://www.v2ray.com/chapter_00/install.html
-    bash <(curl -L -s https://install.direct/go.sh)
-fi
-
-
 if [[ -x "$(command -v v2ray)" ]]; then
     if v2ray -v 2>&1 | grep -q 'multi-v2ray'; then
         colorEcho ${BLUE} "Updating multi-v2ray..."
         # https://github.com/Jrohy/multi-v2ray
         v2ray update
+    elif systemctl list-unit-files --type=service | grep v2ray.service | grep enabled >/dev/null 2>&1; then
+        colorEcho ${BLUE} "Updating v2ray-core..."
+        # https://www.v2ray.com/chapter_00/install.html
+        bash <(curl -L -s https://install.direct/go.sh)
     fi
+elif systemctl list-unit-files --type=service | grep v2ray.service | grep enabled >/dev/null 2>&1; then
+    colorEcho ${BLUE} "Updating v2ray-core..."
+    # https://www.v2ray.com/chapter_00/install.html
+    bash <(curl -L -s https://install.direct/go.sh)
 fi
 
 
