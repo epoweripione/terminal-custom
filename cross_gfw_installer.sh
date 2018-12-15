@@ -62,3 +62,12 @@ if [[ -x "$(command -v v2ray)" ]]; then
 else
     source <(curl -sL https://git.io/fNgqx)
 fi
+
+
+# V2Ray Client
+# https://www.v2ray.com/chapter_00/install.html
+# bash <(curl -L -s https://install.direct/go.sh) && \
+#     systemctl enable v2ray && \
+#     systemctl start v2ray
+
+# service v2ray start|stop|status|reload|restart|force-reload
