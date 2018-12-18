@@ -312,8 +312,8 @@ fi
 
 
 # pip3
-## fix `pip3 list` warning
-colorEcho ${BLUE} "Installing pip3..."
+## fix `pip list` warning
+colorEcho ${BLUE} "Installing pip..."
 if [[ ! $(grep "format=columns" $HOME/.pip/pip.conf) ]]; then
 mkdir -p $HOME/.pip && \
 tee $HOME/.pip/pip.conf <<-'EOF'
@@ -326,7 +326,7 @@ apt install -y python3-dev python3-pip && hash -r
 
 # fix TypeError: '>' not supported between instances of 'Version' and 'Version'
 # fix TypeError: unorderable types: Version() > SetuptoolsVersion()
-pip3 install --ignore-installed pip && hash -r
+pip install --ignore-installed pip && hash -r
 
 # fix for pyxdg, pygobject, pycurl, etc.
 apt install -y libgirepository1.0-dev libssl-dev libcurl4-openssl-dev libcairo2-dev --no-install-recommends
@@ -340,7 +340,25 @@ apt install -y libgirepository1.0-dev libssl-dev libcurl4-openssl-dev libcairo2-
 # The Fuck
 ## https://github.com/nvbn/thefuck
 # colorEcho ${BLUE} "Installing thefuck..."
-# pip3 install thefuck
+# pip install thefuck
+
+
+# TLDR
+## https://github.com/tldr-pages/tldr
+colorEcho ${BLUE} "Installing tldr..."
+if [[ -x "$(command -v npm)" ]]; then
+    npm install -g tldr
+else
+    pip install tldr
+fi
+
+
+# cheat.sh
+## https://github.com/chubin/cheat.sh
+colorEcho ${BLUE} "Installing cheat.sh..."
+apt install -y rlwrap
+curl https://cht.sh/:cht.sh > /usr/local/bin/cht.sh && \
+    chmod +x /usr/local/bin/cht.sh
 
 
 colorEcho ${GREEN} "WSL init done, please restart WSL!"
