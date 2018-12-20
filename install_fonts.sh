@@ -73,8 +73,11 @@ mkdir -p ~/patched-fonts
 #   unzip -q ~/patched-fonts/Iosevka.zip -d ~/patched-fonts/Iosevka && \
 #   rm -f ~/patched-fonts/Iosevka.zip
 
-colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono 2.0.1..."
-curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.0.1/iosevka-term-ss05-nerd-2.0.1.zip -o ~/patched-fonts/iosevka-term-ss05-nerd.zip
+colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono 2.0.2..."
+# cd ~/nerd-fonts
+# for font in /e/VSCodeProjects/nerd-fonts/Iosevka/*.ttf; do fontforge -script font-patcher -out /e/VSCodeProjects/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done
+# cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/iosevka-term-ss05-nerd-2.0.2.zip *.ttf 
+curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.0.2/iosevka-term-ss05-nerd-2.0.2.zip -o ~/patched-fonts/iosevka-term-ss05-nerd.zip
 mkdir -p ~/patched-fonts/iosevka-term-ss05-nerd && \
 	unzip -q ~/patched-fonts/iosevka-term-ss05-nerd.zip -d ~/patched-fonts/iosevka-term-ss05-nerd && \
 	rm -f ~/patched-fonts/iosevka-term-ss05-nerd.zip

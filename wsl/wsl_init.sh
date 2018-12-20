@@ -220,7 +220,7 @@ apt install -y yarn --no-install-recommends
 ## https://www.microsoft.com/net/download/linux-package-manager/debian9/sdk-current
 ## How to use: dotnet --help
 colorEcho ${BLUE} "Installing .NET Core SDK..."
-apt install -y dotnet-sdk-2.1
+apt install -y dotnet-sdk-2.2
 
 
 # jabba & JDK
