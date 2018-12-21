@@ -48,9 +48,9 @@ hexo new page tags
 npm install hexo-generator-feed --save
 # 本地搜索
 npm install hexo-generator-searchdb --save
-
 # # 字数统计、阅读时长
-# npm install hexo-symbols-count-time --save
+npm install hexo-symbols-count-time --save
+
 # # 顶部进度条 http://github.hubspot.com/pace/
 # npm install theme-next-pace --save
 # # 图片浏览
