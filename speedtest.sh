@@ -55,7 +55,7 @@ case "$CHOICE" in
     2)
         SuperBench
         ;;
-    2)
+    3)
         SuperSpeed
         ;;
     *)
