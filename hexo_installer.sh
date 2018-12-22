@@ -26,7 +26,7 @@ fi
 # https://hexo.io/zh-cn/docs/writing.html
 # https://hexo.io/zh-cn/docs/deployment.html
 # https://hexo.io/zh-cn/docs/commands.html
-npm install hexo-cli -g
+npm install hexo-cli gulp -g
 
 # init
 cd /srv
@@ -48,8 +48,31 @@ hexo new page tags
 npm install hexo-generator-feed --save
 # 本地搜索
 npm install hexo-generator-searchdb --save
-# # 字数统计、阅读时长
+# 生成 sitemap.xml，利于 SEO
+npm install hexo-generator-sitemap --save
+# 字数统计、阅读时长
 npm install hexo-symbols-count-time --save
+# Github Emojis 支持 https://github.com/crimx/hexo-filter-github-emojis
+npm install hexo-filter-github-emojis --save
+# 音乐播放插件，支持歌词 https://github.com/MoePlayer/hexo-tag-aplayer
+npm install hexo-tag-aplayer --save
+# 视频播放插件，支持弹幕 https://github.com/MoePlayer/hexo-tag-dplayer
+npm install hexo-tag-dplayer --save
+# 注脚 https://github.com/LouisBarranqueiro/hexo-footnotes
+npm install hexo-footnotes --save
+# hexo-filter-flowchart https://github.com/bubkoo/hexo-filter-flowchart
+npm install hexo-filter-flowchart --save
+# 支持文章置顶 https://github.com/netcan/hexo-generator-index-pin-top
+npm uninstall hexo-generator-index --save
+npm install hexo-generator-index-pin-top --save
+# 压缩代码
+npm install gulp gulp-htmlclean gulp-htmlmin gulp-minify-css --save
+
+
+# # Hexo-filter-cleanup https://github.com/mamboer/hexo-filter-cleanup
+# npm install hexo-filter-cleanup --save
+# # Hexo-img-optimization https://github.com/vkuznecovas/hexo-img-optimization
+# npm install hexo-img-optimization --save
 
 # # 顶部进度条 http://github.hubspot.com/pace/
 # npm install theme-next-pace --save
