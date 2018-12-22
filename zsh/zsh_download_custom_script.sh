@@ -66,6 +66,8 @@ chmod +x ~/nano_installer.sh
 chmod +x ~/proxychains_installer.sh
 chmod +x ~/sdkman_installer.sh
 
+chmod +x ~/speedtest.sh
+
 chmod +x ~/pecl_install_php_extensions.sh
 
 chmod +x ~/frp_installer.sh
