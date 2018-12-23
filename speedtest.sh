@@ -12,6 +12,19 @@ colorEcho() {
     echo -e "\033[${COLOR}${@:2}\033[0m"
 }
 
+# PageSpeed Insights
+# https://developers.google.com/speed/pagespeed/insights/
+
+# http://ping.chinaz.com/
+# http://www.ipip.net/ping.php
+# https://www.17ce.com/
+# http://www.webkaka.com/
+# http://ce.cloud.360.cn/
+# 这几个在线测速工具各有各的优缺点，
+# 推荐使用 ipip.net 测试服务器 IP 和路由追踪，
+# 用 17ce.com 测试网页加载速度，
+# 用 ping.chinaz.com 用国内不同地方的 Ping 值。
+
 # bench.sh
 # https://teddysun.com/444.html
 function bench() {
