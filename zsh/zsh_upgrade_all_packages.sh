@@ -215,19 +215,19 @@ EOF
 fi
 
 
-if [[ -x "$(command -v pip3)" ]]; then
-    colorEcho ${BLUE} "Updating pip3 packages..."
-    sudo pip3 list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | sudo xargs -n1 pip3 install -U
-elif [[ -x "$(command -v pip)" ]]; then
-    colorEcho ${BLUE} "Updating pip packages..."
-    sudo pip list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | sudo xargs -n1 pip install -U
-fi
+# if [[ -x "$(command -v pip3)" ]]; then
+#     colorEcho ${BLUE} "Updating pip3 packages..."
+#     sudo pip3 list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | sudo xargs -n1 pip3 install -U
+# elif [[ -x "$(command -v pip)" ]]; then
+#     colorEcho ${BLUE} "Updating pip packages..."
+#     sudo pip list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | sudo xargs -n1 pip install -U
+# fi
 
 
-if [[ "$(command -v fuck)" && -x "$(command -v pip3)" ]]; then
-    colorEcho ${BLUE} "Updating thefuck..."
-    sudo pip3 install thefuck --upgrade
-fi
+# if [[ "$(command -v fuck)" && -x "$(command -v pip)" ]]; then
+#     colorEcho ${BLUE} "Updating thefuck..."
+#     sudo pip install thefuck --upgrade
+# fi
 
 
 if [[ -d "$HOME/.jabba" ]]; then
