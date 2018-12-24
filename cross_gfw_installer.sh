@@ -58,7 +58,9 @@ rm -rf /etc/localtime && \
     echo $TZ > /etc/timezone
 
 if [[ -x "$(command -v v2ray)" ]]; then
-    source <(curl -sL https://git.io/fNgqx) -k
+    if v2ray -v 2>&1 | grep -q 'multi-v2ray'; then
+        source <(curl -sL https://git.io/fNgqx) -k
+    fi
 else
     source <(curl -sL https://git.io/fNgqx)
 fi
