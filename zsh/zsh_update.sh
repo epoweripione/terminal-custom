@@ -183,11 +183,11 @@ colorEcho ${BLUE} "enable plugins..."
 #   sed -i '/^  git/a\  command-time' ~/.zshrc
 # fi
 
-if [[ "$(command -v fuck)" ]]; then
-    if [[ ! $(grep "  thefuck" ~/.zshrc) ]]; then
-        sed -i '/^  git/a\  thefuck' ~/.zshrc
-    fi
-fi
+# if [[ "$(command -v fuck)" ]]; then
+#     if [[ ! $(grep "  thefuck" ~/.zshrc) ]]; then
+#         sed -i '/^  git/a\  thefuck' ~/.zshrc
+#     fi
+# fi
 
 if [[ ! $(grep "  colored-man-pages" ~/.zshrc) ]]; then
     sed -i '/^  git/a\  colored-man-pages' ~/.zshrc
