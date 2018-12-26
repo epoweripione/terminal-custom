@@ -38,9 +38,27 @@ if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     if pacman -Si geoip-bin >/dev/null 2>&1; then
         pacman -S geoip-bin geoip-database
     else
-        pacman -S geoip geoip-data
+        if pacman -Si GeoIP >/dev/null 2>&1; then
+            pacman -S GeoIP GeoIP-data
+        else
+            pacman -S geoip geoip-data
+        fi
     fi
 fi
+
+# # install latest zsh for readhat & centos
+# yum -y remove zsh
+# yum -y update && yum -y install ncurses-devel gcc make
+
+# wget -c https://nchc.dl.sourceforge.net/project/zsh/zsh/5.6.2/zsh-5.6.2.tar.xz && \
+#     tar -xvJf zsh-5.6.2.tar.xz && \
+#     cd zsh-5.6.2 && \
+#     ./configure && make && make install && \
+#     command -v zsh | sudo tee -a /etc/shells
+
+# if [[ ! -f "/bin/zsh" ]]; then
+#     ln -sv $(command -v zsh) /bin/zsh
+# fi
 
 
 if ! command -v zsh >/dev/null 2>&1; then

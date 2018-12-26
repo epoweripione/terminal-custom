@@ -41,7 +41,11 @@ fi
 if pacman -Si geoip-bin >/dev/null 2>&1; then
     pacman -S geoip-bin geoip-database
 else
-    pacman -S geoip geoip-data
+    if pacman -Si GeoIP >/dev/null 2>&1; then
+        pacman -S GeoIP GeoIP-data
+    else
+        pacman -S geoip geoip-data
+    fi
 fi
 
 ## How to use
