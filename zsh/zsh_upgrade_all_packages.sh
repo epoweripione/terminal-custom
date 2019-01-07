@@ -18,6 +18,7 @@ set_proxy_mirrors_env
 if [[ -z "$spruce_type" ]]; then
     get_os_type
     get_arch
+    get_sysArch
 fi
 
 
@@ -314,19 +315,33 @@ fi
 
 
 if [[ -x "$(command -v v2ray)" ]]; then
-    if v2ray -v 2>&1 | grep -q 'multi-v2ray'; then
+    if v2ray --version 2>&1 | grep -q 'multi-v2ray'; then
         colorEcho ${BLUE} "Updating multi-v2ray..."
         # https://github.com/Jrohy/multi-v2ray
         v2ray update
     elif systemctl list-unit-files --type=service | grep v2ray.service | grep enabled >/dev/null 2>&1; then
-        colorEcho ${BLUE} "Updating v2ray-core..."
-        # https://www.v2ray.com/chapter_00/install.html
-        bash <(curl -L -s https://install.direct/go.sh)
+        V2RAYCORE="yes"
     fi
 elif systemctl list-unit-files --type=service | grep v2ray.service | grep enabled >/dev/null 2>&1; then
+    V2RAYCORE="yes"
+fi
+
+if [[ $UID -ne 0 && -n "$V2RAYCORE" ]]; then
     colorEcho ${BLUE} "Updating v2ray-core..."
     # https://www.v2ray.com/chapter_00/install.html
-    bash <(curl -L -s https://install.direct/go.sh)
+
+    CHECK_URL="https://api.github.com/repos/v2ray/v2ray-core/releases/latest"
+
+    CURRENT_VERSION=$(v2ray --version | grep 'V2Ray' | cut -d' ' -f2)
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        # bash <(curl -L -s https://install.direct/go.sh)
+        DOWNLOAD_URL=https://github.com/v2ray/v2ray-core/releases/download/v${REMOTE_VERSION}/v2ray-${ostype}-${VDIS}.zip
+        curl -SL $DOWNLOAD_URL -o v2ray-core.zip && \
+        bash <(curl -L -s https://install.direct/go.sh) --local ./v2ray-core.zip && \
+        rm -f ./v2ray-core.zip && \
+        ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
+    fi
 fi
 
 
