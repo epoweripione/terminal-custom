@@ -69,6 +69,7 @@ chmod +x ~/sdkman_installer.sh
 
 chmod +x ~/speedtest.sh
 
+chmod +x ~/php_debian_installer.sh
 chmod +x ~/pecl_install_php_extensions.sh
 
 chmod +x ~/frp_installer.sh

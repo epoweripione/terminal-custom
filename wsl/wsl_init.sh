@@ -101,10 +101,10 @@ if [[ ! -e /etc/apt/sources.list.d/yarn.list ]]; then
 fi
 
 ## php
-if [[ ! -e /etc/apt/sources.list.d/php.list ]]; then
-    wget -O /etc/apt/trusted.gpg.d/php.gpg https://mirror.xtom.com.hk/sury/php/apt.gpg
-    echo "deb https://mirror.xtom.com.hk/sury/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-fi
+# if [[ ! -e /etc/apt/sources.list.d/php.list ]]; then
+#     wget -O /etc/apt/trusted.gpg.d/php.gpg https://mirror.xtom.com.hk/sury/php/apt.gpg
+#     echo "deb https://mirror.xtom.com.hk/sury/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
+# fi
 
 ## .NET Core SDK
 if [[ ! -e /etc/apt/sources.list.d/microsoft-prod.list ]]; then
@@ -125,15 +125,6 @@ apt update && apt upgrade -y
 colorEcho ${BLUE} "Install useful packages..."
 apt install -y binutils build-essential di dnsutils g++ gcc \
     git htop iproute2 make net-tools p7zip psmisc tree unzip zip
-
-
-# Install dev packages
-colorEcho ${BLUE} "Install dev packages..."
-apt install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libicu-dev \
-    libxml2-dev libxslt-dev libbz2-dev libpspell-dev aspell-en \
-    libcurl3 libcurl4-openssl-dev libssl-dev libc-client-dev libkrb5-dev \
-    libpcre3 libpcre3-dev libmagickwand-dev libmemcached-dev zlib1g-dev \
-    libgirepository1.0-dev libpq-dev nghttp2 libnghttp2-dev --no-install-recommends
 
 
 # Enable broadcast WINS
@@ -242,60 +233,8 @@ fi
 
 
 # PHP
-## Install PHP7.2
-colorEcho ${BLUE} "Installing PHP7.2..."
-apt install -y pkg-config php7.2 php7.2-fpm php7.2-curl php7.2-dev \
-    php7.2-gd php7.2-mbstring php7.2-mysql php7.2-pgsql \
-    php7.2-sqlite3 php7.2-xml php7.2-xsl php7.2-zip
-
-## opcache
-{ \
-    echo 'opcache.memory_consumption=128'; \
-    echo 'opcache.interned_strings_buffer=8'; \
-    echo 'opcache.max_accelerated_files=4000'; \
-    echo 'opcache.revalidate_freq=60'; \
-    echo 'opcache.fast_shutdown=1'; \
-    echo 'opcache.enable_cli=1'; \
-    echo 'opcache.file_cache=/tmp'; \
-} > /etc/php/7.2/cli/conf.d/opcache-recommended.ini
-
-# remove PHP version from the X-Powered-By HTTP header
-# test: curl -I -H "Accept-Encoding: gzip, deflate" https://www.yourdomain.com
-echo 'expose_php = off' > /etc/php/7.2/cli/conf.d/hide-header-version.ini
-
-## Install composer
-if [[ ! -x "$(command -v composer)" ]]; then
-    colorEcho ${BLUE} "Installing composer..."
-    export COMPOSER_ALLOW_SUPERUSER=1 && \
-        export COMPOSER_HOME=/usr/local/share/composer && \
-        mkdir -p /usr/local/share/composer && \
-        wget https://dl.laravel-china.org/composer.phar -O /usr/local/bin/composer && \
-        chmod a+x /usr/local/bin/composer
-
-    ### Packagist mirror
-    composer config -g repo.packagist composer https://packagist.laravel-china.org
-
-    ### Install composer packages
-    colorEcho ${BLUE} "Installing composer packages..."
-    composer g require "hirak/prestissimo" && \
-        composer g require friendsofphp/php-cs-fixer && \
-        composer g require --dev phpunit/phpunit ^7 && \
-        composer g require psy/psysh:@stable
-
-    mkdir -p $HOME/.local/share/psysh/ && \
-        curl -SL http://psysh.org/manual/zh/php_manual.sqlite -o $HOME/.local/share/psysh/php_manual.sqlite
-fi
-
-## pear & pecl
-if [[ -x "$(command -v pecl)" ]]; then
-    pecl update-channels && rm -rf /tmp/pear $HOME/.pearrc
-
-    ### fix PHP Fatal error: Cannot use result of built-in function in write context in /usr/share/php/Archive/Tar.php on line 639
-    ### https://www.dotkernel.com/php-troubleshooting/fix-installing-pear-packages-with-php-7-2/
-    sed -i 's/& func_get_args/func_get_args/' /usr/share/php/Archive/Tar.php # && pear install Archive_Tar
-    
-    ### fix Warning: Invalid argument supplied for foreach() in Command.php on line 249
-    sed -i 's/exec $PHP -C -n -q/exec $PHP -C -q/' /usr/bin/pecl
+if [[ -s "$HOME/php_debian_installer.sh" ]]; then
+    source "$HOME/php_debian_installer.sh"
 fi
 
 ## Install extension using pecl

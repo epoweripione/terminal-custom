@@ -24,13 +24,14 @@ sed -i 's/exec $PHP -C -n -q/exec $PHP -C -q/' /usr/bin/pecl
 
 ## Find PHP extension_dir
 ## php -ini | grep extension_dir
+PHP_VERSION=$(php --version | head -n 1 | cut -d " " -f 2 | cut -c 1-3)
 PHP_EXT_DIR=$(php-config --extension-dir)
 PHP_INI_DIR=$(php --ini | grep "Scan for additional .ini files in" | cut -d':' -f2 | cut -d' ' -f2)
 
 ## pecl install imagick memcached mongodb oauth xdebug
 ## use proxy: curl -v --socks5-hostname 127.0.0.1:55880
 apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recommends && \
-    cd /tmp && \
+    mkdir -p /tmp/pecl_downloads && cd /tmp/pecl_downloads && \
     curl -SL http://pecl.php.net/get/imagick -o imagick.tgz && \
     curl -SL http://pecl.php.net/get/memcached -o memcached.tgz && \
     curl -SL http://pecl.php.net/get/mongodb -o mongodb.tgz && \
@@ -49,21 +50,21 @@ apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recomm
     echo 'extension=oauth.so' > $PHP_INI_DIR/90-oauth.ini && \
     echo 'extension=redis.so' > $PHP_INI_DIR/90-redis.ini && \
     echo 'zend_extension=xdebug.so' > $PHP_INI_DIR/90-xdebug.ini && \
-    rm -rf /tmp/*
+    rm -rf /tmp/pecl_downloads
 
 ## swoole
 ## https://github.com/swoole/swoole-src
 ## hiredis( for swoole )
 ## https://github.com/redis/hiredis
 apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
-    mkdir -p /tmp/downloads && cd /tmp && \
-    curl -o ./downloads/hiredis.tar.gz https://github.com/redis/hiredis/archive/master.tar.gz -L && \
-    tar zxvf ./downloads/hiredis.tar.gz && \
+    mkdir -p /tmp/pecl_downloads && cd /tmp && \
+    curl -o ./pecl_downloads/hiredis.tar.gz https://github.com/redis/hiredis/archive/master.tar.gz -L && \
+    tar zxvf ./pecl_downloads/hiredis.tar.gz && \
     mv hiredis* hiredis && cd hiredis && \
     make -j && make install && ldconfig && \
     cd /tmp && \
-    curl -o ./downloads/swoole.tar.gz https://github.com/swoole/swoole-src/archive/master.tar.gz -L && \
-    tar zxvf ./downloads/swoole.tar.gz && \
+    curl -o ./pecl_downloads/swoole.tar.gz https://github.com/swoole/swoole-src/archive/master.tar.gz -L && \
+    tar zxvf ./pecl_downloads/swoole.tar.gz && \
     mv swoole-src* swoole-src && cd swoole-src && \
     phpize && \
     ./configure \
@@ -75,31 +76,38 @@ apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
         --enable-coroutine-postgresql && \
     make clean && make && make install && \
     echo 'extension=swoole.so' > $PHP_INI_DIR/90-swoole.ini && \
-    rm -rf /tmp/*
+    rm -rf /tmp/pecl_downloads /tmp/hiredis /tmp/swoole-src
 
 ## Phalcon
 ## https://github.com/phalcon/cphalcon
-apt install -y php7.2-dev libpcre3-dev gcc make re2c --no-install-recommends && \
-    mkdir -p /tmp/downloads && cd /tmp && \
-    curl -o ./downloads/cphalcon.tar.gz https://github.com/phalcon/cphalcon/archive/master.tar.gz -L && \
-    tar zxvf ./downloads/cphalcon.tar.gz && \
+apt install -y php${PHP_VERSION}-dev libpcre3-dev gcc make re2c --no-install-recommends && \
+    mkdir -p /tmp/pecl_downloads && cd /tmp && \
+    curl -o ./pecl_downloads/cphalcon.tar.gz https://github.com/phalcon/cphalcon/archive/master.tar.gz -L && \
+    tar zxvf ./pecl_downloads/cphalcon.tar.gz && \
     mv cphalcon* cphalcon && cd cphalcon/build && \
-    ./install --phpize /usr/bin/phpize7.2 --php-config /usr/bin/php-config7.2 && \
+    ./install --phpize /usr/bin/phpize${PHP_VERSION} --php-config /usr/bin/php-config${PHP_VERSION} && \
     echo 'extension=phalcon.so' > $PHP_INI_DIR/90-phalcon.ini && \
-    rm -rf /tmp/*
+    rm -rf /tmp/pecl_downloads /tmp/cphalcon
 
 ## PDFlib
 ## https://www.pdflib.com/download/pdflib-product-family/
 PDFlib_REMOTE_VER="9.1.2p1"
 PDFlib_CURRENT_VER=$(php --ri pdflib | grep "Binary-Version" | cut -d'>' -f2 | cut -d' ' -f2)
+PDFlib_BIN_VER=$(echo "${PHP_VERSION}0" | cut -c 1,3-)
 if [[ "$PDFlib_CURRENT_VER" != "$PDFlib_REMOTE_VER" ]]; then
     cd /tmp && \
         curl -o pdflib.tar.gz https://www.pdflib.com/binaries/PDFlib/912/PDFlib-9.1.2p1-Linux-x86_64-php.tar.gz -L && \
         tar -xvf pdflib.tar.gz && \
-        mv PDFlib-* pdflib && cd pdflib && \
-        cp bind/php/php-720-nts/php_pdflib.so $PHP_EXT_DIR && \
-        echo 'extension=php_pdflib.so' > $PHP_INI_DIR/90-pdflib.ini && \
-        rm -rf /tmp/*
+        mv PDFlib-* pdflib
+    
+    if [[ -d "/tmp/pdflib/bind/php/php-${PDFlib_BIN_VER}-nts" ]]; then
+        cp /tmp/pdflib/bind/php/php-${PDFlib_BIN_VER}-nts/php_pdflib.so $PHP_EXT_DIR && \
+        echo 'extension=php_pdflib.so' > $PHP_INI_DIR/90-pdflib.ini
+    fi
+
+    if [[ -d "/tmp/pdflib" ]]; then
+        rm -rf /tmp/pdflib
+    fi
 fi
 
 ## How to install OCI8
@@ -162,14 +170,7 @@ if [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "18c" ]]; t
         if [[ -z "$LD_LIBRARY_PATH" ]]; then export LD_LIBRARY_PATH=$ORACLE_HOME; else export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME; fi && \
         export PATH=$PATH:$ORACLE_HOME && \
         : && \
-        apt install -y build-essential libaio1 --no-install-recommends && \
-        cd /tmp && \
-        curl -SL http://pecl.php.net/get/oci8 -o oci8.tgz && \
-        printf "instantclient,$ORACLE_HOME\n" | pecl install --force oci8.tgz && \
-        echo 'extension=oci8.so' > $PHP_INI_DIR/90-oci8.ini && \
-        : && \
-        rm -rf /opt/oracle/*.zip && \
-        rm -rf /tmp/*
+        rm -rf /opt/oracle/*.zip
 elif [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "12c" ]]; then
     mkdir -p /opt/oracle && cd /opt/oracle && \
         curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-basic-linux.x64-12.2.0.1.0.zip && \
@@ -189,14 +190,17 @@ elif [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "12c" ]];
         if [[ -z "$LD_LIBRARY_PATH" ]]; then export LD_LIBRARY_PATH=$ORACLE_HOME; else export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME; fi && \
         export PATH=$PATH:$ORACLE_HOME && \
         : && \
-        apt install -y build-essential libaio1 --no-install-recommends && \
-        cd /tmp && \
+        rm -rf /opt/oracle/*.zip
+fi
+
+if [[ ! -s "$PHP_INI_DIR/90-oci8.ini" ]]; then
+    apt install -y build-essential libaio1 --no-install-recommends && \
+        mkdir -p /tmp/pecl_downloads && cd /tmp/pecl_downloads && \
         curl -SL http://pecl.php.net/get/oci8 -o oci8.tgz && \
         printf "instantclient,$ORACLE_HOME\n" | pecl install --force oci8.tgz && \
         echo 'extension=oci8.so' > $PHP_INI_DIR/90-oci8.ini && \
         : && \
-        rm -rf /opt/oracle/*.zip && \
-        rm -rf /tmp/*
+        rm -rf /tmp/pecl_downloads
 fi
 
 ## How to check php extensions which shared libraries depends on

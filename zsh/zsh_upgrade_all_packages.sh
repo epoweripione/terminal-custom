@@ -185,7 +185,7 @@ if [[ -d "$HOME/.gvm" ]]; then
 fi
 
 
-if [[ $UID -eq 0 && -x "$(command -v composer)" ]]; then
+if [[ $UID -eq 0 && -x "$(command -v php)" && -x "$(command -v composer)" ]]; then
     colorEcho ${BLUE} "Updating composer & composer global packages..."
     composer selfupdate && composer g update
 fi
