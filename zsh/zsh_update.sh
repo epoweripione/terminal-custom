@@ -231,15 +231,15 @@ if [[ -x "$(command -v docker-compose)" ]]; then
     fi
 fi
 
-if [[ -x "$(command -v composer)" ]]; then
-    if [[ ! $(grep "  composer" ~/.zshrc) ]]; then
-        sed -i '/^  git/a\  composer' ~/.zshrc
-    fi
-fi
-
 if [[ -x "$(command -v docker)" ]]; then
     if [[ ! $(grep "  docker" ~/.zshrc) ]]; then
         sed -i '/^  git/a\  docker' ~/.zshrc
+    fi
+fi
+
+if [[ -x "$(command -v composer)" ]]; then
+    if [[ ! $(grep "  composer" ~/.zshrc) ]]; then
+        sed -i '/^  git/a\  composer' ~/.zshrc
     fi
 fi
 

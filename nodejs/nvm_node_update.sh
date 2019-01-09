@@ -30,14 +30,6 @@ fi
 
 if [[ -z "$NVM_NOT_UPDATE" && -d "$HOME/.nvm" ]]; then
     colorEcho ${BLUE} "Updating nvm..."
-    CHECK_URL="https://api.github.com/repos/creationix/nvm/releases/latest"
-
-    CURRENT_VERSION=$(nvm --version)
-    REMOTE_VERSION=$(wget --no-check-certificate -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        curl -o- https://raw.githubusercontent.com/creationix/nvm/v$REMOTE_VERSION/install.sh | bash
-    fi
-
     if type 'nvm' 2>/dev/null | grep -q 'function'; then
         :
     else
@@ -47,15 +39,29 @@ if [[ -z "$NVM_NOT_UPDATE" && -d "$HOME/.nvm" ]]; then
         # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     fi
 
-    if [[ -z "$NVM_INSTALLER_NOT_USE_MIRROR" ]]; then
-        export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node
+    CHECK_URL="https://api.github.com/repos/creationix/nvm/releases/latest"
+
+    CURRENT_VERSION=$(nvm --version)
+    REMOTE_VERSION=$(wget --no-check-certificate -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        curl -o- https://raw.githubusercontent.com/creationix/nvm/v$REMOTE_VERSION/install.sh | bash
     fi
 
-    colorEcho ${BLUE} "Updating node LTS..."
-    nvm install --lts
+    if [[ -z "$NVM_INSTALLER_NOT_USE_MIRROR" ]]; then
+        # export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node
 
-    colorEcho ${BLUE} "Updating node latest..."
-    nvm install node --reinstall-packages-from=node
+        colorEcho ${BLUE} "Updating node latest..."
+        NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node nvm install node --reinstall-packages-from=node
+
+        colorEcho ${BLUE} "Updating node LTS..."
+        NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node nvm install --lts
+    else
+        colorEcho ${BLUE} "Updating node latest..."
+        nvm install node --reinstall-packages-from=node
+
+        colorEcho ${BLUE} "Updating node LTS..."
+        nvm install --lts
+    fi
 
     # nvm use node
     nvm alias default node
