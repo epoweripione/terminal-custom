@@ -80,7 +80,7 @@ fi
 
 ## git lfs
 if [[ ! -e /etc/apt/sources.list.d/github_git-lfs.list ]]; then
-    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
     # Configure proxy for APT
     # echo 'Acquire::http::Proxy::packagecloud-repositories.s3.dualstack.us-west-1.amazonaws.com "http://127.0.0.1:55881/";' > /etc/apt/apt.conf.d/99proxy
 fi

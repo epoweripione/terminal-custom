@@ -275,12 +275,14 @@ if [[ -d "$HOME/.nvm" ]]; then
     if type 'nvm' 2>/dev/null | grep -q 'function'; then
         :
     else
-        export NVM_DIR="${XDG_CONFIG_HOME:-$HOME}/.nvm"
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        export NVM_DIR="$HOME/.nvm"
+        source "$NVM_DIR/nvm.sh"
+        # export NVM_DIR="${XDG_CONFIG_HOME:-$HOME}/.nvm"
+        # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     fi
 
     if [[ -z "$NVM_INSTALLER_NOT_USE_MIRROR" ]]; then
-        export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
+        export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node
     fi
 
     if [[ "$NVM_LOAD_NVMRC_IN_CURRENT_DIRECTORY" == true ]]; then

@@ -179,30 +179,80 @@ ln -s $ZSH/custom/themes/alien/alien.plugin.zsh $ZSH/custom/themes/alien.zsh-the
 
 # enable plugins
 colorEcho ${BLUE} "enable plugins..."
-# if [[ ! $(grep "  command-time" ~/.zshrc) ]]; then
-#   sed -i '/^  git/a\  command-time' ~/.zshrc
-# fi
-
-# if [[ "$(command -v fuck)" ]]; then
-#     if [[ ! $(grep "  thefuck" ~/.zshrc) ]]; then
-#         sed -i '/^  git/a\  thefuck' ~/.zshrc
-#     fi
-# fi
-
-if [[ ! $(grep "  colored-man-pages" ~/.zshrc) ]]; then
-    sed -i '/^  git/a\  colored-man-pages' ~/.zshrc
+if [[ $ostype == "Darwin" ]]; then
+    if [[ ! $(grep "  osx" ~/.zshrc) ]]; then
+        sed -i '/^  git/a\  osx' ~/.zshrc
+    fi
 fi
 
 if [[ ! $(grep "  zsh-autosuggestions" ~/.zshrc) ]]; then
     sed -i '/^  git/a\  zsh-autosuggestions' ~/.zshrc
 fi
 
-if [[ ! $(grep "  fast-syntax-highlighting" ~/.zshrc) ]]; then
-    sed -i '/^  git/a\  fast-syntax-highlighting' ~/.zshrc
+if [[ -x "$(command -v redis-cli)" ]]; then
+    if [[ ! $(grep "  redis-cli" ~/.zshrc) ]]; then
+        sed -i '/^  git/a\  redis-cli' ~/.zshrc
+    fi
+fi
+
+if [[ ! $(grep "  history-substring-search" ~/.zshrc) ]]; then
+    sed -i '/^  git/a\  history-substring-search' ~/.zshrc
 fi
 
 if [[ ! $(grep "  git-flow-completion" ~/.zshrc) ]]; then
     sed -i '/^  git/a\  git-flow-completion' ~/.zshrc
+fi
+
+if [[ "$(command -v fuck)" ]]; then
+    if [[ ! $(grep "  thefuck" ~/.zshrc) ]]; then
+        sed -i '/^  git/a\  thefuck' ~/.zshrc
+    fi
+fi
+
+if [[ ! $(grep "  fast-syntax-highlighting" ~/.zshrc) ]]; then
+    sed -i '/^  git/a\  fast-syntax-highlighting' ~/.zshrc
+fi
+
+if [[ -x "$(command -v fab)" ]]; then
+    if [[ ! $(grep "  fabric" ~/.zshrc) ]]; then
+        sed -i '/^  git/a\  fabric' ~/.zshrc
+    fi
+fi
+
+if [[ -x "$(command -v docker-machine)" ]]; then
+    if [[ ! $(grep "  docker-machine" ~/.zshrc) ]]; then
+        sed -i '/^  git/a\  docker-machine' ~/.zshrc
+    fi
+fi
+
+if [[ -x "$(command -v docker-compose)" ]]; then
+    if [[ ! $(grep "  docker-compose" ~/.zshrc) ]]; then
+        sed -i '/^  git/a\  docker-compose' ~/.zshrc
+    fi
+fi
+
+if [[ -x "$(command -v composer)" ]]; then
+    if [[ ! $(grep "  composer" ~/.zshrc) ]]; then
+        sed -i '/^  git/a\  composer' ~/.zshrc
+    fi
+fi
+
+if [[ -x "$(command -v docker)" ]]; then
+    if [[ ! $(grep "  docker" ~/.zshrc) ]]; then
+        sed -i '/^  git/a\  docker' ~/.zshrc
+    fi
+fi
+
+# if [[ ! $(grep "  command-time" ~/.zshrc) ]]; then
+#   sed -i '/^  git/a\  command-time' ~/.zshrc
+# fi
+
+if [[ ! $(grep "  colored-man-pages" ~/.zshrc) ]]; then
+    sed -i '/^  git/a\  colored-man-pages' ~/.zshrc
+fi
+
+if [[ ! $(grep "  autojump cp rsync sudo supervisor" ~/.zshrc) ]]; then
+    sed -i '/^  git/a\  autojump cp rsync sudo supervisor' ~/.zshrc
 fi
 
 

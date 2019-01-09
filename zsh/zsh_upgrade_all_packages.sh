@@ -49,7 +49,11 @@ if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     if [[ $UID -ne 0 && "$(command -v yay)" ]]; then
         yay -Syu
     else
-        sudo pacman -Syu
+        if [[ -x "$(command -v pacapt)" ]]; then
+            sudo pacapt -Syu --noconfirm
+        else
+            sudo pacman -Syu
+        fi
     fi
 else
     if check_release_package_manager packageManager yum; then

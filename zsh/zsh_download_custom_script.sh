@@ -63,6 +63,7 @@ chmod +x ~/gvm_go_installer.sh
 chmod +x ~/hexo_installer.sh
 chmod +x ~/jabba_jdk_installer.sh
 chmod +x ~/nano_installer.sh
+chmod +x ~/pacapt_installer.sh
 chmod +x ~/proxychains_installer.sh
 chmod +x ~/sdkman_installer.sh
 
