@@ -89,11 +89,13 @@ composer g require "hirak/prestissimo" && \
 
 colorEcho ${BLUE} "Downloading psysh chinese php_manual..."
 mkdir -p $HOME/.local/share/psysh/ && \
-    curl -SL http://psysh.org/manual/zh/php_manual.sqlite -o $HOME/.local/share/psysh/php_manual.sqlite
+    curl -SL http://psysh.org/manual/zh/php_manual.sqlite -o $HOME/php_manual.sqlite && \
+    mv -f $HOME/php_manual.sqlite $HOME/.local/share/psysh/php_manual.sqlite
 
 
 ## pear & pecl
 if [[ -x "$(command -v pecl)" ]]; then
+    colorEcho ${BLUE} "Fix for pecl..."
     pecl update-channels && rm -rf /tmp/pear $HOME/.pearrc
 
     ### fix PHP Fatal error: Cannot use result of built-in function in write context in /usr/share/php/Archive/Tar.php on line 639
