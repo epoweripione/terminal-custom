@@ -48,19 +48,17 @@ if [[ -z "$NVM_NOT_UPDATE" && -d "$HOME/.nvm" ]]; then
     fi
 
     if [[ -z "$NVM_INSTALLER_NOT_USE_MIRROR" ]]; then
-        # export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node
+        colorEcho ${BLUE} "Updating node LTS..."
+        NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node nvm install --lts
 
         colorEcho ${BLUE} "Updating node latest..."
         NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node nvm install node --reinstall-packages-from=node
-
-        colorEcho ${BLUE} "Updating node LTS..."
-        NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node nvm install --lts
     else
-        colorEcho ${BLUE} "Updating node latest..."
-        nvm install node --reinstall-packages-from=node
-
         colorEcho ${BLUE} "Updating node LTS..."
         nvm install --lts
+
+        colorEcho ${BLUE} "Updating node latest..."
+        nvm install node --reinstall-packages-from=node
     fi
 
     # nvm use node

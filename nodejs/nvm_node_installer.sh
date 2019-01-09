@@ -32,17 +32,24 @@ if [[ -d "$HOME/.nvm" ]]; then
     source "$NVM_DIR/nvm.sh"
     # export NVM_DIR="${XDG_CONFIG_HOME:-$HOME}/.nvm"
     # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-    if [[ -z "$NVM_INSTALLER_NOT_USE_MIRROR" ]]; then
-        export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node
-    fi
 fi
 
 ## Install nodejs
 if type 'nvm' 2>/dev/null | grep -q 'function'; then
     if [[ ! "$(command -v node)" ]]; then
-        nvm install node
-        nvm install --lts
+        if [[ -z "$NVM_INSTALLER_NOT_USE_MIRROR" ]]; then
+            colorEcho ${BLUE} "Installing node LTS..."
+            NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node nvm install --lts
+
+            colorEcho ${BLUE} "Installing node latest..."
+            NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node nvm install node
+        else
+            colorEcho ${BLUE} "Installing node LTS..."
+            nvm install --lts
+
+            colorEcho ${BLUE} "Installing node latest..."
+            nvm install node
+        fi
 
         nvm use node
         nvm alias default node

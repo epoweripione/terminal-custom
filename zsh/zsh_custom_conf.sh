@@ -112,6 +112,12 @@ else
 fi
 
 
+# rlwarp alias
+if [[ -x "$(command -v telnet)" && -x "$(command -v rlwrap)" ]]; then
+    alias telnet="rlwrap telnet"
+fi
+
+
 # macOS
 if [[ $ostype == "Darwin" ]]; then
     if [[ -x "$(command -v greadlink)" ]]; then
@@ -191,6 +197,9 @@ if [[ -n "$ORACLE_HOME" ]]; then
 
     if [[ -x "$(command -v rlwrap)" ]]; then
         alias sqlplus="rlwrap sqlplus"
+        alias rman="rlwrap rman"
+        alias asmcmd="rlwrap asmcmd"
+        alias ggsci="rlwrap ggsci"
     fi
 fi
 
