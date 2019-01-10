@@ -66,11 +66,11 @@ else
 fi
 
 
-# V2Ray Client
-# https://www.v2ray.com/chapter_00/install.html
-bash <(curl -L -s https://install.direct/go.sh) && \
-    systemctl enable v2ray && \
-    systemctl start v2ray && \
-    sudo ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
+# # V2Ray Client
+# # https://www.v2ray.com/chapter_00/install.html
+# bash <(curl -L -s https://install.direct/go.sh) && \
+#     systemctl enable v2ray && \
+#     systemctl start v2ray && \
+#     sudo ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
 
-service v2ray start|stop|status|reload|restart|force-reload
+# service v2ray start|stop|status|reload|restart|force-reload
