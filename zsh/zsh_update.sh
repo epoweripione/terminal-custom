@@ -225,15 +225,9 @@ if [[ -x "$(command -v docker-machine)" ]]; then
     fi
 fi
 
-if [[ -x "$(command -v docker-compose)" ]]; then
-    if [[ ! $(grep "  docker-compose" ~/.zshrc) ]]; then
-        sed -i '/^  git/a\  docker-compose' ~/.zshrc
-    fi
-fi
-
 if [[ -x "$(command -v docker)" ]]; then
-    if [[ ! $(grep "  docker" ~/.zshrc) ]]; then
-        sed -i '/^  git/a\  docker' ~/.zshrc
+    if [[ ! $(grep "  docker docker-compose" ~/.zshrc) ]]; then
+        sed -i '/^  git/a\  docker docker-compose' ~/.zshrc
     fi
 fi
 
