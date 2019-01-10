@@ -36,6 +36,9 @@ fi
 # change the command execution time stamp shown in the history command output
 sed -i 's/[#]*[ ]*HIST_STAMPS.*/HIST_STAMPS="yyyy-mm-dd"/' ~/.zshrc
 
+# disable auto update
+sed -i "s/[#]*[ ]*DISABLE_AUTO_UPDATE.*/DISABLE_AUTO_UPDATE=\"true\"/" ~/.zshrc
+
 
 # custom theme
 colorEcho ${BLUE} "custom theme..."

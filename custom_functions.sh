@@ -277,7 +277,7 @@ function set_proxy() {
     export http_proxy=${proxy_url}
     export HTTPS_PROXY=${proxy_url}
     export ALL_PROXY=${proxy_url}
-    
+
     # curlrc
     # echo "proxy=${proxy_url}" >> .curlrc
 }
@@ -312,7 +312,7 @@ function myip() {
     LOCAL_NET_IF=`netstat -rn | awk '/^0.0.0.0/ {thif=substr($0,74,10); print thif;} /^default.*UG/ {thif=substr($0,65,10); print thif;}'`
     LOCAL_NET_IP=`ifconfig ${LOCAL_NET_IF} | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
 
-    WAN_NET_IP=`curl -s -4 ipinfo.io/ip`
+    WAN_NET_IP=`curl -s -4 ifconfig.co`
 
     echo -e "Local IP: ${LOCAL_NET_IP}\nPublic IP: ${WAN_NET_IP}"
 }
@@ -326,8 +326,8 @@ function myip_local() {
 
 function myip_wan() {
     # https://guoyu841020.oschina.io/2017/02/23/linux%E8%8E%B7%E5%8F%96%E5%85%AC%E7%BD%91IP%E7%9A%84%E6%96%B9%E6%B3%95/
-    WAN_NET_IP=`curl -s -4 ipinfo.io/ip`
-    # WAN_NET_IP=`curl -sL ifconfig.co`
+    WAN_NET_IP=`curl -s -4 ifconfig.co`
+    # WAN_NET_IP=`curl -s -4 ipinfo.io/ip`
     # WAN_NET_IP=`curl -s -4 icanhazip.com`
     # WAN_NET_IP=`curl -s -4 ident.me`
     # WAN_NET_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
@@ -337,7 +337,7 @@ function myip_wan() {
 
 function myip_wan_geo() {
     if [[ -x "$(command -v geoiplookup)" ]]; then
-        WAN_NET_IP=`curl -s -4 ipinfo.io/ip`
+        WAN_NET_IP=`curl -s -4 ifconfig.co`
         WAN_NET_IP_GEO=`geoiplookup ${WAN_NET_IP}`
         echo -e "Public IP: ${WAN_NET_IP}\n${WAN_NET_IP_GEO}"
     else
