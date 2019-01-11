@@ -306,18 +306,18 @@ function proxy_cmd() {
 # done
 
 ## Query IP address
-function myip() {
+function myip_lan_wan() {
     # https://stackoverflow.com/questions/13322485/how-to-get-the-primary-ip-address-of-the-local-machine-on-linux-and-os-x
     # LOCAL_NET_IP=$(hostname -I | cut -d' ' -f1)
     LOCAL_NET_IF=`netstat -rn | awk '/^0.0.0.0/ {thif=substr($0,74,10); print thif;} /^default.*UG/ {thif=substr($0,65,10); print thif;}'`
     LOCAL_NET_IP=`ifconfig ${LOCAL_NET_IF} | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
 
-    WAN_NET_IP=`curl -s -4 ifconfig.co`
+    WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 ifconfig.co`
 
     echo -e "Local IP: ${LOCAL_NET_IP}\nPublic IP: ${WAN_NET_IP}"
 }
 
-function myip_local() {
+function myip_lan() {
     LOCAL_NET_IF=`netstat -rn | awk '/^0.0.0.0/ {thif=substr($0,74,10); print thif;} /^default.*UG/ {thif=substr($0,65,10); print thif;}'`
     LOCAL_NET_IP=`ifconfig ${LOCAL_NET_IF} | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
 
@@ -326,10 +326,30 @@ function myip_local() {
 
 function myip_wan() {
     # https://guoyu841020.oschina.io/2017/02/23/linux%E8%8E%B7%E5%8F%96%E5%85%AC%E7%BD%91IP%E7%9A%84%E6%96%B9%E6%B3%95/
-    WAN_NET_IP=`curl -s -4 ifconfig.co`
-    # WAN_NET_IP=`curl -s -4 ipinfo.io/ip`
-    # WAN_NET_IP=`curl -s -4 icanhazip.com`
-    # WAN_NET_IP=`curl -s -4 ident.me`
+    # nginx:
+    # https://www.jianshu.com/p/14320f300223
+    # location /ip {
+    #         default_type text/plain;
+    #         return 200 "$remote_addr";
+    # }
+
+    # location /ipinfo {
+    #         default_type application/json;
+    #         return 200  '{"IP":"$remote_addr","PORT":"$remote_port","X-Forwarded-For":"$proxy_add_x_forwarded_for"}';
+    # }
+    # php:
+    # <?php echo $_SERVER["REMOTE_ADDR"]; ?>
+    # pacman -S --noconfirm html2text
+    # curl -s http://yourdomainname/getip.php | html2text
+    # nodejs:
+    # https://github.com/alsotang/externalip
+    # https://github.com/sindresorhus/public-ip
+
+    WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 ifconfig.co`
+    # WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 ipinfo.io/ip`
+    # WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 https://ipv4.icanhazip.com/`
+    # WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 icanhazip.com`
+    # WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 ident.me`
     # WAN_NET_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
 
     echo -e "Public IP: ${WAN_NET_IP}"
@@ -337,9 +357,13 @@ function myip_wan() {
 
 function myip_wan_geo() {
     if [[ -x "$(command -v geoiplookup)" ]]; then
-        WAN_NET_IP=`curl -s -4 ifconfig.co`
-        WAN_NET_IP_GEO=`geoiplookup ${WAN_NET_IP}`
-        echo -e "Public IP: ${WAN_NET_IP}\n${WAN_NET_IP_GEO}"
+        WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 ifconfig.co`
+        if [[ -n "$WAN_NET_IP" ]]; then
+            WAN_NET_IP_GEO=`geoiplookup ${WAN_NET_IP}`
+            echo -e "Public IP: ${WAN_NET_IP}\n${WAN_NET_IP_GEO}"
+        else
+            echo "Can't get WAN IP!"
+        fi
     else
         echo "Can't get GEO by WAN IP!"
     fi

@@ -39,12 +39,12 @@ fi
 # GeoIP binary and database
 # http://kbeezie.com/geoiplookup-command-line/
 if pacman -Si geoip-bin >/dev/null 2>&1; then
-    pacman -S geoip-bin geoip-database
+    pacman -S --noconfirm geoip-bin geoip-database
 else
     if pacman -Si GeoIP >/dev/null 2>&1; then
-        pacman -S GeoIP GeoIP-data
+        pacman -S --noconfirm GeoIP GeoIP-data
     else
-        pacman -S geoip geoip-data
+        pacman -S --noconfirm geoip geoip-data
     fi
 fi
 
