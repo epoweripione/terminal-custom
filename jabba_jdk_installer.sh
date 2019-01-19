@@ -22,8 +22,10 @@ curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
 ## OpenJDK
 colorEcho ${BLUE} "Installing JDK 11..."
 # apt install -y default-jdk default-jre
-# jabba install openjdk@1.11.0-1 && jabba alias default openjdk@1.11.0-1
-jabba install 1.11.0-1 && jabba alias default 1.11.0-1
+# jabba install 1.8.201 && jabba alias default 1.8.201
+# jabba install 1.8.201 && jabba alias default 1.8.201
+# jabba install openjdk@1.11.0-2 && jabba alias default openjdk@1.11.0-2
+jabba install 1.11.0-2 && jabba alias default 1.11.0-2
 
 ## Oracle jdk 8
 ## http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
