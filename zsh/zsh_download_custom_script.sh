@@ -75,6 +75,9 @@ chmod +x ~/pecl_install_php_extensions.sh
 chmod +x ~/frp_installer.sh
 chmod +x ~/goproxy_installer.sh
 
+chmod +x ~/vs-code-extensions-installer.sh
+cp -f ~/terminal-custom/vscode_extensions.list ~
+
 cp -f ~/terminal-custom/terminal_256colors.py ~
 
 cp -f ~/terminal-custom/zsh/*.sh ~
