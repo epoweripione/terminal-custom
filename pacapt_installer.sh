@@ -28,13 +28,15 @@ if [[ -x "$(command -v pacapt)" ]]; then
 
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "Updating pacapt - An Arch's pacman-like package manager for some Unices..."
-        sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /usr/bin/pacapt && \
+        sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /tmp/pacapt && \
+            sudo mv -f /tmp/pacapt /usr/bin/pacapt && \
             sudo chmod 755 /usr/bin/pacapt && \
             sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
     fi
 else
     colorEcho ${BLUE} "Installing pacapt - An Arch's pacman-like package manager for some Unices..."
-    sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /usr/bin/pacapt && \
+    sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /tmp/pacapt && \
+        sudo mv -f /tmp/pacapt /usr/bin/pacapt && \
         sudo chmod 755 /usr/bin/pacapt && \
         sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
 fi

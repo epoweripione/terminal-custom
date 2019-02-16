@@ -32,13 +32,15 @@ if [[ -x "$(command -v pacapt)" ]]; then
 
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "Updating pacapt - An Arch's pacman-like package manager for some Unices..."
-        sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /usr/bin/pacapt && \
+        sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /tmp/pacapt && \
+            sudo mv -f /tmp/pacapt /usr/bin/pacapt && \
             sudo chmod 755 /usr/bin/pacapt && \
             sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
     fi
 else
     colorEcho ${BLUE} "Installing pacapt - An Arch's pacman-like package manager for some Unices..."
-    sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /usr/bin/pacapt && \
+    sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /tmp/pacapt && \
+        sudo mv -f /tmp/pacapt /usr/bin/pacapt && \
         sudo chmod 755 /usr/bin/pacapt && \
         sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
 fi
@@ -109,7 +111,8 @@ if [[ $UID -eq 0 && -x "$(command -v docker-compose)" ]]; then
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         DOWNLOAD_URL=https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`
-        curl -SL $DOWNLOAD_URL -o /usr/local/bin/docker-compose && \
+        curl -SL $DOWNLOAD_URL -o /tmp/docker-compose && \
+            mv -f /tmp/docker-compose /usr/local/bin/docker-compose && \
             chmod +x /usr/local/bin/docker-compose
     fi
 fi
@@ -129,7 +132,8 @@ if [[ $UID -eq 0 && -x "$(command -v ctop)" ]]; then
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         DOWNLOAD_URL=https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}
-        curl -SL $DOWNLOAD_URL -o /usr/local/bin/ctop && \
+        curl -SL $DOWNLOAD_URL -o /tmp/ctop && \
+            mv -f /tmp/ctop /usr/local/bin/ctop && \
             chmod +x /usr/local/bin/ctop
     fi
 fi

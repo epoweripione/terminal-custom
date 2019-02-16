@@ -40,7 +40,8 @@ if [[ ! -x "$(command -v docker-compose)" ]]; then
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL=https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`
-        curl -SL $DOWNLOAD_URL -o /usr/local/bin/docker-compose && \
+        curl -SL $DOWNLOAD_URL -o /tmp/docker-compose && \
+            mv -f /tmp/docker-compose /usr/local/bin/docker-compose && \
             chmod +x /usr/local/bin/docker-compose
     fi
 fi
@@ -62,7 +63,8 @@ if [[ ! -x "$(command -v ctop)" ]]; then
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL=https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}
-        curl -SL $DOWNLOAD_URL -o /usr/local/bin/ctop && \
+        curl -SL $DOWNLOAD_URL -o /tmp/ctop && \
+            mv -f /tmp/ctop /usr/local/bin/ctop && \
             chmod +x /usr/local/bin/ctop
     fi
 fi
