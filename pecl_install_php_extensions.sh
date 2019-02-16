@@ -112,12 +112,12 @@ apt install -y php${PHP_VERSION}-dev libpcre3-dev gcc make re2c --no-install-rec
 
 ## PDFlib
 ## https://www.pdflib.com/download/pdflib-product-family/
-PDFlib_REMOTE_VER="9.1.2p1"
+PDFlib_REMOTE_VER="9.2.0"
 PDFlib_CURRENT_VER=$(php --ri pdflib | grep "Binary-Version" | cut -d'>' -f2 | cut -d' ' -f2)
 PDFlib_BIN_VER=$(echo "${PHP_VERSION}0" | cut -c 1,3-)
 if [[ "$PDFlib_CURRENT_VER" != "$PDFlib_REMOTE_VER" ]]; then
     cd /tmp && \
-        curl -o pdflib.tar.gz https://www.pdflib.com/binaries/PDFlib/912/PDFlib-9.1.2p1-Linux-x86_64-php.tar.gz -L && \
+        curl -o pdflib.tar.gz https://www.pdflib.com/binaries/PDFlib/920/PDFlib-9.2.0-Linux-x86_64-php.tar.gz -L && \
         tar -xvf pdflib.tar.gz && \
         mv PDFlib-* pdflib
 
