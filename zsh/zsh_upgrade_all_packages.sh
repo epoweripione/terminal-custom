@@ -326,7 +326,7 @@ if [[ -x "$(command -v v2ray)" ]]; then
     if v2ray --version 2>&1 | grep -q 'multi-v2ray'; then
         colorEcho ${BLUE} "Updating multi-v2ray..."
         # https://github.com/Jrohy/multi-v2ray
-        v2ray update.sh && v2ray update
+        v2ray update.sh && v2ray update && v2ray restart
     elif systemctl list-unit-files --type=service | grep v2ray.service | grep enabled >/dev/null 2>&1; then
         V2RAYCORE="yes"
     fi
