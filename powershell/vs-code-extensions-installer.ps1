@@ -73,17 +73,26 @@ $extensions =
 	"vscjava.vscode-java-pack",
 	"vscjava.vscode-java-test",
 	"vscjava.vscode-maven",
-    ## Javascript/Typescript
+    ## Javascript
 	"msjsdiag.debugger-for-chrome",
+	"chenxsan.vscode-standardjs",
+	"dbaeumer.vscode-eslint",
+	"octref.vetur",
+	"xabikos.JavaScriptSnippets",
+	"vsmobile.vscode-react-native",
+	## Typescript
+	"ms-vscode.vscode-typescript-tslint-plugin",
+	"stringham.move-ts",
+	## Angular
 	"Angular.ng-template",
 	"cyrilletuzi.angular-schematics",
 	"Mikael.Angular-BeastCode",
-	"chenxsan.vscode-standardjs",
-	"dbaeumer.vscode-eslint",
-	"eg2.tslint",
-	"octref.vetur",
-	"vsmobile.vscode-react-native",
-	"xabikos.JavaScriptSnippets",
+	# "cipchk.ng-alain-extension-pack",
+	# https://github.com/ng-alain/extension-pack/
+	"cipchk.ng-zorro-vscode",
+	"cipchk.ng-alain-vscode",
+	"cyrilletuzi.angular-schematics",
+	"infinity1207.angular2-switcher",
     ## ionic
 	"loiane.ionic-extension-pack",
 	"vsmobile.cordova-tools",
@@ -95,6 +104,7 @@ $extensions =
     ## Markdown
 	"DavidAnson.vscode-markdownlint",
 	"shd101wyy.markdown-preview-enhanced",
+	"darkriszty.markdown-table-prettify",
 	"yzhang.markdown-all-in-one",
     ## nginx
 	"shanoor.vscode-nginx",
@@ -160,3 +170,32 @@ foreach ($ext in $extensions) {
         code --install-extension $ext
     }
 }
+
+## vscode_extensions.list
+# windows cmd:
+# for /F "tokens=*" %%A in (vscode_extensions.list) do code --install-extension %%A
+
+# # Get-Content has bad performance
+# # it tries to read the file into memory all at once
+# foreach($ext in Get-Content .\vscode_extensions.list) {
+#     if($ext -notmatch '\#') {
+# 		if ($installed.Contains($ext)) {
+# 			Write-Host $ext "already installed." -ForegroundColor Gray
+# 		} else {
+# 			Write-Host "Installing" $ext "..." -ForegroundColor White
+# 			code --install-extension $ext
+# 		}
+#     }
+# }
+
+# # (.NET) file reader reads each line one by one
+# foreach($ext in [System.IO.File]::ReadLines(".\vscode_extensions.list")) {
+#     if($ext -notmatch '\#') {
+# 		if ($installed.Contains($ext)) {
+# 			Write-Host $ext "already installed." -ForegroundColor Gray
+# 		} else {
+# 			Write-Host "Installing" $ext "..." -ForegroundColor White
+# 			code --install-extension $ext
+# 		}
+#     }
+# }

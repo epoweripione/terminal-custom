@@ -168,6 +168,7 @@ if [[ -d "$HOME/.gvm" ]]; then
         else
             REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
         fi
+        REMOTE_VERSION=${REMOTE_VERSION%.}
 
         if [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
             if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then

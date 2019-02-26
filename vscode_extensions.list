@@ -61,15 +61,22 @@ vscjava.vscode-java-test
 vscjava.vscode-maven
 ## Javascript/Typescript
 msjsdiag.debugger-for-chrome
-Angular.ng-template
-cyrilletuzi.angular-schematics
-Mikael.Angular-BeastCode
 chenxsan.vscode-standardjs
 dbaeumer.vscode-eslint
 ms-vscode.vscode-typescript-tslint-plugin
 octref.vetur
-vsmobile.vscode-react-native
 xabikos.JavaScriptSnippets
+vsmobile.vscode-react-native
+## Angular
+Angular.ng-template
+cyrilletuzi.angular-schematics
+Mikael.Angular-BeastCode
+# cipchk.ng-alain-extension-pack
+# https://github.com/ng-alain/extension-pack/
+cipchk.ng-zorro-vscode
+cipchk.ng-alain-vscode
+cyrilletuzi.angular-schematics
+infinity1207.angular2-switcher
 ## ionic
 loiane.ionic-extension-pack
 vsmobile.cordova-tools
@@ -82,6 +89,7 @@ James-Yu.latex-workshop
 DavidAnson.vscode-markdownlint
 shd101wyy.markdown-preview-enhanced
 yzhang.markdown-all-in-one
+darkriszty.markdown-table-prettify
 ## nginx
 shanoor.vscode-nginx
 ## Node
