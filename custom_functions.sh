@@ -86,7 +86,7 @@ function get_arch() {
 		amd64|x86_64)
 			spruce_type='amd64'
 			;;
-		i386|i486|i586|i686|x86)
+		i686|i586|i486|i386|x86)
 			spruce_type='386'
 			;;
 		*)
@@ -103,7 +103,7 @@ function get_sysArch(){
     ARCH=$(uname -m)
     if [[ "$ARCH" == "amd64" ]] || [[ "$ARCH" == "x86_64" ]]; then
         VDIS="64"
-    elif [[ "$ARCH" == "i686" ]] || [[ "$ARCH" == "i386" ]]; then
+    elif [[ "$ARCH" == "i686" ]] || [[ "$ARCH" == "i586" ]] || [[ "$ARCH" == "i486" ]] || [[ "$ARCH" == "i386" ]] || [[ "$ARCH" == "x86" ]]; then
         VDIS="32"
     elif [[ "$ARCH" == *"armv7"* ]] || [[ "$ARCH" == "armv6l" ]]; then
         VDIS="arm"

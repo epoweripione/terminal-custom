@@ -83,7 +83,7 @@ npm install gulp gulp-htmlclean gulp-htmlmin gulp-minify-css --save
 
 
 # themes
-# NexT https://theme-next.iissnan.com/getting-started.html
+# NexT https://theme-next.org/
 git clone https://github.com/theme-next/hexo-theme-next themes/next
 
 # theme plugins

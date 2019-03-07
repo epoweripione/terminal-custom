@@ -289,6 +289,41 @@ if [[ -x "$(command -v proxy)" ]]; then
 fi
 
 
+if [[ -d "/srv/proxy-web" ]]; then
+    # https://github.com/yincongcyincong/proxy-web
+    colorEcho ${BLUE} "Updating proxy-web..."
+
+    if [[ -s "/srv/proxy-web/.version" ]]; then
+        # CURRENT_VERSION=$(cat /srv/proxy-web/.version 2>&1)
+        CURRENT_VERSION=$(head -n1 /srv/proxy-web/.version)
+    else
+        CURRENT_VERSION="v0.0"
+    fi
+
+    CHECK_URL="https://api.github.com/repos/yincongcyincong/proxy-web/releases/latest"
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        if pgrep -f "proxy-web" 2>&1; then
+            pkill -f "proxy-web"
+        fi
+
+        DOWNLOAD_URL=https://github.com/yincongcyincong/proxy-web/releases/download/${REMOTE_VERSION}/proxy-web-${ostype}-${spruce_type}.tar.gz
+        curl -SL $DOWNLOAD_URL -o proxy-web.tar.gz && \
+            mkdir -p /srv/backup_proxy-web && \
+            cp -f /srv/proxy-web/config/*.ini /srv/backup_proxy-web/ && \
+            tar -zxPf proxy-web.tar.gz -C /srv/ && \
+            rm -f proxy-web.tar.gz && \
+            chmod +x /srv/proxy-web/proxy-web && \
+            rm -f /srv/proxy-web/config/*.ini && \
+            cp -f /srv/backup_proxy-web/*.ini /srv/proxy-web/config/ && \
+            echo ${REMOTE_VERSION} > /srv/proxy-web/.version
+
+        nohup /srv/proxy-web/proxy-web >/dev/null 2>&1 & disown
+    fi
+fi
+
+
 if [[ -d "/srv/frp" ]]; then
     colorEcho ${BLUE} "Updating frp..."
     # https://github.com/fatedier/frp
