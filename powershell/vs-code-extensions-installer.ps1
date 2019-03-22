@@ -51,9 +51,10 @@ $extensions =
 	"schneiderpat.aspnet-helper",
 	"tintoy.msbuild-project-tools",
     "alefragnani.project-manager",
-    ## db
+    ## Database
 	"bajdzis.vscode-database",
 	"ms-mssql.mssql",
+	"ms-ossdata.vscode-postgresql",
     ## Dart/Flutter
 	"Dart-Code.dart-code",
 	"Dart-Code.flutter",

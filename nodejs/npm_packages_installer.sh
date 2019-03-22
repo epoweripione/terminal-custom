@@ -73,6 +73,10 @@ npm install -g express-generator
 colorEcho ${BLUE} "Installing tldr..."
 npm install -g tldr
 
+colorEcho ${BLUE} "Installing lib-qqwry..."
+# https://github.com/cnwhy/lib-qqwry/
+npm install -g lib-qqwry
+
 # colorEcho ${BLUE} "Installing arch-wiki-man..."
 # # arch-wiki-man
 # ## https://github.com/greg-js/arch-wiki-man
