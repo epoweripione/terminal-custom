@@ -58,6 +58,9 @@ npm install -g typescript
 colorEcho ${BLUE} "Installing angular/cli..."
 npm install -g @angular/cli
 
+colorEcho ${BLUE} "Installing storybook/cli..."
+npm install -g @storybook/cli
+
 colorEcho ${BLUE} "Installing parcel-bundler..."
 npm install -g parcel-bundler
 

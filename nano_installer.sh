@@ -47,19 +47,22 @@ else
 fi
 
 REMOTE_VERSION=$(curl -s -N https://www.nano-editor.org/download.php \
-    | grep -m 1 -o 'nano-\([0-9]\)\+\.\([0-9]\)\+' | cut -d'-' -f2)
+    | grep -m 1 -o 'nano-\([0-9]\)\+\.\([0-9]\)\+' | head -n1 | cut -d'-' -f2)
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     colorEcho ${BLUE} "Installing nano from source..."
+    DOWNLOAD_URL=https://www.nano-editor.org/dist/v${DIST_VERSION}/nano-${REMOTE_VERSION}.tar.gz
+    # curl -SL $DOWNLOAD_URL -o nano.tar.gz
     cd /tmp && \
-        curl -SL https://www.nano-editor.org/dist/v$DIST_VERSION/nano-$REMOTE_VERSION.tar.gz -o nano.tar.gz && \
+        wget -O nano.tar.gz $DOWNLOAD_URL && \
         tar zxvf nano.tar.gz && \
         mv nano-* nano && cd nano && \
         ./configure --prefix=/usr --enable-utf8 && \
         make && make install && \
         rm -rf /tmp/*
 fi
+
 
 # nano-syntax-highlighting
 if [[ -d ~/.local/share/nano ]]; then

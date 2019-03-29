@@ -71,6 +71,9 @@ yarn global add typescript
 colorEcho ${BLUE} "Installing angular/cli..."
 yarn global add @angular/cli
 
+colorEcho ${BLUE} "Installing storybook/cli..."
+yarn global add @storybook/cli
+
 colorEcho ${BLUE} "Installing parcel-bundler..."
 yarn global add parcel-bundler
 
