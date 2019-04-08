@@ -16,7 +16,7 @@ fi
 # Miniconda
 colorEcho ${BLUE} "Installing Miniconda3..."
 if [[ ! -d "$HOME/miniconda3" ]]; then
-    curl -SL -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    curl -SL -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
     bash ./Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
 
     export PATH=$PATH:$HOME/miniconda3/bin
@@ -50,10 +50,10 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
     # conda clean --all
 
     conda create -n py37 python=3.7
-    # source activate py37
-    # source deactivate
+    # conda activate py37
+    # conda deactivate
 
     conda create -n py27 python=2.7
-    # source activate py2.7
-    # source deactivate
+    # conda activate py2.7
+    # conda deactivate
 fi

@@ -51,6 +51,7 @@ wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsoc
 
 # Multi-V2Ray
 # https://github.com/Jrohy/multi-v2ray
+# /etc/v2ray_util/util.cfg
 # /etc/v2ray/config.json
 rm -rf /etc/localtime && \
     TZ="Asia/Shanghai" && \
@@ -59,7 +60,7 @@ rm -rf /etc/localtime && \
 
 if [[ -x "$(command -v v2ray)" ]]; then
     if v2ray -v 2>&1 | grep -q 'multi-v2ray'; then
-        source <(curl -sL https://git.io/fNgqx) -k
+        source <(curl -sL https://git.io/fNgqx) --zh
     fi
 else
     source <(curl -sL https://git.io/fNgqx)

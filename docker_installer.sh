@@ -26,9 +26,12 @@ colorEcho ${BLUE} "Installing Docker..."
 # apt install -y docker-ce
 # https://github.com/docker/docker-install
 if [[ -z "$DOCKER_INSTALLER_NOT_USE_MIRROR" ]]; then
-    curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+    # curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+    curl -fsSL https://get.docker.com -o get-docker.sh && \
+        bash get-docker.sh --mirror AzureChinaCloud
 else
-    curl -fsSL https://get.docker.com | bash -s docker
+    curl -fsSL https://get.docker.com -o get-docker.sh && \
+        bash get-docker.sh
 fi
 
 
@@ -68,3 +71,16 @@ if [[ ! -x "$(command -v ctop)" ]]; then
             chmod +x /usr/local/bin/ctop
     fi
 fi
+
+## docker mirror in chinia
+# tee /etc/docker/daemon.json <<-'EOF'
+# {
+#   "registry-mirrors": ["https://registry.docker-cn.com"]
+# }
+# EOF
+# # or
+# tee /etc/docker/daemon.json <<-'EOF'
+# {
+#   "registry-mirrors": ["https://mirror.ccs.tencentyun.com"]
+# }
+# EOF

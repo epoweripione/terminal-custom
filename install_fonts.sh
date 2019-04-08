@@ -45,6 +45,10 @@ else
 	fi
 fi
 
+# colorEcho ${BLUE} "Installing powerline fonts..."
+# git clone https://github.com/powerline/fonts.git
+# ./fonts/install.sh
+
 
 colorEcho ${BLUE} "Downloading Nerd fonts..."
 mkdir -p ~/patched-fonts
