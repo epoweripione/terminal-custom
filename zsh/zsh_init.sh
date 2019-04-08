@@ -44,7 +44,7 @@ sed -i "s/[#]*[ ]*DISABLE_AUTO_UPDATE.*/DISABLE_AUTO_UPDATE=\"true\"/" ~/.zshrc
 colorEcho ${BLUE} "custom theme..."
 cp ~/zsh_custom_env.sh ~/.zshenv
 
-theme="agnosterzak-my"
+theme="ys"
 custom_theme="zsh_custom_theme_${theme}"
 
 sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" ~/.zshrc

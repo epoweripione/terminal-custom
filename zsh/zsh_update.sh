@@ -179,6 +179,8 @@ ln -s $ZSH/custom/themes/alien/alien.plugin.zsh $ZSH/custom/themes/alien.zsh-the
 
 # enable plugins
 colorEcho ${BLUE} "enable plugins..."
+sed -i "s/^plugins=(git)/plugins=(\n  git\n)/" ~/.zshrc
+
 if [[ $ostype == "Darwin" ]]; then
     if [[ ! $(grep "  osx" ~/.zshrc) ]]; then
         sed -i '/^  git/a\  osx' ~/.zshrc

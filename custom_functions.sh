@@ -22,6 +22,16 @@ function get_os_type() {
     fi
 }
 
+# Determine which desktop environment is installed from the shell
+# OSDesktopENV=$(ps -e | grep -E -i "gnome|kde|mate|cinnamon|lxde|xfce|jwm")
+function get_os_desktop() {
+    if [[ -n "$XDG_CURRENT_DESKTOP" ]]; then
+        OSDesktopENV=$(echo "$XDG_DATA_DIRS" | sed 's/.*\(gnome\|kde\|mate\|cinnamon\|lxde\|xfce\|jwm\).*/\1/')
+    else
+        OSDesktopENV=$XDG_CURRENT_DESKTOP
+    fi
+}
+
 function check_release_package_manager() {
     local checkType=$1
     local value=$2
