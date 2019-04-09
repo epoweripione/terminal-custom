@@ -19,12 +19,16 @@ fi
 
 
 # Cockpit
-# https://cockpit-project.org/running.html
+# https://cockpit-project.org/
 # https://github.com/cockpit-project/cockpit
+# GETTING STARTED WITH COCKPIT
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/getting_started_with_cockpit/index
+
+# Setting up the primary Cockpit server
 colorEcho ${BLUE} "Installing Cockpit..."
 if check_release_package_manager release centos; then
-    yum install -y -q cockpit cockpit-doc cockpit-docker
-    # yum install -y -q cockpit-machines
+    yum install -y -q cockpit cockpit-docker
+    # yum install -y -q cockpit-doc cockpit-machines
     
     systemctl enable --now cockpit.socket
 
@@ -33,11 +37,11 @@ if check_release_package_manager release centos; then
 elif check_release_package_manager release debian; then
     # echo 'deb http://deb.debian.org/debian stretch-backports main' > \
     #     /etc/apt/sources.list.d/stretch-backports.list
-    apt update && apt -y install cockpit cockpit-doc cockpit-docker
-    # apt -y install cockpit-machines
+    apt update && apt -y install cockpit cockpit-docker
+    # apt -y install cockpit-doc cockpit-machines
 elif check_release_package_manager packageManager pacman; then
-    pacman -Sy && pacman -S cockpit cockpit-doc cockpit-docker
-    # pacman -S cockpit-machines
+    pacman -Sy && pacman -S cockpit cockpit-docker
+    # pacman -S cockpit-doc cockpit-machines
 fi
 
 # If you already have Cockpit on your server, 
@@ -47,3 +51,17 @@ fi
 
 # Proxying Cockpit over NGINX
 # https://github.com/cockpit-project/cockpit/wiki/Proxying-Cockpit-over-NGINX
+
+
+# Adding secondary systems
+# Once you log in to the primary server,
+# you will be able to connect to secondary servers.
+# These secondary systems need to have:
+# The cockpit packages installed.
+# An SSH server running and available on port 22 that supports password or key-based authentication.
+
+# https://github.com/cockpit-project/cockpit/issues/8110
+# secondary needs cockpit-system.
+# The only package that it doesn't need is cockpit-ws.
+# systemctl disable cockpit.socket
+# systemctl disable cockpit
