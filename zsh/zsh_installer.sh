@@ -33,6 +33,7 @@ if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     pacman -S git zsh
     # install pre-request packages
     pacman -S wget g++ gcc make zip unzip
+
     # GeoIP binary and database
     # http://kbeezie.com/geoiplookup-command-line/
     if pacman -Si geoip-bin >/dev/null 2>&1; then
@@ -43,6 +44,14 @@ if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
         else
             pacman -S geoip geoip-data
         fi
+    fi
+
+    # autojump
+    # https://github.com/wting/autojump
+    if pacman -Si autojump-zsh >/dev/null 2>&1; then
+        pacman -S autojump-zsh
+    else
+        pacman -S autojump
     fi
 fi
 
