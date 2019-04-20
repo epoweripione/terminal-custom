@@ -51,7 +51,10 @@ fi
 
 # Proxying Cockpit over NGINX
 # https://github.com/cockpit-project/cockpit/wiki/Proxying-Cockpit-over-NGINX
-
+tee /etc/cockpit/cockpit.conf <<-'EOF'
+[WebService]
+AllowUnencrypted=true
+EOF
 
 # Adding secondary systems
 # Once you log in to the primary server,

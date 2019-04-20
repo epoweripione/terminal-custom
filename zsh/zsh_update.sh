@@ -247,8 +247,14 @@ if [[ ! $(grep "  colored-man-pages" ~/.zshrc) ]]; then
     sed -i '/^  git/a\  colored-man-pages' ~/.zshrc
 fi
 
-if [[ ! $(grep "  autojump cp rsync sudo supervisor" ~/.zshrc) ]]; then
-    sed -i '/^  git/a\  autojump cp rsync sudo supervisor' ~/.zshrc
+if [[ -x "$(command -v autojump)" ]]; then
+    if [[ ! $(grep "  autojump" ~/.zshrc) ]]; then
+        sed -i '/^  git/a\  autojump' ~/.zshrc
+    fi
+fi
+
+if [[ ! $(grep "  cp rsync sudo supervisor" ~/.zshrc) ]]; then
+    sed -i '/^  git/a\  cp rsync sudo supervisor' ~/.zshrc
 fi
 
 
