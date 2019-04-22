@@ -131,48 +131,64 @@ if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; t
     export PATH=$PATH:/c/nodejs:/c/Users/$USERNAME/AppData/Roaming/npm:/c/php/php7:/c/php/composer/vendor/bin
 
     # dotnet
-    alias dotnet="winpty dotnet"
+    if [[ "$(command -v dotnet.exe)" ]]; then
+        alias dotnet="winpty dotnet.exe"
+    fi
 
     #java
-    alias java="winpty java"
-    alias java="winpty javac"
+    if [[ "$(command -v java.exe)" ]]; then
+        alias java="winpty java.exe"
+        alias java="winpty javac.exe"
+    fi
 
     # node,npm
-    alias node="winpty node"
-    alias npm="winpty npm.cmd"
-    alias electron="winpty electron.cmd"
-    alias es-checker="winpty es-checker.cmd"
-    alias eslint="winpty eslint.cmd"
-    alias ionic="winpty ionic.cmd"
-    alias jshint="winpty jshint.cmd"
-    alias ng="winpty ng.cmd"
-    alias npm-check="winpty npm-check.cmd"
-    alias npx="winpty npx.cmd"
-    alias nrm="winpty nrm.cmd"
-    alias parcel="winpty parcel.cmd"
-    alias schematics="winpty schematics.cmd"
-    alias standard="winpty standard.cmd"
-    alias tsc="winpty tsc.cmd"
-    alias tslint="winpty tslint.cmd"
-    alias tsserver="winpty tsserver.cmd"
+    if [[ "$(command -v node.exe)" ]]; then
+        alias node="winpty node.exe"
+        alias npm="winpty npm.cmd"
+        alias electron="winpty electron.cmd"
+        alias es-checker="winpty es-checker.cmd"
+        alias eslint="winpty eslint.cmd"
+        alias ionic="winpty ionic.cmd"
+        alias jshint="winpty jshint.cmd"
+        alias ng="winpty ng.cmd"
+        alias npm-check="winpty npm-check.cmd"
+        alias npx="winpty npx.cmd"
+        alias nrm="winpty nrm.cmd"
+        alias parcel="winpty parcel.cmd"
+        alias schematics="winpty schematics.cmd"
+        alias standard="winpty standard.cmd"
+        alias tsc="winpty tsc.cmd"
+        alias tslint="winpty tslint.cmd"
+        alias tsserver="winpty tsserver.cmd"
+    fi
 
     # php,composer
-    alias php="winpty php"
-    alias composer="winpty composer.bat"
-    alias pear="winpty pear.bat"
-    alias pear2="winpty pear2.bat"
-    alias pecl="winpty pecl.bat"
-    alias php-cs-fixer="winpty php-cs-fixer.bat"
-    alias php-parse="winpty php-parse.bat"
-    alias phpunit="winpty phpunit.bat"
-    alias psysh="winpty psysh.bat"
-    alias var-dump-server="winpty var-dump-server.bat"
+    if [[ "$(command -v php.exe)" ]]; then
+        alias php="winpty php.exe"
+        alias composer="winpty composer.bat"
+        alias pear="winpty pear.bat"
+        alias pear2="winpty pear2.bat"
+        alias pecl="winpty pecl.bat"
+        alias php-cs-fixer="winpty php-cs-fixer.bat"
+        alias php-parse="winpty php-parse.bat"
+        alias phpunit="winpty phpunit.bat"
+        alias psysh="winpty psysh.bat"
+        alias var-dump-server="winpty var-dump-server.bat"
+    fi
 
     # Docker
-    alias dockertoolbox='exec "$DOCKER_TOOLBOX_INSTALL_PATH/start.sh"'
-    alias docker="winpty docker.exe"
-    alias docker-machine="winpty docker-machine.exe"
-    alias docker-compose="winpty docker-compose.exe"
+    if [[ -n "$DOCKER_TOOLBOX_INSTALL_PATH" ]]; then
+        alias dockertoolbox='exec "$DOCKER_TOOLBOX_INSTALL_PATH/start.sh"'
+    fi
+
+    if [[ "$(command -v docker.exe)" ]]; then
+        alias docker="winpty docker.exe"
+        alias docker-compose="winpty docker-compose.exe"
+    fi
+
+    if [[ "$(command -v docker-machine.exe)" ]]; then
+        alias docker-machine="winpty docker-machine.exe"
+    fi
 
     # other
     alias wmic="winpty wmic"
