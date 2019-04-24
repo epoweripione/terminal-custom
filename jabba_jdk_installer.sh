@@ -16,8 +16,18 @@ fi
 # jabba & JDK
 ## Install jabba
 colorEcho ${BLUE} "Installing jabba..."
-curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
-    . ~/.jabba/jabba.sh
+if [[ ! -d "$HOME/.jabba" ]]; then
+    curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
+        . ~/.jabba/jabba.sh
+fi
+
+if [[ -d "$HOME/.jabba" ]]; then
+    if type 'jabba' 2>/dev/null | grep -q 'function'; then
+        :
+    else
+        [[ -s "$HOME/.jabba/jabba.sh" ]] && source "$HOME/.jabba/jabba.sh"
+    fi
+fi
 
 ## OpenJDK
 colorEcho ${BLUE} "Installing JDK..."
