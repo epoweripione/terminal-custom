@@ -97,6 +97,8 @@ chmod +x ~/git_global_config.sh
 cp -f ~/terminal-custom/nodejs/*.sh ~
 chmod +x ~/nvm_node_installer.sh
 chmod +x ~/nvm_node_update.sh
+chmod +x ~/nvs_node_installer.sh
+chmod +x ~/nvs_node_update.sh
 chmod +x ~/npm_packages_installer.sh
 chmod +x ~/yarn_packages_installer.sh
 

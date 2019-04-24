@@ -294,6 +294,19 @@ if [[ -d "$HOME/miniconda3/bin" ]]; then
     # source $HOME/miniconda3/bin/activate
 fi
 
+# nvs
+if [[ -d "$HOME/.nvs" ]]; then
+    if type 'nvs' 2>/dev/null | grep -q 'function'; then
+        :
+    else
+        export NVS_HOME="$HOME/.nvs"
+        [ -s "$NVS_HOME/nvs.sh" ] && . "$NVS_HOME/nvs.sh"
+    fi
+
+    # if [[ -z "$NVS_INSTALLER_NOT_USE_MIRROR" ]]; then
+    #     nvs remote node https://npm.taobao.org/mirrors/node/
+    # fi
+fi
 
 # nvm
 if [[ -d "$HOME/.nvm" ]]; then
@@ -337,6 +350,10 @@ if [[ -d "$HOME/.nvm" ]]; then
     fi
 fi
 
+# npm global
+if [[ -d "$HOME/.npm-global" ]]; then
+    export PATH=$HOME/.npm-global/bin:$PATH
+fi
 
 # sdkman
 if [[ -d "$HOME/.sdkman" ]]; then

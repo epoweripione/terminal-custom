@@ -391,12 +391,14 @@ function set_proxy_mirrors_env() {
         unset DOCKER_INSTALLER_NOT_USE_MIRROR
         unset GVM_INSTALLER_NOT_USE_PROXY
         unset NVM_INSTALLER_NOT_USE_MIRROR
+        unset NVS_INSTALLER_NOT_USE_MIRROR
         unset NPM_INSTALLER_NOT_USE_MIRROR
     else
         APT_NOT_USE_MIRRORS=true
         DOCKER_INSTALLER_NOT_USE_MIRROR=true
         GVM_INSTALLER_NOT_USE_PROXY=true
         NVM_INSTALLER_NOT_USE_MIRROR=true
+        NVS_INSTALLER_NOT_USE_MIRROR=true
         NPM_INSTALLER_NOT_USE_MIRROR=true
     fi
 }

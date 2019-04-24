@@ -26,6 +26,11 @@ colorEcho ${BLUE} "Setting npm config..."
 npm config set user 0
 npm config set unsafe-perm true
 
+# npm global
+mkdir -p $HOME/.npm-global
+npm config set prefix $HOME/.npm-global
+export PATH=$PATH:$HOME/.npm-global/bin
+
 # Change npm registry to taobao
 if [[ -z "$NPM_INSTALLER_NOT_USE_MIRROR" ]]; then
     colorEcho ${BLUE} "Change npm registry to taobao..."

@@ -16,9 +16,9 @@ fi
 set_proxy_mirrors_env
 
 
-# nodejs
 colorEcho ${BLUE} "Installing nvm & nodejs..."
 ## Install nvm
+# https://github.com/creationix/nvm
 if [[ ! -d "$HOME/.nvm" ]]; then
     CHECK_URL="https://api.github.com/repos/creationix/nvm/releases/latest"
     REMOTE_VERSION=$(wget --no-check-certificate -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
@@ -28,10 +28,14 @@ if [[ ! -d "$HOME/.nvm" ]]; then
 fi
 
 if [[ -d "$HOME/.nvm" ]]; then
-    export NVM_DIR="$HOME/.nvm"
-    source "$NVM_DIR/nvm.sh"
-    # export NVM_DIR="${XDG_CONFIG_HOME:-$HOME}/.nvm"
-    # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    if type 'nvm' 2>/dev/null | grep -q 'function'; then
+        :
+    else
+        export NVM_DIR="$HOME/.nvm"
+        source "$NVM_DIR/nvm.sh"
+        # export NVM_DIR="${XDG_CONFIG_HOME:-$HOME}/.nvm"
+        # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    fi
 fi
 
 ## Install nodejs
