@@ -20,12 +20,33 @@ curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
     . ~/.jabba/jabba.sh
 
 ## OpenJDK
-colorEcho ${BLUE} "Installing JDK 11..."
+colorEcho ${BLUE} "Installing JDK..."
 # apt install -y default-jdk default-jre
-# jabba install 1.11.0-3 && jabba alias default 1.11.0-3
-# jabba install 1.8.211 && jabba alias default 1.8.211
-# jabba install openjdk@1.11.0-2 && jabba alias default openjdk@1.11.0-2
-jabba install 1.11.0-3 && jabba alias default 1.11.0-3
+# jabba install 1.11 && jabba alias default 1.11
+# jabba install 1.8 && jabba alias default 1.8
+# jabba install openjdk@1.11 && jabba alias default openjdk@1.11
+jabba install zulu@1.8
+jabba install zulu@1.11
+jabba alias default zulu@1.11
+
+
+## How do I switch java globally?
+## Windows(in powershell as administrator)
+# jabba use zulu@1.11
+## modify global PATH & JAVA_HOME
+# $envRegKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Control\Session Manager\Environment', $true)
+# $envPath=$envRegKey.GetValue('Path', $null, "DoNotExpandEnvironmentNames").replace('%JAVA_HOME%\bin;', '')
+# [Environment]::SetEnvironmentVariable('JAVA_HOME', "$(jabba which $(jabba current))", 'Machine')
+# [Environment]::SetEnvironmentVariable('PATH', "%JAVA_HOME%\bin;$envPath", 'Machine')
+
+## Linux
+# jabba use zulu@1.11
+# sudo update-alternatives --install /usr/bin/java java ${JAVA_HOME%*/}/bin/java 20000
+# sudo update-alternatives --install /usr/bin/javac javac ${JAVA_HOME%*/}/bin/javac 20000
+
+## To switch between multiple GLOBAL alternatives use:
+# sudo update-alternatives --config java
+
 
 ## Oracle jdk 8
 ## http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
@@ -33,7 +54,7 @@ jabba install 1.11.0-3 && jabba alias default 1.11.0-3
 # mkdir -p /usr/lib/jvm && cd /usr/lib/jvm && \
 #     wget --no-check-certificate --no-cookies \
 #         --header "Cookie: oraclelicense=accept-securebackup-cookie" \
-#         http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz && \
+#         https://download.oracle.com/otn/java/jdk/8u212-b10/59066701cf1a433da9770636fbc4c9aa/jdk-8u212-linux-x64.tar.gz && \
 #     tar -zxvf jdk-8u181-linux-x64.tar.gz && \
 #     ln -s /usr/lib/jvm/jdk1.8.0_181/ /usr/lib/jvm/oracle-jdk8 && \
 #     rm -f jdk-8u181-linux-x64.tar.gz && cd $HOME
@@ -44,7 +65,7 @@ jabba install 1.11.0-3 && jabba alias default 1.11.0-3
 # mkdir -p /usr/lib/jvm && cd /usr/lib/jvm && \
 #     wget --no-check-certificate --no-cookies \
 #         --header "Cookie: oraclelicense=accept-securebackup-cookie" \
-#         http://download.oracle.com/otn-pub/java/jdk/11+28/55eed80b163941c8885ad9298e6d786a/jdk-11_linux-x64_bin.tar.gz && \
+#         https://download.oracle.com/otn/java/jdk/11.0.3+12/37f5e150db5247ab9333b11c1dddcd30/jdk-11.0.3_linux-x64_bin.tar.gz && \
 #     tar -zxvf jdk-11_linux-x64_bin.tar.gz && \
 #     ln -s /usr/lib/jvm/jdk-11/ /usr/lib/jvm/oracle-jdk11 && \
 #     rm -f jdk-11_linux-x64_bin.tar.gz && cd $HOME
@@ -65,9 +86,18 @@ jabba install 1.11.0-3 && jabba alias default 1.11.0-3
 # # update-alternatives --config java
 # # update-alternatives --config javac
 
+
 if [[ -x "$(command -v java)" ]]; then
-    export JAVA_HOME=$(readlink -f $(which java) | sed "s:/jre/bin/java::" | sed "s:/bin/java::")
-    export JRE_HOME=$JAVA_HOME/jre
-    export CLASSPATH=$JAVA_HOME/lib
-    export PATH=$PATH:$JAVA_HOME/bin
+    if [[ -z "$JAVA_HOME" ]]; then
+        export JAVA_HOME=$(readlink -f $(which java) | sed "s:/jre/bin/java::" | sed "s:/bin/java::")
+        if [[ -d "$JAVA_HOME/jre" ]]; then
+            export JRE_HOME=$JAVA_HOME/jre
+        fi
+        export CLASSPATH=$JAVA_HOME/lib
+        export PATH=$PATH:$JAVA_HOME/bin
+    else
+        if [[ -z "$CLASSPATH" ]]; then
+            export CLASSPATH=$JAVA_HOME/lib
+        fi
+    fi
 fi
