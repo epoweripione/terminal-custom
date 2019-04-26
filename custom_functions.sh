@@ -382,24 +382,40 @@ function myip_wan_geo() {
 
 ## Set proxy or mirrors env in china
 function set_proxy_mirrors_env() {
-    if [[ -z "$WAN_NET_IP_GEO" ]]; then
-        myip_wan_geo >/dev/null 2>&1
-    fi
+    # if [[ -z "$WAN_NET_IP_GEO" ]]; then
+    #     myip_wan_geo >/dev/null 2>&1
+    # fi
 
-    if [[ ${WAN_NET_IP_GEO:-null} =~ 'CN, China' ]]; then
-        unset APT_NOT_USE_MIRRORS
-        unset DOCKER_INSTALLER_NOT_USE_MIRROR
-        unset GVM_INSTALLER_NOT_USE_PROXY
-        unset NVM_INSTALLER_NOT_USE_MIRROR
-        unset NVS_INSTALLER_NOT_USE_MIRROR
-        unset NPM_INSTALLER_NOT_USE_MIRROR
-    else
+    # if [[ ${WAN_NET_IP_GEO:-null} =~ 'CN, China' ]]; then
+    #     unset APT_NOT_USE_MIRRORS
+    #     unset DOCKER_INSTALLER_NOT_USE_MIRROR
+    #     unset GVM_INSTALLER_NOT_USE_PROXY
+    #     unset NVM_INSTALLER_NOT_USE_MIRROR
+    #     unset NVS_INSTALLER_NOT_USE_MIRROR
+    #     unset NPM_INSTALLER_NOT_USE_MIRROR
+    # else
+    #     APT_NOT_USE_MIRRORS=true
+    #     DOCKER_INSTALLER_NOT_USE_MIRROR=true
+    #     GVM_INSTALLER_NOT_USE_PROXY=true
+    #     NVM_INSTALLER_NOT_USE_MIRROR=true
+    #     NVS_INSTALLER_NOT_USE_MIRROR=true
+    #     NPM_INSTALLER_NOT_USE_MIRROR=true
+    # fi
+
+    if check_webservice_up www.google.com; then
         APT_NOT_USE_MIRRORS=true
         DOCKER_INSTALLER_NOT_USE_MIRROR=true
         GVM_INSTALLER_NOT_USE_PROXY=true
         NVM_INSTALLER_NOT_USE_MIRROR=true
         NVS_INSTALLER_NOT_USE_MIRROR=true
         NPM_INSTALLER_NOT_USE_MIRROR=true
+    else
+        unset APT_NOT_USE_MIRRORS
+        unset DOCKER_INSTALLER_NOT_USE_MIRROR
+        unset GVM_INSTALLER_NOT_USE_PROXY
+        unset NVM_INSTALLER_NOT_USE_MIRROR
+        unset NVS_INSTALLER_NOT_USE_MIRROR
+        unset NPM_INSTALLER_NOT_USE_MIRROR
     fi
 }
 
