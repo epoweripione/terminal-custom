@@ -414,17 +414,13 @@ if [[ -n "$ZSH" ]]; then
 fi
 
 
-if type 'nvm' 2>/dev/null | grep -q 'function'; then
-    if [[ -s "$HOME/nvm_node_update.sh" ]]; then
-        source "$HOME/nvm_node_update.sh"
-    fi
+if [[ -d "$HOME/.nvm" && -s "$HOME/nvm_node_update.sh" ]]; then
+    source "$HOME/nvm_node_update.sh"
 fi
 
 
-if type 'nvs' 2>/dev/null | grep -q 'function'; then
-    if [[ -s "$HOME/nvs_node_update.sh" ]]; then
-        source "$HOME/nvs_node_update.sh"
-    fi
+if [[ -d "$HOME/.nvs" && -s "$HOME/nvs_node_update.sh" ]]; then
+    source "$HOME/nvs_node_update.sh"
 fi
 
 

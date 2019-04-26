@@ -404,6 +404,50 @@ function set_proxy_mirrors_env() {
 }
 
 
+## curl to check webservice is up
+# https://stackoverflow.com/questions/12747929/linux-script-with-curl-to-check-webservice-is-up
+function check_webservice_up() {
+    # How to use:
+    # if check_webservice_up www.google.com; then echo "ok"; else echo "something wrong"; fi
+    local webservice_url=$1
+
+    [[ -z "$webservice_url" ]] && webservice_url="www.google.com"
+
+    local http=`curl -sL -w "%{http_code}\\n" "${webservice_url}" \-o /dev/null --connect-timeout 3 --max-time 5`
+    local exitStatus=0
+
+    # case "$http" in
+    #     [2]*)
+    #         ;;
+    #     [3]*)
+    #         echo "$webservice_url is REDIRECT with ${http}"
+    #         ;;
+    #     [4]*)
+    #         exitStatus=4
+    #         echo "$webservice_url is DENIED with ${http}"
+    #         ;;
+    #     [5]*)
+    #         exitStatus=5
+    #         echo "$webservice_url is ERROR with ${http}"
+    #         ;;
+    #     *)
+    #         exitStatus=6
+    #         echo "$webservice_url is NO RESPONSE with ${http}"
+    #         ;;
+    # esac
+
+    if [ "$exitStatus" -eq "0" ]; then
+        # echo "$webservice_url is UP with ${http}"
+        return 0
+    else
+        return 1
+    fi
+
+    # return $http
+    # exit $exitStatus
+}
+
+
 ## Dateutils
 # http://www.fresse.org/dateutils/
 # apt install -y dateutils
