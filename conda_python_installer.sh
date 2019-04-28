@@ -12,6 +12,9 @@ else
     fi
 fi
 
+# Set proxy or mirrors env in china
+set_proxy_mirrors_env
+
 
 # Miniconda
 colorEcho ${BLUE} "Installing Miniconda3..."
@@ -23,15 +26,17 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
     # source $HOME/miniconda3/bin/activate
 
     ## Use mirror channels
-    # conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/free/ && \
-    #     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/pkgs/main/ && \
-    #     conda config --set show_channel_urls yes
+    if [[ -z "$CONDA_NOT_USE_MIRROR" ]]; then
+        conda config --add channels https://mirrors.cloud.tencent.com/anaconda/pkgs/free/ && \
+            conda config --add channels https://mirrors.cloud.tencent.com/anaconda/pkgs/main/ && \
+            conda config --set show_channel_urls yes
 
-    # conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/ && \
-    #     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/msys2/ && \
-    #     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/bioconda/ && \
-    #     conda config --add channels https://mirrors.ustc.edu.cn/anaconda/cloud/menpo/
-    
+        # conda config --add channels https://mirrors.cloud.tencent.com/anaconda/cloud/conda-forge/ && \
+        #     conda config --add channels https://mirrors.cloud.tencent.com/anaconda/cloud/msys2/ && \
+        #     conda config --add channels https://mirrors.cloud.tencent.com/anaconda/cloud/bioconda/ && \
+        #     conda config --add channels https://mirrors.cloud.tencent.com/anaconda/cloud/menpo/
+    fi
+
     ## Use default channels
     # conda config --remove-key channels
 

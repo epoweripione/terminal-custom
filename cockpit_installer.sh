@@ -51,6 +51,11 @@ fi
 
 # Proxying Cockpit over NGINX
 # https://github.com/cockpit-project/cockpit/wiki/Proxying-Cockpit-over-NGINX
+# tee /etc/cockpit/cockpit.conf <<-'EOF'
+# [WebService]
+# AllowUnencrypted=true
+# UrlRoot=/server/
+# EOF
 tee /etc/cockpit/cockpit.conf <<-'EOF'
 [WebService]
 AllowUnencrypted=true

@@ -392,8 +392,8 @@ fi
 
 
 if [[ -x "$(command -v conda)" ]]; then
-    colorEcho ${BLUE} "Updating conda..."
-    conda update -y conda
+    # colorEcho ${BLUE} "Updating conda..."
+    # conda update -y conda
 
     colorEcho ${BLUE} "Updating all installed conda packages..."
     conda update -y --all
