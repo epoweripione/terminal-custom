@@ -90,7 +90,7 @@ yarn global add electron
 
 # Install global packages without binaries
 # colorEcho ${BLUE} "Installing puppeteer..."
-# yarn global add puppeteer
+yarn global add puppeteer
 
 # colorEcho ${BLUE} "Installing jquery popper.js bootstrap..."
 # yarn global add jquery popper.js bootstrap

@@ -94,14 +94,14 @@ npm install -g lib-qqwry
 colorEcho ${BLUE} "Installing puppeteer..."
 npm install -g puppeteer
 
-colorEcho ${BLUE} "Installing jquery popper.js bootstrap..."
-npm install -g jquery popper.js bootstrap
+# colorEcho ${BLUE} "Installing jquery popper.js bootstrap..."
+# npm install -g jquery popper.js bootstrap
 
-colorEcho ${BLUE} "Installing mdbootstrap..."
-npm install -g mdbootstrap
+# colorEcho ${BLUE} "Installing mdbootstrap..."
+# npm install -g mdbootstrap
 
-colorEcho ${BLUE} "Installing echarts echarts-gl..."
-npm install -g echarts echarts-gl
+# colorEcho ${BLUE} "Installing echarts echarts-gl..."
+# npm install -g echarts echarts-gl
 
 # Clean npm cache
 # npm cache clean --force

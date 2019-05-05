@@ -400,6 +400,16 @@ if [[ -x "$(command -v conda)" ]]; then
 fi
 
 
+if [[ -d "$HOME/.nvm" && -s "$HOME/nvm_node_update.sh" ]]; then
+    source "$HOME/nvm_node_update.sh"
+fi
+
+
+if [[ -d "$HOME/.nvs" && -s "$HOME/nvs_node_update.sh" ]]; then
+    source "$HOME/nvs_node_update.sh"
+fi
+
+
 if [[ -n "$ZSH" ]]; then
     if [[ -s "$HOME/zsh_update.sh" ]]; then
         colorEcho ${BLUE} "Updating oh-my-zsh & custom stuff..."
@@ -411,16 +421,6 @@ if [[ -n "$ZSH" ]]; then
         # -c : Run a command in this shell
         # zsh -i -c "$HOME/zsh_update.sh"
     fi
-fi
-
-
-if [[ -d "$HOME/.nvm" && -s "$HOME/nvm_node_update.sh" ]]; then
-    source "$HOME/nvm_node_update.sh"
-fi
-
-
-if [[ -d "$HOME/.nvs" && -s "$HOME/nvs_node_update.sh" ]]; then
-    source "$HOME/nvs_node_update.sh"
 fi
 
 

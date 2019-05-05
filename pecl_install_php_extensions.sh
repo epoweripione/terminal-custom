@@ -172,21 +172,38 @@ else
     ORACLE_INSTANT_EXIST="no"
 fi
 
-ORACLE_INSTANT_CLIENT="18c"
+ORACLE_INSTANT_CLIENT="19c"
 
-if [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "18c" ]]; then
+if [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "19c" ]]; then
     mkdir -p /opt/oracle && cd /opt/oracle && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-basic-linux.x64-18.3.0.0.0dbru.zip && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sdk-linux.x64-18.3.0.0.0dbru.zip && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sqlplus-linux.x64-18.3.0.0.0dbru.zip && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-tools-linux.x64-18.3.0.0.0dbru.zip && \
+        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-basic-linux.x64-19.3.0.0.0dbru.zip && \
+        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sdk-linux.x64-19.3.0.0.0dbru.zip && \
+        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sqlplus-linux.x64-19.3.0.0.0dbru.zip && \
+        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-tools-linux.x64-19.3.0.0.0dbru.zip && \
         : && \
-        unzip instantclient-basic-linux.x64-18.3.0.0.0dbru.zip && \
-        unzip instantclient-sdk-linux.x64-18.3.0.0.0dbru.zip && \
-        unzip instantclient-sqlplus-linux.x64-18.3.0.0.0dbru.zip && \
-        unzip instantclient-tools-linux.x64-18.3.0.0.0dbru.zip && \
+        unzip instantclient-basic-linux.x64-19.3.0.0.0dbru.zip && \
+        unzip instantclient-sdk-linux.x64-19.3.0.0.0dbru.zip && \
+        unzip instantclient-sqlplus-linux.x64-19.3.0.0.0dbru.zip && \
+        unzip instantclient-tools-linux.x64-19.3.0.0.0dbru.zip && \
         : && \
-        echo /opt/oracle/instantclient_18_3 > /etc/ld.so.conf.d/oracle-instantclient18.3 && \
+        echo /opt/oracle/instantclient_19_3 > /etc/ld.so.conf.d/oracle-instantclient19.3 && \
+        : && \
+        ldconfig && \
+        : && \
+        rm -rf /opt/oracle/*.zip
+elif [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "18c" ]]; then
+    mkdir -p /opt/oracle && cd /opt/oracle && \
+        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip && \
+        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip && \
+        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip && \
+        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-tools-linux.x64-18.5.0.0.0dbru.zip && \
+        : && \
+        unzip instantclient-basic-linux.x64-18.5.0.0.0dbru.zip && \
+        unzip instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip && \
+        unzip instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip && \
+        unzip instantclient-tools-linux.x64-18.5.0.0.0dbru.zip && \
+        : && \
+        echo /opt/oracle/instantclient_18_5 > /etc/ld.so.conf.d/oracle-instantclient18.5 && \
         : && \
         ldconfig && \
         : && \
@@ -213,10 +230,14 @@ elif [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "12c" ]];
 fi
 
 # Oracle Instant Client
-if [[ -d "/opt/oracle/instantclient_18_3" ]]; then
-    ORACLE_HOME="/opt/oracle/instantclient_18_3"
+if [[ -d "/opt/oracle/instantclient_19_3" ]]; then
+    export ORACLE_HOME="/opt/oracle/instantclient_19_3"
+elif [[ -d "/opt/oracle/instantclient_18_5" ]]; then
+    export ORACLE_HOME="/opt/oracle/instantclient_18_5"
+elif [[ -d "/opt/oracle/instantclient_18_3" ]]; then
+    export ORACLE_HOME="/opt/oracle/instantclient_18_3"
 elif [[ -d "/opt/oracle/instantclient_12_2" ]]; then
-    ORACLE_HOME="/opt/oracle/instantclient_12_2"
+    export ORACLE_HOME="/opt/oracle/instantclient_12_2"
 fi
 
 # if [[ -d "/opt/oracle/instantclient_18_3" ]]; then

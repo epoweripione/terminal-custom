@@ -196,7 +196,11 @@ fi
 
 
 # Oracle Instant Client
-if [[ -d "/opt/oracle/instantclient_18_3" ]]; then
+if [[ -d "/opt/oracle/instantclient_19_3" ]]; then
+    export ORACLE_HOME="/opt/oracle/instantclient_19_3"
+elif [[ -d "/opt/oracle/instantclient_18_5" ]]; then
+    export ORACLE_HOME="/opt/oracle/instantclient_18_5"
+elif [[ -d "/opt/oracle/instantclient_18_3" ]]; then
     export ORACLE_HOME="/opt/oracle/instantclient_18_3"
 elif [[ -d "/opt/oracle/instantclient_12_2" ]]; then
     export ORACLE_HOME="/opt/oracle/instantclient_12_2"
