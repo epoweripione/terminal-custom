@@ -39,6 +39,7 @@ apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recomm
     curl -SL http://pecl.php.net/get/mongodb -o mongodb.tgz && \
     curl -SL http://pecl.php.net/get/oauth -o oauth.tgz && \
     curl -SL http://pecl.php.net/get/redis -o redis.tgz && \
+    curl -SL http://pecl.php.net/get/psr -o psr.tgz && \
     curl -SL http://pecl.php.net/get/xdebug -o xdebug.tgz && \
     : && \
     printf "\n" | pecl install --force imagick.tgz && \
@@ -46,6 +47,7 @@ apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recomm
     printf "\n" | pecl install --force mongodb.tgz && \
     printf "\n" | pecl install --force oauth.tgz && \
     printf "\n" | pecl install --force redis.tgz && \
+    printf "\n" | pecl install --force psr.tgz && \
     printf "\n" | pecl install --force xdebug.tgz && \
     : && \
     echo 'extension=imagick.so' > $PHP_INI_DIR/90-imagick.ini && \
@@ -53,6 +55,7 @@ apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recomm
     echo 'extension=mongodb.so' > $PHP_INI_DIR/90-mongodb.ini && \
     echo 'extension=oauth.so' > $PHP_INI_DIR/90-oauth.ini && \
     echo 'extension=redis.so' > $PHP_INI_DIR/90-redis.ini && \
+    echo 'extension=psr.so' > $PHP_INI_DIR/50-psr.ini && \
     echo 'zend_extension=xdebug.so' > $PHP_INI_DIR/90-xdebug.ini && \
     : && \
     rm -rf /tmp/pecl_downloads
@@ -91,16 +94,16 @@ apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
 ## https://github.com/phalcon/cphalcon
 apt install -y php${PHP_VERSION}-dev libpcre3-dev gcc make re2c --no-install-recommends && \
     mkdir -p /tmp/pecl_downloads && \
-    : && \
-    cd /tmp && \
-    curl -o ./pecl_downloads/php-psr.tar.gz https://github.com/jbboehr/php-psr/archive/master.tar.gz -L && \
-    tar zxvf ./pecl_downloads/php-psr.tar.gz && \
-    mv php-psr* php-psr && cd php-psr && \
-    /usr/bin/phpize${PHP_VERSION} && \
-    ./configure --with-php-config=/usr/bin/php-config${PHP_VERSION} && \
-    make && make test && make install && \
-    echo 'extension=psr.so' > $PHP_INI_DIR/50-psr.ini && \
-    : && \
+    # : && \
+    # cd /tmp && \
+    # curl -o ./pecl_downloads/php-psr.tar.gz https://github.com/jbboehr/php-psr/archive/master.tar.gz -L && \
+    # tar zxvf ./pecl_downloads/php-psr.tar.gz && \
+    # mv php-psr* php-psr && cd php-psr && \
+    # /usr/bin/phpize${PHP_VERSION} && \
+    # ./configure --with-php-config=/usr/bin/php-config${PHP_VERSION} && \
+    # make && make test && make install && \
+    # echo 'extension=psr.so' > $PHP_INI_DIR/50-psr.ini && \
+    # : && \
     cd /tmp && \
     curl -o ./pecl_downloads/cphalcon.tar.gz https://github.com/phalcon/cphalcon/archive/master.tar.gz -L && \
     tar zxvf ./pecl_downloads/cphalcon.tar.gz && \
@@ -108,7 +111,8 @@ apt install -y php${PHP_VERSION}-dev libpcre3-dev gcc make re2c --no-install-rec
     ./install --phpize /usr/bin/phpize${PHP_VERSION} --php-config /usr/bin/php-config${PHP_VERSION} && \
     echo 'extension=phalcon.so' > $PHP_INI_DIR/90-phalcon.ini && \
     : && \
-    rm -rf /tmp/pecl_downloads /tmp/php-psr /tmp/cphalcon
+    rm -rf /tmp/pecl_downloads /tmp/cphalcon
+    # rm -rf /tmp/pecl_downloads /tmp/php-psr /tmp/cphalcon
 
 ## PDFlib
 ## https://www.pdflib.com/download/pdflib-product-family/
