@@ -15,10 +15,10 @@ Add-Content $PROFILE "`nImport-Module Posh-git"; Add-Content $PROFILE "`nImport-
 
 
 # my theme
-mkdir -p ~\Documents\WindowsPowerShell\PoshThemes
-# Copy-Item $env:SystemDrive\cmder\Paradox-my.psm1  ~\Documents\WindowsPowerShell\PoshThemes
+mkdir -p ~\Documents\PowerShell\PoshThemes
+# Copy-Item $env:SystemDrive\cmder\Paradox-my.psm1  ~\Documents\PowerShell\PoshThemes
 $p = New-Object System.Net.WebClient
-$p.DownloadFile("https://raw.githubusercontent.com/epoweripione/shellstuff/master/Paradox-my.psm1","~\Documents\WindowsPowerShell\PoshThemes\Paradox-my.psm1")
+$p.DownloadFile("https://raw.githubusercontent.com/epoweripione/shellstuff/master/Paradox-my.psm1","~\Documents\PowerShell\PoshThemes\Paradox-my.psm1")
 
 
 # Custom
