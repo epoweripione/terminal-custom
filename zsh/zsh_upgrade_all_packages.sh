@@ -170,13 +170,11 @@ if [[ -d "$HOME/.gvm" ]]; then
         fi
         REMOTE_VERSION=${REMOTE_VERSION%.}
 
-        if [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
-            if [[ -n "$REMOTE_VERSION" ]]; then
-                if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-                    proxychains4 gvm install $REMOTE_VERSION
-                else
-                    gvm install $REMOTE_VERSION
-                fi
+        if [[ -n "$REMOTE_VERSION" ]] && [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
+            if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+                proxychains4 gvm install $REMOTE_VERSION
+            else
+                gvm install $REMOTE_VERSION
             fi
         fi
 
