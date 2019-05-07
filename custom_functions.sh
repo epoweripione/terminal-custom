@@ -436,25 +436,25 @@ function check_webservice_up() {
     local http=`curl -sL -w "%{http_code}\\n" "${webservice_url}" \-o /dev/null --connect-timeout 3 --max-time 5`
     local exitStatus=0
 
-    # case "$http" in
-    #     [2]*)
-    #         ;;
-    #     [3]*)
-    #         echo "$webservice_url is REDIRECT with ${http}"
-    #         ;;
-    #     [4]*)
-    #         exitStatus=4
-    #         echo "$webservice_url is DENIED with ${http}"
-    #         ;;
-    #     [5]*)
-    #         exitStatus=5
-    #         echo "$webservice_url is ERROR with ${http}"
-    #         ;;
-    #     *)
-    #         exitStatus=6
-    #         echo "$webservice_url is NO RESPONSE with ${http}"
-    #         ;;
-    # esac
+    case "$http" in
+        [2]*)
+            ;;
+        [3]*)
+            # echo "$webservice_url is REDIRECT with ${http}"
+            ;;
+        [4]*)
+            exitStatus=4
+            # echo "$webservice_url is DENIED with ${http}"
+            ;;
+        [5]*)
+            exitStatus=5
+            # echo "$webservice_url is ERROR with ${http}"
+            ;;
+        *)
+            exitStatus=6
+            # echo "$webservice_url is NO RESPONSE with ${http}"
+            ;;
+    esac
 
     if [ "$exitStatus" -eq "0" ]; then
         # echo "$webservice_url is UP with ${http}"
