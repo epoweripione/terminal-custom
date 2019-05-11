@@ -88,6 +88,7 @@ $extensions =
 	"Angular.ng-template",
 	"cyrilletuzi.angular-schematics",
 	"Mikael.Angular-BeastCode",
+	"metatype.copilot-vscode",
 	# "cipchk.ng-alain-extension-pack",
 	# https://github.com/ng-alain/extension-pack/
 	"cipchk.ng-zorro-vscode",
