@@ -76,6 +76,9 @@ chmod +x ~/frp_installer.sh
 chmod +x ~/goproxy_installer.sh
 chmod +x ~/shadowtunnel_installer.sh
 
+chmod +x ~/cockpit_installer.sh
+chmod +x ~/webmin_installer.sh
+
 chmod +x ~/vs-code-extensions-installer.sh
 cp -f ~/terminal-custom/vscode_extensions.list ~
 

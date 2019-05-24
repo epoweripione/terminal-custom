@@ -58,6 +58,9 @@ $extensions =
     ## Dart/Flutter
 	"Dart-Code.dart-code",
 	"Dart-Code.flutter",
+	"nash.awesome-flutter-snippets",
+	"alexisvt.flutter-snippets",
+	"gornivv.vscode-flutter-files",
     ## GO
 	"ms-vscode.Go",
     ## HTML/CSS
@@ -95,6 +98,7 @@ $extensions =
 	"cipchk.ng-alain-vscode",
 	"cyrilletuzi.angular-schematics",
 	"infinity1207.angular2-switcher",
+	"nrwl.angular-console",
     ## ionic
 	"loiane.ionic-extension-pack",
 	"vsmobile.cordova-tools",

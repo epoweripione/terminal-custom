@@ -44,6 +44,9 @@ ms-ossdata.vscode-postgresql
 ## Dart/Flutter
 Dart-Code.dart-code
 Dart-Code.flutter
+nash.awesome-flutter-snippets
+alexisvt.flutter-snippets
+gornivv.vscode-flutter-files
 ## GO
 ms-vscode.Go
 ## HTML/CSS
@@ -60,14 +63,16 @@ vscjava.vscode-java-dependency
 vscjava.vscode-java-pack
 vscjava.vscode-java-test
 vscjava.vscode-maven
-## Javascript/Typescript
+## Javascript
 msjsdiag.debugger-for-chrome
 chenxsan.vscode-standardjs
 dbaeumer.vscode-eslint
-ms-vscode.vscode-typescript-tslint-plugin
 octref.vetur
 xabikos.JavaScriptSnippets
 vsmobile.vscode-react-native
+## Typescript
+ms-vscode.vscode-typescript-tslint-plugin
+stringham.move-ts
 ## Angular
 Angular.ng-template
 cyrilletuzi.angular-schematics
@@ -79,6 +84,7 @@ cipchk.ng-zorro-vscode
 cipchk.ng-alain-vscode
 cyrilletuzi.angular-schematics
 infinity1207.angular2-switcher
+nrwl.angular-console
 ## ionic
 loiane.ionic-extension-pack
 vsmobile.cordova-tools
