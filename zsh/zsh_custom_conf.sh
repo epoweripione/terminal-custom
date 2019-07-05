@@ -388,6 +388,12 @@ if [[ -d "/usr/local/multi-v2ray" ]]; then
 fi
 
 
+# lazydocker aliases
+if [[ -x "$(command -v lazydocker)" ]]; then
+    alias lzd='lazydocker' 
+fi
+
+
 # WSL
 if [[ $(uname -r) =~ "Microsoft" ]]; then
     # Docker

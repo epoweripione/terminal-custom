@@ -72,6 +72,33 @@ if [[ ! -x "$(command -v ctop)" ]]; then
     fi
 fi
 
+
+## lazydocker
+# https://github.com/jesseduffield/lazydocker
+# https://github.com/jesseduffield/lazydocker/blob/master/docs/keybindings/Keybindings_en.md
+# if [[ ! -x "$(command -v lazydocker)" ]]; then
+#     colorEcho ${BLUE} "Installing lazydocker..."
+#     if uname -m | grep -Eqi "amd64|x86_64"; then
+#         DOWNLOAD_FILE_SUFFIX='Linux_x86_64.tar.gz'
+#     else
+#         DOWNLOAD_FILE_SUFFIX='Linux_32-bit.tar.gz'
+#     fi
+
+#     CHECK_URL="https://api.github.com/repos/jesseduffield/lazydocker/releases/latest"
+#     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
+#     if [[ -n "$REMOTE_VERSION" ]]; then
+#         DOWNLOAD_URL=https://github.com/jesseduffield/lazydocker/releases/download/v$REMOTE_VERSION/lazydocker_${REMOTE_VERSION}_${DOWNLOAD_FILE_SUFFIX}
+#         curl -SL $DOWNLOAD_URL -o /tmp/lazydocker.tar.gz && \
+#             mkdir -p /tmp/lazydocker && \
+#             tar -zxPf /tmp/lazydocker.tar.gz -C /tmp/lazydocker && \
+#             mv -f /tmp/lazydocker/lazydocker /usr/local/bin/lazydocker && \
+#             chmod +x /usr/local/bin/lazydocker && \
+#             rm -f /tmp/lazydocker.tar.gz && \
+#             rm -rf /tmp/lazydocker
+#     fi
+# fi
+
+
 ## docker mirror in chinia
 # tee /etc/docker/daemon.json <<-'EOF'
 # {

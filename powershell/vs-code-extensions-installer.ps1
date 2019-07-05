@@ -13,6 +13,7 @@
 
 $extensions =
     # Look & Feel
+	"MS-CEINTL.vscode-language-pack-zh-hans",
 	"anseki.vscode-color",
 	"robertohuertasm.vscode-icons",
 	"idleberg.icon-fonts",
@@ -22,7 +23,7 @@ $extensions =
 	"bmewburn.vscode-intelephense-client",
 	"christian-kohler.npm-intellisense",
 	"christian-kohler.path-intellisense",
-	"CoenraadS.bracket-pair-colorizer",
+	"CoenraadS.coenraads.bracket-pair-colorizer-2",
 	"esbenp.prettier-vscode",
 	"fernandoescolar.vscode-solution-explorer",
 	"formulahendry.auto-close-tag",
@@ -55,6 +56,7 @@ $extensions =
 	"bajdzis.vscode-database",
 	"ms-mssql.mssql",
 	"ms-ossdata.vscode-postgresql",
+	"oracle.oracledevtools",
     ## Dart/Flutter
 	"Dart-Code.dart-code",
 	"Dart-Code.flutter",
@@ -70,6 +72,7 @@ $extensions =
 	"robinbentley.sass-indented",
 	"wcwhitehead.bootstrap-3-snippets",
 	"Zignd.html-css-class-completion",
+	"sidthesloth.html5-boilerplate",
     ## JAVA
 	"redhat.java",
 	"vscjava.vscode-java-debug",
@@ -112,6 +115,7 @@ $extensions =
 	"shd101wyy.markdown-preview-enhanced",
 	"darkriszty.markdown-table-prettify",
 	"yzhang.markdown-all-in-one",
+	"yzane.markdown-pdf",
     ## nginx
 	"shanoor.vscode-nginx",
     ## Node
@@ -145,23 +149,28 @@ $extensions =
 	"donjayamanne.githistory",
 	"eamodio.gitlens",
 	"pflannery.vscode-versionlens",
+	# Remote
+	"ms-vscode-remote.vscode-remote-extensionpack",
+	"ms-vsliveshare.vsliveshare",
+	# Debug & Test
+	"formulahendry.code-runner",
+	"humao.rest-client",
     # Extra functionality
 	"bukas.GBKtoUTF8",
 	"steoates.autoimport",
 	"WakaTime.vscode-wakatime",
     # Extra tools
-	"MS-CEINTL.vscode-language-pack-zh-hans",
-	"ms-vsliveshare.vsliveshare",
 	"Shan.code-settings-sync",
-	"formulahendry.code-runner",
 	"GrapeCity.gc-excelviewer",
 	"Gruntfuggly.todo-tree",
-	"humao.rest-client",
 	"joelday.docthis",
 	"k--kato.docomment",
 	"mkxml.vscode-filesize",
 	"quicktype.quicktype",
-	"wayou.vscode-todo-highlight"
+	"wayou.vscode-todo-highlight",
+	"obkoro1.korofileheader",
+	"kisstkondoros.vscode-gutter-preview",
+	"tomoki1207.pdf"
 
 
 $cmd = "code --list-extensions"
