@@ -39,7 +39,6 @@ apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recomm
     curl -SL http://pecl.php.net/get/mongodb -o mongodb.tgz && \
     curl -SL http://pecl.php.net/get/oauth -o oauth.tgz && \
     curl -SL http://pecl.php.net/get/redis -o redis.tgz && \
-    curl -SL http://pecl.php.net/get/psr -o psr.tgz && \
     curl -SL http://pecl.php.net/get/xdebug -o xdebug.tgz && \
     : && \
     printf "\n" | pecl install --force imagick.tgz && \
@@ -47,7 +46,6 @@ apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recomm
     printf "\n" | pecl install --force mongodb.tgz && \
     printf "\n" | pecl install --force oauth.tgz && \
     printf "\n" | pecl install --force redis.tgz && \
-    printf "\n" | pecl install --force psr.tgz && \
     printf "\n" | pecl install --force xdebug.tgz && \
     : && \
     echo 'extension=imagick.so' > $PHP_INI_DIR/90-imagick.ini && \
@@ -55,55 +53,46 @@ apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recomm
     echo 'extension=mongodb.so' > $PHP_INI_DIR/90-mongodb.ini && \
     echo 'extension=oauth.so' > $PHP_INI_DIR/90-oauth.ini && \
     echo 'extension=redis.so' > $PHP_INI_DIR/90-redis.ini && \
-    echo 'extension=psr.so' > $PHP_INI_DIR/50-psr.ini && \
     echo 'zend_extension=xdebug.so' > $PHP_INI_DIR/90-xdebug.ini && \
     : && \
     rm -rf /tmp/pecl_downloads
 
-## swoole
-## https://github.com/swoole/swoole-src
-## hiredis( for swoole )
-## https://github.com/redis/hiredis
+## psr、swoole
 apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
     mkdir -p /tmp/pecl_downloads && \
     : && \
-    cd /tmp && \
-    curl -o ./pecl_downloads/hiredis.tar.gz https://github.com/redis/hiredis/archive/master.tar.gz -L && \
-    tar zxvf ./pecl_downloads/hiredis.tar.gz && \
-    mv hiredis* hiredis && cd hiredis && \
-    make -j && make install && ldconfig && \
+    cd /tmp/pecl_downloads && \
+    curl -SL http://pecl.php.net/get/psr -o psr.tgz && \
+    curl -SL http://pecl.php.net/get/swoole -o swoole.tgz && \
     : && \
-    cd /tmp && \
-    curl -o ./pecl_downloads/swoole.tar.gz https://github.com/swoole/swoole-src/archive/master.tar.gz -L && \
-    tar zxvf ./pecl_downloads/swoole.tar.gz && \
-    mv swoole-src* swoole-src && cd swoole-src && \
-    phpize && \
-    ./configure \
-        --enable-openssl \
-        --enable-http2  \
-        --enable-async-redis \
-        --enable-sockets \
-        --enable-mysqlnd \
-        --enable-coroutine-postgresql && \
-    make clean && make && make install && \
+    printf "\n" | pecl install --force psr.tgz && \
+    printf "\n" | pecl install --force swoole.tgz && \
+    : && \
+    echo 'extension=psr.so' > $PHP_INI_DIR/50-psr.ini && \
     echo 'extension=swoole.so' > $PHP_INI_DIR/90-swoole.ini && \
     : && \
-    rm -rf /tmp/pecl_downloads /tmp/hiredis /tmp/swoole-src
+    rm -rf /tmp/pecl_downloads
+
+## swoole swoole_postgresql
+## https://github.com/swoole/ext-postgresql
+mkdir -p /tmp/pecl_downloads && \
+    : && \
+    cd /tmp && \
+    curl -o ./pecl_downloads/ext-postgresql.tar.gz https://github.com/swoole/ext-postgresql/archive/master.tar.gz -L && \
+    tar zxvf ./pecl_downloads/ext-postgresql.tar.gz && \
+    mv ext-postgresql* ext-postgresql && cd ext-postgresql && \
+    phpize && \
+    ./configure && \
+    make && make install && \
+    echo 'extension=swoole_postgresql.so' > $PHP_INI_DIR/90-swoole_postgresql.ini && \
+    : && \
+    rm -rf /tmp/pecl_downloads /tmp/ext-postgresql
 
 ## Phalcon
 ## https://github.com/phalcon/cphalcon
 apt install -y php${PHP_VERSION}-dev libpcre3-dev gcc make re2c --no-install-recommends && \
     mkdir -p /tmp/pecl_downloads && \
-    # : && \
-    # cd /tmp && \
-    # curl -o ./pecl_downloads/php-psr.tar.gz https://github.com/jbboehr/php-psr/archive/master.tar.gz -L && \
-    # tar zxvf ./pecl_downloads/php-psr.tar.gz && \
-    # mv php-psr* php-psr && cd php-psr && \
-    # /usr/bin/phpize${PHP_VERSION} && \
-    # ./configure --with-php-config=/usr/bin/php-config${PHP_VERSION} && \
-    # make && make test && make install && \
-    # echo 'extension=psr.so' > $PHP_INI_DIR/50-psr.ini && \
-    # : && \
+    : && \
     cd /tmp && \
     curl -o ./pecl_downloads/cphalcon.tar.gz https://github.com/phalcon/cphalcon/archive/master.tar.gz -L && \
     tar zxvf ./pecl_downloads/cphalcon.tar.gz && \
