@@ -41,9 +41,10 @@ PHP_VERSION=7.3
 
 if [[ -x "$(command -v php)" ]]; then
     PHP_VERSION_OLD=$(php --version | head -n 1 | cut -d " " -f 2 | cut -c 1-3)
-    if [[ "$REMOTE_VERSION" != "$PHP_VERSION_OLD" ]]; then
+    if [[ "$PHP_VERSION" != "$PHP_VERSION_OLD" ]]; then
         colorEcho ${BLUE} "Removing installed php ${PHP_VERSION_OLD}..."
         apt remove -y --purge "php${PHP_VERSION_OLD}*" && apt autoremove -y
+        # rm -rf /usr/lib/php/${PHP_VERSION_OLD} /usr/include/php/${PHP_VERSION_OLD} /etc/php/${PHP_VERSION_OLD}
     fi
 fi
 
@@ -78,13 +79,14 @@ export COMPOSER_ALLOW_SUPERUSER=1 && \
     chmod a+x /usr/local/bin/composer
 
 ### Packagist mirror
-composer config -g repo.packagist composer https://packagist.laravel-china.org
+# composer config -g repo.packagist composer https://packagist.laravel-china.org
+composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 ### Install composer packages
 colorEcho ${BLUE} "Installing composer packages..."
 composer g require "hirak/prestissimo" && \
     composer g require friendsofphp/php-cs-fixer && \
-    composer g require --dev phpunit/phpunit ^7 && \
+    composer g require --dev phpunit/phpunit ^8 && \
     composer g require psy/psysh:@stable
 
 colorEcho ${BLUE} "Downloading psysh chinese php_manual..."

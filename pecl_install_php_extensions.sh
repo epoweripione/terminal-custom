@@ -75,18 +75,18 @@ apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
 
 ## swoole swoole_postgresql
 ## https://github.com/swoole/ext-postgresql
-mkdir -p /tmp/pecl_downloads && \
-    : && \
-    cd /tmp && \
-    curl -o ./pecl_downloads/ext-postgresql.tar.gz https://github.com/swoole/ext-postgresql/archive/master.tar.gz -L && \
-    tar zxvf ./pecl_downloads/ext-postgresql.tar.gz && \
-    mv ext-postgresql* ext-postgresql && cd ext-postgresql && \
-    phpize && \
-    ./configure && \
-    make && make install && \
-    echo 'extension=swoole_postgresql.so' > $PHP_INI_DIR/90-swoole_postgresql.ini && \
-    : && \
-    rm -rf /tmp/pecl_downloads /tmp/ext-postgresql
+# mkdir -p /tmp/pecl_downloads && \
+#     : && \
+#     cd /tmp && \
+#     curl -o ./pecl_downloads/ext-postgresql.tar.gz https://github.com/swoole/ext-postgresql/archive/master.tar.gz -L && \
+#     tar zxvf ./pecl_downloads/ext-postgresql.tar.gz && \
+#     mv ext-postgresql* ext-postgresql && cd ext-postgresql && \
+#     phpize && \
+#     ./configure && \
+#     make && make install && \
+#     echo 'extension=swoole_postgresql.so' > $PHP_INI_DIR/90-swoole_postgresql.ini && \
+#     : && \
+#     rm -rf /tmp/pecl_downloads /tmp/ext-postgresql
 
 ## Phalcon
 ## https://github.com/phalcon/cphalcon

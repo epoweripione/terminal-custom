@@ -58,13 +58,7 @@ rm -rf /etc/localtime && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone
 
-if [[ -x "$(command -v v2ray)" ]]; then
-    if v2ray -v 2>&1 | grep -q 'multi-v2ray'; then
-        source <(curl -sL https://git.io/fNgqx) --zh
-    fi
-else
-    source <(curl -sL https://git.io/fNgqx)
-fi
+source <(curl -sL https://git.io/fNgqx) --zh
 
 
 # # V2Ray Client

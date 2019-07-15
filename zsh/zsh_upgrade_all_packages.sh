@@ -364,7 +364,14 @@ if [[ -x "$(command -v v2ray)" ]]; then
         colorEcho ${BLUE} "Updating multi-v2ray..."
         # https://github.com/Jrohy/multi-v2ray
         # v2ray update.sh && v2ray update && v2ray restart
-        source <(curl -sL https://git.io/fNgqx) -k
+
+        CHECK_URL="https://api.github.com/repos/Jrohy/multi-v2ray/releases/latest"
+
+        CURRENT_VERSION=$(v2ray-util -v | grep 'v2ray_util' | cut -d' ' -f2)
+        REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+        if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+            source <(curl -sL https://git.io/fNgqx) -k
+        fi
     elif systemctl list-unit-files --type=service | grep v2ray.service | grep enabled >/dev/null 2>&1; then
         V2RAYCORE="yes"
     fi
