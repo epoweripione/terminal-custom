@@ -32,6 +32,11 @@ $extensions =
 	"oderwat.indent-rainbow",
 	"streetsidesoftware.code-spell-checker",
 	"VisualStudioExptTeam.vscodeintellicode",
+	"tabnine.tabnine-vscode",
+	"lacroixdavid1.vscode-format-context-menu",
+	"wix.vscode-import-cost",
+	"sysoev.language-stylus",
+	"mrmlnc.vscode-attrs-sorter",
     # Language support
     ## C/C++
 	"ms-vscode.cpptools",
@@ -57,6 +62,8 @@ $extensions =
 	"ms-mssql.mssql",
 	"ms-ossdata.vscode-postgresql",
 	"oracle.oracledevtools",
+	"mtxr.sqltools",
+	"ckolkman.vscode-postgres",
     ## Dart/Flutter
 	"Dart-Code.dart-code",
 	"Dart-Code.flutter",
@@ -105,6 +112,9 @@ $extensions =
     ## ionic
 	"loiane.ionic-extension-pack",
 	"vsmobile.cordova-tools",
+	## Vue
+	"dariofuzinato.vue-peek",
+	"abdelaziz18003.quasar-snippets",
     ## kubernete/docker
 	"ms-kubernetes-tools.vscode-kubernetes-tools",
 	"PeterJausovec.vscode-docker",

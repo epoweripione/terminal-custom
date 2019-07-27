@@ -20,6 +20,20 @@ colorEcho ${BLUE} "Installing gvm & go..."
 ## Install gvm
 ## https://github.com/moovweb/gvm
 ## Please turn on proxy in china (replace the IP and Port to fit your proxy server)
+## Mac OS X Requirements
+## Install Mercurial from https://www.mercurial-scm.org/downloads
+## Install Xcode Command Line Tools from the App Store.
+# xcode-select --install
+# brew update
+# brew install mercurial
+## Linux Requirements
+## Debian/Ubuntu
+# sudo apt-get install curl git mercurial make binutils bison gcc build-essential
+## Redhat/Centos
+# sudo yum install curl git make bison gcc glibc-devel
+## Install Mercurial from http://pkgs.repoforge.org/mercurial/
+## FreeBSD Requirements
+# sudo pkg_add -r bash git mercurial
 if [[ ! -d "$HOME/.gvm" ]]; then
     apt install -y bison && \
         bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
@@ -58,4 +72,13 @@ if [[ -d "$HOME/.gvm" ]]; then
             fi
         fi
     fi
+
+    if [[ -z "$GOBIN" && -n "$GOROOT" ]]; then
+        export GOBIN=$GOROOT/bin
+    fi
 fi
+
+# # go env: 1.13+
+# go env -w GOBIN=$HOME/bin
+# export GOPROXY=direct,https://proxy.golang.org,https://myproxy.mysite:8888
+# export GONOPROXY=

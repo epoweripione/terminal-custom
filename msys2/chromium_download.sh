@@ -54,6 +54,6 @@ if [[ $ostype == "windows" ]]; then
 
     if [[ -d /d/Downloads ]]; then
         echo "Downloading Chromium Dev $ostype-$spruce_type-r$chromium_ver"
-        curl --socks5-hostname 127.0.0.1:55880 -fSL ${url}/${chromium_ver}/chrome-win.zip -o /d/Downloads/chrome-$ver-$chromium_ver.zip
+        curl --socks5-hostname 127.0.0.1:55880 -fSL# ${url}/${chromium_ver}/chrome-win.zip -o /d/Downloads/chrome-$ver-$chromium_ver.zip
     fi
 fi

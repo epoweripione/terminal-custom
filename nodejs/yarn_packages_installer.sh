@@ -65,11 +65,20 @@ yarn config set emoji true
 colorEcho ${BLUE} "Installing es-checker eslint tslint jslint jshint standard..."
 yarn global add es-checker eslint tslint jslint jshint standard
 
+colorEcho ${BLUE} "Installing babel-cli webpack traceur..."
+yarn global add @babel/core @babel/cli webpack webpack-cli traceur
+
 colorEcho ${BLUE} "Installing typescript..."
 yarn global add typescript
 
 colorEcho ${BLUE} "Installing angular/cli..."
 yarn global add @angular/cli
+
+colorEcho ${BLUE} "Installing vue/cli..."
+yarn global add @vue/cli
+
+colorEcho ${BLUE} "Installing quasar/cli..."
+yarn global add @quasar/cli
 
 colorEcho ${BLUE} "Installing storybook/cli..."
 yarn global add @storybook/cli

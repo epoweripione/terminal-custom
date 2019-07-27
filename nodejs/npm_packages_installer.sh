@@ -57,11 +57,20 @@ npm install -g cnpm
 colorEcho ${BLUE} "Installing npm-check es-checker eslint tslint jslint jshint standard..."
 npm install -g npm-check es-checker eslint tslint jslint jshint standard
 
+colorEcho ${BLUE} "Installing babel webpack traceur..."
+npm install -g @babel/core @babel/cli webpack webpack-cli traceur
+
 colorEcho ${BLUE} "Installing typescript..."
 npm install -g typescript
 
 colorEcho ${BLUE} "Installing angular/cli..."
 npm install -g @angular/cli
+
+colorEcho ${BLUE} "Installing vue/cli..."
+npm install -g @vue/cli
+
+colorEcho ${BLUE} "Installing quasar/cli..."
+npm install -g @quasar/cli
 
 colorEcho ${BLUE} "Installing storybook/cli..."
 npm install -g @storybook/cli

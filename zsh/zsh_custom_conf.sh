@@ -259,6 +259,10 @@ if [[ -d "$HOME/.gvm" ]]; then
             gvm use $CURRENT_VERSION --default >/dev/null 2>&1
         fi
     fi
+
+    if [[ -z "$GOBIN" && -n "$GOROOT" ]]; then
+        export GOBIN=$GOROOT/bin
+    fi
 fi
 
 # jabba
