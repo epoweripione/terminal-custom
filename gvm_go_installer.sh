@@ -55,7 +55,7 @@ if [[ -d "$HOME/.gvm" ]]; then
         export GOROOT_BOOTSTRAP=$GOROOT
 
         ## Install latest go version
-        if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && && -x "$(command -v proxychains4)" ]]; then
+        if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
             REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
             REMOTE_VERSION=${REMOTE_VERSION%.}
             proxychains4 gvm install $REMOTE_VERSION
@@ -79,7 +79,7 @@ if [[ -d "$HOME/.gvm" ]]; then
     fi
 
     # Go module proxy for china
-    if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && && -x "$(command -v go)" ]]; then
+    if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
         GO_VERSION=$(go version | cut -d' ' -f3)
         if version_ge $GO_VERSION 'go1.13'; then
             go env -w GOPROXY=https://goproxy.cn,direct

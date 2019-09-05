@@ -266,7 +266,7 @@ if [[ -d "$HOME/.gvm" ]]; then
     fi
 
     # Go module proxy for china
-    if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && && -x "$(command -v go)" ]]; then
+    if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
         GO_VERSION=$(go version | cut -d' ' -f3)
         if version_ge $GO_VERSION 'go1.13'; then
             go env -w GOPROXY=https://goproxy.cn,direct
