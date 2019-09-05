@@ -260,8 +260,20 @@ if [[ -d "$HOME/.gvm" ]]; then
         fi
     fi
 
+    # GOBIN
     if [[ -z "$GOBIN" && -n "$GOROOT" ]]; then
         export GOBIN=$GOROOT/bin
+    fi
+
+    # Go module proxy for china
+    if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && && -x "$(command -v go)" ]]; then
+        GO_VERSION=$(go version | cut -d' ' -f3)
+        if version_ge $GO_VERSION 'go1.13'; then
+            go env -w GOPROXY=https://goproxy.cn,direct
+        else
+            export GOPROXY=https://goproxy.cn
+        fi
+        # go env -w GOPROXY=https://proxy.golang.org,direct
     fi
 fi
 

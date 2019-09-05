@@ -46,6 +46,52 @@ else
 fi
 
 
+if [[ ! -x "$(command -v fontforge)" ]]; then
+	# # http://designwithfontforge.com/en-US/Installing_Fontforge.html
+	colorEcho ${BLUE} "Installing fontforge..."
+	apt-get install -y software-properties-common && \
+		add-apt-repository ppa:fontforge/fontforge && \
+		apt-get update && \
+		apt-get install -y fontforge
+
+	# colorEcho ${BLUE} "Installing fontforge dependencies..."
+	# apt-get install -y libjpeg-dev libtiff5-dev libpng-dev libfreetype6-dev libgif-dev \
+	# 	libgtk-3-dev libxml2-dev libpango1.0-dev libcairo2-dev python3-dev \
+	# 	ninja-build cmake build-essential
+	
+	# colorEcho ${BLUE} "Cloning fontforge repositories..."
+	# cd ~ \
+	# 	&& git clone https://github.com/fontforge/fontforge --depth 1 && \
+	# 	git clone https://github.com/fontforge/libspiro --depth 1 && \
+	# 	git clone https://github.com/fontforge/libuninameslist --depth 1
+	
+	# colorEcho ${BLUE} "Building libspiro..."
+	# cd ~/libspiro && autoreconf -i && automake --foreign -Wall && \
+	# 	./configure && make && make check && make install
+	
+	# colorEcho ${BLUE} "Building libuninameslist..."
+	# cd ~/libuninameslist && autoreconf -i && automake && \
+	# 	./configure && make && make install
+	
+	# colorEcho ${BLUE} "Building fontforge..."
+	# cd ~/fontforge && mkdir -p build && cd build && \
+	# 	cmake -GNinja .. && ninja && ninja install && \
+	# 	ldconfig && \
+	# 	cd ~
+fi
+
+
+if [[ ! -d "~/nerd-fonts" ]]; then
+	colorEcho ${BLUE} "Cloning nerd-fonts repository..."
+	# Download font-patcher
+	cd ~ && \
+		git clone https://github.com/ryanoasis/nerd-fonts --depth 1 && \
+		rm -rf ~/nerd-fonts/patched-fonts
+	# font-patcher
+	cd ~/nerd-fonts && ./font-patcher --version && cd ~
+fi
+
+
 colorEcho ${BLUE} "Downloading Nerd fonts..."
 mkdir -p ~/patched-fonts
 
@@ -73,11 +119,12 @@ mkdir -p ~/patched-fonts
 #   unzip -q ~/patched-fonts/Iosevka.zip -d ~/patched-fonts/Iosevka && \
 #   rm -f ~/patched-fonts/Iosevka.zip
 
-colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono 2.2.1..."
+colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono 2.3.0..."
+## Patch fonts
 # cd ~/nerd-fonts
 # for font in /e/VSCodeProjects/nerd-fonts/Iosevka/*.ttf; do fontforge -script font-patcher -out /e/VSCodeProjects/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done
-# cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/iosevka-term-ss05-nerd-2.2.1.zip *.ttf
-curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.2.1/iosevka-term-ss05-nerd-2.2.1.zip -o ~/patched-fonts/iosevka-term-ss05-nerd.zip
+# cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/iosevka-term-ss05-nerd-2.3.0.zip *.ttf
+curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.3.0/iosevka-term-ss05-nerd-2.3.0.zip -o ~/patched-fonts/iosevka-term-ss05-nerd.zip
 mkdir -p ~/patched-fonts/iosevka-term-ss05-nerd && \
 	unzip -q ~/patched-fonts/iosevka-term-ss05-nerd.zip -d ~/patched-fonts/iosevka-term-ss05-nerd && \
 	rm -f ~/patched-fonts/iosevka-term-ss05-nerd.zip
