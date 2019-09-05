@@ -443,4 +443,8 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
             fi
         fi
     fi
+
+    # fast-syntax-highlighting: fix Segmentation fault (core dumped) when input char -
+    # https://github.com/zdharma/fast-syntax-highlighting/issues/108
+    FAST_HIGHLIGHT[chroma-git]="chroma/-ogit.ch"
 fi

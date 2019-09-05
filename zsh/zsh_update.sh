@@ -181,6 +181,11 @@ ln -s $ZSH/custom/themes/alien/alien.plugin.zsh $ZSH/custom/themes/alien.zsh-the
 colorEcho ${BLUE} "enable plugins..."
 sed -i "s/^plugins=(git)/plugins=(\n  git\n)/" ~/.zshrc
 
+## zsh-syntax-highlighting must be the last plugin sourced
+# if [[ ! $(grep "  zsh-syntax-highlighting" ~/.zshrc) ]]; then
+#     sed -i '/^  git$/a\  zsh-syntax-highlighting' ~/.zshrc
+# fi
+
 if [[ $ostype == "Darwin" ]]; then
     if [[ ! $(grep "  osx" ~/.zshrc) ]]; then
         sed -i '/^  git$/a\  osx' ~/.zshrc
