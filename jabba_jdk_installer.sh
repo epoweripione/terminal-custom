@@ -33,12 +33,11 @@ fi
 ## OpenJDK
 colorEcho ${BLUE} "Installing JDK..."
 # apt install -y default-jdk default-jre
-# jabba install 1.11 && jabba alias default 1.11
-# jabba install 1.8 && jabba alias default 1.8
-# jabba install openjdk@1.11 && jabba alias default openjdk@1.11
+# jabba install openjdk@1.11.0-2 && jabba alias default openjdk@1.11.0-2
 jabba install zulu@1.8
-jabba install zulu@1.11
-jabba alias default zulu@1.11
+jabba install zulu@1.11.0-4
+jabba install zulu@1.13.0-0
+jabba alias default zulu@1.11.0-4
 
 
 ## How do I switch java globally?

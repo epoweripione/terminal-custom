@@ -26,13 +26,12 @@ if [[ ! -x "$(command -v pacapt)" ]]; then
 fi
 
 # Install ZSH Shell
-colorEcho ${BLUE} "Installing Git & ZSH & pre-request packages..."
+colorEcho ${BLUE} "Installing pre-request packages..."
 if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
-    pacman -Sy
-    # git & zsh
-    pacman -S git zsh
+    pacman -Syu
+
     # install pre-request packages
-    pacman -S wget g++ gcc make zip unzip
+    pacman -S git curl wget g++ gcc make zip unzip
 
     # GeoIP binary and database
     # http://kbeezie.com/geoiplookup-command-line/
@@ -55,22 +54,45 @@ if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     fi
 fi
 
-# # install latest zsh for readhat & centos
-# yum -y remove zsh
-# yum -y update && yum -y install ncurses-devel gcc make
+colorEcho ${BLUE} "Installing ZSH Shell..."
+# pacman -S zsh
+if [[ -f /etc/redhat-release ]]; then
+    # install latest zsh for readhat & centos
+    # yum -y remove zsh
+    yum -y update && \
+        yum -y install ncurses-devel gcc make
 
-# wget -c https://nchc.dl.sourceforge.net/project/zsh/zsh/5.6.2/zsh-5.6.2.tar.xz && \
-#     tar -xvJf zsh-5.6.2.tar.xz && \
-#     cd zsh-5.6.2 && \
-#     ./configure && make && make install && \
-#     command -v zsh | sudo tee -a /etc/shells
+    cd /tmp && \
+        curl -SL -o zsh.tar.xz https://nchc.dl.sourceforge.net/project/zsh/zsh/5.7.1/zsh-5.7.1.tar.xz && \
+        tar -xvJf zsh.tar.xz && \
+        mv zsh-* zsh && \
+        cd zsh && \
+        ./configure && make && make install && \
+        cd - && \
+        rm -rf /tmp/*
+    
+    if [[ ! -x "$(command -v zsh)" ]]; then
+        if [[ -s "/usr/local/bin/zsh" ]]; then
+            ln -sv /usr/local/bin/zsh /bin/zsh
+        fi
+    fi
 
-# if [[ ! -f "/bin/zsh" ]]; then
-#     ln -sv $(command -v zsh) /bin/zsh
-# fi
+    if [[ -x "$(command -v zsh)" ]]; then
+        if [[ ! -f "/bin/zsh" ]]; then
+            ln -sv $(command -v zsh) /bin/zsh
+        fi
+
+        command -v zsh | tee -a /etc/shells
+    fi
+else
+    pacman -S zsh
+fi
+
+# change default shell to zsh
+# chsh -s $(which zsh)
 
 
-if ! command -v zsh >/dev/null 2>&1; then
+if [[ ! -x "$(command -v zsh)" ]]; then
     colorEcho ${RED} "ZSH is not installed! Please manual install ZSH!"
     exit
 fi

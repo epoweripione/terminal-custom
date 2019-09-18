@@ -68,6 +68,7 @@ chmod +x ~/proxychains_installer.sh
 chmod +x ~/sdkman_installer.sh
 
 chmod +x ~/speedtest.sh
+chmod +x ~/analyze_sys_performance.sh
 
 chmod +x ~/php_debian_installer.sh
 chmod +x ~/pecl_install_php_extensions.sh
