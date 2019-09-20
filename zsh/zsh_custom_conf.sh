@@ -23,6 +23,10 @@ zstyle ':completion:*' hosts off
 # custom bindkey
 bindkey \^U backward-kill-line
 
+# bind the Control-P/N keys for zsh-history-substring-search
+bindkey -M emacs '^P' history-substring-search-up
+bindkey -M emacs '^N' history-substring-search-down
+
 # not confirm a rm *
 setopt localoptions rmstarsilent
 

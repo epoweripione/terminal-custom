@@ -305,6 +305,27 @@ if [[ -x "$(command -v proxy)" ]]; then
 fi
 
 
+if [[ -s "/usr/local/bin/proxy-admin-free" ]]; then
+    # https://github.com/snail007/proxy_admin_free
+    colorEcho ${BLUE} "Updating proxy_admin_free..."
+
+    if [[ -s "/etc/gpaf/.version" ]]; then
+        # CURRENT_VERSION=$(cat /etc/gpaf/.version 2>&1)
+        CURRENT_VERSION=$(head -n1 /etc/gpaf/.version)
+    else
+        CURRENT_VERSION="v0.0"
+    fi
+
+    CHECK_URL="https://api.github.com/repos/snail007/proxy_admin_free/releases/latest"
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        curl -L https://raw.githubusercontent.com/snail007/proxy_admin_free/master/install_auto.sh | bash
+
+        echo ${REMOTE_VERSION} > /etc/gpaf/.version
+    fi
+fi
+
+
 if [[ -d "/srv/proxy-web" ]]; then
     # https://github.com/yincongcyincong/proxy-web
     colorEcho ${BLUE} "Updating proxy-web..."
@@ -411,6 +432,11 @@ if [[ $UID -ne 0 && -n "$V2RAYCORE" ]]; then
         rm -f ./v2ray-core.zip && \
         ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
     fi
+fi
+
+
+if [[ -s "$HOME/bat_installer.sh" ]]; then
+    source "$HOME/bat_installer.sh"
 fi
 
 

@@ -13,41 +13,41 @@ else
 fi
 
 
-# Shadowsocks
-# Shadowsocks-Python：/etc/shadowsocks-python/config.json
-# ShadowsocksR: /etc/shadowsocks-r/config.json
-# Shadowsocks-Go：/etc/shadowsocks-go/config.json
-# Shadowsocks-libev：/etc/shadowsocks-libev/config.json
+# # Shadowsocks
+# # Shadowsocks-Python：/etc/shadowsocks-python/config.json
+# # ShadowsocksR: /etc/shadowsocks-r/config.json
+# # Shadowsocks-Go：/etc/shadowsocks-go/config.json
+# # Shadowsocks-libev：/etc/shadowsocks-libev/config.json
 
-# ./shadowsocks_exec.sh start | stop | restart | status
-if [[ ! -e "$HOME/shadowsocks_exec.sh" ]]; then
-    cat > shadowsocks_exec.sh <<EOF
-#!/bin/bash
+# # ./shadowsocks_exec.sh start | stop | restart | status
+# if [[ ! -e "$HOME/shadowsocks_exec.sh" ]]; then
+#     cat > shadowsocks_exec.sh <<EOF
+# #!/bin/bash
 
-[ -e /etc/init.d/shadowsocks-r ] && /etc/init.d/shadowsocks-r \$1
-[ -e /etc/init.d/shadowsocks-libev ] && /etc/init.d/shadowsocks-libev \$1
-[ -e /etc/init.d/shadowsocks-python ] && /etc/init.d/shadowsocks-r \$1
-[ -e /etc/init.d/shadowsocks-go ] && /etc/init.d/shadowsocks-libev \$1
+# [ -e /etc/init.d/shadowsocks-r ] && /etc/init.d/shadowsocks-r \$1
+# [ -e /etc/init.d/shadowsocks-libev ] && /etc/init.d/shadowsocks-libev \$1
+# [ -e /etc/init.d/shadowsocks-python ] && /etc/init.d/shadowsocks-r \$1
+# [ -e /etc/init.d/shadowsocks-go ] && /etc/init.d/shadowsocks-libev \$1
 
-if [ -x "\$(command -v supervisorctl)" ]; then
-    supervisorctl \$1 kcptun
-fi
-EOF
+# if [ -x "\$(command -v supervisorctl)" ]; then
+#     supervisorctl \$1 kcptun
+# fi
+# EOF
 
-    chmod +x shadowsocks_exec.sh
-fi
+#     chmod +x shadowsocks_exec.sh
+# fi
 
 
-if [[ -s "$HOME/shadowsocks-all.sh" ]]; then
-    source "$HOME/shadowsocks_exec.sh stop"
-    source "$HOME/shadowsocks-all.sh uninstall"
-    rm -fr shadowsocks-all* && rm -fr mbedtls-* libsodium-*
-fi
+# if [[ -s "$HOME/shadowsocks-all.sh" ]]; then
+#     source "$HOME/shadowsocks_exec.sh stop"
+#     source "$HOME/shadowsocks-all.sh uninstall"
+#     rm -fr shadowsocks-all* && rm -fr mbedtls-* libsodium-*
+# fi
 
-# https://github.com/teddysun/shadowsocks_install/tree/master
-wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-all.sh && \
-    chmod +x shadowsocks-all.sh && \
-    ./shadowsocks-all.sh 2>&1 | tee shadowsocks-all.log
+# # https://github.com/teddysun/shadowsocks_install/tree/master
+# wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-all.sh && \
+#     chmod +x shadowsocks-all.sh && \
+#     ./shadowsocks-all.sh 2>&1 | tee shadowsocks-all.log
 
 
 # # Kcptun

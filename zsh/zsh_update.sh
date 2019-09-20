@@ -1,24 +1,25 @@
 #!/bin/zsh
 
-#######color code########
-RED="31m"      # Error message
-GREEN="32m"    # Success message
-YELLOW="33m"   # Warning message
-BLUE="36m"     # Info message
-
-colorEcho() {
-    COLOR=$1
-    echo -e "\033[${COLOR}${@:2}\033[0m"
-}
-
-
 if [[ -z "$ZSH" ]]; then
     colorEcho ${RED} "Please install ZSH & Oh-my-zsh first!"
     exit 0
 fi
 
+# Load custom functions
+if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
+    :
+else
+    if [[ -s "$HOME/custom_functions.sh" ]]; then
+        source "$HOME/custom_functions.sh"
+    else
+        echo "$HOME/custom_functions.sh not exist!"
+        exit 0
+    fi
+fi
 
-ostype=$(uname)
+if [[ -z "$ostype" ]]; then
+    get_os_type
+fi
 
 
 # # pacapt - An Arch's pacman-like package manager for some Unices
@@ -47,16 +48,12 @@ colorEcho ${BLUE} "Updating neofetch..."
 if [[ -d $HOME/neofetch ]]; then
     cd $HOME/neofetch && git pull
 else
-    if [[ $ostype == "Darwin" || $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
-        git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
-    elif [[ $UID -eq 0 ]]; then
-        git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
-    fi
+    git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
 fi
 
-if [[ $ostype == "Darwin" ]]; then
+if [[ $ostype == "darwin" ]]; then
     cd $HOME/neofetch && make PREFIX=/usr/local install
-elif [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
+elif [[ $ostype =~ "windows" ]]; then
     cd $HOME/neofetch && make -i install
 else
     if [[ $UID -eq 0 ]]; then
@@ -67,6 +64,27 @@ fi
 if [[ -x "$(command -v neofetch)" ]]; then
     mkdir -p ~/.config/neofetch/ && \
         cp ~/terminal-custom/zsh/neofetch_config.conf ~/.config/neofetch/config.conf
+fi
+
+
+# fzf
+colorEcho ${BLUE} "Updating fzf..."
+if [[ ! -x "$(command -v fzf)" ]]; then
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install
+else
+    cd ~/.fzf && git pull && ./install --bin
+fi
+
+
+# zsh-interactive-cd
+if [[ -x "$(command -v fzf)" ]]; then
+    colorEcho ${BLUE} "Updating zsh-interactive-cd..."
+    if [[ -d $ZSH/custom/plugins/zsh-interactive-cd ]]; then
+        cd $ZSH/custom/plugins/zsh-interactive-cd && git pull
+    else
+        git clone https://github.com/changyuheng/zsh-interactive-cd.git $ZSH/custom/plugins/zsh-interactive-cd
+    fi
 fi
 
 
@@ -186,24 +204,20 @@ sed -i "s/^plugins=(git)/plugins=(\n  git\n)/" ~/.zshrc
 #     sed -i '/^  git$/a\  zsh-syntax-highlighting' ~/.zshrc
 # fi
 
-if [[ $ostype == "Darwin" ]]; then
-    if [[ ! $(grep "  osx" ~/.zshrc) ]]; then
-        sed -i '/^  git$/a\  osx' ~/.zshrc
-    fi
+if [[ ! $(grep "  history-substring-search" ~/.zshrc) ]]; then
+    sed -i '/^  git$/a\  history-substring-search' ~/.zshrc
+fi
+
+if [[ ! $(grep "  fast-syntax-highlighting" ~/.zshrc) ]]; then
+    sed -i '/^  git$/a\  fast-syntax-highlighting' ~/.zshrc
 fi
 
 if [[ ! $(grep "  zsh-autosuggestions" ~/.zshrc) ]]; then
     sed -i '/^  git$/a\  zsh-autosuggestions' ~/.zshrc
 fi
 
-if [[ -x "$(command -v redis-cli)" ]]; then
-    if [[ ! $(grep "  redis-cli" ~/.zshrc) ]]; then
-        sed -i '/^  git$/a\  redis-cli' ~/.zshrc
-    fi
-fi
-
-if [[ ! $(grep "  history-substring-search" ~/.zshrc) ]]; then
-    sed -i '/^  git$/a\  history-substring-search' ~/.zshrc
+if [[ ! $(grep "  zsh-interactive-cd" ~/.zshrc) ]]; then
+    sed -i '/^  git$/a\  zsh-interactive-cd' ~/.zshrc
 fi
 
 if [[ ! $(grep "  git-flow-completion" ~/.zshrc) ]]; then
@@ -216,8 +230,10 @@ if [[ "$(command -v fuck)" ]]; then
     fi
 fi
 
-if [[ ! $(grep "  fast-syntax-highlighting" ~/.zshrc) ]]; then
-    sed -i '/^  git$/a\  fast-syntax-highlighting' ~/.zshrc
+if [[ -x "$(command -v redis-cli)" ]]; then
+    if [[ ! $(grep "  redis-cli" ~/.zshrc) ]]; then
+        sed -i '/^  git$/a\  redis-cli' ~/.zshrc
+    fi
 fi
 
 if [[ -x "$(command -v fab)" ]]; then
@@ -259,8 +275,20 @@ if [[ -x "$(command -v autojump)" ]]; then
     fi
 fi
 
+if [[ -x "$(command -v fzf)" ]]; then
+    if [[ ! $(grep "  fzf" ~/.zshrc) ]]; then
+        sed -i '/^  git$/a\  fzf' ~/.zshrc
+    fi
+fi
+
 if [[ ! $(grep "  cp rsync sudo supervisor" ~/.zshrc) ]]; then
     sed -i '/^  git$/a\  cp rsync sudo supervisor' ~/.zshrc
+fi
+
+if [[ $ostype == "darwin" ]]; then
+    if [[ ! $(grep "  osx" ~/.zshrc) ]]; then
+        sed -i '/^  git$/a\  osx' ~/.zshrc
+    fi
 fi
 
 

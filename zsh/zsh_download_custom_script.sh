@@ -55,6 +55,7 @@ chmod +x ~/terminal_colors.sh
 chmod +x ~/ssl-cert-info.sh
 chmod +x ~/ssl-check-expire-date.sh
 
+chmod +x ~/bat_installer.sh
 chmod +x ~/conda_python_installer.sh
 chmod +x ~/cross_gfw_installer.sh
 chmod +x ~/docker_installer.sh
@@ -116,7 +117,7 @@ fi
 
 
 # MSYS2
-if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" ]]; then
+if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
     cp -f ~/terminal-custom/msys2/*.sh ~
     chmod +x ~/chromium_download.sh
     chmod +x ~/msys2_clean_cache.sh

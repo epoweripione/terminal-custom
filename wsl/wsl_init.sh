@@ -184,6 +184,12 @@ fi
 ## set colorscheme monokai-dark
 
 
+# bat
+if [[ -s "$HOME/bat_installer.sh" ]]; then
+    source "$HOME/bat_installer.sh"
+fi
+
+
 # proxychains
 if [[ -s "$HOME/proxychains_installer.sh" ]]; then
     source "$HOME/proxychains_installer.sh"

@@ -93,10 +93,10 @@ function check_release_package_manager() {
 function get_arch() {
 	local architecture=$(uname -m)
 	case "$architecture" in
-		amd64|x86_64)
+		amd64 | x86_64)
 			spruce_type='amd64'
 			;;
-		i686|i586|i486|i386|x86)
+		i686 | i586 | i486 | i386 | x86)
 			spruce_type='386'
 			;;
 		*)
@@ -111,134 +111,149 @@ function get_arch() {
 
 function get_sysArch(){
     ARCH=$(uname -m)
-    if [[ "$ARCH" == "amd64" ]] || [[ "$ARCH" == "x86_64" ]]; then
-        VDIS="64"
-    elif [[ "$ARCH" == "i686" ]] || [[ "$ARCH" == "i586" ]] || [[ "$ARCH" == "i486" ]] || [[ "$ARCH" == "i386" ]] || [[ "$ARCH" == "x86" ]]; then
-        VDIS="32"
-    elif [[ "$ARCH" == *"armv7"* ]] || [[ "$ARCH" == "armv6l" ]]; then
-        VDIS="arm"
-    elif [[ "$ARCH" == *"armv8"* ]] || [[ "$ARCH" == "aarch64" ]]; then
-        VDIS="arm64"
-    elif [[ "$ARCH" == *"mips64le"* ]]; then
-        VDIS="mips64le"
-    elif [[ "$ARCH" == *"mips64"* ]]; then
-        VDIS="mips64"
-    elif [[ "$ARCH" == *"mipsle"* ]]; then
-        VDIS="mipsle"
-    elif [[ "$ARCH" == *"mips"* ]]; then
-        VDIS="mips"
-    elif [[ "$ARCH" == *"s390x"* ]]; then
-        VDIS="s390x"
-    elif [[ "$ARCH" == "ppc64le" ]]; then
-        VDIS="ppc64le"
-    elif [[ "$ARCH" == "ppc64" ]]; then
-        VDIS="ppc64"
-    fi
+    case "$ARCH" in
+        amd64 | x86_64)
+            VDIS="64"
+            ;;
+		i686 | i586 | i486 | i386 | x86)
+            VDIS="32"
+            ;;
+		*armv7* | armv6l)
+            VDIS="arm"
+            ;;
+		*armv8* | aarch64)
+            VDIS="arm64"
+            ;;
+		*mips64le*)
+            VDIS="mips64le"
+            ;;
+		*mips64*)
+            VDIS="mips64"
+            ;;
+		*mipsle*)
+            VDIS="mipsle"
+            ;;
+		*mips*)
+            VDIS="mips"
+            ;;
+		*s390x*)
+            VDIS="s390x"
+            ;;
+		*ppc64le*)
+            VDIS="ppc64le"
+            ;;
+		*ppc64*)
+            VDIS="ppc64"
+            ;;
+		*)
+            VDIS=""
+            ;;
+    esac
     return 0
 }
 
 function get_os_icon() {
     case $(uname) in
         Darwin)
-        OS='OSX'
-        OS_ICON=$'\uF179'
-        ;;
+            OS='OSX'
+            OS_ICON=$'\uF179'
+            ;;
         MSYS_NT-* | MINGW* | CYGWIN_NT-*)
-        OS='Windows'
-        OS_ICON=$'\uF17A'
-        ;;
+            OS='Windows'
+            OS_ICON=$'\uF17A'
+            ;;
         FreeBSD)
-        OS='BSD'
-        OS_ICON=$'\uF30C'
-        ;;
+            OS='BSD'
+            OS_ICON=$'\uF30C'
+            ;;
         OpenBSD)
-        OS='BSD'
-        OS_ICON=$'\uF30C'
-        ;;
+            OS='BSD'
+            OS_ICON=$'\uF30C'
+            ;;
         DragonFly)
-        OS='BSD'
-        OS_ICON=$'\uF30C'
-        ;;
+            OS='BSD'
+            OS_ICON=$'\uF30C'
+            ;;
         Linux)
-        OS='Linux'
-        os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
-        case "$os_release_id" in
-            *arch*)
-            OS_ICON=$'\uF303'
-            ;;
-            *debian*)
-            OS_ICON=$'\uF306'
-            ;;
-        *ubuntu*)
-            OS_ICON=$'\uF31B'
-            ;;
-        *elementary*)
-            OS_ICON=$'\uF309'
-            ;;
-        *fedora*)
-            OS_ICON=$'\uF30A'
-            ;;
-        *coreos*)
-            OS_ICON=$'\uF305'
-            ;;
-        *gentoo*)
-            OS_ICON=$'\uF30D'
-            ;;
-        *mageia*)
-            OS_ICON=$'\uF310'
-            ;;
-        *centos*)
-            OS_ICON=$'\uF304'
-            ;;
-        *opensuse*|*tumbleweed*)
-            OS_ICON=$'\uF314'
-            ;;
-        *sabayon*)
-            OS_ICON=$'\uF317'
-            ;;
-        *slackware*)
-            OS_ICON=$'\uF319'
-            ;;
-        *linuxmint*)
-            OS_ICON=$'\uF30E'
-            ;;
-        *alpine*)
-            OS_ICON=$'\uF300'
-            ;;
-        *aosc*)
-            OS_ICON=$'\uF301'
-            ;;
-        *nixos*)
-            OS_ICON=$'\uF313'
-            ;;
-        *devuan*)
-            OS_ICON=$'\uF307'
-            ;;
-        *manjaro*)
-            OS_ICON=$'\uF312'
-            ;;
-            *)
             OS='Linux'
-            OS_ICON=$'\uF17C'
-            ;;
-        esac
+            os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
+            case "$os_release_id" in
+                *arch*)
+                    OS_ICON=$'\uF303'
+                    ;;
+                *debian*)
+                    OS_ICON=$'\uF306'
+                    ;;
+                *ubuntu*)
+                    OS_ICON=$'\uF31B'
+                    ;;
+                *elementary*)
+                    OS_ICON=$'\uF309'
+                    ;;
+                *fedora*)
+                    OS_ICON=$'\uF30A'
+                    ;;
+                *coreos*)
+                    OS_ICON=$'\uF305'
+                    ;;
+                *gentoo*)
+                    OS_ICON=$'\uF30D'
+                    ;;
+                *mageia*)
+                    OS_ICON=$'\uF310'
+                    ;;
+                *centos*)
+                    OS_ICON=$'\uF304'
+                    ;;
+                *opensuse* | *tumbleweed*)
+                    OS_ICON=$'\uF314'
+                    ;;
+                *sabayon*)
+                    OS_ICON=$'\uF317'
+                    ;;
+                *slackware*)
+                    OS_ICON=$'\uF319'
+                    ;;
+                *linuxmint*)
+                    OS_ICON=$'\uF30E'
+                    ;;
+                *alpine*)
+                    OS_ICON=$'\uF300'
+                    ;;
+                *aosc*)
+                    OS_ICON=$'\uF301'
+                    ;;
+                *nixos*)
+                    OS_ICON=$'\uF313'
+                    ;;
+                *devuan*)
+                    OS_ICON=$'\uF307'
+                    ;;
+                *manjaro*)
+                    OS_ICON=$'\uF312'
+                    ;;
+                    *)
+                    OS='Linux'
+                    OS_ICON=$'\uF17C'
+                    ;;
+            esac
 
-        # Check if we're running on Android
-        case $(uname -o 2>/dev/null) in
-            Android)
-            OS='Android'
-            OS_ICON=$'\uF17B'
+            # Check if we're running on Android
+            case $(uname -o 2>/dev/null) in
+                Android)
+                    OS='Android'
+                    OS_ICON=$'\uF17B'
+                    ;;
+            esac
             ;;
-        esac
-        ;;
         SunOS)
-        OS='Solaris'
-        OS_ICON=$'\uF185'
-        ;;
+            OS='Solaris'
+            OS_ICON=$'\uF185'
+            ;;
         *)
-        OS=''
-        OS_ICON=''
-        ;;
+            OS=''
+            OS_ICON=''
+            ;;
     esac
 }
 
