@@ -18,6 +18,10 @@ else
 fi
 
 
+# Remove old version nano
+# pacman -R nano
+
+
 # https://www.nano-editor.org/dist/latest/faq.html
 # http://mybookworld.wikidot.com/compile-nano-from-source
 if check_release_package_manager packageManager yum; then

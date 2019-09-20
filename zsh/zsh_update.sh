@@ -77,17 +77,6 @@ else
 fi
 
 
-# zsh-interactive-cd
-if [[ -x "$(command -v fzf)" ]]; then
-    colorEcho ${BLUE} "Updating zsh-interactive-cd..."
-    if [[ -d $ZSH/custom/plugins/zsh-interactive-cd ]]; then
-        cd $ZSH/custom/plugins/zsh-interactive-cd && git pull
-    else
-        git clone https://github.com/changyuheng/zsh-interactive-cd.git $ZSH/custom/plugins/zsh-interactive-cd
-    fi
-fi
-
-
 # custom plugins
 colorEcho ${BLUE} "Updating custom plugins..."
 
@@ -127,12 +116,20 @@ else
     git clone https://github.com/popstas/zsh-command-time.git $ZSH/custom/plugins/command-time
 fi
 
-# zsh-command-time
+# git-flow-completion
 colorEcho ${BLUE} "Updating git-flow-completion..."
 if [[ -d $ZSH/custom/plugins/git-flow-completion ]]; then
     cd $ZSH/custom/plugins/git-flow-completion && git pull
 else
     git clone https://github.com/petervanderdoes/git-flow-completion.git $ZSH/custom/plugins/git-flow-completion
+fi
+
+# zsh-interactive-cd
+colorEcho ${BLUE} "Updating zsh-interactive-cd..."
+if [[ -d $ZSH/custom/plugins/zsh-interactive-cd ]]; then
+    cd $ZSH/custom/plugins/zsh-interactive-cd && git pull
+else
+    git clone https://github.com/changyuheng/zsh-interactive-cd.git $ZSH/custom/plugins/zsh-interactive-cd
 fi
 
 
@@ -275,7 +272,7 @@ if [[ -x "$(command -v autojump)" ]]; then
     fi
 fi
 
-if [[ -x "$(command -v fzf)" ]]; then
+if [[ -x "$(command -v fzf)" || -d ~/.fzf ]]; then
     if [[ ! $(grep "  fzf" ~/.zshrc) ]]; then
         sed -i '/^  git$/a\  fzf' ~/.zshrc
     fi
