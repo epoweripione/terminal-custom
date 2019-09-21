@@ -43,10 +43,37 @@ function SuperSpeed() {
         ./superspeed.sh
 }
 
+function Besttrack() {
+    wget -qO- git.io/besttrace | bash
+}
+
+function ZBench() {
+    wget -qO- https://raw.githubusercontent.com/FunctionClub/ZBench/master/ZBench-CN.sh | bash
+}
+
+function LemonBenchFast() {
+    curl -fsSL https://ilemonrain.com/download/shell/LemonBench.sh | bash -s fast
+}
+
+function LemonBenchFull() {
+    curl -fsSL https://ilemonrain.com/download/shell/LemonBench.sh | bash -s full
+}
+
+function UnixBench() {
+    wget --no-check-certificate https://github.com/teddysun/across/raw/master/unixbench.sh && \
+        chmod +x unixbench.sh && \
+        ./unixbench.sh
+}
+
 echo -e ""
 echo -e "1.bench.sh(teddysun)"
 echo -e "2.SuperBench.sh(oldking)"
 echo -e "3.SuperSpeed.sh(oldking)"
+echo -e "4.Besttrack"
+echo -e "5.ZBench-CN.sh"
+echo -e "6.LemonBench.sh(Fast)"
+echo -e "7.LemonBench.sh(Full)"
+echo -e "8.UnixBench.sh"
 
 while :; do echo
 	read -n1 -p "Please choose test(enter to exit):" CHOICE
@@ -70,6 +97,21 @@ case "$CHOICE" in
         ;;
     3)
         SuperSpeed
+        ;;
+    4)
+        Besttrack
+        ;;
+    5)
+        ZBench
+        ;;
+    6)
+        LemonBenchFast
+        ;;
+    7)
+        LemonBenchFull
+        ;;
+    8)
+        UnixBench
         ;;
     *)
         colorEcho ${YELLOW} "Wrong choice!"  # unknown option

@@ -62,6 +62,7 @@ chmod +x ~/docker_installer.sh
 chmod +x ~/geoip_installer.sh
 chmod +x ~/gvm_go_installer.sh
 chmod +x ~/hexo_installer.sh
+chmod +x ~/hosts_accelerate_cn.sh
 chmod +x ~/jabba_jdk_installer.sh
 chmod +x ~/nano_installer.sh
 chmod +x ~/pacapt_installer.sh

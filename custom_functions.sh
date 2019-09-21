@@ -9,17 +9,26 @@ function colorEcho() {
     echo -e "\033[${COLOR}${@:2}\033[0m"
 }
 
-## get os type & release info
+# get os type: darwin, windows, linux, bsd, solaris
 function get_os_type() {
-    local os=$(uname)
-    local os_wsl=$(uname -r)
-    if [[ $os == "Darwin" ]]; then
-        ostype="darwin"
-    elif [[ $os_wsl =~ "Microsoft" || $os =~ "MSYS_NT" || $os =~ "MINGW" || $os =~ "CYGWIN_NT" ]]; then
-        ostype="windows"
-    else
-        ostype=$(echo "$os" | sed 's/.*/\L&/')
-    fi
+    local osname=$(uname)
+    case "$osname" in
+        Darwin)
+            ostype="darwin"
+            ;;
+        MSYS_NT-* | MINGW* | CYGWIN_NT-*)
+            ostype="windows"
+            ;;
+        FreeBSD | OpenBSD | DragonFly)
+            ostype="bsd"
+            ;;
+        SunOS)
+            ostype='solaris'
+            ;;
+        *)
+            ostype=$(echo "$osname" | sed 's/.*/\L&/')
+            ;;
+    esac
 }
 
 # Determine which desktop environment is installed from the shell
@@ -39,7 +48,7 @@ function check_release_package_manager() {
     local release=''
     local systemPackage=''
 
-    os=$(uname)
+    local osname=$(uname)
     if [[ -f /etc/redhat-release ]]; then
         release="centos"
         systemPackage="yum"
@@ -49,10 +58,10 @@ function check_release_package_manager() {
     elif [[ -f /etc/arch-release ]]; then
         release="arch"
         systemPackage="pacman"
-    elif [[ $os =~ "MSYS_NT" || $os =~ "MINGW" ]]; then
+    elif [[ $osname =~ "MSYS_NT" || $osname =~ "MINGW" ]]; then
         release="MSYS"
         systemPackage="pacman"
-    elif [[ $os =~ "CYGWIN_NT" ]]; then
+    elif [[ $osname =~ "CYGWIN_NT" ]]; then
         release="CYGWIN"
         systemPackage="apt-cyg"
     elif cat /etc/issue | grep -Eqi "debian"; then
@@ -152,26 +161,49 @@ function get_sysArch(){
     return 0
 }
 
-function get_os_icon() {
+function get_os() {
     case $(uname) in
         Darwin)
             OS='OSX'
-            OS_ICON=$'\uF179'
             ;;
         MSYS_NT-* | MINGW* | CYGWIN_NT-*)
             OS='Windows'
+            ;;
+        FreeBSD | OpenBSD | DragonFly)
+            OS='BSD'
+            ;;
+        Linux)
+            OS='Linux'
+            # Check if we're running on Android
+            case $(uname -o 2>/dev/null) in
+                Android)
+                    OS='Android'
+                    ;;
+            esac
+            ;;
+        SunOS)
+            OS='Solaris'
+            ;;
+        *)
+            OS=''
+            ;;
+    esac
+
+    local os_wsl=$(uname -r)
+    if [[ $os_wsl =~ "Microsoft" ]]; then
+        OS='Windows'
+    fi
+}
+
+function get_os_icon() {
+    case $(uname) in
+        Darwin)
+            OS_ICON=$'\uF179'
+            ;;
+        MSYS_NT-* | MINGW* | CYGWIN_NT-*)
             OS_ICON=$'\uF17A'
             ;;
-        FreeBSD)
-            OS='BSD'
-            OS_ICON=$'\uF30C'
-            ;;
-        OpenBSD)
-            OS='BSD'
-            OS_ICON=$'\uF30C'
-            ;;
-        DragonFly)
-            OS='BSD'
+        FreeBSD | OpenBSD | DragonFly)
             OS_ICON=$'\uF30C'
             ;;
         Linux)
@@ -233,7 +265,6 @@ function get_os_icon() {
                     OS_ICON=$'\uF312'
                     ;;
                     *)
-                    OS='Linux'
                     OS_ICON=$'\uF17C'
                     ;;
             esac
@@ -241,20 +272,22 @@ function get_os_icon() {
             # Check if we're running on Android
             case $(uname -o 2>/dev/null) in
                 Android)
-                    OS='Android'
                     OS_ICON=$'\uF17B'
                     ;;
             esac
             ;;
         SunOS)
-            OS='Solaris'
             OS_ICON=$'\uF185'
             ;;
         *)
-            OS=''
             OS_ICON=''
             ;;
     esac
+
+    local os_wsl=$(uname -r)
+    if [[ $os_wsl =~ "Microsoft" ]]; then
+        OS_ICON=$'\uF17A'
+    fi
 }
 
 # version compare functions
@@ -337,9 +370,10 @@ function myip_lan_wan() {
     LOCAL_NET_IF=`netstat -rn | awk '/^0.0.0.0/ {thif=substr($0,74,10); print thif;} /^default.*UG/ {thif=substr($0,65,10); print thif;}'`
     LOCAL_NET_IP=`ifconfig ${LOCAL_NET_IF} | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
 
-    WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 ifconfig.co`
+    WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 https://v4.ident.me/`
+    WAN_NET_IPV6=`curl -s -6 --connect-timeout 5 --max-time 10 https://v6.ident.me/`
 
-    echo -e "Local IP: ${LOCAL_NET_IP}\nPublic IP: ${WAN_NET_IP}"
+    echo -e "Local IP: ${LOCAL_NET_IP}\nPublic IP: ${WAN_NET_IP}\nPublic IPV6: ${WAN_NET_IPV6}"
 }
 
 function myip_lan() {
@@ -370,19 +404,20 @@ function myip_wan() {
     # https://github.com/alsotang/externalip
     # https://github.com/sindresorhus/public-ip
 
-    WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 ifconfig.co`
+    WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 https://v4.ident.me/`
+    WAN_NET_IPV6=`curl -s -6 --connect-timeout 5 --max-time 10 https://v6.ident.me/`
+    # WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 ifconfig.co`
     # WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 ipinfo.io/ip`
     # WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 https://ipv4.icanhazip.com/`
     # WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 icanhazip.com`
-    # WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 ident.me`
     # WAN_NET_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
 
-    echo -e "Public IP: ${WAN_NET_IP}"
+    echo -e "Public IP: ${WAN_NET_IP}\nPublic IPV6: ${WAN_NET_IPV6}"
 }
 
 function myip_wan_geo() {
     if [[ -x "$(command -v geoiplookup)" ]]; then
-        WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 ifconfig.co`
+        WAN_NET_IP=`curl -s -4 --connect-timeout 5 --max-time 10 https://v4.ident.me/`
         if [[ -n "$WAN_NET_IP" ]]; then
             WAN_NET_IP_GEO=`geoiplookup ${WAN_NET_IP}`
             echo -e "Public IP: ${WAN_NET_IP}\n${WAN_NET_IP_GEO}"
