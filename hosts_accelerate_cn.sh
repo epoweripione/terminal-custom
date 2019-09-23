@@ -18,7 +18,15 @@ fi
 
 
 # Local WAN IP
-LOCAL_WAN_IP=$(curl -s -4 --connect-timeout 5 --max-time 10 https://v4.ident.me/)
+if [[ -z "$WAN_NET_IP" ]]; then
+    get_network_wan_ipv4
+fi
+
+if [[ -z "$WAN_NET_IP" ]]; then
+    colorEcho ${RED} "Can't get local WAN IP address!"
+    exit 1
+fi
+
 
 if [[ $ostype == "windows" ]]; then
     HostsFile=/c/Windows/System32/drivers/etc/hosts
@@ -79,7 +87,7 @@ for TargetHost in ${HostsList[@]}; do
         TargetURL=https://${TargetDomain}.ipaddress.com/${TargetHost}
     fi
 
-    TargetIP=$(curl -sL --connect-timeout 5 --max-time 10 ${TargetURL} | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' | grep -v ${LOCAL_WAN_IP} | head -n1)
+    TargetIP=$(curl -sL --connect-timeout 5 --max-time 10 ${TargetURL} | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' | grep -v ${WAN_NET_IP} | head -n1)
     if [[ -n "$TargetIP" ]]; then
         if [[ -n "$LineEnd" ]]; then
             echo "${TargetIP} ${TargetHost}"
