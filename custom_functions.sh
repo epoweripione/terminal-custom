@@ -164,7 +164,7 @@ function get_sysArch(){
 function get_os() {
     case $(uname) in
         Darwin)
-            OS='OSX'
+            OS='macOS'
             ;;
         MSYS_NT-* | MINGW* | CYGWIN_NT-*)
             OS='Windows'
@@ -195,6 +195,102 @@ function get_os() {
     fi
 }
 
+function get_os_release() {
+    case $(uname) in
+        Darwin)
+            OS_RELEASE='macos'
+            ;;
+        MSYS_NT-* | MINGW* | CYGWIN_NT-*)
+            OS_RELEASE='windows'
+            ;;
+        FreeBSD)
+            OS_RELEASE='freebsd'
+            ;;
+        OpenBSD)
+            OS_RELEASE='openbsd'
+            ;;
+        DragonFly)
+            OS_RELEASE='dragonfly'
+            ;;
+        Linux)
+            OS_RELEASE="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
+            # Check if we're running on Android
+            case $(uname -o 2>/dev/null) in
+                Android)
+                    OS_RELEASE='android'
+                    ;;
+            esac
+            ;;
+        SunOS)
+            OS_RELEASE='solaris'
+            ;;
+        *)
+            OS_RELEASE=''
+            ;;
+    esac
+
+    local os_wsl=$(uname -r)
+    if [[ $os_wsl =~ "Microsoft" ]]; then
+        OS_RELEASE='windows'
+    fi
+}
+
+function check_os_package_manager() {
+    # ref to: https://github.com/icy/pacapt/blob/ng/pacapt
+    local _pacman
+
+    _pacman="$1"; shift
+
+    [[ "$(uname)" == "SunOS" ]] && OS_PACKAGE_MANAGER="$_pacman" && return
+    grep -qis "$@" /etc/issue && OS_PACKAGE_MANAGER="$_pacman" && return
+    grep -qis "$@" /etc/os-release && OS_PACKAGE_MANAGER="$_pacman" && return
+}
+
+function get_os_package_manager() {
+    unset OS_PACKAGE_MANAGER
+
+    # ref to: https://github.com/icy/pacapt/blob/ng/pacapt
+    check_os_package_manager sun_tools "SunOS" && return
+    check_os_package_manager pacman "Arch Linux" && return
+    check_os_package_manager dpkg "Debian GNU/Linux" && return
+    check_os_package_manager dpkg "Ubuntu" && return
+    check_os_package_manager cave "Exherbo Linux" && return
+    check_os_package_manager yum "CentOS" && return
+    check_os_package_manager yum "Red Hat" && return
+    check_os_package_manager zypper "SUSE" && return
+    check_os_package_manager pkg_tools "OpenBSD" && return
+    check_os_package_manager pkg_tools "Bitrig" && return
+    check_os_package_manager apk "Alpine Linux" && return
+
+    [[ -z "$OS_PACKAGE_MANAGER" ]] || return
+
+    # Prevent a loop when this script is installed on non-standard system
+    if [[ -x "/usr/bin/pacman" ]]; then
+        grep -q "pacapt" '/usr/bin/pacman' >/dev/null 2>&1
+        [[ $? -ge 1 ]] && OS_PACKAGE_MANAGER="pacman" && return
+    fi
+
+    [[ -x "/usr/bin/apt-get" ]] && OS_PACKAGE_MANAGER="dpkg" && return
+    [[ -x "/data/data/com.termux/files/usr/bin/apt-get" ]] && OS_PACKAGE_MANAGER="dpkg" && return
+    [[ -x "/usr/bin/cave" ]] && OS_PACKAGE_MANAGER="cave" && return
+    [[ -x "/usr/bin/dnf" ]] && OS_PACKAGE_MANAGER="dnf" && return
+    [[ -x "/usr/bin/yum" ]] && OS_PACKAGE_MANAGER="yum" && return
+    [[ -x "/opt/local/bin/port" ]] && OS_PACKAGE_MANAGER="macports" && return
+    [[ -x "/usr/bin/emerge" ]] && OS_PACKAGE_MANAGER="portage" && return
+    [[ -x "/usr/bin/zypper" ]] && OS_PACKAGE_MANAGER="zypper" && return
+    [[ -x "/usr/sbin/pkg" ]] && OS_PACKAGE_MANAGER="pkgng" && return
+    # make sure pkg_add is after pkgng, FreeBSD base comes with it until converted
+    [[ -x "/usr/sbin/pkg_add" ]] && OS_PACKAGE_MANAGER="pkg_tools" && return
+    [[ -x "/usr/sbin/pkgadd" ]] && OS_PACKAGE_MANAGER="sun_tools" && return
+    [[ -x "/sbin/apk" ]] && OS_PACKAGE_MANAGER="apk" && return
+    [[ -x "/usr/bin/tazpkg" ]] && OS_PACKAGE_MANAGER="tazpkg" && return
+    [[ -x "/usr/bin/swupd" ]] && OS_PACKAGE_MANAGER="swupd" && return
+
+    command -v brew >/dev/null && OS_PACKAGE_MANAGER="homebrew" && return
+
+    return 1
+}
+
 function get_os_icon() {
     case $(uname) in
         Darwin)
@@ -207,8 +303,7 @@ function get_os_icon() {
             OS_ICON=$'\uF30C'
             ;;
         Linux)
-            OS='Linux'
-            os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
+            local os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
             case "$os_release_id" in
                 *arch*)
                     OS_ICON=$'\uF303'
@@ -562,26 +657,26 @@ function myip_lan_wan() {
     get_network_wan_ipv4
     get_network_wan_ipv6
 
-    [[ -n "$NETWORK_LOCAL_IPV4_DEFAULT" ]] && echo -e "Local IP: ${NETWORK_LOCAL_IPV4_DEFAULT}\n"
-    [[ -n "$NETWORK_LOCAL_IPV6_DEFAULT" ]] && echo -e "Local IPV6: ${NETWORK_LOCAL_IPV6_DEFAULT}\n"
-    [[ -n "$WAN_NET_IP" ]] && echo -e "Public IP: ${WAN_NET_IP}\n"
-    [[ -n "$WAN_NET_IPV6" ]] && echo -e "Public IPV6: ${WAN_NET_IPV6}\n"
+    [[ -n "$NETWORK_LOCAL_IPV4_DEFAULT" ]] && echo -e "Local IP: ${NETWORK_LOCAL_IPV4_DEFAULT}"
+    [[ -n "$NETWORK_LOCAL_IPV6_DEFAULT" ]] && echo -e "Local IPV6: ${NETWORK_LOCAL_IPV6_DEFAULT}"
+    [[ -n "$WAN_NET_IP" ]] && echo -e "Public IP: ${WAN_NET_IP}"
+    [[ -n "$WAN_NET_IPV6" ]] && echo -e "Public IPV6: ${WAN_NET_IPV6}"
 }
 
 function myip_lan() {
     get_network_local_ipv4_default
     get_network_local_ipv6_default
 
-    [[ -n "$NETWORK_LOCAL_IPV4_DEFAULT" ]] && echo -e "Local IP: ${NETWORK_LOCAL_IPV4_DEFAULT}\n"
-    [[ -n "$NETWORK_LOCAL_IPV6_DEFAULT" ]] && echo -e "Local IPV6: ${NETWORK_LOCAL_IPV6_DEFAULT}\n"
+    [[ -n "$NETWORK_LOCAL_IPV4_DEFAULT" ]] && echo -e "Local IP: ${NETWORK_LOCAL_IPV4_DEFAULT}"
+    [[ -n "$NETWORK_LOCAL_IPV6_DEFAULT" ]] && echo -e "Local IPV6: ${NETWORK_LOCAL_IPV6_DEFAULT}"
 }
 
 function myip_wan() {
     get_network_wan_ipv4
     get_network_wan_ipv6
 
-    [[ -n "$WAN_NET_IP" ]] && echo -e "Public IP: ${WAN_NET_IP}\n"
-    [[ -n "$WAN_NET_IPV6" ]] && echo -e "Public IPV6: ${WAN_NET_IPV6}\n"
+    [[ -n "$WAN_NET_IP" ]] && echo -e "Public IP: ${WAN_NET_IP}"
+    [[ -n "$WAN_NET_IPV6" ]] && echo -e "Public IPV6: ${WAN_NET_IPV6}"
 }
 
 function myip_wan_geo() {

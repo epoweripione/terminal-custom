@@ -110,7 +110,7 @@ fi
 if [[ ! -e /etc/apt/sources.list.d/microsoft-prod.list ]]; then
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg && \
         mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/ && \
-        wget -q https://packages.microsoft.com/config/debian/9/prod.list && \
+        wget -q https://packages.microsoft.com/config/debian/10/prod.list && \
         mv prod.list /etc/apt/sources.list.d/microsoft-prod.list && \
         chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg && \
         chown root:root /etc/apt/sources.list.d/microsoft-prod.list
@@ -214,10 +214,11 @@ apt install -y yarn --no-install-recommends
 
 
 # .NET Core SDK
-## https://www.microsoft.com/net/download/linux-package-manager/debian9/sdk-current
+## https://dotnet.microsoft.com/download/linux-package-manager/debian10/sdk-3.0.100
 ## How to use: dotnet --help
 colorEcho ${BLUE} "Installing .NET Core SDK..."
-apt install -y dotnet-sdk-2.2
+# apt install -y dotnet-sdk-2.2
+apt install -y dotnet-sdk-3.0
 
 
 # jabba & JDK

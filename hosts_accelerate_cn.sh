@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ $UID -ne 0 ]]; then
+    echo "Please run this script as root user!"
+    exit 0
+fi
+
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
@@ -28,14 +33,26 @@ if [[ -z "$WAN_NET_IP" ]]; then
 fi
 
 
-if [[ $ostype == "windows" ]]; then
-    HostsFile=/c/Windows/System32/drivers/etc/hosts
+PARAMS_NUM=$#
+
+if [[ $PARAMS_NUM == 1 ]]; then
+    HostsFile="$1"
 else
-    HostsFile=/etc/hosts
+    if [[ "$ostype" == "windows" ]]; then
+        HostsFile=/c/Windows/System32/drivers/etc/hosts
+    else
+        HostsFile=/etc/hosts
+    fi
+fi
+
+if [[ ! -s "$HostsFile" ]]; then
+    colorEcho ${RED} "${HostsFile} not exist!"
+    exit 1
 fi
 
 
 colorEcho ${BLUE} "Setting hosts for github..."
+# first char with `-`: Same IP as prior host
 HostsList=(
 github.com
 www.github.com
@@ -44,21 +61,23 @@ gist.github.com
 assets-cdn.github.com
 github.global.ssl.fastly.net
 github-cloud.s3.amazonaws.com
+github.githubassets.com
+raw.githubusercontent.com
+-gist.githubusercontent.com
+-cloud.githubusercontent.com
+-camo.githubusercontent.com
+-avatars0.githubusercontent.com
+-avatars1.githubusercontent.com
+-avatars2.githubusercontent.com
+-avatars3.githubusercontent.com
+-avatars4.githubusercontent.com
+-avatars5.githubusercontent.com
+-avatars6.githubusercontent.com
+-avatars7.githubusercontent.com
+-avatars8.githubusercontent.com
 )
-# raw.githubusercontent.com
-# gist.githubusercontent.com
-# cloud.githubusercontent.com
-# camo.githubusercontent.com
-# avatars0.githubusercontent.com
-# avatars1.githubusercontent.com
-# avatars2.githubusercontent.com
-# avatars3.githubusercontent.com
-# avatars4.githubusercontent.com
-# avatars5.githubusercontent.com
-# avatars6.githubusercontent.com
-# avatars7.githubusercontent.com
-# avatars8.githubusercontent.com
-# github.githubassets.com
+
+IP_HOSTS=""
 
 # begin line
 if [[ $(grep "^# Github Start" ${HostsFile}) ]]; then
@@ -68,9 +87,12 @@ if [[ $(grep "^# Github Start" ${HostsFile}) ]]; then
         DeleteBegin=$((${LineBegin}+1))
         DeleteEnd=$((${LineEnd}-1))
         sed -i "${DeleteBegin},${DeleteEnd}d" ${HostsFile}
+
+        LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
     fi
 else
-    echo -e "\n# Github Start" | tee -a ${HostsFile}
+    # echo -e "\n# Github Start" | tee -a ${HostsFile}
+    IP_HOSTS="# Github Start"
     sed -i "/github/d" ${HostsFile}
 fi
 
@@ -80,6 +102,14 @@ fi
 # https://fastly.net.ipaddress.com/github.global.ssl.fastly.net
 for TargetHost in ${HostsList[@]}; do
     # echo ${TargetHost}
+
+    SameIPPrior=""
+    # first char with `-`: Same IP as prior host
+    if [[ $(echo ${TargetHost} | grep "^-") ]]; then
+        SameIPPrior="yes"
+        TargetHost=$(echo ${TargetHost##-}) # remove -
+    fi
+
     TargetDomain=$(echo ${TargetHost} | awk -F. '{print $(NF-1),$NF}' OFS=".")
     if [[ "$TargetDomain" == "$TargetHost" ]]; then
         TargetURL=https://${TargetDomain}.ipaddress.com/
@@ -87,33 +117,55 @@ for TargetHost in ${HostsList[@]}; do
         TargetURL=https://${TargetDomain}.ipaddress.com/${TargetHost}
     fi
 
-    TargetIP=$(curl -sL --connect-timeout 5 --max-time 10 ${TargetURL} | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' | grep -v ${WAN_NET_IP} | head -n1)
+    if [[ -z "$SameIPPrior" ]]; then
+        TargetIP=$(curl -sL --connect-timeout 5 --max-time 10 ${TargetURL} | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' | grep -v ${WAN_NET_IP} | head -n1)
+    fi
+
     if [[ -n "$TargetIP" ]]; then
-        if [[ -n "$LineEnd" ]]; then
-            echo "${TargetIP} ${TargetHost}"
-            sed -i "${LineEnd}i ${TargetIP} ${TargetHost}" ${HostsFile}
-        elif [[ -n "$LineBegin" ]]; then
-            echo "${TargetIP} ${TargetHost}"
-            sed -i "${LineBegin}a ${TargetIP} ${TargetHost}" ${HostsFile}
+        if [[ -z "$IP_HOSTS" ]]; then
+            IP_HOSTS="${TargetIP} ${TargetHost}"
         else
-            echo "${TargetIP} ${TargetHost}" | tee -a ${HostsFile}
+            IP_HOSTS="${IP_HOSTS}\n${TargetIP} ${TargetHost}"
         fi
     fi
 done
 
-# end line
-if [[ ! $(grep "^# Github End" ${HostsFile}) ]]; then
-    echo "# Github End" | tee -a ${HostsFile}
+if [[ -n "$IP_HOSTS" ]]; then
+    echo -e "${IP_HOSTS}"
+
+    if [[ ! $(grep "^# Github End" ${HostsFile}) ]]; then
+        IP_HOSTS="${IP_HOSTS}\n# Github End"
+    fi
+
+    if [[ -n "$LineBegin" ]]; then
+        sed -i "${LineBegin}a ${IP_HOSTS}" ${HostsFile}
+    elif [[ -n "$LineEnd" ]]; then
+        sed -i "${LineEnd}i ${IP_HOSTS}" ${HostsFile}
+    else
+        echo "${IP_HOSTS}" | tee -a ${HostsFile}
+    fi
 fi
 
 
 # Flush DNS cache
-if [[ $ostype == "windows" ]]; then
+if [[ "$ostype" == "windows" ]]; then
     ipconfig -flushdns || true
 else
-    systemd-resolve --flush-caches || true
-    /etc/init.d/dns-clean start || true
-    systemctl restart dnsmasq.service || true
+    [[ -s "/lib/systemd/system/systemd-resolved.service" ]] && \
+        ln -sf /lib/systemd/system/systemd-resolved.service \
+            /etc/systemd/system/dbus-org.freedesktop.resolve1.service || true
+
+    [[ -x "$(command -v systemd-resolve)" ]] && systemd-resolve --flush-caches
+
+    [[ -s "/etc/init.d/dns-clean" ]] && /etc/init.d/dns-clean start
+
+    if systemctl list-unit-files --type=service | grep "systemd-resolved.service" | grep "enabled" >/dev/null 2>&1; then
+        systemctl restart systemd-resolved.service
+    fi
+
+    if systemctl list-unit-files --type=service | grep "dnsmasq.service" | grep "enabled" >/dev/null 2>&1; then
+        systemctl restart dnsmasq.service
+    fi
 fi
 
 

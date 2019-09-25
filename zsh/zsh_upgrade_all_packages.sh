@@ -49,13 +49,9 @@ fi
 colorEcho ${BLUE} "Updating system packages..."
 if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     if [[ $UID -ne 0 && "$(command -v yay)" ]]; then
-        yay -Syu
+        yay --noconfirm -Syu
     else
-        if [[ -x "$(command -v pacapt)" ]]; then
-            sudo pacapt -Syu --noconfirm
-        else
-            sudo pacman -Syu
-        fi
+        sudo pacman --noconfirm -Syu
     fi
 else
     if check_release_package_manager packageManager yum; then
@@ -64,9 +60,9 @@ else
         sudo apt update && sudo apt upgrade -y
     elif check_release_package_manager packageManager pacman; then
         if [[ $UID -ne 0 && "$(command -v yay)" ]]; then
-            yay -Syu
+            yay --noconfirm -Syu
         else
-            sudo pacman -Syu
+            sudo pacman --noconfirm -Syu
         fi
     fi
 fi
@@ -409,10 +405,10 @@ if [[ -x "$(command -v v2ray)" ]]; then
         if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
             source <(curl -sL https://git.io/fNgqx) -k
         fi
-    elif systemctl list-unit-files --type=service | grep v2ray.service | grep enabled >/dev/null 2>&1; then
+    elif systemctl list-unit-files --type=service | grep "v2ray.service" | grep "enabled" >/dev/null 2>&1; then
         V2RAYCORE="yes"
     fi
-elif systemctl list-unit-files --type=service | grep v2ray.service | grep enabled >/dev/null 2>&1; then
+elif systemctl list-unit-files --type=service | grep "v2ray.service" | grep "enabled" >/dev/null 2>&1; then
     V2RAYCORE="yes"
 fi
 

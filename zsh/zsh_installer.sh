@@ -20,7 +20,8 @@ function colorEcho() {
 # https://github.com/icy/pacapt
 if [[ ! -x "$(command -v pacapt)" ]]; then
     colorEcho ${BLUE} "Installing pacapt - An Arch's pacman-like package manager for some Unices..."
-    sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /usr/bin/pacapt && \
+    sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /tmp/pacapt && \
+        sudo mv -f /tmp/pacapt /usr/bin/pacapt && \
         sudo chmod 755 /usr/bin/pacapt && \
         sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
 fi
@@ -28,29 +29,29 @@ fi
 # Install ZSH Shell
 colorEcho ${BLUE} "Installing pre-request packages..."
 if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
-    pacman -Syu
+    pacman --noconfirm -Syu
 
     # install pre-request packages
-    pacman -S git curl wget g++ gcc make zip unzip
+    pacman --noconfirm -S git curl wget g++ gcc make zip unzip
 
     # GeoIP binary and database
     # http://kbeezie.com/geoiplookup-command-line/
     if pacman -Si geoip-bin >/dev/null 2>&1; then
-        pacman -S geoip-bin geoip-database
+        pacman --noconfirm -S geoip-bin geoip-database
     else
         if pacman -Si GeoIP >/dev/null 2>&1; then
-            pacman -S GeoIP GeoIP-data
+            pacman --noconfirm -S GeoIP GeoIP-data
         else
-            pacman -S geoip geoip-data
+            pacman --noconfirm -S geoip geoip-data
         fi
     fi
 
     # autojump
     # https://github.com/wting/autojump
     if pacman -Si autojump-zsh >/dev/null 2>&1; then
-        pacman -S autojump-zsh
+        pacman --noconfirm -S autojump-zsh
     else
-        pacman -S autojump
+        pacman --noconfirm -S autojump
     fi
 fi
 
