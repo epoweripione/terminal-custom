@@ -463,9 +463,9 @@ function proxy_cmd() {
 function get_network_interface_list() {
     unset NETWORK_INTERFACE_LIST
     if [[ -x "$(command -v ip)" ]]; then
-        NETWORK_INTERFACE_LIST=$(ip link | awk -F: '$0 !~ "lo|vir|^[^0-9]"{print $2;getline}')
+        NETWORK_INTERFACE_LIST=$(ip link | awk -F: '$0 !~ "lo|vir|^[^0-9]" {print $2;getline}')
         # Without wireless
-        # NETWORK_INTERFACE_LIST=$(ip link | awk -F: '$0 !~ "lo|vir|wl|^[^0-9]"{print $2;getline}')
+        # NETWORK_INTERFACE_LIST=$(ip link | awk -F: '$0 !~ "lo|vir|wl|^[^0-9]" {print $2;getline}')
     else
         NETWORK_INTERFACE_LIST=$(ls /sys/class/net | tr "\t" "\n" | grep -Ev "lo|vir|^[0-9]")
     fi
@@ -474,9 +474,9 @@ function get_network_interface_list() {
 function get_network_interface_default() {
     unset NETWORK_INTERFACE_DEFAULT
     if [[ -x "$(command -v ip)" ]]; then
-        NETWORK_INTERFACE_DEFAULT=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
-    else
-        NETWORK_INTERFACE_DEFAULT=$(ls /sys/class/net | tr "\t" "\n" | grep -Ev "lo|vir|^[0-9]" | head -n1)
+        NETWORK_INTERFACE_DEFAULT=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//" -e "s/[ \t]//g")
+    elif [[ -x "$(command -v netstat)" ]]; then
+        NETWORK_INTERFACE_DEFAULT=$(netstat -rn | awk '/^0.0.0.0/ {thif=substr($0,74,10); print thif;} /^default.*UG/ {thif=substr($0,65,10); print thif;}')
     fi
 }
 
