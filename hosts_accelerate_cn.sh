@@ -25,6 +25,14 @@ fi
 # Local WAN IP
 if [[ -z "$WAN_NET_IP" ]]; then
     get_network_wan_ipv4
+    get_network_wan_geo
+fi
+
+if [[ "${WAN_NET_IP_GEO}" =~ 'China' || "${WAN_NET_IP_GEO}" =~ 'CN' ]]; then
+    :
+else
+    colorEcho ${BLUE} "You are not in china! Congratulations!"
+    exit 0
 fi
 
 if [[ -z "$WAN_NET_IP" ]]; then
@@ -142,7 +150,8 @@ if [[ -n "$IP_HOSTS" ]]; then
     elif [[ -n "$LineEnd" ]]; then
         sed -i "${LineEnd}i ${IP_HOSTS}" ${HostsFile}
     else
-        echo "${IP_HOSTS}" | tee -a ${HostsFile}
+        # echo -e "${IP_HOSTS}" | tee -a ${HostsFile}
+        echo -e "${IP_HOSTS}" >> ${HostsFile}
     fi
 fi
 
