@@ -2,7 +2,7 @@
 
 GREEN="32m"
 
-pacman -Scc
+pacman --noconfirm -Scc
 
 [ -d ~/.cache ] && rm -r ~/.cache
 [ -e ~/.wget-hsts ] && rm -f ~/.wget-hsts

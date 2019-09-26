@@ -1,5 +1,20 @@
 #!/bin/bash
 
-sed -i "1iServer = http://mirrors.ustc.edu.cn/msys2/mingw/i686/" /etc/pacman.d/mirrorlist.mingw32
-sed -i "1iServer = http://mirrors.ustc.edu.cn/msys2/mingw/x86_64/" /etc/pacman.d/mirrorlist.mingw64
-sed -i "1iServer = http://mirrors.ustc.edu.cn/msys2/msys/\$arch/" /etc/pacman.d/mirrorlist.msys
+PARAMS_NUM=$#
+
+if [[ $PARAMS_NUM == 1 ]]; then
+    MIRROR_SERVER="$1"
+else
+    # MIRROR_SERVER="https://mirrors.ustc.edu.cn"
+    MIRROR_SERVER="https://mirrors.tuna.tsinghua.edu.cn"
+fi
+
+if [[ $(grep "^## Primary" /etc/pacman.d/mirrorlist.mingw32) ]]; then
+    LineBegin=$(cat -n /etc/pacman.d/mirrorlist.mingw32 | grep '## Primary' | awk '{print $1}')
+fi
+
+[[ -z "$LineBegin" ]] && LineBegin=1
+
+sed -i "${LineBegin}a Server = ${MIRROR_SERVER}/msys2/mingw/i686\n" /etc/pacman.d/mirrorlist.mingw32 && \
+    sed -i "${LineBegin}a Server = ${MIRROR_SERVER}/msys2/mingw/x86_64\n" /etc/pacman.d/mirrorlist.mingw64 && \
+    sed -i "${LineBegin}a Server = ${MIRROR_SERVER}/msys2/msys/\$arch\n" /etc/pacman.d/mirrorlist.msys
