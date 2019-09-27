@@ -76,6 +76,7 @@ chmod +x ~/php_debian_installer.sh
 chmod +x ~/pecl_install_php_extensions.sh
 
 chmod +x ~/frp_installer.sh
+chmod +x ~/generate_random_string.sh
 chmod +x ~/goproxy_installer.sh
 chmod +x ~/shadowtunnel_installer.sh
 

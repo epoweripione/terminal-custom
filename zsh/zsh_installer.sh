@@ -49,7 +49,7 @@ if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     # autojump
     # https://github.com/wting/autojump
     if pacman -Si autojump-zsh >/dev/null 2>&1; then
-        pacman --noconfirm -S autojump-zsh
+        pacman --noconfirm -S autojump autojump-zsh
     else
         pacman --noconfirm -S autojump
     fi

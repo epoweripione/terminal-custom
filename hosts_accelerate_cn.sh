@@ -69,6 +69,7 @@ gist.github.com
 assets-cdn.github.com
 github.global.ssl.fastly.net
 github-cloud.s3.amazonaws.com
+github-production-release-asset-2e65be.s3.amazonaws.com
 github.githubassets.com
 raw.githubusercontent.com
 -gist.githubusercontent.com

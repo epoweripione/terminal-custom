@@ -104,7 +104,7 @@ else
     ZSH_COMMAND_TIME_MSG=" \u2192 Execution time: %s \u2190"
 
     # Message color.
-    if [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
+    if [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
         ZSH_COMMAND_TIME_COLOR="magenta"
     else
         if [[ $UID -eq 0 ]]; then

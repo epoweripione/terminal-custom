@@ -20,18 +20,47 @@ fi
 # Set proxy or mirrors env in china
 set_proxy_mirrors_env
 
+# Get os release name
+get_os_release
 
-# Docker
+
+## Docker
 colorEcho ${BLUE} "Installing Docker..."
 # apt install -y docker-ce
 # https://github.com/docker/docker-install
-if [[ -z "$DOCKER_INSTALLER_NOT_USE_MIRROR" ]]; then
-    # curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
-    curl -fsSL https://get.docker.com -o get-docker.sh && \
-        bash get-docker.sh --mirror AzureChinaCloud
-else
-    curl -fsSL https://get.docker.com -o get-docker.sh && \
-        bash get-docker.sh
+if [[ ! -x "$(command -v docker)" ]]; then
+    if [[ -z "$DOCKER_INSTALLER_NOT_USE_MIRROR" ]]; then
+        # curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+        curl -fsSL https://get.docker.com -o get-docker.sh && \
+            bash get-docker.sh --mirror AzureChinaCloud
+    else
+        curl -fsSL https://get.docker.com -o get-docker.sh && \
+            bash get-docker.sh
+    fi
+fi
+
+if [[ ! -x "$(command -v docker)" ]]; then
+    # Oracle Linux、RHEL
+    if [[ "$OS_RELEASE" == "ol" || "$OS_RELEASE" == "rhel" ]]
+        # yum -y install docker-engine
+        # yum -y remove docker docker-common docker-selinux docker-engine docker-cli
+        yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+        yum -y install docker-ce && \
+            systemctl enable docker && \
+            systemctl start docker
+    fi
+
+    # SUSE Linux Enterprise Server
+    if [[ "$OS_RELEASE" == "sles" ]]
+        zypper in docker && \
+            systemctl enable docker && \
+            systemctl start docker
+    fi
+fi
+
+if [[ ! -x "$(command -v docker)" ]]; then
+    colorEcho ${RED} "Docker is not installed! Please manual install docker-ce or docker-engine!"
+    exit 1
 fi
 
 
