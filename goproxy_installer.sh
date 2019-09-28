@@ -25,28 +25,31 @@ fi
 
 # goproxy
 # https://github.com/snail007/goproxy
-colorEcho ${BLUE} "Installing goproxy..."
-curl -SL https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh | bash
+if [[ ! -x "$(command -v proxy)" ]]; then
+    colorEcho ${BLUE} "Installing goproxy..."
+    curl -SL https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh | bash
+fi
 
-
-# goproxy web admin
+# ProxyAdmin
 # https://github.com/snail007/proxy_admin_free
-# config file: /etc/gpaf/app.toml
+# config file: /etc/gpa/app.toml
 # http://127.0.0.1:32080
 # user/pwd: root/123
-# proxy-admin-free install
-# proxy-admin-free uninstall
-# proxy-admin-free start
-# proxy-admin-free stop
-# proxy-admin-free restart
-colorEcho ${BLUE} "Installing ProxyAdmin..."
-curl -L https://raw.githubusercontent.com/snail007/proxy_admin_free/master/install_auto.sh | bash
+# proxy-admin install
+# proxy-admin uninstall
+# proxy-admin start
+# proxy-admin stop
+# proxy-admin restart
+if [[ ! -x "$(command -v proxy-admin)" ]]; then
+    colorEcho ${BLUE} "Installing ProxyAdmin..."
+    curl -L https://raw.githubusercontent.com/snail007/proxy_admin_free/master/install_auto.sh | bash
 
-if [[ -s "/usr/local/bin/proxy-admin-free" ]]; then
-    CHECK_URL="https://api.github.com/repos/snail007/proxy_admin_free/releases/latest"
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
-    if [[ -n "$REMOTE_VERSION" ]]; then
-        echo ${REMOTE_VERSION} > /etc/gpaf/.version
+    if [[ -x "$(command -v proxy-admin)" ]]; then
+        CHECK_URL="https://api.github.com/repos/snail007/proxy_admin_free/releases/latest"
+        REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+        if [[ -n "$REMOTE_VERSION" ]]; then
+            echo ${REMOTE_VERSION} > /etc/gpa/.version
+        fi
     fi
 fi
 

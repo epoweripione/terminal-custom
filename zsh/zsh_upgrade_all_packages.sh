@@ -301,13 +301,13 @@ if [[ -x "$(command -v proxy)" ]]; then
 fi
 
 
-if [[ -s "/usr/local/bin/proxy-admin-free" ]]; then
+if [[ -x "$(command -v proxy-admin)" ]]; then
     # https://github.com/snail007/proxy_admin_free
-    colorEcho ${BLUE} "Updating proxy_admin_free..."
+    colorEcho ${BLUE} "Updating ProxyAdmin..."
 
-    if [[ -s "/etc/gpaf/.version" ]]; then
-        # CURRENT_VERSION=$(cat /etc/gpaf/.version 2>&1)
-        CURRENT_VERSION=$(head -n1 /etc/gpaf/.version)
+    if [[ -s "/etc/gpa/.version" ]]; then
+        # CURRENT_VERSION=$(cat /etc/gpa/.version 2>&1)
+        CURRENT_VERSION=$(head -n1 /etc/gpa/.version)
     else
         CURRENT_VERSION="v0.0"
     fi
@@ -317,7 +317,7 @@ if [[ -s "/usr/local/bin/proxy-admin-free" ]]; then
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         curl -L https://raw.githubusercontent.com/snail007/proxy_admin_free/master/install_auto.sh | bash
 
-        echo ${REMOTE_VERSION} > /etc/gpaf/.version
+        echo ${REMOTE_VERSION} > /etc/gpa/.version
     fi
 fi
 
