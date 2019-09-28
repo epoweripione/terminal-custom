@@ -48,6 +48,11 @@ if [[ ! -x "$(command -v docker)" ]]; then
         yum -y install docker-ce && \
             systemctl enable docker && \
             systemctl start docker
+
+        # fix: Error response from daemon: OCI runtime create failed: 
+        # ...write /proc/self/attr/keycreate: permission denied\
+        yum -y install \
+            http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.107-1.el7_6.noarch.rpm
     fi
 
     # SUSE Linux Enterprise Server
