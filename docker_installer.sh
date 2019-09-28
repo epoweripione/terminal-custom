@@ -128,15 +128,21 @@ fi
 # fi
 
 
-## docker mirror in chinia
-# tee /etc/docker/daemon.json <<-'EOF'
-# {
-#   "registry-mirrors": ["https://registry.docker-cn.com"]
-# }
-# EOF
-# # or
-# tee /etc/docker/daemon.json <<-'EOF'
-# {
-#   "registry-mirrors": ["https://mirror.ccs.tencentyun.com"]
-# }
-# EOF
+## docker mirror in china
+if [[ -z "$DOCKER_INSTALLER_NOT_USE_MIRROR" ]]; then
+    tee /etc/docker/daemon.json <<-'EOF'
+{
+    "registry-mirrors": [
+        "https://dockerhub.azk8s.cn",
+        "https://mirror.ccs.tencentyun.com",
+        "https://u1z0ttze.mirror.aliyuncs.com",
+        "https://docker.mirrors.ustc.edu.cn",
+        "https://reg-mirror.qiniu.com",
+        "http://7924d745.m.daocloud.io",
+        "https://registry.docker-cn.com"
+    ]
+}
+EOF
+
+    systemctl daemon-reload && systemctl restart docker
+fi
