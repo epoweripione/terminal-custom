@@ -18,18 +18,29 @@ else
 fi
 
 
-# Remove old version nano
-# pacman -R nano
-
-
 # https://www.nano-editor.org/dist/latest/faq.html
 # http://mybookworld.wikidot.com/compile-nano-from-source
-if check_release_package_manager packageManager yum; then
-    yum update -y && yum -y -q install ncurses-devel
-elif check_release_package_manager packageManager apt; then
-    apt update && apt -y install libncurses5-dev libncursesw5-dev
-elif check_release_package_manager packageManager pacman; then
-    pacman -Sy && pacman -S ncurses
+if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+    # Remove old version nano
+    pacman --noconfirm -R nano
+
+    if pacman -Si ncurses >/dev/null 2>&1; then
+        pacman --noconfirm -S ncurses
+    else
+        if pacman -Si ncurses-devel >/dev/null 2>&1; then
+            pacman --noconfirm -S ncurses-devel
+        else
+            pacman --noconfirm -S libncurses5-dev libncursesw5-dev
+        fi
+    fi
+else
+    if check_release_package_manager packageManager yum; then
+        yum update -y && yum -y -q install ncurses-devel
+    elif check_release_package_manager packageManager apt; then
+        apt update && apt -y install libncurses5-dev libncursesw5-dev
+    elif check_release_package_manager packageManager pacman; then
+        pacman -Sy && pacman -S ncurses
+    fi
 fi
 
 

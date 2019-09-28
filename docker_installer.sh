@@ -41,7 +41,7 @@ fi
 
 if [[ ! -x "$(command -v docker)" ]]; then
     # Oracle Linux、RHEL
-    if [[ "$OS_RELEASE" == "ol" || "$OS_RELEASE" == "rhel" ]]
+    if [[ "$OS_RELEASE" == "ol" || "$OS_RELEASE" == "rhel" ]]; then
         # yum -y install docker-engine
         # yum -y remove docker docker-common docker-selinux docker-engine docker-cli
         yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
@@ -51,7 +51,7 @@ if [[ ! -x "$(command -v docker)" ]]; then
     fi
 
     # SUSE Linux Enterprise Server
-    if [[ "$OS_RELEASE" == "sles" ]]
+    if [[ "$OS_RELEASE" == "sles" ]]; then
         zypper in docker && \
             systemctl enable docker && \
             systemctl start docker
