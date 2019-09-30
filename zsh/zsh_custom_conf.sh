@@ -311,7 +311,6 @@ if [[ -d "$HOME/anaconda3/bin" ]]; then
     export PATH=$PATH:$HOME/anaconda3/bin
 fi
 
-
 # miniconda3
 if [[ -d "$HOME/miniconda3/bin" ]]; then
     export PATH=$PATH:$HOME/miniconda3/bin
@@ -389,13 +388,11 @@ if [[ -d "$HOME/.sdkman" ]]; then
     fi
 fi
 
-
 # proxychains4 aliases
 if [[ -x "$(command -v proxychains4)" ]]; then
     alias proxywan='proxychains4'
     alias proxylan='proxychains4 -f /etc/proxychains/proxychains_lan.conf'
 fi
-
 
 # multi-v2ray
 if [[ -d "/usr/local/multi-v2ray" ]]; then
@@ -407,10 +404,14 @@ if [[ -d "/usr/local/multi-v2ray" ]]; then
     export PYTHONIOENCODING=utf-8
 fi
 
-
 # lazydocker aliases
 if [[ -x "$(command -v lazydocker)" ]]; then
     alias lzd='lazydocker' 
+fi
+
+# navi
+if [[ -x "$(command -v navi)" ]]; then
+    source "$(navi widget zsh)"
 fi
 
 
@@ -442,7 +443,8 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
     if [[ $UID -eq 0 ]]; then
         # libnss-winbind
         if (( $(ps -ef | grep -v grep | grep winbind | wc -l) == 0 )); then
-            if systemctl list-unit-files --type=service | grep "winbind.service" | grep "enabled" >/dev/null 2>&1; then
+            if [[ $(systemctl is-enabled winbind) ]]; then
+            # if systemctl list-unit-files --type=service | grep "winbind.service" | grep "enabled" >/dev/null 2>&1; then
                 service winbind start
             fi
         fi

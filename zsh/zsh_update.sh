@@ -68,13 +68,27 @@ fi
 
 
 # fzf
-colorEcho ${BLUE} "Updating fzf..."
-if [[ ! -x "$(command -v fzf)" ]]; then
-    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    ~/.fzf/install
-else
-    cd ~/.fzf && git pull && ./install --bin
+if [[ $UID -eq 0 ]]; then
+    colorEcho ${BLUE} "Updating fzf..."
+    if [[ ! -x "$(command -v fzf)" ]]; then
+        git clone --depth 1 https://github.com/junegunn/fzf ~/.fzf
+        ~/.fzf/install
+    else
+        cd ~/.fzf && git pull && ./install --bin
+    fi
 fi
+
+
+# navi
+# if [[ $UID -eq 0 ]]; then
+#     colorEcho ${BLUE} "Updating navi..."
+#     if [[ ! -x "$(command -v navi)" ]]; then
+#         git clone --depth 1 http://github.com/denisidoro/navi /opt/navi
+#         cd /opt/navi && make install
+#     else
+#         cd /opt/navi && git pull && make update
+#     fi
+# fi
 
 
 # custom plugins
@@ -89,7 +103,7 @@ colorEcho ${BLUE} "Updating fast-syntax-highlighting..."
 if [[ -d $ZSH/custom/plugins/fast-syntax-highlighting ]]; then
     cd $ZSH/custom/plugins/fast-syntax-highlighting && git pull
 else
-    git clone https://github.com/zdharma/fast-syntax-highlighting.git $ZSH/custom/plugins/fast-syntax-highlighting
+    git clone https://github.com/zdharma/fast-syntax-highlighting $ZSH/custom/plugins/fast-syntax-highlighting
 fi
 
 # zsh-syntax-highlighting
@@ -97,7 +111,7 @@ colorEcho ${BLUE} "Updating zsh-syntax-highlighting..."
 if [[ -d $ZSH/custom/plugins/zsh-syntax-highlighting ]]; then
     cd $ZSH/custom/plugins/zsh-syntax-highlighting && git pull
 else
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting $ZSH/custom/plugins/zsh-syntax-highlighting
 fi
 
 # zsh-autosuggestions
@@ -105,7 +119,7 @@ colorEcho ${BLUE} "Updating zsh-autosuggestions..."
 if [[ -d $ZSH/custom/plugins/zsh-autosuggestions ]]; then
     cd $ZSH/custom/plugins/zsh-autosuggestions && git pull
 else
-    git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH/custom/plugins/zsh-autosuggestions
+    git clone https://github.com/zsh-users/zsh-autosuggestions $ZSH/custom/plugins/zsh-autosuggestions
 fi
 
 # zsh-command-time
@@ -113,7 +127,7 @@ colorEcho ${BLUE} "Updating zsh-command-time..."
 if [[ -d $ZSH/custom/plugins/command-time ]]; then
     cd $ZSH/custom/plugins/command-time && git pull
 else
-    git clone https://github.com/popstas/zsh-command-time.git $ZSH/custom/plugins/command-time
+    git clone https://github.com/popstas/zsh-command-time $ZSH/custom/plugins/command-time
 fi
 
 # git-flow-completion
@@ -121,7 +135,7 @@ colorEcho ${BLUE} "Updating git-flow-completion..."
 if [[ -d $ZSH/custom/plugins/git-flow-completion ]]; then
     cd $ZSH/custom/plugins/git-flow-completion && git pull
 else
-    git clone https://github.com/petervanderdoes/git-flow-completion.git $ZSH/custom/plugins/git-flow-completion
+    git clone https://github.com/petervanderdoes/git-flow-completion $ZSH/custom/plugins/git-flow-completion
 fi
 
 # zsh-interactive-cd
@@ -129,7 +143,7 @@ colorEcho ${BLUE} "Updating zsh-interactive-cd..."
 if [[ -d $ZSH/custom/plugins/zsh-interactive-cd ]]; then
     cd $ZSH/custom/plugins/zsh-interactive-cd && git pull
 else
-    git clone https://github.com/changyuheng/zsh-interactive-cd.git $ZSH/custom/plugins/zsh-interactive-cd
+    git clone https://github.com/changyuheng/zsh-interactive-cd $ZSH/custom/plugins/zsh-interactive-cd
 fi
 
 
@@ -141,7 +155,7 @@ colorEcho ${BLUE} "Updating agnosterzak..."
 if [[ -d $ZSH/custom/themes/agnosterzak ]]; then
     cd $ZSH/custom/themes/agnosterzak && git pull
 else
-    git clone https://github.com/zakaziko99/agnosterzak-ohmyzsh-theme.git $ZSH/custom/themes/agnosterzak
+    git clone https://github.com/zakaziko99/agnosterzak-ohmyzsh-theme $ZSH/custom/themes/agnosterzak
 fi
 
 [[ -L $ZSH/custom/themes/agnosterzak.zsh-theme ]] && rm -f $ZSH/custom/themes/agnosterzak.zsh-theme
@@ -152,7 +166,7 @@ colorEcho ${BLUE} "Updating spaceship-prompt..."
 if [[ -d $ZSH/custom/themes/spaceship-prompt ]]; then
     cd $ZSH/custom/themes/spaceship-prompt && git pull
 else
-    git clone https://github.com/denysdovhan/spaceship-prompt.git $ZSH/custom/themes/spaceship-prompt
+    git clone https://github.com/denysdovhan/spaceship-prompt $ZSH/custom/themes/spaceship-prompt
 fi
 
 [[ -L $ZSH/custom/themes/spaceship.zsh-theme ]] && rm -f $ZSH/custom/themes/spaceship.zsh-theme
@@ -163,7 +177,7 @@ colorEcho ${BLUE} "Updating powerlevel9k..."
 if [[ -d $ZSH/custom/themes/powerlevel9k ]]; then
     cd $ZSH/custom/themes/powerlevel9k && git pull
 else
-    git clone https://github.com/bhilburn/powerlevel9k.git $ZSH/custom/themes/powerlevel9k
+    git clone https://github.com/bhilburn/powerlevel9k $ZSH/custom/themes/powerlevel9k
 fi
 
 [[ -L $ZSH/custom/themes/powerlevel9k.zsh-theme ]] && rm -f $ZSH/custom/themes/powerlevel9k.zsh-theme
@@ -174,7 +188,7 @@ colorEcho ${BLUE} "Updating agkozak..."
 if [[ -d $ZSH/custom/themes/agkozak ]]; then
     cd $ZSH/custom/themes/agkozak && git pull
 else
-    git clone https://github.com/agkozak/agkozak-zsh-prompt.git $ZSH/custom/themes/agkozak
+    git clone https://github.com/agkozak/agkozak-zsh-prompt $ZSH/custom/themes/agkozak
 fi
 
 [[ -L $ZSH/custom/themes/agkozak.zsh-theme ]] && rm -f $ZSH/custom/themes/agkozak.zsh-theme
@@ -185,7 +199,7 @@ colorEcho ${BLUE} "Updating alien..."
 if [[ -d $ZSH/custom/themes/alien ]]; then
     cd $ZSH/custom/themes/alien && git pull
 else
-    git clone https://github.com/eendroroy/alien.git $ZSH/custom/themes/alien
+    git clone https://github.com/eendroroy/alien $ZSH/custom/themes/alien
 fi
 
 [[ -L $ZSH/custom/themes/alien.zsh-theme ]] && rm -f $ZSH/custom/themes/alien.zsh-theme && \
@@ -294,7 +308,7 @@ colorEcho ${BLUE} "Updating nano-syntax-highlighting..."
 if [[ -d ~/.local/share/nano ]]; then
     cd ~/.local/share/nano && git pull
 else
-    git clone https://github.com/scopatz/nanorc.git ~/.local/share/nano
+    git clone https://github.com/scopatz/nanorc ~/.local/share/nano
 fi
 
 colorEcho ${BLUE} "nano settings..."

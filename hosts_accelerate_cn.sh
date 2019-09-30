@@ -66,6 +66,7 @@ github.com
 www.github.com
 api.github.com
 gist.github.com
+codeload.github.com
 assets-cdn.github.com
 github.global.ssl.fastly.net
 github-cloud.s3.amazonaws.com
@@ -169,11 +170,11 @@ else
 
     [[ -s "/etc/init.d/dns-clean" ]] && /etc/init.d/dns-clean start
 
-    if systemctl list-unit-files --type=service | grep "systemd-resolved.service" | grep "enabled" >/dev/null 2>&1; then
+    if [[ $(systemctl is-enabled systemd-resolved) ]]; then
         systemctl restart systemd-resolved.service
     fi
 
-    if systemctl list-unit-files --type=service | grep "dnsmasq.service" | grep "enabled" >/dev/null 2>&1; then
+    if [[ $(systemctl is-enabled dnsmasq) ]]; then
         systemctl restart dnsmasq.service
     fi
 fi
