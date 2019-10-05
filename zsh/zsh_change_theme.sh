@@ -13,25 +13,42 @@ colorEcho() {
 }
 
 changeTheme() {
-    theme="$1"
-    custom_theme="zsh_custom_theme_${theme}"
+    local theme="$1"
+    local theme_name="$1"
+    local custom_theme="zsh_custom_theme_${theme}"
 
-    if [[ ! -s "$ZSH/themes/${theme}.zsh-theme" && ! -s "$ZSH/custom/themes/${theme}.zsh-theme" ]]; then
+    if [[ ! -s "$ZSH/themes/${theme}.zsh-theme" && ! -s "$ZSH_CUSTOM/themes/${theme}.zsh-theme" ]]; then
         colorEcho ${RED} "Theme ${theme} not exist!"
         exit
     fi
 
     # custom theme
-    sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" ~/.zshrc
+    [[ "$theme" == "powerlevel9k" ]] && theme_name="powerlevel9k/powerlevel9k"
+
+    # https://github.com/romkatv/powerlevel10k
+    [[ "$theme" == "powerlevel10k" ]] && theme_name="powerlevel10k/powerlevel10k"
+    [[ "$theme" != "powerlevel10k" ]] && sed -i "/\.p10k\.zsh/d" ~/.zshrc
+
+    # https://github.com/sindresorhus/pure
+    if [[ "$theme" == "pure" ]]; then
+        theme_name=""
+        sed $'$a \\\n' ~/.zshrc
+        sed -i '$a source ~/zsh_custom_pure_prompt.sh' ~/.zshrc
+    else
+        sed -i "/^source ~\/zsh_custom_pure_prompt\.sh/d" ~/.zshrc
+    fi
+
+    # change theme
+    sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme_name}\"/" ~/.zshrc
 
     # custom theme configuration
     sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
-    if [[ -e ~/${custom_theme}.sh ]]; then
+    if [[ -s ~/${custom_theme}.sh ]]; then
         sed -i "/^ZSH_THEME=.*/a\source ~/${custom_theme}.sh" ~/.zshrc
     fi
 
     # .zshenv
-    [[ -e ~/.zshenv ]] && rm -f ~/.zshenv
+    [[ -s ~/.zshenv ]] && rm -f ~/.zshenv
 
     if [[ "$theme" == "powerlevel9k" && $(tput colors) -ne 256 ]]; then
         cp ~/zsh_custom_env_xterm.sh ~/.zshenv
@@ -44,6 +61,12 @@ changeTheme() {
         # else
         #     sed -i '/^  git/a\  command-time' ~/.zshrc
         # fi
+    fi
+
+    if [[ "$theme" == "powerlevel10k" && $(tput colors) -ne 256 ]]; then
+        cp ~/zsh_custom_env_xterm.sh ~/.zshenv
+    else
+        cp ~/zsh_custom_env.sh ~/.zshenv
     fi
 
     colorEcho ${GREEN} "ZSH theme has change to ${theme}，please exit and restart ZSH Shell!"
@@ -71,11 +94,13 @@ echo -e "4.agnosterzak-my"
 echo -e "5.agkozak"
 echo -e "6.alien"
 echo -e "7.powerlevel9k"
-echo -e "8.spaceship"
+echo -e "8.powerlevel10k"
+echo -e "9.spaceship"
+echo -e "10.pure"
 
 while :; do echo
 	read -n1 -p "Please choose theme(enter to exit):" CHOICE
-	if [[ ! $CHOICE =~ ^[1-8]$ ]]; then
+	if [[ ! $CHOICE =~ ^[1-10]$ ]]; then
         if [[ -z ${CHOICE} ]]; then
             exit 0
         fi
@@ -109,7 +134,13 @@ case "$CHOICE" in
         changeTheme "powerlevel9k"
         ;;
     8)
+        changeTheme "=powerlevel10k"
+        ;;
+    9)
         changeTheme "spaceship"
+        ;;
+    10)
+        changeTheme "pure"
         ;;
     *)
         colorEcho ${YELLOW} "Wrong choice!"  # unknown option

@@ -128,7 +128,10 @@ for TargetHost in ${HostsList[@]}; do
     fi
 
     if [[ -z "$SameIPPrior" ]]; then
-        TargetIP=$(curl -sL --connect-timeout 5 --max-time 10 ${TargetURL} | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' | grep -v ${WAN_NET_IP} | head -n1)
+        TargetIP=$(curl -sL --connect-timeout 5 --max-time 10 ${TargetURL} \
+                    | grep -Eo '<main>.*</main>' \
+                    | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
+                    | grep -v ${WAN_NET_IP} | head -n1)
     fi
 
     if [[ -n "$TargetIP" ]]; then
