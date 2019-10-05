@@ -3,6 +3,8 @@
 if [[ -z "$ZSH" ]]; then
     colorEcho ${RED} "Please install ZSH & Oh-my-zsh first!"
     exit 0
+else
+    [[ -z "$ZSH_CUSTOM" ]] && ZSH_CUSTOM=$ZSH/custom
 fi
 
 # Load custom functions
