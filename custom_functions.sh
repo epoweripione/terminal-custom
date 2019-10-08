@@ -785,6 +785,31 @@ function check_webservice_up() {
     # exit $exitStatus
 }
 
+## test the availability of a socks5 proxy
+function check_socks5_proxy_up() {
+    # How to use:
+    # if check_socks5_proxy_up 127.0.0.1:1080 www.google.com; then echo "ok"; else echo "something wrong"; fi
+    local socks_proxy_url
+    local webservice_url
+    local exitStatus=0
+
+    [[ $# > 0 ]] && socks_proxy_url=$1
+    [[ $# > 1 ]] && webservice_url=$2
+
+    [[ -z "$socks_proxy_url" ]] && socks_proxy_url="127.0.0.1:1080"
+    [[ -z "$webservice_url" ]] && webservice_url="www.google.com"
+
+    curl -sSf -I --connect-timeout 3 --max-time 5 \
+        --socks5-hostname "${socks_proxy_url}" \
+        "${webservice_url}" > /dev/null || exitStatus=$?
+
+    if [ "$exitStatus" -eq "0" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 
 ## Dateutils
 # http://www.fresse.org/dateutils/

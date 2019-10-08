@@ -9,11 +9,11 @@ POWERLEVEL9K_MODE='nerdfont-complete'
 POWERLEVEL9K_TIME_FORMAT='%D{%H:%M}'
 
 # prompt
-# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context dir vcs)
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon ssh root_indicator context time dir vcs background_jobs command_execution_time status)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon context dir vcs)
+# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon ssh root_indicator context time dir vcs background_jobs command_execution_time status)
 
-POWERLEVEL9K_DISABLE_RPROMPT=true
-# POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status background_jobs time ssh root_indicator custom_prompt_timer command_execution_time)
+POWERLEVEL9K_DISABLE_RPROMPT=false
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status background_jobs time ssh root_indicator custom_prompt_timer command_execution_time)
 
 POWERLEVEL9K_LEFT_SEGMENT_SEPARATOR="\uE0B4"
 POWERLEVEL9K_LEFT_SUBSEGMENT_SEPARATOR="" # "%F{$(( $DEFAULT_BACKGROUND - 2 ))}|%f"
@@ -53,6 +53,7 @@ POWERLEVEL9K_VCS_SHOW_SUBMODULE_DIRTY=true
 POWERLEVEL9K_VCS_HIDE_TAGS=false
 
 if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
+  ZLE_RPROMPT_INDENT=6
   POWERLEVEL9K_VCS_GIT_HOOKS=(vcs-detect-changes git-untracked git-remotebranch)
 else
   POWERLEVEL9K_VCS_GIT_HOOKS=(vcs-detect-changes git-untracked git-aheadbehind git-stash git-remotebranch git-tagname)

@@ -104,11 +104,11 @@ echo -e "6.alien"
 echo -e "7.powerlevel9k"
 echo -e "8.powerlevel10k"
 echo -e "9.spaceship"
-echo -e "10.pure"
+echo -e "A.pure"
 
 while :; do echo
 	read -n1 -p "Please choose theme(enter to exit):" CHOICE
-	if [[ ! $CHOICE =~ ^[1-10]$ ]]; then
+	if [[ ! $CHOICE =~ ^[0-9a-zA-Z]$ ]]; then
         if [[ -z ${CHOICE} ]]; then
             exit 0
         fi
@@ -142,12 +142,12 @@ case "$CHOICE" in
         changeTheme "powerlevel9k"
         ;;
     8)
-        changeTheme "=powerlevel10k"
+        changeTheme "powerlevel10k"
         ;;
     9)
         changeTheme "spaceship"
         ;;
-    10)
+    a | A)
         changeTheme "pure"
         ;;
     *)
