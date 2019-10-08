@@ -408,10 +408,10 @@ if [[ -x "$(command -v v2ray)" ]]; then
         # if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         #     source <(curl -sL https://git.io/fNgqx) -k
         # fi
-    elif [[ $(systemctl is-enabled v2ray) ]]; then
+    elif [[ $(systemctl is-enabled v2ray 2>/dev/null) ]]; then
         V2RAYCORE="yes"
     fi
-elif [[ $(systemctl is-enabled v2ray) ]]; then
+elif [[ $(systemctl is-enabled v2ray 2>/dev/null) ]]; then
     V2RAYCORE="yes"
 fi
 

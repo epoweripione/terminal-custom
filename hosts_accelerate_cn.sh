@@ -173,11 +173,11 @@ else
 
     [[ -s "/etc/init.d/dns-clean" ]] && /etc/init.d/dns-clean start
 
-    if [[ $(systemctl is-enabled systemd-resolved) ]]; then
+    if [[ $(systemctl is-enabled systemd-resolved 2>/dev/null) ]]; then
         systemctl restart systemd-resolved.service
     fi
 
-    if [[ $(systemctl is-enabled dnsmasq) ]]; then
+    if [[ $(systemctl is-enabled dnsmasq 2>/dev/null) ]]; then
         systemctl restart dnsmasq.service
     fi
 fi

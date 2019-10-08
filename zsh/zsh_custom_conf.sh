@@ -443,7 +443,7 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
     if [[ $UID -eq 0 ]]; then
         # libnss-winbind
         if (( $(ps -ef | grep -v grep | grep winbind | wc -l) == 0 )); then
-            if [[ $(systemctl is-enabled winbind) ]]; then
+            if [[ $(systemctl is-enabled winbind 2>/dev/null) ]]; then
             # if systemctl list-unit-files --type=service | grep "winbind.service" | grep "enabled" >/dev/null 2>&1; then
                 service winbind start
             fi

@@ -93,7 +93,7 @@ fi
 # fi
 
 
-# custom plugins
+# Custom plugins
 colorEcho ${BLUE} "Updating custom plugins..."
 
 # zsh-navigation-tools
@@ -149,7 +149,7 @@ else
 fi
 
 
-# custom themes
+# Custom themes
 colorEcho ${BLUE} "Updating custom themes..."
 
 # agnosterzak
@@ -227,9 +227,10 @@ else
 fi
 
 
-# enable plugins
+# Enable plugins
 colorEcho ${BLUE} "enable plugins..."
 
+# plugin list
 Plugins="git git-flow-completion"
 
 [[ $ostype == "darwin" ]] && Plugins="${Plugins} osx"
@@ -270,7 +271,7 @@ for TargetPlugin in ${PluginList[@]}; do
     fi
 done
 
-
+# replace plugins in .zshrc
 sed -i "s/^plugins=(git)/plugins=(\n  git\n)/" ~/.zshrc
 
 LineBegin=$(cat -n ~/.zshrc | grep 'plugins=(' | awk '{print $1}' | tail -n1)
