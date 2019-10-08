@@ -283,7 +283,7 @@ if [[ -n "$LineBegin" && -n "$LineEnd" ]]; then
     sed -i "${DeleteBegin},${DeleteEnd}d" ~/.zshrc
 fi
 
-sed -i "${LineBegin}a ${Plugins}" ~/.zshrc
+sed -i "${LineBegin}a\\${Plugins}" ~/.zshrc
 
 
 # nano

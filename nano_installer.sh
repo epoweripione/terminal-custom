@@ -84,11 +84,12 @@ if [[ -d ~/.local/share/nano ]]; then
     cd ~/.local/share/nano && git pull
 else
     mkdir -p ~/.local/share/nano
-    git clone https://github.com/scopatz/nanorc.git ~/.local/share/nano
+    git clone https://github.com/scopatz/nanorc ~/.local/share/nano
 fi
 
 
 # nano settings
+colorEcho ${BLUE} "nano settings..."
 if [[ ! $(grep "set titlecolor" ~/.nanorc) ]]; then
     echo "set titlecolor brightwhite,red" >> ~/.nanorc
 fi
@@ -122,5 +123,5 @@ if [[ -d ~/.local/share/nano ]]; then
     # fi
 fi
 
-# cd $HOME
+cd $HOME
 # colorEcho ${GREEN} "Done!"
