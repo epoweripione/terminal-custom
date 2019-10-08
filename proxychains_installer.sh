@@ -22,7 +22,7 @@ fi
 if [[ ! -x "$(command -v proxychains4)" ]]; then
     colorEcho ${BLUE} "Installing proxychains..."
     cd $HOME && \
-        git clone https://github.com/rofl0r/proxychains-ng.git && \
+        git clone https://github.com/rofl0r/proxychains-ng && \
         cd proxychains-ng && \
         ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
         make && make install && make install-config && \

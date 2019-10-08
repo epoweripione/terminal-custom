@@ -154,14 +154,9 @@ apt install -y git-lfs && git lfs install
 
 
 # git-flow (AVH Edition)
-## https://github.com/petervanderdoes/gitflow-avh
-## How to use
-## http://danielkummer.github.io/git-flow-cheatsheet/index.zh_CN.html
-## https://github.com/mylxsw/growing-up/blob/master/doc/%E7%A0%94%E5%8F%91%E5%9B%A2%E9%98%9FGIT%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B%E6%96%B0%E4%BA%BA%E5%AD%A6%E4%B9%A0%E6%8C%87%E5%8D%97.md
-colorEcho ${BLUE} "Installing git-flow (AVH Edition)..."
-DOWNLOAD_URL=https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh
-wget --no-check-certificate -q $DOWNLOAD_URL && \
-    sudo bash gitflow-installer.sh install develop; rm gitflow-installer.sh
+if [[ -s "$HOME/gitflow_installer.sh" ]]; then
+    source "$HOME/gitflow_installer.sh"
+fi
 
 
 # nano editor

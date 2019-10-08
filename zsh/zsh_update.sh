@@ -231,7 +231,9 @@ fi
 colorEcho ${BLUE} "enable plugins..."
 
 # plugin list
-Plugins="git git-flow-completion"
+Plugins="git"
+
+[[ "$(command -v git-flow)" ]] && Plugins="${Plugins} git-flow-completion"
 
 [[ $ostype == "darwin" ]] && Plugins="${Plugins} osx"
 

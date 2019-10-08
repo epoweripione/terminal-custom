@@ -48,6 +48,7 @@ fi
 colorEcho ${BLUE} "Copying shell script to HOME..."
 cp -f ~/terminal-custom/*.sh ~
 chmod +x ~/hosts_update.sh
+chmod +x ~/generate_random_string.sh
 chmod +x ~/install_fonts.sh
 chmod +x ~/terminal_256colors.sh
 chmod +x ~/terminal_colors.sh
@@ -60,6 +61,7 @@ chmod +x ~/conda_python_installer.sh
 chmod +x ~/cross_gfw_installer.sh
 chmod +x ~/docker_installer.sh
 chmod +x ~/geoip_installer.sh
+chmod +x ~/gitflow_installer.sh
 chmod +x ~/gvm_go_installer.sh
 chmod +x ~/hexo_installer.sh
 chmod +x ~/hosts_accelerate_cn.sh
@@ -76,7 +78,6 @@ chmod +x ~/php_debian_installer.sh
 chmod +x ~/pecl_install_php_extensions.sh
 
 chmod +x ~/frp_installer.sh
-chmod +x ~/generate_random_string.sh
 chmod +x ~/goproxy_installer.sh
 chmod +x ~/shadowtunnel_installer.sh
 
