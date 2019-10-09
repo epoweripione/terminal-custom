@@ -23,6 +23,20 @@ if [[ -z "$ostype" ]]; then
     get_sysArch
 fi
 
+if check_webservice_up www.google.com; then
+    colorEcho ${BLUE} "You are not blocked by the firewall! Congratulations!"
+    exit 0
+fi
+
+
+if [[ $# > 0 ]]; then
+    PROXY_PORT=$1
+else
+    PROXY_PORT="55880"
+fi
+
+PROXY_URL="127.0.0.1:${PROXY_PORT}"
+
 
 # V2Ray Client
 # https://www.v2ray.com/chapter_00/install.html
@@ -94,9 +108,9 @@ function get_v2ray_config_from_subscription() {
     while read -r READLINE; do
         [[ -z "${READLINE}" ]] && continue
 
-        VMESS_CONFIG=$(echo "${READLINE}" | base64 -d | sed -e 's/[{}", ]//g' -e 's/\r//g')
+        VMESS_CONFIG=$(echo "${READLINE}" | base64 -di | sed -e 's/[{}", ]//g' -e 's/\r//g')
 
-        VMESS_PS=$(echo "${VMESS_CONFIG}" | grep '^ps:' | cut -d':' -f2)
+        VMESS_PS=$(echo "${VMESS_CONFIG}" | grep '^ps:' | cut -d':' -f2-)
         VMESS_ADDR=$(echo "${VMESS_CONFIG}" | grep '^add:' | cut -d':' -f2)
         VMESS_PORT=$(echo "${VMESS_CONFIG}" | grep '^port:' | cut -d':' -f2)
         VMESS_USER_ID=$(echo "${VMESS_CONFIG}" | grep '^id:' | cut -d':' -f2)
@@ -164,7 +178,7 @@ function get_v2ray_config_from_subscription() {
 {
     "inbounds": [{
             "tag": "proxy",
-            "port": 55880,
+            "port": ${PROXY_PORT},
             "listen": "0.0.0.0",
             "protocol": "socks",
             "sniffing": {
@@ -244,7 +258,6 @@ EOF
 ## main
 install_v2ray_client
 
-PROXY_URL="127.0.0.1:55880"
 if check_socks5_proxy_up ${PROXY_URL}; then
     colorEcho ${BLUE} "Proxy ${PROXY_URL} already exist!"
 else
