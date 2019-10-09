@@ -234,7 +234,6 @@ EOF
     # rm -f ${VMESS_FILENAME} ${DECODE_FILENAME}
 
     if [ "$exitStatus" -eq "0" ]; then
-        # echo "$webservice_url is UP with ${http}"
         return 0
     else
         return 1
@@ -247,11 +246,11 @@ install_v2ray_client
 
 PROXY_URL="127.0.0.1:55880"
 if check_socks5_proxy_up ${PROXY_URL}; then
-    colorEcho ${BLUE} "Proxy ${PROXY_URL} already exist\!"
+    colorEcho ${BLUE} "Proxy ${PROXY_URL} already exist!"
 else
     if get_v2ray_config_from_subscription; then
-        colorEcho ${BLUE} "Proxy ${PROXY_URL} has been setup successfully\!"
+        colorEcho ${BLUE} "Proxy ${PROXY_URL} has been setup successfully!"
     else
-        colorEcho ${RED} "Something wrong when setup proxy ${PROXY_URL}\!"
+        colorEcho ${RED} "Something wrong when setup proxy ${PROXY_URL}!"
     fi
 fi
