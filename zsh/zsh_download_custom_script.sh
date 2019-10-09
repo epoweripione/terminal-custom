@@ -58,7 +58,6 @@ chmod +x ~/ssl-check-expire-date.sh
 
 chmod +x ~/bat_installer.sh
 chmod +x ~/conda_python_installer.sh
-chmod +x ~/cross_gfw_installer.sh
 chmod +x ~/docker_installer.sh
 chmod +x ~/geoip_installer.sh
 chmod +x ~/gitflow_installer.sh
@@ -76,6 +75,9 @@ chmod +x ~/analyze_sys_performance.sh
 
 chmod +x ~/php_debian_installer.sh
 chmod +x ~/pecl_install_php_extensions.sh
+
+chmod +x ~/cross_gfw_installer.sh
+chmod +x ~/cross_gfw_config.sh
 
 chmod +x ~/frp_installer.sh
 chmod +x ~/goproxy_installer.sh
