@@ -160,11 +160,13 @@ if [[ -d "$HOME/.gvm" ]]; then
 
         # Install latest go version
         if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-            REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
+            REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ \
+                            | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         else
-            REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
+            REMOTE_VERSION=$(curl -s https://golang.org/dl/ \
+                            | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         fi
-        REMOTE_VERSION=${REMOTE_VERSION%.}
+        # REMOTE_VERSION=${REMOTE_VERSION%.}
 
         if [[ -n "$REMOTE_VERSION" ]] && [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
             if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
@@ -400,9 +402,10 @@ if [[ -x "$(command -v v2ray)" ]]; then
 
         # CHECK_URL="https://api.github.com/repos/Jrohy/multi-v2ray/releases/latest"
 
-        # CURRENT_VERSION=$(v2ray-util -v | grep 'v2ray_util' | cut -d' ' -f2)
-        # # trim color code: \033[32m \033[0m
-        # CURRENT_VERSION=$(echo $CURRENT_VERSION | sed -e 's/'$(echo "\033")'//g' | awk -F'[' '{print $2}' | awk -F'm' '{print $2}')
+        # CURRENT_VERSION=$(v2ray-util -v | grep 'v2ray_util' | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
+        # # CURRENT_VERSION=$(v2ray-util -v | grep 'v2ray_util' | cut -d' ' -f2)
+        # # # trim color code: \033[32m \033[0m
+        # # CURRENT_VERSION=$(echo $CURRENT_VERSION | sed -e 's/'$(echo "\033")'//g' | awk -F'[' '{print $2}' | awk -F'm' '{print $2}')
 
         # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
         # if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
@@ -421,7 +424,8 @@ if [[ $UID -ne 0 && -n "$V2RAYCORE" ]]; then
 
     CHECK_URL="https://api.github.com/repos/v2ray/v2ray-core/releases/latest"
 
-    CURRENT_VERSION=$(v2ray --version | grep 'V2Ray' | cut -d' ' -f2)
+    CURRENT_VERSION=$(v2ray --version | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+    # CURRENT_VERSION=$(v2ray --version | grep 'V2Ray' | cut -d' ' -f2)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         # bash <(curl -L -s https://install.direct/go.sh)

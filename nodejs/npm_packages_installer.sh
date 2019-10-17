@@ -84,14 +84,18 @@ npm install -g cordova ionic
 colorEcho ${BLUE} "Installing electron..."
 npm install -g electron
 
+# https://ice.work/iceworks
+colorEcho ${BLUE} "Installing iceworks..."
+npm install -g iceworks
+
 colorEcho ${BLUE} "Installing express-generator..."
 npm install -g express-generator
 
 colorEcho ${BLUE} "Installing tldr..."
 npm install -g tldr
 
-colorEcho ${BLUE} "Installing lib-qqwry..."
 # https://github.com/cnwhy/lib-qqwry/
+colorEcho ${BLUE} "Installing lib-qqwry..."
 npm install -g lib-qqwry
 
 # colorEcho ${BLUE} "Installing arch-wiki-man..."

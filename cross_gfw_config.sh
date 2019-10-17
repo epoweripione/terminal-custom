@@ -99,11 +99,13 @@ function get_v2ray_config_from_subscription() {
     local VMESS_USER_ID
     local VMESS_USER_ALTERID
     local VMESS_NETWORK
+    local VMESS_TYPE
     local VMESS_SECURITY
     local VMESS_TLS_SETTINGS
     local VMESS_WS_HOST
     local VMESS_WS_PATH
     local VMESS_WS_SETTINGS
+    local VMESS_KCP_SETTINGS
 
     while read -r READLINE; do
         [[ -z "${READLINE}" ]] && continue
@@ -116,22 +118,23 @@ function get_v2ray_config_from_subscription() {
         VMESS_USER_ID=$(echo "${VMESS_CONFIG}" | grep '^id:' | cut -d':' -f2)
         VMESS_USER_ALTERID=$(echo "${VMESS_CONFIG}" | grep '^aid:' | cut -d':' -f2)
         VMESS_NETWORK=$(echo "${VMESS_CONFIG}" | grep '^net:' | cut -d':' -f2)
+        VMESS_TYPE=$(echo "${VMESS_CONFIG}" | grep '^type:' | cut -d':' -f2)
         VMESS_SECURITY=$(echo "${VMESS_CONFIG}" | grep '^tls:' | cut -d':' -f2)
         VMESS_WS_HOST=$(echo "${VMESS_CONFIG}" | grep '^host:' | cut -d':' -f2)
         VMESS_WS_PATH=$(echo "${VMESS_CONFIG}" | grep '^path:' | cut -d':' -f2)
 
         colorEcho ${BLUE} "Testing ${VMESS_PS} ${VMESS_ADDR}:${VMESS_PORT}..."
-        if [[ "${VMESS_NETWORK}" == "tcp" ]]; then
+        if [[ -z "${VMESS_SECURITY}" ]]; then
             VMESS_SECURITY=$(echo "null")
-            VMESS_TLS_SETTINGS=$(echo "null")
-            VMESS_WS_SETTINGS=$(echo "null")
-        elif [[ "${VMESS_NETWORK}" == "ws" ]]; then
-            if [[ -z "${VMESS_SECURITY}" ]]; then
-                VMESS_SECURITY=$(echo "null")
-            else
-                VMESS_SECURITY=$(echo "\"${VMESS_SECURITY}\"")
-            fi
+        else
+            VMESS_SECURITY=$(echo "\"${VMESS_SECURITY}\"")
+        fi
 
+        VMESS_TLS_SETTINGS=$(echo "null")
+        VMESS_WS_SETTINGS=$(echo "null")
+        VMESS_KCP_SETTINGS=$(echo "null")
+
+        if [[ "${VMESS_NETWORK}" == "ws" ]]; then
             if [[ -z "${VMESS_WS_PATH}" ]]; then
                 VMESS_WS_PATH=$(echo "null")
             else
@@ -170,6 +173,25 @@ function get_v2ray_config_from_subscription() {
                         echo "                }"; \
                     })
             fi
+        elif [[ "${VMESS_NETWORK}" == "kcp" ]]; then
+            VMESS_KCP_SETTINGS=$({ \
+                    echo "{"; \
+                    echo "                    \"mtu\": 1350,"; \
+                    echo "                    \"tti\": 50,"; \
+                    echo "                    \"uplinkCapacity\": 12,"; \
+                    echo "                    \"downlinkCapacity\": 100,"; \
+                    echo "                    \"congestion\": false,"; \
+                    echo "                    \"readBufferSize\": 2,"; \
+                    echo "                    \"writeBufferSize\": 2,"; \
+                    echo "                    \"headers\": {"; \
+                    echo "                        \"type\": \"${VMESS_TYPE}\","; \
+                    echo "                        \"request\": null,"; \
+                    echo "                        \"response\": null"; \
+                    echo "                    }"; \
+                    echo "                }"; \
+                })
+        else
+            continue
         fi
 
         # Gen config file
@@ -214,7 +236,7 @@ function get_v2ray_config_from_subscription() {
                 "security": ${VMESS_SECURITY},
                 "tlsSettings": ${VMESS_TLS_SETTINGS},
                 "tcpSettings": null,
-                "kcpSettings": null,
+                "kcpSettings": ${VMESS_KCP_SETTINGS},
                 "wsSettings": ${VMESS_WS_SETTINGS},
                 "httpSettings": null,
                 "quicSettings": null
@@ -228,7 +250,7 @@ function get_v2ray_config_from_subscription() {
 EOF
 
         # removed ^M
-        sed -i -e 's/'$(echo "\015")'//g' -e 's/\r//g' /etc/v2ray/config.json
+        sed -i -e 's/'$(echo "\013")'//g' -e 's/\r//g' /etc/v2ray/config.json
 
         # check the config file
         if v2ray -test -config /etc/v2ray/config.json; then

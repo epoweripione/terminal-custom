@@ -37,9 +37,9 @@ else
     if check_release_package_manager packageManager yum; then
         yum update -y && yum -y -q install ncurses-devel
     elif check_release_package_manager packageManager apt; then
-        apt update && apt -y install libncurses5-dev libncursesw5-dev
+        apt-get update && apt-get -y install libncurses5-dev libncursesw5-dev
     elif check_release_package_manager packageManager pacman; then
-        pacman -Sy && pacman -S ncurses
+        pacman -Sy && pacman --noconfirm -S ncurses
     fi
 fi
 
@@ -56,13 +56,15 @@ fi
 
 # compile & install nano
 if [[ -x "$(command -v nano)" ]]; then
-    CURRENT_VERSION=$(nano -V | grep -m 1 -o 'version \([0-9]\)\+\.\([0-9]\)\+' | cut -d' ' -f2)
+    # CURRENT_VERSION=$(nano -V | grep -m 1 -o 'version \([0-9]\)\+\.\([0-9]\)\+' | cut -d' ' -f2)
+    CURRENT_VERSION=$(nano -V | grep -Eo -m1 '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
 else
     CURRENT_VERSION=0.0
 fi
 
 REMOTE_VERSION=$(curl -s -N https://www.nano-editor.org/download.php \
-    | grep -m 1 -o 'nano-\([0-9]\)\+\.\([0-9]\)\+' | head -n1 | cut -d'-' -f2)
+    | grep -Eo -m1 'nano-([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d'-' -f2)
+    # | grep -m 1 -o 'nano-\([0-9]\)\+\.\([0-9]\)\+' | head -n1 | cut -d'-' -f2)
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then

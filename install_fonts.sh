@@ -1,58 +1,53 @@
 #!/bin/bash
 
-#######color code########
-RED="31m"      # Error message
-GREEN="32m"    # Success message
-YELLOW="33m"   # Warning message
-BLUE="36m"     # Info message
+# Load custom functions
+if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
+    :
+else
+    if [[ -s "$HOME/custom_functions.sh" ]]; then
+        source "$HOME/custom_functions.sh"
+    else
+        echo "$HOME/custom_functions.sh not exist!"
+        exit 0
+    fi
+fi
 
-colorEcho() {
-	COLOR=$1
-	echo -e "\033[${COLOR}${@:2}\033[0m"
-}
+# Get ostype
+get_os_type
 
-ostype=$(uname)
+if [[ "$ostype" != "windows" && $UID -ne 0 ]]; then
+    echo "Please run this script as root user!"
+    exit 0
+fi
 
-
-# # Install Powerline fonts
-# echo "Downloading Powerline fonts..."
-# git clone https://github.com/powerline/fonts.git --depth=1 ~/powerline-fonts
-
-# if [[ $ostype =~ "MSYS_NT" ]] || [[ $ostype =~ "CYGWIN_NT" ]]; then
-#   echo "Please use install.ps1 in PowerShell to install Powerline fonts."
-# else
-#   echo "Installing Powerline fonts..."
-#   cd ~/powerline-fonts && ./install.sh
-#   # rm -rf ~/powerline-fonts
-# fi
+## Visual Studio Code Settings
+## "editor.fontFamily": "'FuraCode Nerd Font Mono', 'Fira Code Retina', 'FiraCode-Retina', 'Iosevka Nerd Font Mono', 'Iosevka Term SS05', 'Sarasa Term SC', '更纱黑体 SC'",
+# "editor.fontFamily": "'FuraCode Nerd Font Mono', 'Fira Code Retina', 'FiraCode-Retina', 'Sarasa Term SC'",
+# "editor.fontLigatures": true
 
 
 # Install Nerd fonts
 # https://github.com/ryanoasis/nerd-fonts
-
-if [[ ! -n $(which unzip) ]]; then
-	colorEcho ${RED} "Please install unzip first!"
-	exit 0
-fi
-
-if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
-	:
-else
-	# if ((${EUID:-0} || "$(id -u)")); then
-	if [[ $UID -ne 0 ]]; then
-		colorEcho ${RED} "Please run this script as root user!"
-		exit 0
-	fi
-fi
-
-
 if [[ ! -x "$(command -v fontforge)" ]]; then
 	# # http://designwithfontforge.com/en-US/Installing_Fontforge.html
 	colorEcho ${BLUE} "Installing fontforge..."
-	apt-get install -y software-properties-common && \
-		add-apt-repository ppa:fontforge/fontforge && \
-		apt-get update && \
-		apt-get install -y fontforge
+	if check_release_package_manager packageManager apt; then
+		apt-get install -y software-properties-common && \
+			add-apt-repository ppa:fontforge/fontforge && \
+			apt-get update
+	fi
+
+	if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+		pacman --noconfirm -S unzip fontforge
+	else
+		if check_release_package_manager packageManager yum; then
+			yum update -y && yum -y -q install unzip fontforge
+		elif check_release_package_manager packageManager apt; then
+			apt-get -y install unzip fontforge
+		elif check_release_package_manager packageManager pacman; then
+			pacman -Sy && pacman --noconfirm -S unzip fontforge
+		fi
+	fi
 
 	# colorEcho ${BLUE} "Installing fontforge dependencies..."
 	# apt-get install -y libjpeg-dev libtiff5-dev libpng-dev libfreetype6-dev libgif-dev \
@@ -81,15 +76,31 @@ if [[ ! -x "$(command -v fontforge)" ]]; then
 fi
 
 
-if [[ ! -d "~/nerd-fonts" ]]; then
-	colorEcho ${BLUE} "Cloning nerd-fonts repository..."
-	# Download font-patcher
-	cd ~ && \
-		git clone https://github.com/ryanoasis/nerd-fonts --depth 1 && \
-		rm -rf ~/nerd-fonts/patched-fonts
-	# font-patcher
-	cd ~/nerd-fonts && ./font-patcher --version && cd ~
-fi
+# if [[ ! -d "~/nerd-fonts" ]]; then
+# 	colorEcho ${BLUE} "Cloning nerd-fonts repository..."
+# 	# Download font-patcher
+# 	cd ~ && \
+# 		git clone https://github.com/ryanoasis/nerd-fonts --depth 1 && \
+# 		rm -rf ~/nerd-fonts/patched-fonts
+# 	# font-patcher
+# 	cd ~/nerd-fonts && ./font-patcher --version && cd ~
+# fi
+
+colorEcho ${BLUE} "Downloading nerd-fonts & font-patcher..."
+# # Use remote server to reduce `git clone` network traffic in local machine
+# git clone https://github.com/ryanoasis/nerd-fonts --depth 1 && \
+# 		rm -rf ~/nerd-fonts/patched-fonts ~/nerd-fonts/.git && \
+# 		cd ~ && zip -q -r nerd-fonts.zip ./nerd-fonts && \
+# 		mv ~/nerd-fonts.zip /srv/web/www/default
+
+# Download from remote server
+rm -rf ~/nerd-fonts && \
+	curl -SL -O https://www.raycloud.tk/nerd-fonts.zip && \
+	unzip -q nerd-fonts.zip -d ~ && \
+# fix latest version issue patch char i,j not correct
+rm -f ~/nerd-fonts/font-patcher && \
+	curl -SL -o ~/nerd-fonts/font-patcher \
+		https://github.com/ryanoasis/nerd-fonts/raw/3241ea6e44191ec89c0260f51112dec691363ebd/font-patcher
 
 
 colorEcho ${BLUE} "Downloading Nerd fonts..."
@@ -119,12 +130,23 @@ mkdir -p ~/patched-fonts
 #   unzip -q ~/patched-fonts/Iosevka.zip -d ~/patched-fonts/Iosevka && \
 #   rm -f ~/patched-fonts/Iosevka.zip
 
-colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono 2.3.0..."
+colorEcho ${BLUE} "Downloading FuraCode Nerd Font Complete Mono 2.0.0..."
+# https://github.com/tonsky/FiraCode
+## Patch fonts
+# cd ~/nerd-fonts
+# for font in /e/VSCodeProjects/nerd-fonts/FiraCode_2/*.ttf; do fontforge -script font-patcher -out /e/VSCodeProjects/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done
+curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.3.2/FuraCode-Mono-2.0.0.zip -o ~/patched-fonts/FuraCode-Mono.zip
+mkdir -p ~/patched-fonts/FuraCode-Mono && \
+	unzip -q ~/patched-fonts/FuraCode-Mono.zip -d ~/patched-fonts/FuraCode-Mono && \
+	rm -f ~/patched-fonts/FuraCode-Mono.zip
+
+colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono 2.3.2..."
+# https://github.com/be5invis/Iosevka
 ## Patch fonts
 # cd ~/nerd-fonts
 # for font in /e/VSCodeProjects/nerd-fonts/Iosevka/*.ttf; do fontforge -script font-patcher -out /e/VSCodeProjects/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done
-# cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/iosevka-term-ss05-nerd-2.3.0.zip *.ttf
-curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.3.0/iosevka-term-ss05-nerd-2.3.0.zip -o ~/patched-fonts/iosevka-term-ss05-nerd.zip
+# cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/iosevka-term-ss05-nerd-2.3.2.zip *.ttf
+curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.3.2/iosevka-term-ss05-nerd-2.3.2.zip -o ~/patched-fonts/iosevka-term-ss05-nerd.zip
 mkdir -p ~/patched-fonts/iosevka-term-ss05-nerd && \
 	unzip -q ~/patched-fonts/iosevka-term-ss05-nerd.zip -d ~/patched-fonts/iosevka-term-ss05-nerd && \
 	rm -f ~/patched-fonts/iosevka-term-ss05-nerd.zip
@@ -133,7 +155,7 @@ mkdir -p ~/patched-fonts/iosevka-term-ss05-nerd && \
 curl -fSL https://github.com/ryanoasis/nerd-fonts/raw/master/install.sh -o ~/nerdfonts_installer.sh && chmod +x ~/nerdfonts_installer.sh
 
 colorEcho ${BLUE} "Installing Nerd fonts..."
-if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
+if [[ "$ostype" == "windows" ]]; then
 	cd ~ && ./nerdfonts_installer.sh --quiet --clean --use-single-width-glyphs --install-to-user-path
 	colorEcho ${BLUE} "Please manual install fonts from $HOME/.local/share/fonts"
 else
