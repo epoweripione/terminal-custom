@@ -107,14 +107,11 @@ echo -e "9.spaceship"
 echo -e "A.pure"
 
 while :; do echo
-	read -n1 -p "Please choose theme(enter to exit):" CHOICE
+	read -p "Please choose theme(enter to exit):" CHOICE
+    [[ -z ${CHOICE} ]] && exit 0
 	if [[ ! $CHOICE =~ ^[0-9a-zA-Z]$ ]]; then
-        if [[ -z ${CHOICE} ]]; then
-            exit 0
-        fi
 		colorEcho ${RED} "Input error, please choose theme from above!"
 	else
-        echo -e "\n"
 		break
 	fi
 done

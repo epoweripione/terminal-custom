@@ -120,6 +120,7 @@ for TargetHost in ${HostsList[@]}; do
         TargetHost=$(echo ${TargetHost##-}) # remove -
     fi
 
+    colorEcho ${BLUE} "Checking ${TargetHost}..."
     TargetDomain=$(echo ${TargetHost} | awk -F. '{print $(NF-1),$NF}' OFS=".")
     if [[ "$TargetDomain" == "$TargetHost" ]]; then
         TargetURL=https://${TargetDomain}.ipaddress.com/

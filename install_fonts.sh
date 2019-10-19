@@ -94,9 +94,9 @@ colorEcho ${BLUE} "Downloading nerd-fonts & font-patcher..."
 # 		mv ~/nerd-fonts.zip /srv/web/www/default
 
 # Download from remote server
-rm -rf ~/nerd-fonts && \
-	curl -SL -O https://www.raycloud.tk/nerd-fonts.zip && \
-	unzip -q nerd-fonts.zip -d ~ && \
+[[ -d "~/nerd-fonts" ]] && rm -rf ~/nerd-fonts
+curl -SL -O https://www.raycloud.tk/nerd-fonts.zip && \
+	unzip -q nerd-fonts.zip -d ~
 # fix latest version issue patch char i,j not correct
 rm -f ~/nerd-fonts/font-patcher && \
 	curl -SL -o ~/nerd-fonts/font-patcher \
@@ -135,6 +135,7 @@ colorEcho ${BLUE} "Downloading FuraCode Nerd Font Complete Mono 2.0.0..."
 ## Patch fonts
 # cd ~/nerd-fonts
 # for font in /e/VSCodeProjects/nerd-fonts/FiraCode_2/*.ttf; do fontforge -script font-patcher -out /e/VSCodeProjects/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done
+# cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/FuraCode-Mono-2.0.0.zip . -i "Fura Code*.ttf"
 curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.3.2/FuraCode-Mono-2.0.0.zip -o ~/patched-fonts/FuraCode-Mono.zip
 mkdir -p ~/patched-fonts/FuraCode-Mono && \
 	unzip -q ~/patched-fonts/FuraCode-Mono.zip -d ~/patched-fonts/FuraCode-Mono && \
@@ -145,7 +146,7 @@ colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono 2.3.2..
 ## Patch fonts
 # cd ~/nerd-fonts
 # for font in /e/VSCodeProjects/nerd-fonts/Iosevka/*.ttf; do fontforge -script font-patcher -out /e/VSCodeProjects/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done
-# cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/iosevka-term-ss05-nerd-2.3.2.zip *.ttf
+# cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/iosevka-term-ss05-nerd-2.3.2.zip . -i "Iosevka Term*.ttf"
 curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.3.2/iosevka-term-ss05-nerd-2.3.2.zip -o ~/patched-fonts/iosevka-term-ss05-nerd.zip
 mkdir -p ~/patched-fonts/iosevka-term-ss05-nerd && \
 	unzip -q ~/patched-fonts/iosevka-term-ss05-nerd.zip -d ~/patched-fonts/iosevka-term-ss05-nerd && \

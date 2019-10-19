@@ -811,6 +811,56 @@ function check_socks5_proxy_up() {
 }
 
 
+## ProgressBar
+# bar=''
+# for ((i=0;$i<=100;i++)); do
+#     printf "Progress:[%-100s]%d%%\r" $bar $i
+#     sleep 0.1
+#     bar=#$bar
+# done
+# echo
+function draw_progress_bar() {
+    # https://stackoverflow.com/questions/238073/how-to-add-a-progress-bar-to-a-shell-script
+    # progress bar length in characters
+    [[ -z "$PROGRESS_BAR_WIDTH" ]] && PROGRESS_BAR_WIDTH=50
+
+    # Arguments: current value, max value, unit of measurement (optional)
+    local __value=$1
+    local __max=$2
+    local __unit=${3:-""}  # if unit is not supplied, do not display it
+
+    # Calculate percentage
+    if (( $__max < 1 )); then __max=1; fi  # anti zero division protection
+    local __percentage=$(( 100 - ($__max*100 - $__value*100) / $__max ))
+
+    # Rescale the bar according to the progress bar width
+    local __num_bar=$(( $__percentage * $PROGRESS_BAR_WIDTH / 100 ))
+
+    # Draw progress bar
+    printf "["
+    for b in $(seq 1 $__num_bar); do printf "#"; done
+    for s in $(seq 1 $(( $PROGRESS_BAR_WIDTH - $__num_bar ))); do printf " "; done
+    if [[ -n "$__unit" ]]; then
+        printf "] $__percentage%% ($__value / $__max $__unit)\r"
+    else
+        printf "] $__percentage%% ($__value / $__max)\r"
+    fi
+}
+## Usage:
+# PROGRESS_CNT=100
+# PROGRESS_CUR=1
+# while true; do
+#     PROGRESS_CUR=$(($PROGRESS_CUR+1))
+#     # Draw a progress bar
+#     draw_progress_bar $PROGRESS_CUR $PROGRESS_CNT "files"
+#     # Check if we reached 100%
+#     [[ $PROGRESS_CUR == $PROGRESS_CNT ]] && break
+#     # sleep 0.1  # Wait before redrawing
+# done                                           
+# # Go to the newline at the end of progress     
+# printf "\n"
+
+
 ## Dateutils
 # http://www.fresse.org/dateutils/
 # apt install -y dateutils
