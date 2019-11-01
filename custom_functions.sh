@@ -213,11 +213,12 @@ function get_os_release() {
             OS_RELEASE='dragonfly'
             ;;
         Linux)
-            [[ -r /etc/os-release ]] && \
+            if [[ -r "/etc/os-release" ]]; then
                 OS_RELEASE="$(. /etc/os-release && echo "$ID")"
-
-            [[ -z "$OS_RELEASE" ]] && \
-                OS_RELEASE="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2 | sed 's/\"//g')"
+                [[ -z "$OS_RELEASE" ]] && \
+                    OS_RELEASE="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release \
+                                | cut -d'=' -f2 | sed 's/\"//g')"
+            fi
 
             # Check if we're running on Android
             case $(uname -o 2>/dev/null) in

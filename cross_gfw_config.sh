@@ -278,15 +278,16 @@ EOF
 
 
 ## main
-if [[ ! -x "$(command -v v2ray)" ]]; then
-    install_v2ray_client
-fi
-
+colorEcho ${BLUE} "Checking & loading socks proxy..."
 if check_socks5_proxy_up ${PROXY_URL}; then
-    colorEcho ${BLUE} "Proxy ${PROXY_URL} already exist!"
+    colorEcho ${BLUE} "Socks proxy address: ${PROXY_URL}"
 else
+    if [[ ! -x "$(command -v v2ray)" ]]; then
+        install_v2ray_client
+    fi
+
     if get_v2ray_config_from_subscription; then
-        colorEcho ${BLUE} "Proxy ${PROXY_URL} has been setup successfully!"
+        colorEcho ${BLUE} "Socks proxy address: ${PROXY_URL}"
     else
         colorEcho ${RED} "Something wrong when setup proxy ${PROXY_URL}!"
     fi

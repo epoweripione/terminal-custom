@@ -75,23 +75,6 @@ alias grep="grep --color=auto"
 # alias -s zip='unzip'
 # alias -s bz2='tar -xjvf'
 
-# URL encode/decode
-# https://love2dev.com/blog/whats-the-difference-between-encodeuri-and-encodeuricomponent/
-# usage
-# echo -n "https://www.google.com/search?q=网址转中文" | encodeURI
-# echo -n "https://www.google.com/search?q=%E7%BD%91%E5%9D%80%E8%BD%AC%E4%B8%AD%E6%96%87" | decodeURI
-# echo -n "网址转中文" | encodeURIComponent
-# echo -n "https://www.google.com/search?q=%E7%BD%91%E5%9D%80%E8%BD%AC%E4%B8%AD%E6%96%87" | decodeURIComponent
-if [[ -x "$(command -v node)" ]]; then
-    alias encodeURI="node -e \"process.stdin.on('data', data => process.stdout.write(encodeURI(data.toString())))\""
-    alias decodeURI="node -e \"process.stdin.on('data', data => process.stdout.write(decodeURI(data.toString())))\""
-    alias encodeURIComponent="node -e \"process.stdin.on('data', data => process.stdout.write(encodeURIComponent(data.toString())))\""
-    alias decodeURIComponent="node -e \"process.stdin.on('data', data => process.stdout.write(decodeURIComponent(data.toString())))\""
-else
-    alias encodeURIComponent="xxd -p | tr -d '\n' | sed 's/\(..\)/%\1/g'"
-    alias decodeURIComponent="sed 's/%/\\\\x/g' | xargs -0 printf '%b'"
-fi
-
 # pip aliases
 if [[ -x "$(command -v pip)" ]]; then
     alias pipupdateall='pip list -o | grep -E -v '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f 1 | xargs -n1 pip install -U'
@@ -431,6 +414,22 @@ if [[ -x "$(command -v navi)" ]]; then
     source "$(navi widget zsh)"
 fi
 
+# URL encode/decode
+# https://love2dev.com/blog/whats-the-difference-between-encodeuri-and-encodeuricomponent/
+# usage
+# echo -n "https://www.google.com/search?q=网址转中文" | encodeURI
+# echo -n "https://www.google.com/search?q=%E7%BD%91%E5%9D%80%E8%BD%AC%E4%B8%AD%E6%96%87" | decodeURI
+# echo -n "网址转中文" | encodeURIComponent
+# echo -n "https://www.google.com/search?q=%E7%BD%91%E5%9D%80%E8%BD%AC%E4%B8%AD%E6%96%87" | decodeURIComponent
+if [[ -x "$(command -v node)" ]]; then
+    alias encodeURI="node -e \"process.stdin.on('data', data => process.stdout.write(encodeURI(data.toString())))\""
+    alias decodeURI="node -e \"process.stdin.on('data', data => process.stdout.write(decodeURI(data.toString())))\""
+    alias encodeURIComponent="node -e \"process.stdin.on('data', data => process.stdout.write(encodeURIComponent(data.toString())))\""
+    alias decodeURIComponent="node -e \"process.stdin.on('data', data => process.stdout.write(decodeURIComponent(data.toString())))\""
+else
+    alias encodeURIComponent="xxd -p | tr -d '\n' | sed 's/\(..\)/%\1/g'"
+    alias decodeURIComponent="sed 's/%/\\\\x/g' | xargs -0 printf '%b'"
+fi
 
 # WSL
 if [[ $(uname -r) =~ "Microsoft" ]]; then
