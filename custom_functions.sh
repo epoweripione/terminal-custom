@@ -730,6 +730,7 @@ function set_proxy_mirrors_env() {
         NVM_INSTALLER_NOT_USE_MIRROR=true
         NVS_INSTALLER_NOT_USE_MIRROR=true
         NPM_INSTALLER_NOT_USE_MIRROR=true
+        GITHUB_NOT_USE_PROXY=true
     else
         unset APT_NOT_USE_MIRRORS
         unset CONDA_NOT_USE_MIRROR
@@ -738,6 +739,7 @@ function set_proxy_mirrors_env() {
         unset NVM_INSTALLER_NOT_USE_MIRROR
         unset NVS_INSTALLER_NOT_USE_MIRROR
         unset NPM_INSTALLER_NOT_USE_MIRROR
+        unset GITHUB_NOT_USE_PROXY
     fi
 }
 
@@ -808,6 +810,42 @@ function check_socks5_proxy_up() {
     else
         return 1
     fi
+}
+
+
+## Setting socks5 proxy for certain git repos
+function set_git_socks5_proxy() {
+    # Usage: set_git_socks5_proxy github.com,gitlab.com 127.0.0.1:55880
+    local git_repo_url
+    local git_proxy_url
+
+    [[ $# > 0 ]] && git_repo_url=$1
+
+    [[ $# > 1 ]] && git_proxy_url=$2
+    # [[ -z "$git_proxy_url" ]] && git_proxy_url="127.0.0.1:1080"
+
+    if [[ -n "$git_proxy_url" ]]; then
+        if ! check_socks5_proxy_up ${git_proxy_url}; then
+            git_proxy_url=""
+        fi
+    fi
+
+    local Url_List
+    local TargetUrl
+
+    Url_List=($(echo ${git_repo_url} | sed 's/,/ /g'))
+
+    for TargetUrl in ${Url_List[@]}; do
+        [[ -z "$TargetUrl" ]] && continue
+
+        if [[ -z "$git_proxy_url" ]]; then
+            git config --global --unset http.https://${TargetUrl}.proxy
+            git config --global --unset https.https://${TargetUrl}.proxy
+        else
+            git config --global http.https://${TargetUrl}.proxy socks5://${git_proxy_url}
+            git config --global https.https://${TargetUrl}.proxy socks5://${git_proxy_url}
+        fi
+    done
 }
 
 

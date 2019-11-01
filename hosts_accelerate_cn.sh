@@ -62,29 +62,29 @@ fi
 colorEcho ${BLUE} "Setting hosts for github..."
 # first char with `-`: Same IP as prior host
 HostsList=(
-github.com
-www.github.com
-api.github.com
-gist.github.com
-codeload.github.com
-assets-cdn.github.com
-github.global.ssl.fastly.net
-github-cloud.s3.amazonaws.com
-github-production-release-asset-2e65be.s3.amazonaws.com
-github.githubassets.com
-raw.githubusercontent.com
--gist.githubusercontent.com
--cloud.githubusercontent.com
--camo.githubusercontent.com
--avatars0.githubusercontent.com
--avatars1.githubusercontent.com
--avatars2.githubusercontent.com
--avatars3.githubusercontent.com
--avatars4.githubusercontent.com
--avatars5.githubusercontent.com
--avatars6.githubusercontent.com
--avatars7.githubusercontent.com
--avatars8.githubusercontent.com
+    github.com
+    www.github.com
+    api.github.com
+    gist.github.com
+    codeload.github.com
+    assets-cdn.github.com
+    github.global.ssl.fastly.net
+    github-cloud.s3.amazonaws.com
+    github-production-release-asset-2e65be.s3.amazonaws.com
+    github.githubassets.com
+    raw.githubusercontent.com
+    -gist.githubusercontent.com
+    -cloud.githubusercontent.com
+    -camo.githubusercontent.com
+    -avatars0.githubusercontent.com
+    -avatars1.githubusercontent.com
+    -avatars2.githubusercontent.com
+    -avatars3.githubusercontent.com
+    -avatars4.githubusercontent.com
+    -avatars5.githubusercontent.com
+    -avatars6.githubusercontent.com
+    -avatars7.githubusercontent.com
+    -avatars8.githubusercontent.com
 )
 
 IP_HOSTS=""
@@ -129,7 +129,7 @@ for TargetHost in ${HostsList[@]}; do
     fi
 
     if [[ -z "$SameIPPrior" ]]; then
-        TargetIP=$(curl -sL --connect-timeout 5 --max-time 10 ${TargetURL} \
+        TargetIP=$(curl -sL --connect-timeout 5 --max-time 15 ${TargetURL} \
                     | grep -Eo '<main>.*</main>' \
                     | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
                     | grep -v ${WAN_NET_IP} | head -n1)

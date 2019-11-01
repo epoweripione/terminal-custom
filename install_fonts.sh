@@ -87,20 +87,32 @@ fi
 # fi
 
 colorEcho ${BLUE} "Downloading nerd-fonts & font-patcher..."
-# # Use remote server to reduce `git clone` network traffic in local machine
-# git clone https://github.com/ryanoasis/nerd-fonts --depth 1 && \
-# 		rm -rf ~/nerd-fonts/patched-fonts ~/nerd-fonts/.git && \
-# 		cd ~ && zip -q -r nerd-fonts.zip ./nerd-fonts && \
-# 		mv ~/nerd-fonts.zip /srv/web/www/default
+# Use remote server to reduce `git clone` network traffic in local machine
+# git clone --depth 1 https://github.com/ryanoasis/nerd-fonts ~/nerd-fonts && \
+# 	rm -rf ~/nerd-fonts/patched-fonts ~/nerd-fonts/.git && \
+# 	: && \
+# 	# fix latest version issue patch char i,j not correct
+# 	rm -f ~/nerd-fonts/font-patcher && \
+# 		curl -SL -o ~/nerd-fonts/font-patcher \
+# 			https://github.com/ryanoasis/nerd-fonts/raw/3241ea6e44191ec89c0260f51112dec691363ebd/font-patcher
+# 	: && \
+# 	cd ~ && zip -q -r nerd-fonts.zip ./nerd-fonts && \
+# 	mv ~/nerd-fonts.zip /srv/web/www/default
 
 # Download from remote server
-[[ -d "~/nerd-fonts" ]] && rm -rf ~/nerd-fonts
-curl -SL -O https://www.raycloud.tk/nerd-fonts.zip && \
-	unzip -q nerd-fonts.zip -d ~
-# fix latest version issue patch char i,j not correct
-rm -f ~/nerd-fonts/font-patcher && \
-	curl -SL -o ~/nerd-fonts/font-patcher \
-		https://github.com/ryanoasis/nerd-fonts/raw/3241ea6e44191ec89c0260f51112dec691363ebd/font-patcher
+read -p "Download URL for nerd-fonts repository?[Use git clone if empty]" NerdFont_URL
+if [[ -z "$NerdFont_URL" ]]; then
+	if [[ -d "~/nerd-fonts" ]]; then
+		cd ~/nerd-fonts && git pull
+	else
+		git clone --depth 1 https://github.com/ryanoasis/nerd-fonts ~/nerd-fonts
+	fi
+	# rm -rf ~/nerd-fonts/patched-fonts
+else
+	[[ -d "~/nerd-fonts" ]] && rm -rf ~/nerd-fonts
+	curl -SL -o ~/nerd-fonts.zip "$NerdFont_URL" && \
+		unzip -q nerd-fonts.zip -d ~
+fi
 
 
 colorEcho ${BLUE} "Downloading Nerd fonts..."

@@ -49,7 +49,7 @@ function install_v2ray_client() {
 
     CURRENT_VERSION=0.0.0
     if [[ $(systemctl is-enabled v2ray 2>/dev/null) ]]; then
-        CURRENT_VERSION=$(v2ray --version | grep 'V2Ray' | cut -d' ' -f2)
+        CURRENT_VERSION=$(v2ray --version | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
     fi
 
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
@@ -61,9 +61,9 @@ function install_v2ray_client() {
         # bash <(curl -L -s https://install.direct/go.sh)
         DOWNLOAD_URL=https://github.com/v2ray/v2ray-core/releases/download/v${REMOTE_VERSION}/v2ray-${ostype}-${VDIS}.zip
         curl -SL $DOWNLOAD_URL -o v2ray-core.zip && \
-        bash <(curl -L -s https://install.direct/go.sh) --local ./v2ray-core.zip && \
-        rm -f ./v2ray-core.zip && \
-        ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
+            bash <(curl -L -s https://install.direct/go.sh) --local ./v2ray-core.zip && \
+            rm -f ./v2ray-core.zip && \
+            ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
     fi
 }
 
@@ -278,7 +278,9 @@ EOF
 
 
 ## main
-install_v2ray_client
+if [[ ! -x "$(command -v v2ray)" ]]; then
+    install_v2ray_client
+fi
 
 if check_socks5_proxy_up ${PROXY_URL}; then
     colorEcho ${BLUE} "Proxy ${PROXY_URL} already exist!"

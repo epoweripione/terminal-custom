@@ -29,74 +29,81 @@ fi
 # Install ZSH Shell
 colorEcho ${BLUE} "Installing pre-request packages..."
 if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
-    pacman --noconfirm -Syu
+    sudo pacman --noconfirm -Syu
 
     # install pre-request packages
-    pacman --noconfirm -S git curl wget g++ gcc make zip unzip
+    sudo pacman --noconfirm -S git curl wget g++ gcc make zip unzip
 
     # GeoIP binary and database
     # http://kbeezie.com/geoiplookup-command-line/
     if pacman -Si geoip-bin >/dev/null 2>&1; then
-        pacman --noconfirm -S geoip-bin geoip-database
+        sudo pacman --noconfirm -S geoip-bin geoip-database
     else
         if pacman -Si GeoIP >/dev/null 2>&1; then
-            pacman --noconfirm -S GeoIP GeoIP-data
+            sudo pacman --noconfirm -S GeoIP GeoIP-data
         else
-            pacman --noconfirm -S geoip geoip-data
+            sudo pacman --noconfirm -S geoip geoip-data
         fi
     fi
 
     # autojump
     # https://github.com/wting/autojump
     if pacman -Si autojump-zsh >/dev/null 2>&1; then
-        pacman --noconfirm -S autojump autojump-zsh
+        sudo pacman --noconfirm -S autojump autojump-zsh
     else
-        pacman --noconfirm -S autojump
+        sudo pacman --noconfirm -S autojump
     fi
 fi
 
 colorEcho ${BLUE} "Installing ZSH Shell..."
-# pacman -S zsh
-if [[ -f /etc/redhat-release ]]; then
-    # install latest zsh for readhat & centos
-    # yum -y remove zsh
-    yum -y update && \
-        yum -y install ncurses-devel gcc make
+# http://zsh.sourceforge.net/
+if [[ ! -x "$(command -v zsh)" ]]; then
+    if [[ -f /etc/redhat-release ]]; then
+        # install latest zsh for readhat & centos
+        # sudo yum -y remove zsh
+        sudo yum -y update && \
+            sudo yum -y install ncurses-devel gcc make
 
-    cd /tmp && \
-        curl -SL -o zsh.tar.xz https://nchc.dl.sourceforge.net/project/zsh/zsh/5.7.1/zsh-5.7.1.tar.xz && \
-        tar -xvJf zsh.tar.xz && \
-        mv zsh-* zsh && \
-        cd zsh && \
-        ./configure && make && make install && \
-        cd - && \
-        rm -rf /tmp/*
-    
-    if [[ ! -x "$(command -v zsh)" ]]; then
-        if [[ -s "/usr/local/bin/zsh" ]]; then
-            ln -sv /usr/local/bin/zsh /bin/zsh
+        REMOTE_VERSION=$(curl -s http://zsh.sourceforge.net/News/ \
+                            | grep -Eo -m1 'Release ([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+        REMOTE_VERSION=$(echo $REMOTE_VERSION | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
+        DOWNLOAD_URL=https://nchc.dl.sourceforge.net/project/zsh/zsh/${REMOTE_VERSION}/zsh-${REMOTE_VERSION}.tar.xz
+        cd /tmp && \
+            sudo curl -SL $DOWNLOAD_URL -o zsh.tar.xz && \
+            sudo tar -xvJf zsh.tar.xz && \
+            sudo mv zsh-* zsh && \
+            cd zsh && \
+            sudo ./configure && sudo make && sudo make install && \
+            cd - && \
+            sudo rm -rf /tmp/*
+
+        if [[ ! -x "$(command -v zsh)" ]]; then
+            if [[ -s "/usr/local/bin/zsh" ]]; then
+                sudo ln -sv /usr/local/bin/zsh /bin/zsh
+            fi
         fi
-    fi
 
-    if [[ -x "$(command -v zsh)" ]]; then
-        if [[ ! -f "/bin/zsh" ]]; then
-            ln -sv $(command -v zsh) /bin/zsh
+        if [[ -x "$(command -v zsh)" ]]; then
+            if [[ ! -f "/bin/zsh" ]]; then
+                sudo ln -sv $(command -v zsh) /bin/zsh
+            fi
+
+            command -v zsh | sudo tee -a /etc/shells
         fi
-
-        command -v zsh | tee -a /etc/shells
+    else
+        sudo pacman -S zsh
     fi
-else
-    pacman -S zsh
 fi
-
-# change default shell to zsh
-# chsh -s $(which zsh)
 
 
 if [[ ! -x "$(command -v zsh)" ]]; then
     colorEcho ${RED} "ZSH is not installed! Please manual install ZSH!"
     exit
 fi
+
+
+# change default shell to zsh
+# chsh -s $(which zsh)
 
 
 # Launch ZSH in BASH

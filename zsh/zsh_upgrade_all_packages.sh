@@ -15,6 +15,15 @@ fi
 # Set proxy or mirrors env in china
 set_proxy_mirrors_env
 
+# Github proxy
+if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
+    [[ -s "$HOME/cross_gfw_config.sh" ]] && source "$HOME/cross_gfw_config.sh"
+    set_git_socks5_proxy github.com,gitlab.com 127.0.0.1:55880
+fi
+
+# ostype: darwin, windows, linux, bsd, solaris
+# spruce_type: amd64, 386
+# VDIS: 64, 32, arm, arm64, mips64le, mips64, mipsle, mips, s390x, ppc64le, ppc64
 if [[ -z "$spruce_type" ]]; then
     get_os_type
     get_arch
@@ -431,9 +440,9 @@ if [[ $UID -ne 0 && -n "$V2RAYCORE" ]]; then
         # bash <(curl -L -s https://install.direct/go.sh)
         DOWNLOAD_URL=https://github.com/v2ray/v2ray-core/releases/download/v${REMOTE_VERSION}/v2ray-${ostype}-${VDIS}.zip
         curl -SL $DOWNLOAD_URL -o v2ray-core.zip && \
-        bash <(curl -L -s https://install.direct/go.sh) --local ./v2ray-core.zip && \
-        rm -f ./v2ray-core.zip && \
-        ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
+            bash <(curl -L -s https://install.direct/go.sh) --local ./v2ray-core.zip && \
+            rm -f ./v2ray-core.zip && \
+            ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
     fi
 fi
 

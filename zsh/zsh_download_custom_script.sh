@@ -87,6 +87,9 @@ chmod +x ~/cockpit_installer.sh
 chmod +x ~/vnstat_installer.sh
 chmod +x ~/webmin_installer.sh
 
+chmod +x ~/batch_download.sh
+chmod +x ~/manjaro_init.sh
+
 chmod +x ~/vs-code-extensions-installer.sh
 cp -f ~/terminal-custom/vscode_extensions.list ~
 
