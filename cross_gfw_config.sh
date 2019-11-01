@@ -58,8 +58,14 @@ function install_v2ray_client() {
         else
             colorEcho ${BLUE} "Updating v2ray-core..."
         fi
+
         # bash <(curl -L -s https://install.direct/go.sh)
-        DOWNLOAD_URL=https://github.com/v2ray/v2ray-core/releases/download/v${REMOTE_VERSION}/v2ray-${ostype}-${VDIS}.zip
+
+        echo "Download URL for v2ray-core?"
+        read -p "[Use github by default] " DOWNLOAD_URL
+        [[ -z "$DOWNLOAD_URL" ]] && \
+            DOWNLOAD_URL=https://github.com/v2ray/v2ray-core/releases/download/v${REMOTE_VERSION}/v2ray-${ostype}-${VDIS}.zip
+
         curl -SL $DOWNLOAD_URL -o v2ray-core.zip && \
             bash <(curl -L -s https://install.direct/go.sh) --local ./v2ray-core.zip && \
             rm -f ./v2ray-core.zip && \
@@ -289,9 +295,11 @@ else
         install_v2ray_client
     fi
 
-    if get_v2ray_config_from_subscription; then
-        colorEcho ${BLUE} "Socks proxy address: ${PROXY_URL}"
-    else
-        colorEcho ${RED} "Something wrong when setup proxy ${PROXY_URL}!"
+    if [[ -x "$(command -v v2ray)" ]]; then
+        if get_v2ray_config_from_subscription; then
+            colorEcho ${BLUE} "Socks proxy address: ${PROXY_URL}"
+        else
+            colorEcho ${RED} "Something wrong when setup proxy ${PROXY_URL}!"
+        fi
     fi
 fi
