@@ -62,8 +62,8 @@ if [[ ! -d "$DOWNLOAD_DIR" ]]; then
     exit 1
 fi
 
-
-# read -p "Please input download URL?[https://example.com/downloads]" DOWNLOAD_URL
+# echo "Please input download URL?"
+# read -p "[https://example.com/downloads] " DOWNLOAD_URL
 # DOWNLOAD_URL=$(echo $DOWNLOAD_URL \
 #                 | grep -Eo '(https|http|ftp)://[a-zA-Z0-9\+\!\.\?\|,:;/=~_-$%#&@]*')
 # # trim last character with /

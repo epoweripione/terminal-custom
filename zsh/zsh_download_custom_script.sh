@@ -36,7 +36,7 @@ ostype=$(uname)
 # fi
 
 
-colorEcho ${BLUE} "Cloning custom shell script repository to HOME..."
+colorEcho ${BLUE} "Cloning custom shell script repository to $HOME/terminal-custom..."
 if [[ -d ~/terminal-custom ]]; then
     cd ~/terminal-custom && git pull
 else
@@ -45,7 +45,7 @@ fi
 
 
 # copy shell script to HOME
-colorEcho ${BLUE} "Copying shell script to HOME..."
+colorEcho ${BLUE} "Copying shell script to $HOME..."
 cp -f ~/terminal-custom/*.sh ~
 chmod +x ~/hosts_update.sh
 chmod +x ~/generate_random_string.sh
@@ -134,7 +134,7 @@ if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; t
 fi
 
 
-colorEcho ${BLUE} "copy zsh custom plugins & theme to ZSH/custom..."
+colorEcho ${BLUE} "copy zsh custom plugins & theme to $ZSH/custom..."
 if [[ -d $ZSH/custom ]]; then
     # zsh custom plugins
     [ -d ~/terminal-custom/zsh/plugins ] && cp -f ~/terminal-custom/zsh/plugins/* $ZSH/custom/plugins

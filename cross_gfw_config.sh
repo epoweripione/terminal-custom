@@ -77,11 +77,11 @@ function get_v2ray_config_from_subscription() {
     local DECODE_FILENAME="/tmp/v2ray_decode.vmess"
 
     colorEcho ${BLUE} "Geting v2ray subscriptions..."
-    curl -sSf --connect-timeout 5 --max-time 15 "${SUB_URL}" -o "${VMESS_FILENAME}"
+    curl -sSf --connect-timeout 10 --max-time 30 "${SUB_URL}" -o "${VMESS_FILENAME}"
 
     if [[ -s "${VMESS_FILENAME}" ]]; then
         base64 -d "${VMESS_FILENAME}" > "${DECODE_FILENAME}"
-        sed -i 's|^vmess://||g' "${DECODE_FILENAME}"
+        sed -i -e 's|^vmess://||g' -e '/^ss:\/\//d' "${DECODE_FILENAME}"
     fi
 
     if [[ ! -s "${DECODE_FILENAME}" ]]; then
@@ -111,10 +111,13 @@ function get_v2ray_config_from_subscription() {
         [[ -z "${READLINE}" ]] && continue
 
         VMESS_CONFIG=$(echo "${READLINE}" | base64 -di | sed -e 's/[{}", ]//g' -e 's/\r//g')
+        [[ -z "${VMESS_CONFIG}" ]] && continue
 
         VMESS_PS=$(echo "${VMESS_CONFIG}" | grep '^ps:' | cut -d':' -f2-)
         VMESS_ADDR=$(echo "${VMESS_CONFIG}" | grep '^add:' | cut -d':' -f2)
         VMESS_PORT=$(echo "${VMESS_CONFIG}" | grep '^port:' | cut -d':' -f2)
+        [[ -z "${VMESS_ADDR}" || -z "${VMESS_PORT}" ]] && continue
+
         VMESS_USER_ID=$(echo "${VMESS_CONFIG}" | grep '^id:' | cut -d':' -f2)
         VMESS_USER_ALTERID=$(echo "${VMESS_CONFIG}" | grep '^aid:' | cut -d':' -f2)
         VMESS_NETWORK=$(echo "${VMESS_CONFIG}" | grep '^net:' | cut -d':' -f2)
@@ -255,7 +258,7 @@ EOF
         # check the config file
         if v2ray -test -config /etc/v2ray/config.json; then
             # restart v2ray client
-            service v2ray restart
+            service v2ray restart && sleep 1
 
             # check the proxy work or not
             if check_socks5_proxy_up ${PROXY_URL}; then

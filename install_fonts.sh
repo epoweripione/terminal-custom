@@ -100,7 +100,8 @@ colorEcho ${BLUE} "Downloading nerd-fonts & font-patcher..."
 # 	mv ~/nerd-fonts.zip /srv/web/www/default
 
 # Download from remote server
-read -p "Download URL for nerd-fonts repository?[Use git clone if empty]" NerdFont_URL
+echo "Download URL for nerd-fonts repository?"
+read -p "[Use git clone if empty] " NerdFont_URL
 if [[ -z "$NerdFont_URL" ]]; then
 	if [[ -d "~/nerd-fonts" ]]; then
 		cd ~/nerd-fonts && git pull

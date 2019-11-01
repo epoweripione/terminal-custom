@@ -44,13 +44,15 @@ if [[ ! -s "$ZSH_CUSTOM/themes/agnosterzak-my.zsh-theme" ]]; then
     if check_webservice_up www.google.com; then
         :
     else
-        read -p "Download URL for oh-my-zsh custom plugins & themes?[Use github by default]" OHMYZSH_CUSTOM_URL
+        echo "Download URL for oh-my-zsh custom plugins & themes?"
+        read -p "[Use github by default] " OHMYZSH_CUSTOM_URL
     fi
 
     if [[ -n "$OHMYZSH_CUSTOM_URL" ]]; then
-        curl -SL -o /tmp/oh-my-zsh-custom.zip "${OHMYZSH_CUSTOM_URL}" && \
+        curl -SL -o "/tmp/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
             rm -rf "$ZSH_CUSTOM" && \
-            unzip -qo "/tmp/oh-my-zsh-custom.zip" -d "$ZSH"
+            unzip -qo "/tmp/oh-my-zsh-custom.zip" -d "$ZSH" && \
+            rm -f "/tmp/oh-my-zsh-custom.zip"
     fi
 fi
 
