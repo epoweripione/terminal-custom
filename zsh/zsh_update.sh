@@ -40,7 +40,7 @@ fi
 
 
 # oh-my-zsh custom plugins & themes
-if [[ ! -s "$ZSH_CUSTOM/themes/agnosterzak-my.zsh-theme" ]]; then
+if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
     if check_webservice_up www.google.com; then
         :
     else
@@ -193,13 +193,13 @@ fi
 [[ -L $ZSH_CUSTOM/themes/spaceship.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/spaceship.zsh-theme
 ln -s $ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme $ZSH_CUSTOM/themes/spaceship.zsh-theme
 
-# powerlevel9k
-colorEcho ${BLUE} "Updating powerlevel9k..."
-if [[ -d $ZSH_CUSTOM/themes/powerlevel9k ]]; then
-    cd $ZSH_CUSTOM/themes/powerlevel9k && git pull
-else
-    git clone https://github.com/bhilburn/powerlevel9k $ZSH_CUSTOM/themes/powerlevel9k
-fi
+# # powerlevel9k
+# colorEcho ${BLUE} "Updating powerlevel9k..."
+# if [[ -d $ZSH_CUSTOM/themes/powerlevel9k ]]; then
+#     cd $ZSH_CUSTOM/themes/powerlevel9k && git pull
+# else
+#     git clone https://github.com/bhilburn/powerlevel9k $ZSH_CUSTOM/themes/powerlevel9k
+# fi
 
 [[ -L $ZSH_CUSTOM/themes/powerlevel9k.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/powerlevel9k.zsh-theme
 ln -s $ZSH_CUSTOM/themes/powerlevel9k/powerlevel9k.zsh-theme $ZSH_CUSTOM/themes/powerlevel9k.zsh-theme

@@ -50,9 +50,13 @@ if [[ ! -x "$(command -v docker)" ]]; then
             systemctl start docker
 
         # fix: Error response from daemon: OCI runtime create failed: 
-        # ...write /proc/self/attr/keycreate: permission denied\
-        yum -y install \
-            http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.107-1.el7_6.noarch.rpm
+        # ...write /proc/self/attr/keycreate: permission denied
+        OS_VERSION_ID=$(grep -E '^VERSION_ID=([a-zA-Z]*)' /etc/os-release \
+                        | cut -d'=' -f2 | sed 's/\"//g' | cut -d'.' -f1)
+        if [[ "$OS_VERSION_ID" == "7" ]]; then
+            yum -y install \
+                http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.107-1.el7_6.noarch.rpm
+        fi
     fi
 
     # SUSE Linux Enterprise Server

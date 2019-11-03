@@ -101,16 +101,16 @@ echo -e "3.agnosterzak"
 echo -e "4.agnosterzak-my"
 echo -e "5.agkozak"
 echo -e "6.alien"
-echo -e "7.powerlevel9k"
-echo -e "8.powerlevel10k"
-echo -e "9.spaceship"
-echo -e "A.pure"
+echo -e "7.powerlevel10k"
+echo -e "8.spaceship"
+echo -e "9.pure"
 
 while :; do
     echo
 	read -p "Please choose theme(enter to exit):" CHOICE
     [[ -z "$CHOICE" ]] && exit 0
-	if [[ ! $CHOICE =~ ^[0-9a-zA-Z]$ ]]; then
+	# if [[ ! $CHOICE =~ ^[0-9a-zA-Z]$ ]]; then
+	if [[ ! $CHOICE =~ ^[0-9]$ ]]; then
 		colorEcho ${RED} "Input error, please choose theme from above!"
 	else
 		break
@@ -137,15 +137,12 @@ case "$CHOICE" in
         changeTheme "alien"
         ;;
     7)
-        changeTheme "powerlevel9k"
-        ;;
-    8)
         changeTheme "powerlevel10k"
         ;;
-    9)
+    8)
         changeTheme "spaceship"
         ;;
-    a | A)
+    9)
         changeTheme "pure"
         ;;
     *)
