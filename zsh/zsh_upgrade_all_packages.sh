@@ -17,7 +17,7 @@ set_proxy_mirrors_env
 
 # Github proxy
 if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
-    [[ -s "$HOME/cross_gfw_config.sh" ]] && source "$HOME/cross_gfw_config.sh"
+    [[ -s "$HOME/cross_gfw_config.sh" ]] && bash "$HOME/cross_gfw_config.sh"
     set_git_socks5_proxy github.com,gitlab.com 127.0.0.1:55880
 fi
 
