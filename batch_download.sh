@@ -115,7 +115,7 @@ done < "$DOWNLOAD_FILES_URL"
 
 # # oh-my-zsh custom
 # # cd ~/.oh-my-zsh && \
-# #     zip -qr ~/oh-my-zsh-custom.zip ./custom && \
+# #     zip -qyr ~/oh-my-zsh-custom.zip ./custom && \
 # #     mv ~/oh-my-zsh-custom.zip /srv/web/www/default
 # if [[ -s "${DOWNLOAD_DIR}/oh-my-zsh-custom.zip" && -d "$HOME/.oh-my-zsh" ]]; then
 #     rm -rf "$HOME/.oh-my-zsh/custom"
@@ -129,7 +129,7 @@ done < "$DOWNLOAD_FILES_URL"
 # #     git clone https://github.com/zagortenay333/Harmattan $HOME/Harmattan
 # # fi
 # # cd ~ && \
-# #     zip -qr ~/Harmattan.zip ./Harmattan && \
+# #     zip -qyr ~/Harmattan.zip ./Harmattan && \
 # #     mv ~/Harmattan.zip /srv/web/www/default
 # if [[ -s "${DOWNLOAD_DIR}/Harmattan.zip" ]]; then
 #     [[ -d "$HOME/Harmattan" ]] && rm -rf "$HOME/Harmattan"
@@ -145,7 +145,7 @@ done < "$DOWNLOAD_FILES_URL"
 # # 		curl -SL -o ~/nerd-fonts/font-patcher \
 # # 			https://github.com/ryanoasis/nerd-fonts/raw/3241ea6e44191ec89c0260f51112dec691363ebd/font-patcher
 # # 	: && \
-# # 	cd ~ && zip -q -r nerd-fonts.zip ./nerd-fonts && \
+# # 	cd ~ && zip -qyr nerd-fonts.zip ./nerd-fonts && \
 # # 	mv ~/nerd-fonts.zip /srv/web/www/default
 # if [[ -s "${DOWNLOAD_DIR}/nerd-fonts.zip" ]]; then
 #     [[ -d "$HOME/nerd-fonts" ]] && rm -rf "$HOME/nerd-fonts"

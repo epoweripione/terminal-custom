@@ -82,7 +82,7 @@ fi
 
 
 # nano-syntax-highlighting
-if [[ -d ~/.local/share/nano ]]; then
+if [[ -d ~/.local/share/nano/.git ]]; then
     cd ~/.local/share/nano && git pull
 else
     mkdir -p ~/.local/share/nano

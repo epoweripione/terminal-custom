@@ -31,7 +31,7 @@ CHECK_URL="https://api.github.com/repos/fatedier/frp/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 if [[ -n "$REMOTE_VERSION" ]]; then
     DOWNLOAD_URL=https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_${ostype}_${spruce_type}.tar.gz
-    curl -SL $DOWNLOAD_URL -o frp.tar.gz && \
+    curl -SL -o frp.tar.gz $DOWNLOAD_URL && \
         tar -zxPf frp.tar.gz -C /srv/ && \
         rm frp.tar.gz && \
         mkdir -p /srv/frp && \

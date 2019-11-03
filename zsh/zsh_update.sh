@@ -45,7 +45,8 @@ if [[ ! -s "$ZSH_CUSTOM/themes/agnosterzak-my.zsh-theme" ]]; then
         :
     else
         echo "Download URL for oh-my-zsh custom plugins & themes?"
-        read -p "[Use github by default] " OHMYZSH_CUSTOM_URL
+        echo -n "[Use github by default] "
+        read OHMYZSH_CUSTOM_URL
     fi
 
     if [[ -n "$OHMYZSH_CUSTOM_URL" ]]; then
@@ -309,7 +310,7 @@ sed -i "${LineBegin}a\\${Plugins}" ~/.zshrc
 
 # nano
 colorEcho ${BLUE} "Updating nano-syntax-highlighting..."
-if [[ -d ~/.local/share/nano ]]; then
+if [[ -d ~/.local/share/nano/.git ]]; then
     cd ~/.local/share/nano && git pull
 else
     git clone https://github.com/scopatz/nanorc ~/.local/share/nano

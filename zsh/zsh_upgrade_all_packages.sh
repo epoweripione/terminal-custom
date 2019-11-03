@@ -18,7 +18,13 @@ set_proxy_mirrors_env
 # Github proxy
 if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
     [[ -s "$HOME/cross_gfw_config.sh" ]] && bash "$HOME/cross_gfw_config.sh"
+
     set_git_socks5_proxy github.com,gitlab.com 127.0.0.1:55880
+
+    CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
+    cat /dev/null > ${CURL_SOCKS5_CONFIG}
+    [[ -n "$GIT_SOCKS5_PROXY_URL" ]] && \
+        echo "--socks5-hostname \"${GIT_SOCKS5_PROXY_URL}\"" > ${CURL_SOCKS5_CONFIG}
 fi
 
 # ostype: darwin, windows, linux, bsd, solaris
@@ -116,7 +122,7 @@ if [[ $UID -eq 0 && -x "$(command -v docker-compose)" ]]; then
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         DOWNLOAD_URL=https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`
-        curl -SL $DOWNLOAD_URL -o /tmp/docker-compose && \
+        curl -SL --config ${CURL_SOCKS5_CONFIG} -o /tmp/docker-compose $DOWNLOAD_URL && \
             mv -f /tmp/docker-compose /usr/local/bin/docker-compose && \
             chmod +x /usr/local/bin/docker-compose
     fi
@@ -137,7 +143,7 @@ if [[ $UID -eq 0 && -x "$(command -v ctop)" ]]; then
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         DOWNLOAD_URL=https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}
-        curl -SL $DOWNLOAD_URL -o /tmp/ctop && \
+        curl -SL --config ${CURL_SOCKS5_CONFIG} -o /tmp/ctop $DOWNLOAD_URL && \
             mv -f /tmp/ctop /usr/local/bin/ctop && \
             chmod +x /usr/local/bin/ctop
     fi
@@ -353,7 +359,7 @@ if [[ -d "/srv/proxy-web" ]]; then
         fi
 
         DOWNLOAD_URL=https://github.com/yincongcyincong/proxy-web/releases/download/${REMOTE_VERSION}/proxy-web-${ostype}-${spruce_type}.tar.gz
-        curl -SL $DOWNLOAD_URL -o proxy-web.tar.gz && \
+        curl -SL --config ${CURL_SOCKS5_CONFIG} -o proxy-web.tar.gz $DOWNLOAD_URL && \
             mkdir -p /srv/backup_proxy-web && \
             cp -f /srv/proxy-web/config/*.ini /srv/backup_proxy-web/ && \
             tar -zxPf proxy-web.tar.gz -C /srv/ && \
@@ -382,7 +388,7 @@ if [[ -d "/srv/frp" ]]; then
         fi
 
         DOWNLOAD_URL=https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_${ostype}_${spruce_type}.tar.gz
-        curl -SL $DOWNLOAD_URL -o frp.tar.gz && \
+        curl -SL --config ${CURL_SOCKS5_CONFIG} -o frp.tar.gz $DOWNLOAD_URL && \
             tar -zxPf frp.tar.gz -C /srv/ && \
             rm frp.tar.gz && \
             mkdir -p /srv/backup_frp && \
@@ -439,7 +445,7 @@ if [[ $UID -ne 0 && -n "$V2RAYCORE" ]]; then
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         # bash <(curl -L -s https://install.direct/go.sh)
         DOWNLOAD_URL=https://github.com/v2ray/v2ray-core/releases/download/v${REMOTE_VERSION}/v2ray-${ostype}-${VDIS}.zip
-        curl -SL $DOWNLOAD_URL -o v2ray-core.zip && \
+        curl -SL --config ${CURL_SOCKS5_CONFIG} -o v2ray-core.zip $DOWNLOAD_URL && \
             bash <(curl -L -s https://install.direct/go.sh) --local ./v2ray-core.zip && \
             rm -f ./v2ray-core.zip && \
             ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true

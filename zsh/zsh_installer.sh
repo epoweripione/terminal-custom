@@ -91,7 +91,7 @@ if [[ ! -x "$(command -v zsh)" ]]; then
             command -v zsh | sudo tee -a /etc/shells
         fi
     else
-        sudo pacman -S zsh
+        sudo pacman --noconfirm -S zsh
     fi
 fi
 
