@@ -277,6 +277,8 @@ git clone --depth 1 https://github.com/kuiba1949/conky-weather $HOME/.conky/conk
     sed -i 's/alignment top_right/alignment middle_middle/' $HOME/.conky/conky-weather/conkyrc_mini && \
     sed -i 's/WenQuanYi Zen Hei/font Sarasa Term SC/g' $HOME/.conky/conky-weather/conkyrc_mini && \
     sed -i 's/gap_y.*/gap_y 20/' $HOME/.conky/conky-weather/conkyrc_mini && \
+    sed -i 's/draw_borders.*/draw_borders = false,/' $HOME/.conky/conky-weather/conkyrc_mini && \
+    sed -i '/own_window_colour/,$d' $HOME/.conky/conky-weather/conkyrc_mini && \
     # sed -i '/提醒/,$d' $HOME/.conky/conky-weather/conkyrc_mini && \
     : && \
     lua $HOME/conky-convert.lua $HOME/.conky/conky-weather/conkyrc_mini && \
@@ -368,7 +370,8 @@ EOF
 
 chmod +x $HOME/.conky/autostart.sh
 if [[ ! $(grep "autostart.sh" $HOME/.xprofile) ]]; then
-    echo "$HOME/.conky/autostart.sh &" >> $HOME/.xprofile
+    # echo "$HOME/.conky/autostart.sh &" >> $HOME/.xprofile
+    echo "$HOME/.conky/autostart.sh >/dev/null 2>&1 & disown" >> $HOME/.xprofile
 fi
 
 # mkdir -p $HOME/.config/autostart
@@ -508,7 +511,7 @@ yay -Yc
 
 # Reset curl proxy
 if [[ "$CURL_PROXY_CHOICE" == 'y' || "$CURL_PROXY_CHOICE" == 'Y' ]]; then
-    read -p "Rest curl socks5 proxy?[Y/n]:" CHOICE
+    read -p "Reset curl socks5 proxy?[Y/n]:" CHOICE
     [[ -z "$CHOICE" ]] && CHOICE=Y
     if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]
         sed -i "/^--socks5-hostname.*/d" $HOME/.curlrc

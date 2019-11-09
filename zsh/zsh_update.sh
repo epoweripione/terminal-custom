@@ -50,7 +50,8 @@ if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
     fi
 
     if [[ -n "$OHMYZSH_CUSTOM_URL" ]]; then
-        curl -SL -o "/tmp/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
+        # curl -SL -o "/tmp/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
+        wget -c -O "/tmp/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
             rm -rf "$ZSH_CUSTOM" && \
             unzip -qo "/tmp/oh-my-zsh-custom.zip" -d "$ZSH" && \
             rm -f "/tmp/oh-my-zsh-custom.zip"
@@ -73,13 +74,11 @@ else
 fi
 
 if [[ $ostype == "darwin" ]]; then
-    cd $HOME/neofetch && make PREFIX=/usr/local install
+    cd $HOME/neofetch && sudo make PREFIX=/usr/local install
 elif [[ $ostype =~ "windows" ]]; then
-    cd $HOME/neofetch && make -i install
+    cd $HOME/neofetch && sudo make -i install
 else
-    if [[ $UID -eq 0 ]]; then
-        cd $HOME/neofetch && make install
-    fi
+    cd $HOME/neofetch && sudo make install
 fi
 
 if [[ -x "$(command -v neofetch)" ]]; then
@@ -92,23 +91,27 @@ fi
 if [[ $UID -eq 0 ]]; then
     colorEcho ${BLUE} "Updating fzf..."
     if [[ ! -x "$(command -v fzf)" ]]; then
-        git clone --depth 1 https://github.com/junegunn/fzf ~/.fzf
-        ~/.fzf/install
+        git clone --depth 1 https://github.com/junegunn/fzf ~/.fzf && \
+            ~/.fzf/install
     else
         cd ~/.fzf && git pull && ./install --bin
+    fi
+else
+    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+        if pacman -Si fzf >/dev/null 2>&1; then
+            sudo pacman --noconfirm -S fzf
+        fi
     fi
 fi
 
 
 # navi
-# if [[ $UID -eq 0 ]]; then
-#     colorEcho ${BLUE} "Updating navi..."
-#     if [[ ! -x "$(command -v navi)" ]]; then
-#         git clone --depth 1 http://github.com/denisidoro/navi /opt/navi
-#         cd /opt/navi && make install
-#     else
-#         cd /opt/navi && git pull && make update
-#     fi
+# colorEcho ${BLUE} "Updating navi..."
+# if [[ ! -x "$(command -v navi)" ]]; then
+#     git clone --depth 1 http://github.com/denisidoro/navi /opt/navi
+#     cd /opt/navi && sudo make install
+# else
+#     cd /opt/navi && git pull && sudo make update
 # fi
 
 

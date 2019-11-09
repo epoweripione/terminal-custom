@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [[ $UID -ne 0 ]]; then
-    echo "Please run this script as root user!"
-    exit 0
-fi
+# if [[ $UID -ne 0 ]]; then
+#     echo "Please run this script as root user!"
+#     exit 0
+# fi
 
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
@@ -66,10 +66,10 @@ function install_v2ray_client() {
         [[ -z "$DOWNLOAD_URL" ]] && \
             DOWNLOAD_URL=https://github.com/v2ray/v2ray-core/releases/download/v${REMOTE_VERSION}/v2ray-${ostype}-${VDIS}.zip
 
-        curl -SL $DOWNLOAD_URL -o v2ray-core.zip && \
-            bash <(curl -L -s https://install.direct/go.sh) --local ./v2ray-core.zip && \
+        curl -SL -o v2ray-core.zip $DOWNLOAD_URL && \
+            curl -sL https://install.direct/go.sh | sudo bash -s -- --local ./v2ray-core.zip && \
             rm -f ./v2ray-core.zip && \
-            ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
+            sudo ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
     fi
 }
 
@@ -204,8 +204,8 @@ function get_v2ray_config_from_subscription() {
         fi
 
         # Gen config file
-        # tee /etc/v2ray/config.json <<-EOF
-        cat >/etc/v2ray/config.json <<-EOF
+        # cat >/etc/v2ray/config.json <<-EOF
+        sudo tee /etc/v2ray/config.json >/dev/null <<-EOF
 {
     "inbounds": [{
             "tag": "proxy",
@@ -259,12 +259,13 @@ function get_v2ray_config_from_subscription() {
 EOF
 
         # removed ^M
-        sed -i -e 's/'$(echo "\013")'//g' -e 's/\r//g' /etc/v2ray/config.json
+        sudo sed -i -e 's/'$(echo "\013")'//g' -e 's/\r//g' /etc/v2ray/config.json
 
         # check the config file
         if v2ray -test -config /etc/v2ray/config.json; then
             # restart v2ray client
-            service v2ray restart && sleep 1
+            # service v2ray restart && sleep 1
+            sudo systemctl restart v2ray && sleep 1
 
             # check the proxy work or not
             if check_socks5_proxy_up ${PROXY_URL}; then

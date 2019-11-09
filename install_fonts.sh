@@ -111,7 +111,7 @@ if [[ -z "$NerdFont_URL" ]]; then
 	# rm -rf ~/nerd-fonts/patched-fonts
 else
 	[[ -d "~/nerd-fonts" ]] && rm -rf ~/nerd-fonts
-	curl -SL -o ~/nerd-fonts.zip "$NerdFont_URL" && \
+	wget -c -O ~/nerd-fonts.zip "$NerdFont_URL" && \
 		unzip -q nerd-fonts.zip -d ~
 fi
 

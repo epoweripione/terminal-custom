@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [[ $UID -ne 0 ]]; then
-    echo "Please run this script as root user!"
-    exit 0
-fi
+# if [[ $UID -ne 0 ]]; then
+#     echo "Please run this script as root user!"
+#     exit 0
+# fi
 
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
@@ -96,14 +96,14 @@ if [[ $(grep "^# Github Start" ${HostsFile}) ]]; then
     if [[ -n "$LineBegin" && -n "$LineEnd" ]]; then
         DeleteBegin=$((${LineBegin}+1))
         DeleteEnd=$((${LineEnd}-1))
-        sed -i "${DeleteBegin},${DeleteEnd}d" ${HostsFile}
+        sudo sed -i "${DeleteBegin},${DeleteEnd}d" ${HostsFile}
 
         LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
     fi
 else
     # echo -e "\n# Github Start" | tee -a ${HostsFile}
     IP_HOSTS="# Github Start"
-    sed -i "/github/d" ${HostsFile}
+    sudo sed -i "/github/d" ${HostsFile}
 fi
 
 # https://amazonaws.com.ipaddress.com/github-cloud.s3.amazonaws.com
@@ -152,12 +152,12 @@ if [[ -n "$IP_HOSTS" ]]; then
     fi
 
     if [[ -n "$LineBegin" ]]; then
-        sed -i "${LineBegin}a ${IP_HOSTS}" ${HostsFile}
+        sudo sed -i "${LineBegin}a ${IP_HOSTS}" ${HostsFile}
     elif [[ -n "$LineEnd" ]]; then
-        sed -i "${LineEnd}i ${IP_HOSTS}" ${HostsFile}
+        sudo sed -i "${LineEnd}i ${IP_HOSTS}" ${HostsFile}
     else
-        # echo -e "${IP_HOSTS}" | tee -a ${HostsFile}
-        echo -e "${IP_HOSTS}" >> ${HostsFile}
+        # echo -e "${IP_HOSTS}" | sudo tee -a ${HostsFile}
+        echo -e "${IP_HOSTS}" | sudo tee -a ${HostsFile} >/dev/null
     fi
 fi
 
@@ -167,19 +167,19 @@ if [[ "$ostype" == "windows" ]]; then
     ipconfig -flushdns || true
 else
     [[ -s "/lib/systemd/system/systemd-resolved.service" ]] && \
-        ln -sf /lib/systemd/system/systemd-resolved.service \
+        sudo ln -sf /lib/systemd/system/systemd-resolved.service \
             /etc/systemd/system/dbus-org.freedesktop.resolve1.service || true
 
-    [[ -x "$(command -v systemd-resolve)" ]] && systemd-resolve --flush-caches
+    [[ -x "$(command -v systemd-resolve)" ]] && sudo systemd-resolve --flush-caches
 
     [[ -s "/etc/init.d/dns-clean" ]] && /etc/init.d/dns-clean start
 
     if [[ $(systemctl is-enabled systemd-resolved 2>/dev/null) ]]; then
-        systemctl restart systemd-resolved.service
+        sudo systemctl restart systemd-resolved.service
     fi
 
     if [[ $(systemctl is-enabled dnsmasq 2>/dev/null) ]]; then
-        systemctl restart dnsmasq.service
+        sudo systemctl restart dnsmasq.service
     fi
 fi
 

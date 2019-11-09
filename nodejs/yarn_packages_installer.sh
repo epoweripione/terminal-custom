@@ -81,6 +81,7 @@ colorEcho ${BLUE} "Installing quasar/cli..."
 yarn global add @quasar/cli
 
 colorEcho ${BLUE} "Installing storybook/cli..."
+yarn global add react react-dom
 yarn global add @storybook/cli
 
 colorEcho ${BLUE} "Installing parcel-bundler..."

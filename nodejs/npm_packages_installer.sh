@@ -73,6 +73,7 @@ colorEcho ${BLUE} "Installing quasar/cli..."
 npm install -g @quasar/cli
 
 colorEcho ${BLUE} "Installing storybook/cli..."
+npm install -g react react-dom
 npm install -g @storybook/cli
 
 colorEcho ${BLUE} "Installing parcel-bundler..."

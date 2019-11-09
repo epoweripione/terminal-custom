@@ -108,7 +108,7 @@ while read -r TargetUrl; do
         colorEcho ${BLUE} "Downloading ${TargetUrl}..."
         # TargetFileName=$(echo "${TargetUrl}" | awk -F '/' '{print $NF}')
         # curl -SL -o "${TargetFileName}" "${TargetUrl}"
-        curl -SL -O "${TargetUrl}"
+        wget -c "${TargetUrl}"
     fi
 done < "$DOWNLOAD_FILES_URL"
 

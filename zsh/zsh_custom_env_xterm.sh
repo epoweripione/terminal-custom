@@ -3,4 +3,7 @@
 # export LC_CTYPE="en_US.UTF-8"
 
 export TERM="xterm-256color"
-PROMPT_EOL_MARK=""
+export COLORTERM="truecolor"
+
+# https://superuser.com/questions/645599/why-is-a-percent-sign-appearing-before-each-prompt-on-zsh-in-windows/645612
+export PROMPT_EOL_MARK=""

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [[ $UID -ne 0 ]]; then
-    echo "Please run this script as root user!"
-    exit 0
-fi
+# if [[ $UID -ne 0 ]]; then
+#     echo "Please run this script as root user!"
+#     exit 0
+# fi
 
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
@@ -66,18 +66,18 @@ fi
 if [[ -n "$BAT_FILENAME" ]]; then
     colorEcho ${BLUE} "Installing bat..."
     if [[ -s "/usr/bin/bat" ]]; then
-        rm -f /usr/bin/bat
+        sudo rm -f /usr/bin/bat
     fi
 
     if [[ -s "/usr/local/bat/bat" ]]; then
-        rm -rf /usr/local/bat
+        sudo rm -rf /usr/local/bat
     fi
 
     DOWNLOAD_URL=https://github.com/sharkdp/bat/releases/download/${REMOTE_VERSION}/${BAT_FILENAME}
     curl -SL -o bat.tar.gz $DOWNLOAD_URL && \
-        tar -zxPf bat.tar.gz -C /usr/local && \
+        sudo tar -zxPf bat.tar.gz -C /usr/local && \
         rm -f bat.tar.gz && \
         cd /usr/local && \
-        mv bat-* bat && \
-        ln -sv /usr/local/bat/bat /usr/bin/bat || true
+        sudo mv bat-* bat && \
+        sudo ln -sv /usr/local/bat/bat /usr/bin/bat || true
 fi

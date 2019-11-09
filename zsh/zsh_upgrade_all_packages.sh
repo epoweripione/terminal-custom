@@ -113,7 +113,7 @@ if [[ "$isUpgrade" == "yes" ]]; then
 fi
 
 
-if [[ $UID -eq 0 && -x "$(command -v docker-compose)" ]]; then
+if [[ -x "$(command -v docker-compose)" ]]; then
     colorEcho ${BLUE} "Updating docker-compose..."
 
     CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
@@ -123,13 +123,13 @@ if [[ $UID -eq 0 && -x "$(command -v docker-compose)" ]]; then
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         DOWNLOAD_URL=https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`
         curl -SL --config ${CURL_SOCKS5_CONFIG} -o /tmp/docker-compose $DOWNLOAD_URL && \
-            mv -f /tmp/docker-compose /usr/local/bin/docker-compose && \
-            chmod +x /usr/local/bin/docker-compose
+            sudo mv -f /tmp/docker-compose /usr/local/bin/docker-compose && \
+            sudo chmod +x /usr/local/bin/docker-compose
     fi
 fi
 
 
-if [[ $UID -eq 0 && -x "$(command -v ctop)" ]]; then
+if [[ -x "$(command -v ctop)" ]]; then
     colorEcho ${BLUE} "Updating ctop..."
     if uname -m | grep -Eqi "amd64|x86_64"; then
         DOWNLOAD_FILE_SUFFIX='linux-amd64'
@@ -144,8 +144,8 @@ if [[ $UID -eq 0 && -x "$(command -v ctop)" ]]; then
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         DOWNLOAD_URL=https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}
         curl -SL --config ${CURL_SOCKS5_CONFIG} -o /tmp/ctop $DOWNLOAD_URL && \
-            mv -f /tmp/ctop /usr/local/bin/ctop && \
-            chmod +x /usr/local/bin/ctop
+            sudo mv -f /tmp/ctop /usr/local/bin/ctop && \
+            sudo chmod +x /usr/local/bin/ctop
     fi
 fi
 
@@ -219,13 +219,13 @@ if [[ -d "$HOME/.gvm" ]]; then
 fi
 
 
-if [[ $UID -eq 0 && -x "$(command -v php)" && -x "$(command -v composer)" ]]; then
+if [[ -x "$(command -v php)" && -x "$(command -v composer)" ]]; then
     colorEcho ${BLUE} "Updating composer & composer global packages..."
     composer selfupdate && composer g update
 fi
 
 
-if [[ $UID -eq 0 && -x "$(command -v micro)" ]]; then
+if [[ && -x "$(command -v micro)" ]]; then
     colorEcho ${BLUE} "Updating Micro editor..."
 
     CHECK_URL="https://api.github.com/repos/zyedidia/micro/releases/latest"
@@ -233,7 +233,7 @@ if [[ $UID -eq 0 && -x "$(command -v micro)" ]]; then
     CURRENT_VERSION=$(micro -version | grep Version | cut -d',' -f2)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        cd /usr/local/bin && curl https://getmic.ro | bash && cd $HOME
+        cd /usr/local/bin && curl https://getmic.ro | sudo bash && cd $HOME
     fi
 fi
 
@@ -304,7 +304,7 @@ if [[ -d "$HOME/.sdkman" ]]; then
 fi
 
 
-if [[ -x "$(command -v proxy)" ]]; then
+if [[ -s "/usr/bin/proxy" && -x "$(command -v proxy)" ]]; then
     colorEcho ${BLUE} "Updating goproxy..."
     # https://github.com/snail007/goproxy
 
@@ -433,7 +433,7 @@ elif [[ $(systemctl is-enabled v2ray 2>/dev/null) ]]; then
     V2RAYCORE="yes"
 fi
 
-if [[ $UID -ne 0 && -n "$V2RAYCORE" ]]; then
+if [[ -n "$V2RAYCORE" ]]; then
     colorEcho ${BLUE} "Updating v2ray-core..."
     # https://www.v2ray.com/chapter_00/install.html
 
@@ -446,9 +446,9 @@ if [[ $UID -ne 0 && -n "$V2RAYCORE" ]]; then
         # bash <(curl -L -s https://install.direct/go.sh)
         DOWNLOAD_URL=https://github.com/v2ray/v2ray-core/releases/download/v${REMOTE_VERSION}/v2ray-${ostype}-${VDIS}.zip
         curl -SL --config ${CURL_SOCKS5_CONFIG} -o v2ray-core.zip $DOWNLOAD_URL && \
-            bash <(curl -L -s https://install.direct/go.sh) --local ./v2ray-core.zip && \
+            curl -sL https://install.direct/go.sh | sudo bash -s -- --local ./v2ray-core.zip && \
             rm -f ./v2ray-core.zip && \
-            ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
+            sudo ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
     fi
 fi
 

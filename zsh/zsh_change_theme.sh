@@ -39,7 +39,7 @@ changeTheme() {
     fi
 
     # change theme
-    sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme_name}\"/" ~/.zshrc
+    sed -i "s|^ZSH_THEME=.*|ZSH_THEME=\"${theme_name}\"|" ~/.zshrc
 
     # custom theme configuration
     sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
