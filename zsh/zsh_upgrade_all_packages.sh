@@ -225,7 +225,7 @@ if [[ -x "$(command -v php)" && -x "$(command -v composer)" ]]; then
 fi
 
 
-if [[ && -x "$(command -v micro)" ]]; then
+if [[ -x "$(command -v micro)" ]]; then
     colorEcho ${BLUE} "Updating Micro editor..."
 
     CHECK_URL="https://api.github.com/repos/zyedidia/micro/releases/latest"
