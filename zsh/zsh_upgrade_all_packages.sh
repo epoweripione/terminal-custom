@@ -47,14 +47,14 @@ if [[ -x "$(command -v pacapt)" ]]; then
 
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "Updating pacapt - An Arch's pacman-like package manager for some Unices..."
-        sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /tmp/pacapt && \
+        sudo curl -SL -o /tmp/pacapt https://github.com/icy/pacapt/raw/ng/pacapt && \
             sudo mv -f /tmp/pacapt /usr/bin/pacapt && \
             sudo chmod 755 /usr/bin/pacapt && \
             sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
     fi
 else
     colorEcho ${BLUE} "Installing pacapt - An Arch's pacman-like package manager for some Unices..."
-    sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /tmp/pacapt && \
+    sudo curl -SL -o /tmp/pacapt https://github.com/icy/pacapt/raw/ng/pacapt && \
         sudo mv -f /tmp/pacapt /usr/bin/pacapt && \
         sudo chmod 755 /usr/bin/pacapt && \
         sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
@@ -80,36 +80,6 @@ else
             sudo pacman --noconfirm -Syu
         fi
     fi
-fi
-
-
-if [[ -x "$(command -v proxychains4)" && -d "$HOME/proxychains-ng" && $UID -eq 0 ]]; then isUpgrade="yes"; fi
-if [[ ! -x "$(command -v proxychains4)" && ! -d "$HOME/proxychains-ng" && $UID -eq 0 ]]; then isNewInstall="yes"; fi
-
-if [[ "$isUpgrade" == "yes" ]]; then
-    colorEcho ${BLUE} "Updating proxychains4..."
-    cd $HOME/proxychains-ng && git pull
-    # only recompile if update
-    # git_latest_update=$(git log -1 --format="%at" | xargs -I{} date -d @{} +'%Y-%m-%d %H:%M:%S')
-    git_latest_update=$(git log -1 --format="%at" | xargs -I{} date -d @{})
-    proxychains4_date=$(date -d "$(stat --printf='%y\n' $(which proxychains4))")
-    # if [[ $(date -d "$git_latest_update") > $(date --date='7 day ago') ]]; then
-    if [[ $(date -d "$git_latest_update") > $(date -d "$proxychains4_date") ]]; then
-        ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
-            make && make install
-    fi
-    cd $HOME
-# elif [[ "$isNewInstall" == "yes" ]]; then
-#     colorEcho ${BLUE} "Installing proxychains..."
-#     cd $HOME && \
-#     git clone https://github.com/rofl0r/proxychains-ng.git && \
-#         cd proxychains-ng && \
-#         ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
-#         make && make install && make install-config && \
-#         cp /etc/proxychains/proxychains.conf /etc/proxychains/proxychains.conf.bak && \
-#         sed -i 's/socks4/# socks4/g' /etc/proxychains/proxychains.conf && \
-#         echo 'socks5 127.0.0.1 55880' >> /etc/proxychains/proxychains.conf && \
-#         cd $HOME
 fi
 
 
@@ -313,7 +283,7 @@ if [[ -s "/usr/bin/proxy" && -x "$(command -v proxy)" ]]; then
     CURRENT_VERSION=$(proxy --version 2>&1 | cut -d'_' -f2)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        curl -SL https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh | bash
+        curl -SL https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh | sudo bash
     fi
 fi
 
@@ -332,9 +302,11 @@ if [[ -x "$(command -v proxy-admin)" ]]; then
     CHECK_URL="https://api.github.com/repos/snail007/proxy_admin_free/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        curl -L https://raw.githubusercontent.com/snail007/proxy_admin_free/master/install_auto.sh | bash
+        curl -SL \
+            https://raw.githubusercontent.com/snail007/proxy_admin_free/master/install_auto.sh \
+        | sudo bash
 
-        echo ${REMOTE_VERSION} > /etc/gpa/.version
+        echo ${REMOTE_VERSION} | sudo tee /etc/gpa/.version >/dev/null
     fi
 fi
 
@@ -453,9 +425,9 @@ if [[ -n "$V2RAYCORE" ]]; then
 fi
 
 
-if [[ -s "$HOME/bat_installer.sh" ]]; then
-    source "$HOME/bat_installer.sh"
-fi
+# [[ -s "$HOME/proxychains_installer.sh" ]] && source "$HOME/proxychains_installer.sh"
+[[ -s "$HOME/bat_installer.sh" ]] && source "$HOME/bat_installer.sh"
+
 
 
 if [[ -x "$(command -v conda)" ]]; then

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [[ $UID -ne 0 ]]; then
-    echo "Please run this script as root user!"
-    exit 0
-fi
+# if [[ $UID -ne 0 ]]; then
+#     echo "Please run this script as root user!"
+#     exit 0
+# fi
 
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
@@ -23,8 +23,8 @@ fi
 colorEcho ${BLUE} "Installing git-flow (AVH Edition)..."
 DOWNLOAD_URL=https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh
 wget --no-check-certificate -q $DOWNLOAD_URL && \
-    bash gitflow-installer.sh install develop && \
-    rm gitflow-installer.sh
+    sudo bash gitflow-installer.sh install develop && \
+    sudo rm gitflow-installer.sh
 
 ## How to use
 # http://danielkummer.github.io/git-flow-cheatsheet/index.zh_CN.html

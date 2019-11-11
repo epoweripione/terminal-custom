@@ -66,19 +66,29 @@ cd $ZSH && git pull
 
 
 # neofetch
-colorEcho ${BLUE} "Updating neofetch..."
-if [[ -d $HOME/neofetch ]]; then
-    cd $HOME/neofetch && git pull
-else
-    git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+    if pacman -Si neofetch >/dev/null 2>&1; then
+        colorEcho ${BLUE} "Installing neofetch..."
+        sudo pacman --noconfirm -S neofetch
+    fi
 fi
 
-if [[ $ostype == "darwin" ]]; then
-    cd $HOME/neofetch && sudo make PREFIX=/usr/local install
-elif [[ $ostype =~ "windows" ]]; then
-    cd $HOME/neofetch && sudo make -i install
-else
-    cd $HOME/neofetch && sudo make install
+if [[ ! -x "$(command -v neofetch)" ]]; then
+    if [[ -d "$HOME/neofetch" ]]; then
+        colorEcho ${BLUE} "Updating neofetch..."
+        cd $HOME/neofetch && git pull
+    else
+        colorEcho ${BLUE} "Installing neofetch..."
+        git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
+    fi
+
+    if [[ $ostype == "darwin" ]]; then
+        cd $HOME/neofetch && sudo make PREFIX=/usr/local install
+    elif [[ $ostype =~ "windows" ]]; then
+        cd $HOME/neofetch && sudo make -i install
+    else
+        cd $HOME/neofetch && sudo make install
+    fi
 fi
 
 if [[ -x "$(command -v neofetch)" ]]; then
@@ -88,20 +98,20 @@ fi
 
 
 # fzf
-if [[ $UID -eq 0 ]]; then
-    colorEcho ${BLUE} "Updating fzf..."
-    if [[ ! -x "$(command -v fzf)" ]]; then
-        git clone --depth 1 https://github.com/junegunn/fzf ~/.fzf && \
-            ~/.fzf/install
-    else
-        cd ~/.fzf && git pull && ./install --bin
+if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+    if pacman -Si fzf >/dev/null 2>&1; then
+        colorEcho ${BLUE} "Installing fzf..."
+        sudo pacman --noconfirm -S fzf
     fi
+fi
+
+if [[ $UID -eq 0 && ! -x "$(command -v fzf)" ]]; then
+    colorEcho ${BLUE} "Installing fzf..."
+    git clone --depth 1 https://github.com/junegunn/fzf ~/.fzf && \
+        ~/.fzf/install
 else
-    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
-        if pacman -Si fzf >/dev/null 2>&1; then
-            sudo pacman --noconfirm -S fzf
-        fi
-    fi
+    colorEcho ${BLUE} "Updating fzf..."
+    cd ~/.fzf && git pull && ./install --bin
 fi
 
 

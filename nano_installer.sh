@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [[ $UID -ne 0 ]]; then
-    echo "Please run this script as root user!"
-    exit 0
-fi
+# if [[ $UID -ne 0 ]]; then
+#     echo "Please run this script as root user!"
+#     exit 0
+# fi
 
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
@@ -22,24 +22,24 @@ fi
 # http://mybookworld.wikidot.com/compile-nano-from-source
 if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     # Remove old version nano
-    pacman --noconfirm -R nano
+    sudo pacman --noconfirm -R nano
 
     if pacman -Si ncurses >/dev/null 2>&1; then
-        pacman --noconfirm -S ncurses
+        sudo pacman --noconfirm -S ncurses
     else
         if pacman -Si ncurses-devel >/dev/null 2>&1; then
-            pacman --noconfirm -S ncurses-devel
+            sudo pacman --noconfirm -S ncurses-devel
         else
-            pacman --noconfirm -S libncurses5-dev libncursesw5-dev
+            sudo pacman --noconfirm -S libncurses5-dev libncursesw5-dev
         fi
     fi
 else
     if check_release_package_manager packageManager yum; then
-        yum update -y && yum -y -q install ncurses-devel
+        sudo yum update -y && sudo yum -y -q install ncurses-devel
     elif check_release_package_manager packageManager apt; then
-        apt-get update && apt-get -y install libncurses5-dev libncursesw5-dev
+        sudo apt-get update && sudo apt-get -y install libncurses5-dev libncursesw5-dev
     elif check_release_package_manager packageManager pacman; then
-        pacman -Sy && pacman --noconfirm -S ncurses
+        sudo pacman -Sy && sudo pacman --noconfirm -S ncurses
     fi
 fi
 
@@ -73,11 +73,11 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     # curl -SL $DOWNLOAD_URL -o nano.tar.gz
     cd /tmp && \
         wget -O nano.tar.gz $DOWNLOAD_URL && \
-        tar zxvf nano.tar.gz && \
-        mv nano-* nano && cd nano && \
-        ./configure --prefix=/usr --enable-utf8 && \
-        make && make install && \
-        rm -rf /tmp/*
+        sudo tar zxvf nano.tar.gz && \
+        sudo mv nano-* nano && cd nano && \
+        sudo ./configure --prefix=/usr --enable-utf8 && \
+        sudo make && sudo make install && \
+        sudo rm -rf /tmp/*
 fi
 
 

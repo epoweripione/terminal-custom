@@ -20,7 +20,7 @@ function colorEcho() {
 # https://github.com/icy/pacapt
 if [[ ! -x "$(command -v pacapt)" ]]; then
     colorEcho ${BLUE} "Installing pacapt - An Arch's pacman-like package manager for some Unices..."
-    sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /tmp/pacapt && \
+    sudo curl -SL -o /tmp/pacapt https://github.com/icy/pacapt/raw/ng/pacapt && \
         sudo mv -f /tmp/pacapt /usr/bin/pacapt && \
         sudo chmod 755 /usr/bin/pacapt && \
         sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true

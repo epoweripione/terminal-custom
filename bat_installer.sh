@@ -60,6 +60,13 @@ if [[ -x "$(command -v bat)" ]]; then
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
         BAT_FILENAME=""
     fi
+else
+    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+        if pacman -Si bat >/dev/null 2>&1; then
+            sudo pacman --noconfirm -S bat
+            BAT_FILENAME=""
+        fi
+    fi
 fi
 
 
