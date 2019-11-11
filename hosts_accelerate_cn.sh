@@ -155,7 +155,7 @@ for TargetHost in ${HostsList[@]}; do
 
     if [[ -z "$SameIPPrior" ]]; then
         if [[ "$CHECK_METHOD" == "dig" ]]; then
-            TargetIP=$(dig +short ${TargetURL} @8.8.8.8 \
+            TargetIP=$(dig +short ${TargetHost} @8.8.8.8 \
                         | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
                         | grep -v ${WAN_NET_IP} | head -n1)
         else
