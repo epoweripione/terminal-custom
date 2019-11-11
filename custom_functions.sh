@@ -5,8 +5,13 @@ YELLOW="33m"   # Warning message
 BLUE="36m"     # Info message
 
 function colorEcho() {
-    COLOR=$1
+    local COLOR=$1
     echo -e "\033[${COLOR}${@:2}\033[0m"
+}
+
+function colorEchoN() {
+    local COLOR=$1
+    echo -e -n "\033[${COLOR}${@:2}\033[0m"
 }
 
 # get os type: darwin, windows, linux, bsd, solaris

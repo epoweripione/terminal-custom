@@ -145,7 +145,7 @@ for TargetHost in ${HostsList[@]}; do
         TargetHost=$(echo ${TargetHost##-}) # remove -
     fi
 
-    colorEcho ${BLUE} "Checking ${TargetHost}..."
+    colorEchoN ${BLUE} "Checking ${TargetHost}"
     TargetDomain=$(echo ${TargetHost} | awk -F. '{print $(NF-1),$NF}' OFS=".")
     if [[ "$TargetDomain" == "$TargetHost" ]]; then
         TargetURL=https://${TargetDomain}.ipaddress.com/
@@ -167,6 +167,11 @@ for TargetHost in ${HostsList[@]}; do
     fi
 
     if [[ -n "$TargetIP" ]]; then
+        if [[ -x "$(command -v geoiplookup)" ]]; then
+            TargetIPGeo=$(geoiplookup ${TargetIP} | cut -d':' -f2-)
+        fi
+        colorEcho ${YELLOW} " ${TargetIP}(${TargetIPGeo/[[:space:]]/})"
+
         if [[ -z "$IP_HOSTS" ]]; then
             IP_HOSTS="${TargetIP} ${TargetHost}"
         else
