@@ -118,7 +118,7 @@ IP_HOSTS=""
 if [[ $(grep "^# Github Start" ${HostsFile}) ]]; then
     LineBegin=$(cat -n ${HostsFile} | grep '# Github Start' | awk '{print $1}')
     LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
-    if [[ -n "$LineBegin" && -n "$LineEnd" ]]; then
+    if [[ -n "$LineBegin" && -n "$LineEnd" && -z "$TEST_ONLY" ]]; then
         DeleteBegin=$((${LineBegin}+1))
         DeleteEnd=$((${LineEnd}-1))
         sudo sed -i "${DeleteBegin},${DeleteEnd}d" ${HostsFile}
