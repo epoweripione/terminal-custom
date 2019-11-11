@@ -499,6 +499,14 @@ sudo pacman --noconfirm -S filelight gotop easystroke peek redshift
 # Terminal
 sudo pacman --noconfirm -S konsole
 
+# # eDEX-UI
+# # https://github.com/GitSquared/edex-ui
+# # yay --noconfirm -S edex-ui-git
+# CHECK_URL="https://api.github.com/repos/GitSquared/edex-ui/releases/latest"
+# REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+# wget -c -O eDEX-UI.AppImage \
+#     https://github.com/GitSquared/edex-ui/releases/download/${REMOTE_VERSION}/eDEX-UI.Linux.x86_64.AppImage
+
 
 # Clean jobs
 # sudo pacman -Rns $(pacman -Qtdq)

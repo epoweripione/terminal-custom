@@ -43,7 +43,8 @@ fi
 
 PARAMS_NUM=$#
 
-if [[ $PARAMS_NUM == 1 ]]; then
+# hosts file
+if [[ $PARAMS_NUM > 0 ]]; then
     HostsFile="$1"
 else
     if [[ "$ostype" == "windows" ]]; then
@@ -56,6 +57,30 @@ fi
 if [[ ! -s "$HostsFile" ]]; then
     colorEcho ${RED} "${HostsFile} not exist!"
     exit 1
+fi
+
+# use dig or curl
+[[ $PARAMS_NUM > 1 ]] && CHECK_METHOD="$2"
+[[ -z "$CHECK_METHOD" ]] && CHECK_METHOD="curl"
+
+# don't modify hosts file
+[[ $PARAMS_NUM > 2 ]] && TEST_ONLY="$3"
+
+
+# dig
+if [[ "$CHECK_METHOD" == "dig" && ! -x "$(command -v dig)" ]]; then
+    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+        if pacman -Si bind-tools >/dev/null 2>&1; then
+            colorEcho ${BLUE} "Installing bind-tools..."
+            sudo pacman --noconfirm -S bind-tools
+        elif pacman -Si bind-utils >/dev/null 2>&1; then
+            colorEcho ${BLUE} "Installing bind-utils..."
+            sudo pacman --noconfirm -S bind-utils
+        elif pacman -Si dnsutils >/dev/null 2>&1; then
+            colorEcho ${BLUE} "Installing dnsutils..."
+            sudo pacman --noconfirm -S dnsutils
+        fi
+    fi
 fi
 
 
@@ -101,8 +126,8 @@ if [[ $(grep "^# Github Start" ${HostsFile}) ]]; then
         LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
     fi
 else
-    # echo -e "\n# Github Start" | tee -a ${HostsFile}
-    IP_HOSTS="# Github Start"
+    # echo -e "\n# Github Start" | sudo tee -a ${HostsFile}
+    IP_HOSTS="\n# Github Start"
     sudo sed -i "/github/d" ${HostsFile}
 fi
 
@@ -129,10 +154,16 @@ for TargetHost in ${HostsList[@]}; do
     fi
 
     if [[ -z "$SameIPPrior" ]]; then
-        TargetIP=$(curl -sL --connect-timeout 5 --max-time 15 ${TargetURL} \
-                    | grep -Eo '<main>.*</main>' \
-                    | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
-                    | grep -v ${WAN_NET_IP} | head -n1)
+        if [[ "$CHECK_METHOD" == "dig" ]]; then
+            TargetIP=$(dig +short ${TargetURL} @8.8.8.8 \
+                        | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
+                        | grep -v ${WAN_NET_IP} | head -n1)
+        else
+            TargetIP=$(curl -sL --connect-timeout 5 --max-time 15 ${TargetURL} \
+                        | grep -Eo '<main>.*</main>' \
+                        | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
+                        | grep -v ${WAN_NET_IP} | head -n1)
+        fi
     fi
 
     if [[ -n "$TargetIP" ]]; then
@@ -144,9 +175,9 @@ for TargetHost in ${HostsList[@]}; do
     fi
 done
 
-if [[ -n "$IP_HOSTS" ]]; then
-    echo -e "${IP_HOSTS}"
+[[ -n "$IP_HOSTS" ]] && echo -e "${IP_HOSTS}"
 
+if [[ -n "$IP_HOSTS" && -z "$TEST_ONLY" ]]; then
     if [[ ! $(grep "^# Github End" ${HostsFile}) ]]; then
         IP_HOSTS="${IP_HOSTS}\n# Github End"
     fi
