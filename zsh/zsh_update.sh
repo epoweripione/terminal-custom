@@ -66,10 +66,12 @@ cd $ZSH && git pull
 
 
 # neofetch
-if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
-    if pacman -Si neofetch >/dev/null 2>&1; then
-        colorEcho ${BLUE} "Installing neofetch..."
-        sudo pacman --noconfirm -S neofetch
+if [[ ! -x "$(command -v neofetch)" ]]; then
+    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+        if pacman -Si neofetch >/dev/null 2>&1; then
+            colorEcho ${BLUE} "Installing neofetch..."
+            sudo pacman --noconfirm -S neofetch
+        fi
     fi
 fi
 
@@ -98,29 +100,34 @@ fi
 
 
 # fzf
-if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
-    if pacman -Si fzf >/dev/null 2>&1; then
-        colorEcho ${BLUE} "Installing fzf..."
-        sudo pacman --noconfirm -S fzf
+if [[ ! -x "$(command -v fzf)" ]]; then
+    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+        if pacman -Si fzf >/dev/null 2>&1; then
+            colorEcho ${BLUE} "Installing fzf..."
+            sudo pacman --noconfirm -S fzf
+        fi
     fi
 fi
 
-if [[ $UID -eq 0 && ! -x "$(command -v fzf)" ]]; then
-    colorEcho ${BLUE} "Installing fzf..."
-    git clone --depth 1 https://github.com/junegunn/fzf ~/.fzf && \
-        ~/.fzf/install
-else
-    colorEcho ${BLUE} "Updating fzf..."
-    cd ~/.fzf && git pull && ./install --bin
+if [[ $UID -eq 0 ]]; then
+    if [[ ! -x "$(command -v fzf)" ]]; then
+        colorEcho ${BLUE} "Installing fzf..."
+        git clone --depth 1 https://github.com/junegunn/fzf ~/.fzf && \
+            ~/.fzf/install
+    elif [[ -d "~/.fzf" ]]; then
+        colorEcho ${BLUE} "Updating fzf..."
+        cd ~/.fzf && git pull && ./install --bin
+    fi
 fi
 
 
 # navi
-# colorEcho ${BLUE} "Updating navi..."
 # if [[ ! -x "$(command -v navi)" ]]; then
-#     git clone --depth 1 http://github.com/denisidoro/navi /opt/navi
-#     cd /opt/navi && sudo make install
-# else
+#     colorEcho ${BLUE} "Installing navi..."
+#     git clone --depth 1 http://github.com/denisidoro/navi /opt/navi && \
+#         cd /opt/navi && sudo make install
+# elif [[ -d "/opt/navi" ]]; then
+#     colorEcho ${BLUE} "Updating navi..."
 #     cd /opt/navi && git pull && sudo make update
 # fi
 

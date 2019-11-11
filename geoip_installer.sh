@@ -31,7 +31,7 @@ fi
 # https://github.com/icy/pacapt
 if [[ ! -x "$(command -v pacapt)" ]]; then
     colorEcho ${BLUE} "Installing pacapt - An Arch's pacman-like package manager for some Unices..."
-    sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /usr/bin/pacapt && \
+    sudo curl -SL -o /usr/bin/pacapt https://github.com/icy/pacapt/raw/ng/pacapt && \
         sudo chmod 755 /usr/bin/pacapt && \
         sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
 fi
