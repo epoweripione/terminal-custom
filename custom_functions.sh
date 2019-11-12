@@ -391,7 +391,7 @@ function get_os_icon() {
     esac
 
     local os_wsl=$(uname -r)
-    if [[ $os_wsl =~ "Microsoft" ]]; then
+    if [[ "$os_wsl" =~ "Microsoft" ]]; then
         OS_ICON=$'\uF17A'
     fi
 }

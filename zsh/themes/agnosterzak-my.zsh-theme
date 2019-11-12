@@ -6,10 +6,7 @@
 # # README
 #
 # In order for this theme to render correctly, you will need a
-# [Powerline-patched font](https://github.com/Lokaltog/powerline-fonts).
-# Make sure you have a recent version: the code points that Powerline
-# uses changed in 2012, and older versions will display incorrectly,
-# in confusing ways.
+# [Powerline-patched font](https://gist.github.com/1595572).
 #
 # In addition, I recommend the
 # [Solarized theme](https://github.com/altercation/solarized/) and, if you're
@@ -30,22 +27,15 @@
 
 CURRENT_BG='NONE'
 
-# Special Powerline characters
-
-() {
-  local LC_ALL="" LC_CTYPE="en_US.UTF-8"
-  # NOTE: This segment separator character is correct.  In 2012, Powerline changed
-  # the code points they use for their special characters. This is the new code point.
-  # If this is not working for you, you probably have an old version of the
-  # Powerline-patched fonts installed. Download and install the new version.
-  # Do not submit PRs to change this unless you have reviewed the Powerline code point
-  # history and have new information.
-  # This is defined using a Unicode escape sequence so it is unambiguously readable, regardless of
-  # what font the user is viewing this source code in. Do not replace the
-  # escape sequence with a single literal character.
-  # SEGMENT_SEPARATOR=$'\ue0b0' # 
-  SEGMENT_SEPARATOR=$'\ue0b4' # 
-}
+# Characters
+# SEGMENT_SEPARATOR="\ue0b0" # 
+SEGMENT_SEPARATOR="\ue0b4" # 
+PLUSMINUS="\u00b1"
+BRANCH="\ue0a0"
+DETACHED="\u27a6"
+CROSS="\u2718"
+LIGHTNING="\u26a1"
+GEAR="\u2699"
 
 # Begin a segment
 # Takes two arguments, background and foreground. Both can be omitted,
@@ -55,22 +45,22 @@ prompt_segment() {
   [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
   [[ -n $2 ]] && fg="%F{$2}" || fg="%f"
   if [[ $CURRENT_BG != 'NONE' && $1 != $CURRENT_BG ]]; then
-    echo -n " %{$bg%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR%{$fg%} "
+    print -n " %{$bg%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR%{$fg%} "
   else
-    echo -n "%{$bg%}%{$fg%} "
+    print -n "%{$bg%}%{$fg%} "
   fi
   CURRENT_BG=$1
-  [[ -n $3 ]] && echo -n $3
+  [[ -n $3 ]] && print -n $3
 }
 
 # End the prompt, closing any open segments
 prompt_end() {
   if [[ -n $CURRENT_BG ]]; then
-    echo -n " %{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR"
+    print -n " %{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR"
   else
-    echo -n "%{%k%}"
+    print -n "%{%k%}"
   fi
-  echo -n "%{%f%}"
+  print -n "%{%f%}"
   CURRENT_BG=''
 }
 
@@ -180,26 +170,23 @@ prompt_battery() {
 
 # Git: branch/detached head, dirty status
 prompt_git() {
-# «»±˖˗‑‐‒ ━ ✚‐↔←↑↓→↭⇎⇔⋆━◂▸◄►◆☀★✔✖❮❯⚑⚙
+#«»±˖˗‑‐‒ ━ ✚‐↔←↑↓→↭⇎⇔⋆━◂▸◄►◆☀★☗☊✔✖❮❯⚑⚙
   local PL_BRANCH_CHAR
   () {
     local LC_ALL="" LC_CTYPE="en_US.UTF-8"
-    PL_BRANCH_CHAR=$'\uE0A0'         # 
+    PL_BRANCH_CHAR="$BRANCH"
   }
   local ref dirty mode repo_path clean has_upstream
   local modified untracked added deleted tagged stashed
   local ready_commit git_status bgclr fgclr
   local commits_diff commits_ahead commits_behind has_diverged to_push to_pull
 
-  ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git rev-parse --short HEAD 2> /dev/null)" || return
-
   repo_path=$(git rev-parse --git-dir 2>/dev/null)
 
   if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
     dirty=$(parse_git_dirty)
     git_status=$(git status --porcelain 2> /dev/null)
-
-    # ✔	clean directory
+    ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git rev-parse --short HEAD 2> /dev/null)"
     if [[ -n $dirty ]]; then
       clean=''
       bgclr='yellow'
@@ -210,17 +197,18 @@ prompt_git() {
       fgclr='white'
     fi
 
+    local upstream=$(git rev-parse --symbolic-full-name --abbrev-ref @{upstream} 2> /dev/null)
+    if [[ -n "${upstream}" && "${upstream}" != "@{upstream}" ]]; then has_upstream=true; fi
+
     local current_commit_hash=$(git rev-parse HEAD 2> /dev/null)
 
-    # ☀	new untracked files
     local number_of_untracked_files=$(\grep -c "^??" <<< "${git_status}")
+    # if [[ $number_of_untracked_files -gt 0 ]]; then untracked=" $number_of_untracked_files◆"; fi
     if [[ $number_of_untracked_files -gt 0 ]]; then untracked=" $number_of_untracked_files☀"; fi
 
-    # ✚	added files from the new untracked ones
     local number_added=$(\grep -c "^A" <<< "${git_status}")
     if [[ $number_added -gt 0 ]]; then added=" $number_added✚"; fi
 
-    # ●	modified files
     local number_modified=$(\grep -c "^.M" <<< "${git_status}")
     if [[ $number_modified -gt 0 ]]; then
       modified=" $number_modified●"
@@ -236,7 +224,6 @@ prompt_git() {
       modified=" ●$((number_added_modified+number_added_renamed))±"
     fi
 
-    # ‒	deleted files
     local number_deleted=$(\grep -c "^.D" <<< "${git_status}")
     if [[ $number_deleted -gt 0 ]]; then
       deleted=" $number_deleted‒"
@@ -244,7 +231,6 @@ prompt_git() {
       fgclr='white'
     fi
 
-    # ±	added files from the modifies or delete ones
     local number_added_deleted=$(\grep -c "^D" <<< "${git_status}")
     if [[ $number_deleted -gt 0 && $number_added_deleted -gt 0 ]]; then
       deleted="$deleted$number_added_deleted±"
@@ -252,46 +238,25 @@ prompt_git() {
       deleted=" ‒$number_added_deleted±"
     fi
 
-    # 	tag name at current commit
-    local tag_at_current_commit
-    if [[ "$AGNOSTERZAK_GIT_SHOW_TAGS" == true ]]; then
-      tag_at_current_commit=$(git describe --exact-match --tags $current_commit_hash 2> /dev/null)
-      if [[ -n $tag_at_current_commit ]]; then tagged=" $tag_at_current_commit "; fi
-    fi
+    local tag_at_current_commit=$(git describe --exact-match --tags $current_commit_hash 2> /dev/null)
+    if [[ -n $tag_at_current_commit ]]; then tagged=" ☗$tag_at_current_commit "; fi
 
-    # ⚙	sets of stashed files
-    local number_of_stashes
-    if [[ "$AGNOSTERZAK_GIT_SHOW_STASH" == true ]]; then
-      local number_of_stashes="$(git stash list -n1 2> /dev/null | wc -l)"
-    else
-      number_of_stashes=0
-    fi
-
+    local number_of_stashes="$(git stash list -n1 2> /dev/null | wc -l)"
     if [[ $number_of_stashes -gt 0 ]]; then
       stashed=" ${number_of_stashes##*(  )}⚙"
       bgclr='magenta'
       fgclr='white'
     fi
 
-    # ⚑	ready to commit
     if [[ $number_added -gt 0 || $number_added_modified -gt 0 || $number_added_deleted -gt 0 ]]; then ready_commit=' ⚑'; fi
 
-    # 	branch has a stream, preceeded by his remote name
-    # ↑	commits ahead on the current branch comparing to remote, preceeded by their number
-    # ↓	commits behind on the current branch comparing to remote, preceeded by their number
-    local has_upstream=false
     local upstream_prompt=''
-    if [[ "$AGNOSTERZAK_GIT_SHOW_UPSTREAM" == true ]]; then
-      upstream=$(git rev-parse --symbolic-full-name --abbrev-ref @{upstream} 2> /dev/null)
-      if [[ -n "${upstream}" && "${upstream}" != "@{upstream}" ]]; then has_upstream=true; fi
-    fi
-
     if [[ $has_upstream == true ]]; then
       commits_diff="$(git log --pretty=oneline --topo-order --left-right ${current_commit_hash}...${upstream} 2> /dev/null)"
       commits_ahead=$(\grep -c "^<" <<< "$commits_diff")
       commits_behind=$(\grep -c "^>" <<< "$commits_diff")
       upstream_prompt="$(git rev-parse --symbolic-full-name --abbrev-ref @{upstream} 2> /dev/null)"
-      upstream_prompt=$(sed -e 's/\/.*$/  /g' <<< "$upstream_prompt")
+      upstream_prompt=$(sed -e 's/\/.*$/ ☊ /g' <<< "$upstream_prompt")
     fi
 
     has_diverged=false
@@ -305,9 +270,6 @@ prompt_git() {
     fi
     if [[ $has_diverged == false && $commits_behind -gt 0 ]]; then to_pull=" $fg_bold[magenta]↓$commits_behind$fg_bold[$fgclr]"; fi
 
-    # <B>	bisect state on the current branch
-    # >M<	Merge state on the current branch
-    # >R>	Rebase state on the current branch
     if [[ -e "${repo_path}/BISECT_LOG" ]]; then
       mode=" <B>"
     elif [[ -e "${repo_path}/MERGE_HEAD" ]]; then
@@ -316,33 +278,9 @@ prompt_git() {
       mode=" >R>"
     fi
 
-    # remote trunk
-    local remote=$(git ls-remote --get-url 2> /dev/null)
-    if [[ "$remote" =~ "github" ]] then
-      vcs_visual_identifier=$'\uF113 ' # 
-    elif [[ "$remote" =~ "bitbucket" ]] then
-      vcs_visual_identifier=$'\uE703 ' # 
-    elif [[ "$remote" =~ "stash" ]] then
-      vcs_visual_identifier=$'\uE703 ' # 
-    elif [[ "$remote" =~ "gitlab" ]] then
-      vcs_visual_identifier=$'\uF296 ' # 
-    else
-      vcs_visual_identifier=$'\uF1D3 ' # 
-    fi
-
-    # revision
-    local revision
-    if [[ "$AGNOSTERZAK_GIT_SHOW_CHANGESET" == true ]]; then
-      # revision=$(git rev-list -n 1 --abbrev-commit --abbrev=${AGNOSTERZAK_GIT_CHANGESET_HASH_LENGTH} HEAD)
-      revision=${current_commit_hash:0:${AGNOSTERZAK_GIT_CHANGESET_HASH_LENGTH}}
-      if [[ -n "$revision" ]] then
-        vcs_commit_identifier=$' \uE729 ' # 
-      fi
-    fi
-
     prompt_segment $bgclr $fgclr
-    
-    echo -n "%{$fg_bold[$fgclr]%}${vcs_visual_identifier}${ref/refs\/heads\//$PL_BRANCH_CHAR $upstream_prompt}${vcs_commit_identifier}${revision}${mode}$to_push$to_pull$clean$tagged$stashed$untracked$modified$deleted$added$ready_commit%{$fg_no_bold[$fgclr]%}"
+
+    print -n "%{$fg_bold[$fgclr]%}${ref/refs\/heads\//$PL_BRANCH_CHAR $upstream_prompt}${mode}$to_push$to_pull$clean$tagged$stashed$untracked$modified$deleted$added$ready_commit%{$fg_no_bold[$fgclr]%}"
   fi
 }
 
@@ -362,7 +300,7 @@ prompt_hg() {
         # if working copy is clean
         prompt_segment green black
       fi
-      echo -n $(hg prompt "☿ {rev}@{branch}") $st
+      print -n $(hg prompt "☿ {rev}@{branch}") $st
     else
       st=""
       rev=$(hg id -n 2>/dev/null | sed 's/[^-0-9]//g')
@@ -376,7 +314,7 @@ prompt_hg() {
       else
         prompt_segment green black
       fi
-      echo -n "☿ $rev@$branch" $st
+      print -n "☿ $rev@$branch" $st
     fi
   fi
 }
@@ -390,7 +328,7 @@ prompt_dir() {
 prompt_virtualenv() {
   local virtualenv_path="$VIRTUAL_ENV"
   if [[ -n $virtualenv_path && -n $VIRTUAL_ENV_DISABLE_PROMPT ]]; then
-    prompt_segment green white "(`basename $virtualenv_path`)"
+    prompt_segment blue black "(`basename $virtualenv_path`)"
   fi
 }
 
@@ -405,9 +343,9 @@ prompt_time() {
 prompt_status() {
   local symbols
   symbols=()
-  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}✘"
-  [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}⚡"
-  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}⚙"
+  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}$CROSS"
+  [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}$LIGHTNING"
+  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}$GEAR"
 
   [[ -n "$symbols" ]] && prompt_segment black default "$symbols"
 }
@@ -416,106 +354,95 @@ prompt_status() {
 get_os_icon() {
     case $(uname) in
         Darwin)
-        OS='OSX'
-        OS_ICON=$'\uF179'
-        ;;
+            OS_ICON=$'\uF179'
+            ;;
         MSYS_NT-* | MINGW* | CYGWIN_NT-*)
-        OS='Windows'
-        OS_ICON=$'\uF17A'
-        ;;
-        FreeBSD)
-        OS='BSD'
-        OS_ICON=$'\uF30C'
-        ;;
-        OpenBSD)
-        OS='BSD'
-        OS_ICON=$'\uF30C'
-        ;;
-        DragonFly)
-        OS='BSD'
-        OS_ICON=$'\uF30C'
-        ;;
+            OS_ICON=$'\uF17A'
+            ;;
+        FreeBSD | OpenBSD | DragonFly)
+            OS_ICON=$'\uF30C'
+            ;;
         Linux)
-        OS='Linux'
-        os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
-        case "$os_release_id" in
-            *arch*)
-            OS_ICON=$'\uF303'
-            ;;
-            *debian*)
-            OS_ICON=$'\uF306'
-            ;;
-        *ubuntu*)
-            OS_ICON=$'\uF31B'
-            ;;
-        *elementary*)
-            OS_ICON=$'\uF309'
-            ;;
-        *fedora*)
-            OS_ICON=$'\uF30A'
-            ;;
-        *coreos*)
-            OS_ICON=$'\uF305'
-            ;;
-        *gentoo*)
-            OS_ICON=$'\uF30D'
-            ;;
-        *mageia*)
-            OS_ICON=$'\uF310'
-            ;;
-        *centos*)
-            OS_ICON=$'\uF304'
-            ;;
-        *opensuse*|*tumbleweed*)
-            OS_ICON=$'\uF314'
-            ;;
-        *sabayon*)
-            OS_ICON=$'\uF317'
-            ;;
-        *slackware*)
-            OS_ICON=$'\uF319'
-            ;;
-        *linuxmint*)
-            OS_ICON=$'\uF30E'
-            ;;
-        *alpine*)
-            OS_ICON=$'\uF300'
-            ;;
-        *aosc*)
-            OS_ICON=$'\uF301'
-            ;;
-        *nixos*)
-            OS_ICON=$'\uF313'
-            ;;
-        *devuan*)
-            OS_ICON=$'\uF307'
-            ;;
-        *manjaro*)
-            OS_ICON=$'\uF312'
-            ;;
-            *)
-            OS='Linux'
-            OS_ICON=$'\uF17C'
-            ;;
-        esac
+            local os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
+            case "$os_release_id" in
+                *arch*)
+                    OS_ICON=$'\uF303'
+                    ;;
+                *debian*)
+                    OS_ICON=$'\uF306'
+                    ;;
+                *ubuntu*)
+                    OS_ICON=$'\uF31B'
+                    ;;
+                *elementary*)
+                    OS_ICON=$'\uF309'
+                    ;;
+                *fedora*)
+                    OS_ICON=$'\uF30A'
+                    ;;
+                *coreos*)
+                    OS_ICON=$'\uF305'
+                    ;;
+                *gentoo*)
+                    OS_ICON=$'\uF30D'
+                    ;;
+                *mageia*)
+                    OS_ICON=$'\uF310'
+                    ;;
+                *centos*)
+                    OS_ICON=$'\uF304'
+                    ;;
+                *opensuse* | *tumbleweed*)
+                    OS_ICON=$'\uF314'
+                    ;;
+                *sabayon*)
+                    OS_ICON=$'\uF317'
+                    ;;
+                *slackware*)
+                    OS_ICON=$'\uF319'
+                    ;;
+                *linuxmint*)
+                    OS_ICON=$'\uF30E'
+                    ;;
+                *alpine*)
+                    OS_ICON=$'\uF300'
+                    ;;
+                *aosc*)
+                    OS_ICON=$'\uF301'
+                    ;;
+                *nixos*)
+                    OS_ICON=$'\uF313'
+                    ;;
+                *devuan*)
+                    OS_ICON=$'\uF307'
+                    ;;
+                *manjaro*)
+                    OS_ICON=$'\uF312'
+                    ;;
+                    *)
+                    OS_ICON=$'\uF17C'
+                    ;;
+            esac
 
-        # Check if we're running on Android
-        case $(uname -o 2>/dev/null) in
-            Android)
-            OS='Android'
-            OS_ICON=$'\uF17B'
+            # Check if we're running on Android
+            case $(uname -o 2>/dev/null) in
+                Android)
+                    OS_ICON=$'\uF17B'
+                    ;;
+            esac
             ;;
-        esac
-        ;;
         SunOS)
-        OS='Solaris'
-        OS_ICON=$'\uF185'
-        ;;
+            OS_ICON=$'\uF185'
+            ;;
         *)
-        OS=''
-        OS_ICON=''
-        ;;
+            OS_ICON=''
+            ;;
     esac
+
+    local os_wsl=$(uname -r)
+    if [[ "$os_wsl" =~ "Microsoft" ]]; then
+        OS_ICON=$'\uF17A'
+    fi
 }
 
 prompt_time_only() {
@@ -681,7 +608,7 @@ prompt_os_icon() {
 ## Main prompt
 build_prompt() {
   RETVAL=$?
-  echo -n "\n"
+  print -n "\n"
   prompt_os_icon
   prompt_battery
   prompt_time_only
@@ -694,7 +621,7 @@ build_prompt() {
   prompt_prompt_timer
   prompt_end
   CURRENT_BG='NONE'
-  echo -n "\n"
+  print -n "\n"
   prompt_indicator
   CURRENT_BG=''
   prompt_end
@@ -717,32 +644,28 @@ precmd_functions+=(prompt_prompt_timer_precmd)
 preexec_functions+=(prompt_prompt_timer_preexec)
 
 
-## What does it show?
-# If the previous command failed (✘)
-# User @ Hostname (if user is not DEFAULT_USER, which can then be set in your profile)
+## It currently shows:
+# Battery Life (in case of the laptop is not charging)
+# Timestamp
+# Current directory
 # Git status
-# Branch () or detached head (➦)
-# Current branch / SHA1 in detached head state
-# Dirty working directory (±, color change)
-# Working directory
-# Elevated (root) privileges (⚡)
+# User & Host status
 
-## Battery status			Color
-# more than 39%			green
-# less than 40% and more than 19%	yellow
-# less than 20%				red
+## Battery status                   Color
+# more than 39%                     green
+# less than 40% and more than 19%   yellow
+# less than 20%                     red
 
 ### Git
 ## Color States
 # Background Color & Foreground Color		Meaning
-# green & white					git-clean	Absolutely clean state
-# magenta & white 				git-stash	There are stashed files
-# yellow & magenta				git-untracked	There are new untracked files
-# red & white					git-modified	There are modified or deleted files but unstaged
+# green & white     git-clean	Absolutely clean state
+# magenta & white   git-stash	There are stashed files
+# yellow & magenta  git-untracked	There are new untracked files
+# red & white       git-modified	There are modified or deleted files but unstaged
 
 ## Icon	Meaning
 # ✔	clean directory
-# 	tag name at current commit
 # ☀	new untracked files preceeded by their number
 # ✚	added files from the new untracked ones preceeded by their number
 # ‒	deleted files preceeded by their number
@@ -750,7 +673,7 @@ preexec_functions+=(prompt_prompt_timer_preexec)
 # ±	added files from the modifies or delete ones preceeded by their number
 # ⚑	ready to commit
 # ⚙	sets of stashed files preceeded by their number
-# 	branch has a stream, preceeded by his remote name
+# ☊	branch has a stream, preceeded by his remote name
 # ↑	commits ahead on the current branch comparing to remote, preceeded by their number
 # ↓	commits behind on the current branch comparing to remote, preceeded by their number
 # <B>	bisect state on the current branch

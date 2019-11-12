@@ -243,6 +243,24 @@ sudo systemctl enable xrdp xrdp-sesman && \
 sudo pacman --noconfirm -S freerdp remmina
 
 
+# # NoMachine
+# # https://www.nomachine.com/DT02O00124
+# wget -c -O nomachine_x86_64.tar.gz \
+#     https://download.nomachine.com/download/6.8/Linux/nomachine_6.8.1_1_x86_64.tar.gz && \
+#     sudo tar xzvf nomachine_x86_64.tar.gz -C /usr && \
+#     sudo /usr/NX/nxserver --install
+
+# # UPDATE
+# cd /usr
+# wget -c -O nomachine_x86_64.tar.gz \
+#     https://download.nomachine.com/download/6.8/Linux/nomachine_6.8.1_1_x86_64.tar.gz && \
+#     sudo tar xzvf nomachine_x86_64.tar.gz -C /usr && \
+#     sudo /usr/NX/nxserver --update
+
+# # UNINSTALL
+# sudo /usr/NX/scripts/setup/nxserver --uninstall && sudo rm -rf /usr/NX
+
+
 # # Conky
 # sudo pacman --noconfirm -S conky
 sudo pacman --noconfirm -S conky-lua-nv conky-manager jq lua-clock-manjaro
