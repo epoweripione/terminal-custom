@@ -32,7 +32,9 @@ if [[ "${WAN_NET_IP_GEO}" =~ 'China' || "${WAN_NET_IP_GEO}" =~ 'CN' ]]; then
     :
 else
     colorEcho ${BLUE} "You are not in china! Congratulations!"
-    exit 0
+    echo -n "Continue?[y/N] "
+    read -t 5 EXIT_CONTINUE
+    [[ -z "$EXIT_CONTINUE" || "$EXIT_CONTINUE" == "n" || "$EXIT_CONTINUE" == "N" ]] && exit 0
 fi
 
 if [[ -z "$WAN_NET_IP" ]]; then
@@ -61,7 +63,7 @@ fi
 
 # use dig or curl
 [[ $PARAMS_NUM > 1 ]] && CHECK_METHOD="$2"
-[[ -z "$CHECK_METHOD" ]] && CHECK_METHOD="curl"
+[[ -z "$CHECK_METHOD" ]] && CHECK_METHOD="dig"
 
 # don't modify hosts file
 [[ $PARAMS_NUM > 2 ]] && TEST_ONLY="$3"

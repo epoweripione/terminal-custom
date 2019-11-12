@@ -64,12 +64,14 @@ if [[ ! -x "$(command -v zsh)" ]]; then
         sudo yum -y update && \
             sudo yum -y install ncurses-devel gcc make
 
+        # ZSH_REPO_VERSION=$(yum info zsh | grep -E "[Vv]ersion" | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
+
         REMOTE_VERSION=$(curl -s http://zsh.sourceforge.net/News/ \
                             | grep -Eo -m1 'Release ([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         REMOTE_VERSION=$(echo $REMOTE_VERSION | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
         DOWNLOAD_URL=https://nchc.dl.sourceforge.net/project/zsh/zsh/${REMOTE_VERSION}/zsh-${REMOTE_VERSION}.tar.xz
         cd /tmp && \
-            sudo curl -SL $DOWNLOAD_URL -o zsh.tar.xz && \
+            sudo curl -SL -o zsh.tar.xz $DOWNLOAD_URL && \
             sudo tar -xvJf zsh.tar.xz && \
             sudo mv zsh-* zsh && \
             cd zsh && \
