@@ -195,7 +195,7 @@ function get_os() {
     esac
 
     local os_wsl=$(uname -r)
-    if [[ $os_wsl =~ "Microsoft" ]]; then
+    if [[ "$os_wsl" =~ "Microsoft" ]]; then
         OS='Windows'
     fi
 }
@@ -241,7 +241,7 @@ function get_os_release() {
     esac
 
     local os_wsl=$(uname -r)
-    if [[ $os_wsl =~ "Microsoft" ]]; then
+    if [[ "$os_wsl" =~ "Microsoft" ]]; then
         OS_RELEASE='windows'
     fi
 }
