@@ -136,6 +136,10 @@ if [[ ! $(grep "wins" /etc/nsswitch.conf) ]]; then
 fi
 service winbind start # /etc/init.d/winbind start
 
+# wslu
+# https://github.com/wslutilities/wslu
+curl -s https://packagecloud.io/install/repositories/whitewaterfoundry/wslu/script.deb.sh | sudo bash
+apt install -y wslu
 
 # Install git lfs
 ## https://github.com/git-lfs/git-lfs/wiki/Tutorial
