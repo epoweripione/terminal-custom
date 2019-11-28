@@ -13,6 +13,12 @@ else
 fi
 
 
+if [[ ! -x "$(command -v code)" ]]; then
+    colorEcho ${RED} "Please install visual studio code first!"
+    exit 0
+fi
+
+
 # How to export installed extensions list
 # code --list-extensions > vscode_extensions.list
 

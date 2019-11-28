@@ -80,6 +80,8 @@ $extensions =
 	"wcwhitehead.bootstrap-3-snippets",
 	"Zignd.html-css-class-completion",
 	"sidthesloth.html5-boilerplate",
+	"shinnn.stylelint",
+	"vincaslt.highlight-matching-tag",
     ## JAVA
 	"redhat.java",
 	"vscjava.vscode-java-debug",
@@ -132,6 +134,7 @@ $extensions =
 	"eg2.vscode-npm-script",
     "leizongmin.node-module-intellisense",
     ## PHP
+	"felixfbecker.php-intellisense",
 	"ikappas.composer",
 	"ikappas.phpcs",
 	"felixfbecker.php-debug",
@@ -180,7 +183,9 @@ $extensions =
 	"wayou.vscode-todo-highlight",
 	"obkoro1.korofileheader",
 	"kisstkondoros.vscode-gutter-preview",
-	"tomoki1207.pdf"
+	"tomoki1207.pdf",
+	"wwm.better-align",
+	"tyriar.sort-lines"
 
 
 $cmd = "code --list-extensions"

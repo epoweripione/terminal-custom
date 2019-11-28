@@ -272,11 +272,14 @@ if [[ -d "$HOME/.sdkman" ]]; then
         [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
     fi
 
+    [[ -z "$SDKMAN_NOT_USE_PROXY" && -n "$GIT_SOCKS5_PROXY_URL" ]] && \
+        set_proxy "socks5h://${GIT_SOCKS5_PROXY_URL}"
     sdk selfupdate && sdk update && printf "Y\n" | sdk upgrade
+    [[ -z "$SDKMAN_NOT_USE_PROXY" && -n "$GIT_SOCKS5_PROXY_URL" ]] && clear_proxy
 fi
 
 
-if [[ -s "/usr/bin/proxy" && -x "$(command -v proxy)" ]]; then
+if [[ -d "/etc/proxy" && -x "$(command -v proxy)" ]]; then
     colorEcho ${BLUE} "Updating goproxy..."
     # https://github.com/snail007/goproxy
 

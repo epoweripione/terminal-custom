@@ -66,7 +66,8 @@ function install_v2ray_client() {
         [[ -z "$DOWNLOAD_URL" ]] && \
             DOWNLOAD_URL=https://github.com/v2ray/v2ray-core/releases/download/v${REMOTE_VERSION}/v2ray-${ostype}-${VDIS}.zip
 
-        curl -SL -o v2ray-core.zip $DOWNLOAD_URL && \
+        # curl -SL -o v2ray-core.zip $DOWNLOAD_URL && \
+        wget -c -O v2ray-core.zip $DOWNLOAD_URL && \
             curl -sL https://install.direct/go.sh | sudo bash -s -- --local ./v2ray-core.zip && \
             rm -f ./v2ray-core.zip && \
             sudo ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true

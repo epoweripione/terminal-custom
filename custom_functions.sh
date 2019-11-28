@@ -438,18 +438,16 @@ function set_proxy() {
     # export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
     # export no_proxy="localhost,127.0.0.0/8,*.local"
 
-    export http_proxy=${proxy_url}
-    export HTTPS_PROXY=${proxy_url}
-    export ALL_PROXY=${proxy_url}
+    export {http,https,ftp,all}_proxy=${proxy_url}
+    export {HTTP,HTTPS,FTP,ALL}_PROXY=${proxy_url}
 
     # curlrc
     # echo "proxy=${proxy_url}" >> .curlrc
 }
 
 function clear_proxy() {
-    export http_proxy=
-    export HTTPS_PROXY=
-    export ALL_PROXY=
+    unset {http,https,ftp,all}_proxy
+    unset {HTTP,HTTPS,FTP,ALL}_PROXY
 }
 
 function proxy_cmd() {
@@ -737,6 +735,7 @@ function set_proxy_mirrors_env() {
         NVS_INSTALLER_NOT_USE_MIRROR=true
         NPM_INSTALLER_NOT_USE_MIRROR=true
         GITHUB_NOT_USE_PROXY=true
+        SDKMAN_NOT_USE_PROXY=true
     else
         unset APT_NOT_USE_MIRRORS
         unset CONDA_NOT_USE_MIRROR
@@ -746,6 +745,7 @@ function set_proxy_mirrors_env() {
         unset NVS_INSTALLER_NOT_USE_MIRROR
         unset NPM_INSTALLER_NOT_USE_MIRROR
         unset GITHUB_NOT_USE_PROXY
+        unset SDKMAN_NOT_USE_PROXY
     fi
 }
 
@@ -834,7 +834,7 @@ function set_git_socks5_proxy() {
 
     if [[ -n "$GIT_SOCKS5_PROXY_URL" ]]; then
         if ! check_socks5_proxy_up ${GIT_SOCKS5_PROXY_URL}; then
-            GIT_SOCKS5_PROXY_URL=""
+            unset GIT_SOCKS5_PROXY_URL
         fi
     fi
 
