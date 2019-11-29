@@ -19,10 +19,10 @@ set_proxy_mirrors_env
 # Miniconda
 colorEcho ${BLUE} "Installing Miniconda3..."
 if [[ ! -d "$HOME/miniconda3" ]]; then
-    curl -SL -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-    bash ./Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
+    wget -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+        bash ./Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
 
-    export PATH=$PATH:$HOME/miniconda3/bin
+    # export PATH=$PATH:$HOME/miniconda3/condabin
     # source $HOME/miniconda3/bin/activate
 
     ## Use mirror channels
@@ -55,11 +55,16 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
     # conda clean --tarballs
     # conda clean --all
 
+    conda config --set auto_activate_base false
+
+    DEFALUT_SHELL=$(basename $SHELL)
+    conda init ${DEFALUT_SHELL}
+
     conda create -n py37 python=3.7
     # conda activate py37
     # conda deactivate
 
     conda create -n py27 python=2.7
-    # conda activate py2.7
+    # conda activate py27
     # conda deactivate
 fi

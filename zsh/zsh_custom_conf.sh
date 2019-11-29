@@ -306,16 +306,16 @@ if [[ -x "$(command -v java)" ]]; then
     fi
 fi
 
-# anaconda3
-if [[ -d "$HOME/anaconda3/bin" ]]; then
-    export PATH=$PATH:$HOME/anaconda3/bin
-fi
+# # anaconda3
+# if [[ -d "$HOME/anaconda3/bin" ]]; then
+#     export PATH=$PATH:$HOME/anaconda3/condabin
+# fi
 
-# miniconda3
-if [[ -d "$HOME/miniconda3/bin" ]]; then
-    export PATH=$PATH:$HOME/miniconda3/bin
-    # source $HOME/miniconda3/bin/activate
-fi
+# # miniconda3
+# if [[ -d "$HOME/miniconda3/bin" ]]; then
+#     export PATH=$PATH:$HOME/miniconda3/condabin
+#     # source $HOME/miniconda3/bin/activate
+# fi
 
 # nvs
 if [[ -d "$HOME/.nvs" ]]; then

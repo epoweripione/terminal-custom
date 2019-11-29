@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+CURRENT_DIR=$(pwd)
+
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
@@ -468,4 +470,5 @@ if [[ -n "$ZSH" ]]; then
 fi
 
 
+cd ${CURRENT_DIR}
 colorEcho ${GREEN} "Upgarde all packages done!"

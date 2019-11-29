@@ -3,8 +3,13 @@
 ## How to use
 ## 1. Install curl first
 ## 2. Install zsh and oh-my-zsh: source <(curl -sL https://git.io/fA8Jb)
+##                               source <(curl -sL http://t.cn/AigJm9ut)
 ## 3. Init: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh && ~/zsh_init.sh
+##          source <(curl -sL http://t.cn/AigJuOCW) && ~/zsh_update.sh && ~/zsh_init.sh
 ## 4. Update: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh
+##            source <(curl -sL http://t.cn/AigJuOCW) && ~/zsh_update.sh
+
+CURRENT_DIR=$(pwd)
 
 #######color code########
 RED="31m"      # Error message
@@ -79,6 +84,9 @@ chmod +x ~/pecl_install_php_extensions.sh
 chmod +x ~/cross_gfw_installer.sh
 chmod +x ~/cross_gfw_config.sh
 
+chmod +x ~/ip2location_installer.sh
+chmod +x ~/ip2location_distance.sh
+
 chmod +x ~/frp_installer.sh
 chmod +x ~/goproxy_installer.sh
 chmod +x ~/shadowtunnel_installer.sh
@@ -144,5 +152,5 @@ if [[ -d $ZSH/custom ]]; then
 fi
 
 
-cd -
+cd ${CURRENT_DIR}
 colorEcho ${GREEN} "Custom shell script download finished!"

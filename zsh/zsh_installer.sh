@@ -3,6 +3,7 @@
 ## How to use
 ## 1. Install curl first
 ## 2. Install zsh and oh-my-zsh: source <(curl -sL https://git.io/fA8Jb)
+##                               source <(curl -sL http://t.cn/AigJm9ut)
 
 #######color code########
 RED="31m"      # Error message
