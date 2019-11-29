@@ -104,4 +104,4 @@ getDistance
 echo "Distance between $IP1 and $IP2 is $DISTANCE km"
 
 # How to get distanct between 2 IP:
-# DISTANCT_2IP=$(./ip2location_distance.sh IP1 IP2 | grep -Eo 'is ([0-9.])* km' | grep -Eo '([0-9.])*')
+# DISTANCT_2IP=$(./ip2location_distance.sh IP1 IP2 | grep -Eo 'is ([0-9.])+ km' | grep -Eo '([0-9.])+')

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Usage: ./hosts_accelerate_cn.sh /etc/hosts dig|curl|reset test
+
 # if [[ $UID -ne 0 ]]; then
 #     echo "Please run this script as root user!"
 #     exit 0
@@ -132,6 +134,9 @@ else
     IP_HOSTS="\n# Github Start"
     sudo sed -i "/github/d" ${HostsFile}
 fi
+
+# sudo sed -i "/[Gg]ithub/d" ${HostsFile}
+[[ "$CHECK_METHOD" == "reset" ]] && exit 0
 
 # https://amazonaws.com.ipaddress.com/github-cloud.s3.amazonaws.com
 # https://github.com.ipaddress.com/
