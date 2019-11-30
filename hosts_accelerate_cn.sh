@@ -87,6 +87,17 @@ if [[ "$CHECK_METHOD" == "dig" && ! -x "$(command -v dig)" ]]; then
     fi
 fi
 
+if [[ ! -x "$(command -v dig)" ]]; then
+    colorEcho ${RED} "dig is not installed!"
+    exit 1
+fi
+
+if [[ "$CHECK_METHOD" == "dig" && ! -x "$(command -v dig)" ]]; then
+    echo -n "DNS Server adderss?[8.8.8.8] "
+    read DIG_DNS_SERVER
+    [[ -z "$DIG_DNS_SERVER" ]] && DIG_DNS_SERVER=8.8.8.8
+fi
+
 
 colorEcho ${BLUE} "Setting hosts for github..."
 # first char with `-`: Same IP as prior host
@@ -162,7 +173,7 @@ for TargetHost in ${HostsList[@]}; do
 
     if [[ -z "$SameIPPrior" ]]; then
         if [[ "$CHECK_METHOD" == "dig" ]]; then
-            TargetIP=$(dig +short ${TargetHost} @8.8.8.8 \
+            TargetIP=$(dig +short ${TargetHost} @${DIG_DNS_SERVER} \
                         | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
                         | grep -v ${WAN_NET_IP} | head -n1)
         else

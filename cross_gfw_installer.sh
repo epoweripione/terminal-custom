@@ -65,7 +65,8 @@ rm -rf /etc/localtime && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone
 
-source <(curl -sL https://git.io/fNgqx) --zh
+source <(curl -sL https://multi.netlify.com/v2ray.sh) --zh
+# source <(curl -sL https://git.io/fNgqx) --zh
 
 
 # # V2Ray Client

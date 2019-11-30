@@ -1,18 +1,35 @@
+# Proxy settings (need admin privileges) 
+# netsh winhttp show proxy
+# use ie proxy settings:
+# netsh winhttp import proxy source=ie
+# or:
+# netsh winhttp set proxy 127.0.0.1:55881
+# reset:
+# netsh winhttp reset proxy
+
+
+Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
+
+
+# https://docs.microsoft.com/en-us/nuget/install-nuget-client-tools
+# Find-PackageProvider -Name "Nuget" -AllVersions
+# Install-PackageProvider -Name "NuGet" -Force
+
+
 if (-Not (Test-Path $PROFILE)) {
     New-Item $PROFILE –Type File –Force
 }
 
-
 Install-Module -Name PSReadLine -AllowPrerelease -SkipPublisherCheck -Force
 
-
 Install-Module Find-String,PSColors,TabExpansionPlusPlus -AllowClobber
-Add-Content $PROFILE "`nImport-Module Find-String"; Add-Content $PROFILE "`nImport-Module PSColors"; Add-Content $PROFILE "`nImport-Module TabExpansionPlusPlus";
-
+Add-Content $PROFILE "`nImport-Module Find-String"
+Add-Content $PROFILE "Import-Module PSColors"
+Add-Content $PROFILE "Import-Module TabExpansionPlusPlus"
 
 Install-Module Posh-git,oh-my-posh
-Add-Content $PROFILE "`nImport-Module Posh-git"; Add-Content $PROFILE "`nImport-Module oh-my-posh"; Add-Content $PROFILE "`nSet-Theme Paradox-my"
-
+Add-Content $PROFILE "Import-Module Posh-git"
+Add-Content $PROFILE "Import-Module oh-my-posh"
 
 # my theme
 mkdir -p ~\Documents\PowerShell\PoshThemes
@@ -20,6 +37,7 @@ mkdir -p ~\Documents\PowerShell\PoshThemes
 $p = New-Object System.Net.WebClient
 $p.DownloadFile("https://raw.githubusercontent.com/epoweripione/shellstuff/master/Paradox-my.psm1","~\Documents\PowerShell\PoshThemes\Paradox-my.psm1")
 
+Add-Content $PROFILE "`nSet-Theme Paradox-my"
 
 # Custom
 Install-Module Get-ChildItemColor
