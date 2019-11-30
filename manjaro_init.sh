@@ -34,6 +34,24 @@ else
     sed -i "/^--socks5-hostname.*/d" $HOME/.curlrc
 fi
 
+# snap
+read -p "Use socks5 proxy for snap?[y/N]:" SNAP_PROXY_CHOICE
+if [[ "$SNAP_PROXY_CHOICE" == 'y' || "$SNAP_PROXY_CHOICE" == 'Y' ]]; then
+    read -p "Socks5 proxy address?[127.0.0.1:55880]:" Sock5Address
+    [[ -z "$Sock5Address" ]] && Sock5Address=127.0.0.1:55880
+
+    # sudo systemctl edit snapd
+    sudo mkdir -p "/etc/systemd/system/snapd.service.d/"
+    echo -e "[Service]" \
+        | sudo tee -a "/etc/systemd/system/snapd.service.d/override.conf" >/dev/null
+    echo -e "Environment=\"http_proxy=socks5://${Sock5Address}\"" \
+        | sudo tee -a "/etc/systemd/system/snapd.service.d/override.conf" >/dev/null
+    echo -e "Environment=\"https_proxy=socks5://${Sock5Address}\"" \
+        | sudo tee -a "/etc/systemd/system/snapd.service.d/override.conf" >/dev/null
+
+    sudo systemctl daemon-reload && sudo systemctl restart snapd
+fi
+
 
 # pacman
 # Generate custom mirrorlist
@@ -464,7 +482,7 @@ sudo pacman --noconfirm -S visual-studio-code-bin dbeaver wireshark-qt
 sudo pacman --noconfirm -S goldendict
 
 # Download & Upload
-sudo pacman --noconfirm -S uget filezilla
+sudo pacman --noconfirm -S aria2 uget filezilla
 
 # Docker
 sudo pacman --noconfirm -S docker docker-compose
@@ -524,6 +542,18 @@ sudo pacman --noconfirm -S konsole
 # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
 # wget -c -O eDEX-UI.AppImage \
 #     https://github.com/GitSquared/edex-ui/releases/download/${REMOTE_VERSION}/eDEX-UI.Linux.x86_64.AppImage
+
+
+# pyenv
+# https://segmentfault.com/a/1190000006174123
+sudo pacman -S pyenv
+# pyenv init
+# pyenv install --list
+# pyenv install <version>
+# v=3.8.0;wget https://npm.taobao.org/mirrors/python/$v/Python-$v.tar.xz -P ~/.pyenv/cache/;pyenv install $v
+# pyenv versions
+# pyenv uninstall <version>
+# pyenv global <version>
 
 
 # Clean jobs

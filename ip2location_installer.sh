@@ -14,16 +14,6 @@ fi
 
 # https://github.com/chrislim2888/IP2Location-C-Library
 install_ip2location_c() {
-    if [[ ! -x "$(command -v make)" ]]; then
-        colorEcho ${RED} "make is not installed!"
-        exit 1
-    fi
-
-    if [[ ! -x "$(command -v gcc)" ]]; then
-        colorEcho ${RED} "gcc is not installed!"
-        exit 1
-    fi
-
     git clone https://github.com/chrislim2888/IP2Location-C-Library $CURRENT_DIR/IP2Location-C-Library && \
         cd $CURRENT_DIR/IP2Location-C-Library && \
         sudo autoreconf -i -v --force && \
@@ -42,11 +32,6 @@ install_ip2location_c() {
 
 # https://www.ip2location.com/development-libraries/ip2location/python
 install_ip2location_python() {
-    if [[ ! -x "$(command -v python)" ]]; then
-        colorEcho ${RED} "python is not installed!"
-        exit 1
-    fi
-
     # https://github.com/chrislim2888/IP2Location-Python
     git clone https://github.com/chrislim2888/IP2Location-Python $CURRENT_DIR/IP2Location-Python && \
         cd $CURRENT_DIR/IP2Location-Python && \
@@ -54,9 +39,8 @@ install_ip2location_python() {
         python setup.py install
 }
 
+# https://lite.ip2location.com/ip2location-lite
 download_ip2location_db() {
-    # https://lite.ip2location.com/ip2location-lite
-
     # Use your unique download token to download IP2Location databases
     local DOWNLOAD_TOKEN
     local DATABASE_CODE="DB5LITEBIN"
@@ -91,7 +75,26 @@ BIN_FILE="IP2LOCATION-LITE-DB5.BIN"
 
 #ip2locationLatLong
 CURRENT_DIR=$(pwd)
-[[ ! -s "$CURRENT_DIR/ip2locationLatLong" ]] && install_ip2location_c
+
+# C-Library
+if [[ ! -s "$CURRENT_DIR/ip2locationLatLong" ]]; then
+    if [[ ! -x "$(command -v make)" ]]; then
+        colorEcho ${RED} "make is not installed!"
+        exit 1
+    fi
+
+    if [[ ! -x "$(command -v gcc)" ]]; then
+        colorEcho ${RED} "gcc is not installed!"
+        exit 1
+    fi
+
+    install_ip2location_c
+fi
+
+# python
+[[ -x "$(command -v python)" ]] && install_ip2location_python
+
+# db
 [[ ! -s "$CURRENT_DIR/$BIN_FILE" ]] && download_ip2location_db
 
 
