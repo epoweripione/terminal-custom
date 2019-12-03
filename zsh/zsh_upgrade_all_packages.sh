@@ -241,14 +241,10 @@ fi
 #     [[ ! $(grep "[install]" $HOME/.pip/pip.conf) ]] && \
 #         echo -e "\n[install]" | tee -a $HOME/.pip/pip.conf >/dev/null
 #     sed -i "/^\[install\]/a\trusted-host=mirrors.aliyun.com" $HOME/.pip/pip.conf
-#     echo -e "trusted-host=mirrors.aliyun.com" | tee -a $HOME/.pip/pip.conf >/dev/null
+#     # echo -e "trusted-host=mirrors.aliyun.com" | tee -a $HOME/.pip/pip.conf >/dev/null
 # fi
 
-
-# if [[ -x "$(command -v pip3)" ]]; then
-#     colorEcho ${BLUE} "Updating pip3 packages..."
-#     sudo pip3 list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | sudo xargs -n1 pip3 install -U
-# elif [[ -x "$(command -v pip)" ]]; then
+# if [[ -x "$(command -v pip)" ]]; then
 #     colorEcho ${BLUE} "Updating pip packages..."
 #     sudo pip list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | sudo xargs -n1 pip install -U
 # fi

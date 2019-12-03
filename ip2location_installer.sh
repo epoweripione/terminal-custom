@@ -92,7 +92,9 @@ if [[ ! -s "$CURRENT_DIR/ip2locationLatLong" ]]; then
 fi
 
 # python
-[[ -x "$(command -v python)" ]] && install_ip2location_python
+if [[ -x "$(command -v pip)" ]]; then
+    [[ ! $(pip list | grep IP2Location) ]] && install_ip2location_python
+fi
 
 # db
 [[ ! -s "$CURRENT_DIR/$BIN_FILE" ]] && download_ip2location_db

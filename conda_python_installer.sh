@@ -16,6 +16,10 @@ fi
 set_proxy_mirrors_env
 
 
+# python3 & pip
+# bash <(curl -sL https://python3.netlify.com/install.sh)
+
+
 # Miniconda
 colorEcho ${BLUE} "Installing Miniconda3..."
 if [[ ! -d "$HOME/miniconda3" ]]; then

@@ -3,6 +3,7 @@ RED="31m"      # Error message
 GREEN="32m"    # Success message
 YELLOW="33m"   # Warning message
 BLUE="36m"     # Info message
+FUCHSIA="35m"
 
 function colorEcho() {
     local COLOR=$1
@@ -55,8 +56,16 @@ function check_release_package_manager() {
 
     local osname=$(uname)
     if [[ -f /etc/redhat-release ]]; then
-        release="centos"
-        systemPackage="yum"
+        if [[ $(cat /etc/redhat-release | grep Fedora) ]]; then
+            release="fedora"
+            systemPackage="dnf"
+        # elif [[ $(cat /etc/redhat-release |grep "CentOS Linux release 8") ]]; then
+        #     release="centos8"
+        #     systemPackage="dnf"
+        else
+            release="centos"
+            systemPackage="yum"
+        fi
     elif [[ -f /etc/alpine-release ]]; then
         release="alpine"
         systemPackage="apk"
@@ -74,6 +83,9 @@ function check_release_package_manager() {
         systemPackage="apt"
     elif cat /etc/issue | grep -Eqi "ubuntu"; then
         release="ubuntu"
+        systemPackage="apt"
+    elif cat /etc/issue | grep -Eqi "raspbian"; then
+        release="raspbian"
         systemPackage="apt"
     elif cat /etc/issue | grep -Eqi "centos|red hat|redhat"; then
         release="centos"
@@ -266,8 +278,10 @@ function get_os_package_manager() {
     check_os_package_manager dpkg "Debian GNU/Linux" && return
     check_os_package_manager dpkg "Ubuntu" && return
     check_os_package_manager cave "Exherbo Linux" && return
-    check_os_package_manager yum "CentOS" && return
-    check_os_package_manager yum "Red Hat" && return
+    # check_os_package_manager dnf "CentOS Linux 8" && return
+    # check_os_package_manager dnf "CentOS-8" && return
+    # check_os_package_manager yum "CentOS" && return
+    # check_os_package_manager yum "Red Hat" && return
     check_os_package_manager zypper "SUSE" && return
     check_os_package_manager pkg_tools "OpenBSD" && return
     check_os_package_manager pkg_tools "Bitrig" && return

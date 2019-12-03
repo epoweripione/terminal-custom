@@ -65,7 +65,7 @@ fi
 
 # use dig or curl
 [[ $PARAMS_NUM > 1 ]] && CHECK_METHOD="$2"
-[[ -z "$CHECK_METHOD" ]] && CHECK_METHOD="dig"
+[[ -z "$CHECK_METHOD" ]] && CHECK_METHOD="curl"
 
 # don't modify hosts file
 [[ $PARAMS_NUM > 2 ]] && TEST_ONLY="$3"
@@ -87,13 +87,13 @@ if [[ "$CHECK_METHOD" == "dig" && ! -x "$(command -v dig)" ]]; then
     fi
 fi
 
-if [[ ! -x "$(command -v dig)" ]]; then
+if [[ "$CHECK_METHOD" == "dig" && ! -x "$(command -v dig)" ]]; then
     colorEcho ${RED} "dig is not installed!"
     exit 1
 fi
 
-if [[ "$CHECK_METHOD" == "dig" && ! -x "$(command -v dig)" ]]; then
-    echo -n "DNS Server adderss?[8.8.8.8] "
+if [[ "$CHECK_METHOD" == "dig" && -x "$(command -v dig)" ]]; then
+    echo -n "DNS Server adderss for dig?[8.8.8.8] "
     read DIG_DNS_SERVER
     [[ -z "$DIG_DNS_SERVER" ]] && DIG_DNS_SERVER=8.8.8.8
 fi
