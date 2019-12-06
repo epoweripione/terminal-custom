@@ -25,7 +25,8 @@ if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
     set_git_socks5_proxy github.com,gitlab.com 127.0.0.1:55880
 
     [[ -n "$GIT_SOCKS5_PROXY_URL" ]] && \
-        echo "--socks5-hostname \"${GIT_SOCKS5_PROXY_URL}\"" > ${CURL_SOCKS5_CONFIG}
+        echo "--socks5-hostname \"${GIT_SOCKS5_PROXY_URL}\"" > ${CURL_SOCKS5_CONFIG} || \
+        cat /dev/null > ${CURL_SOCKS5_CONFIG}
 else
     set_git_socks5_proxy github.com,gitlab.com
     cat /dev/null > ${CURL_SOCKS5_CONFIG}
@@ -218,31 +219,6 @@ fi
 #     # pecl update-channels && rm -rf /tmp/pear $HOME/.pearrc
 # fi
 
-
-# fix `pip list` warning
-if [[ ! $(grep "format=columns" $HOME/.pip/pip.conf) ]]; then
-    mkdir -p $HOME/.pip && \
-    tee $HOME/.pip/pip.conf <<-'EOF'
-[global]
-format=columns
-EOF
-fi
-
-# pip mirror
-# if [[ $(grep "index-url=" $HOME/.pip/pip.conf) ]]; then
-#     sed -i "s|index-url=.*|index-url=https://mirrors.aliyun.com/pypi/simple/|" $HOME/.pip/pip.conf
-# else
-#     sed -i "/^\[global\]/a\index-url=https://mirrors.aliyun.com/pypi/simple/" $HOME/.pip/pip.conf
-# fi
-
-# if [[ $(grep "trusted-host=" $HOME/.pip/pip.conf) ]]; then
-#     sed -i "s|trusted-host=.*|trusted-host=mirrors.aliyun.com|" $HOME/.pip/pip.conf
-# else
-#     [[ ! $(grep "[install]" $HOME/.pip/pip.conf) ]] && \
-#         echo -e "\n[install]" | tee -a $HOME/.pip/pip.conf >/dev/null
-#     sed -i "/^\[install\]/a\trusted-host=mirrors.aliyun.com" $HOME/.pip/pip.conf
-#     # echo -e "trusted-host=mirrors.aliyun.com" | tee -a $HOME/.pip/pip.conf >/dev/null
-# fi
 
 # if [[ -x "$(command -v pip)" ]]; then
 #     colorEcho ${BLUE} "Updating pip packages..."

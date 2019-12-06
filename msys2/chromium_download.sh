@@ -74,14 +74,15 @@ if [[ $ostype == "windows" ]]; then
             wget -O "/d/Downloads/chrome-$ver-$chromium_ver.zip" \
                 -c "${url}/${chromium_ver}/chrome-win.zip"
         fi
-        if [[ "$USE_PROXY" == 'y' || "$USE_PROXY" == 'Y' ]]; then
-            curl --socks5-hostname 127.0.0.1:55880 -fSL \
-                -o "/d/Downloads/chrome-$ver-$chromium_ver.zip" \
-                -C - "${url}/${chromium_ver}/chrome-win.zip"
-        else
-            curl -fSL \
-                -o "/d/Downloads/chrome-$ver-$chromium_ver.zip" \
-                -C - "${url}/${chromium_ver}/chrome-win.zip"
-        fi
+
+        # if [[ "$USE_PROXY" == 'y' || "$USE_PROXY" == 'Y' ]]; then
+        #     curl --socks5-hostname 127.0.0.1:55880 -fSL \
+        #         -o "/d/Downloads/chrome-$ver-$chromium_ver.zip" \
+        #         -C - "${url}/${chromium_ver}/chrome-win.zip"
+        # else
+        #     curl -fSL \
+        #         -o "/d/Downloads/chrome-$ver-$chromium_ver.zip" \
+        #         -C - "${url}/${chromium_ver}/chrome-win.zip"
+        # fi
     fi
 fi

@@ -743,6 +743,7 @@ function set_proxy_mirrors_env() {
     if check_webservice_up www.google.com; then
         APT_NOT_USE_MIRRORS=true
         CONDA_NOT_USE_MIRROR=true
+        PIP_NOT_USE_MIRROR=true
         DOCKER_INSTALLER_NOT_USE_MIRROR=true
         GVM_INSTALLER_NOT_USE_PROXY=true
         NVM_INSTALLER_NOT_USE_MIRROR=true
@@ -753,6 +754,7 @@ function set_proxy_mirrors_env() {
     else
         unset APT_NOT_USE_MIRRORS
         unset CONDA_NOT_USE_MIRROR
+        unset PIP_NOT_USE_MIRROR
         unset DOCKER_INSTALLER_NOT_USE_MIRROR
         unset GVM_INSTALLER_NOT_USE_PROXY
         unset NVM_INSTALLER_NOT_USE_MIRROR

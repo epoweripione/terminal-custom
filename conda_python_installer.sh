@@ -19,6 +19,32 @@ set_proxy_mirrors_env
 # python3 & pip
 # bash <(curl -sL https://python3.netlify.com/install.sh)
 
+# fix `pip list` warning
+if [[ ! $(grep "format=columns" $HOME/.pip/pip.conf) ]]; then
+    mkdir -p $HOME/.pip && \
+        echo -e "[global]\nformat=columns" >> $HOME/.pip/pip.conf
+fi
+
+# pip mirror
+# alias pipinstall='pip install -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com'
+PIP_MIRROR_URL=https://mirrors.aliyun.com/pypi/simple/
+PIP_MIRROR_HOST=mirrors.aliyun.com
+if [[ -z "$PIP_NOT_USE_MIRROR" && ! $(grep "${PIP_MIRROR_HOST}" $HOME/.pip/pip.conf) ]]; then
+    if [[ $(grep "index-url=" $HOME/.pip/pip.conf) ]]; then
+        sed -i "s|index-url=.*|index-url=${PIP_MIRROR_URL}|" $HOME/.pip/pip.conf
+    else
+        sed -i "/^\[global\]/a\index-url=${PIP_MIRROR_URL}" $HOME/.pip/pip.conf
+    fi
+
+    if [[ $(grep "trusted-host=" $HOME/.pip/pip.conf) ]]; then
+        sed -i "s|trusted-host=.*|trusted-host=${PIP_MIRROR_HOST}|" $HOME/.pip/pip.conf
+    else
+        [[ ! $(grep "[install]" $HOME/.pip/pip.conf) ]] && \
+            echo -e "\n[install]" | tee -a $HOME/.pip/pip.conf >/dev/null
+        sed -i "/^\[install\]/a\trusted-host=${PIP_MIRROR_HOST}" $HOME/.pip/pip.conf
+    fi
+fi
+
 
 # Miniconda
 colorEcho ${BLUE} "Installing Miniconda3..."
