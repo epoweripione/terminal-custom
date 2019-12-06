@@ -186,7 +186,7 @@ for TargetHost in ${HostsList[@]}; do
 
     if [[ -n "$TargetIP" ]]; then
         if [[ -x "$(command -v geoiplookup)" ]]; then
-            TargetIPGeo=$(geoiplookup ${TargetIP} | cut -d':' -f2-)
+            TargetIPGeo=$(geoiplookup ${TargetIP} | head -n1 | cut -d':' -f2-)
         fi
         colorEcho ${YELLOW} " ${TargetIP}(${TargetIPGeo/[[:space:]]/})"
 
@@ -195,6 +195,8 @@ for TargetHost in ${HostsList[@]}; do
         else
             IP_HOSTS="${IP_HOSTS}\n${TargetIP} ${TargetHost}"
         fi
+    else
+        colorEcho ${RED} " error!"
     fi
 done
 

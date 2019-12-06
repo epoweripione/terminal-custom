@@ -81,7 +81,6 @@ function install_v2ray_client() {
 function get_v2ray_config_from_subscription() {
     local exitStatus=1
 
-    # local SUBSCRIBE_URL="https://jiang.netlify.com/"
     local VMESS_FILENAME="/tmp/v2ray.vmess"
     local DECODE_FILENAME="/tmp/v2ray_decode.vmess"
 
@@ -94,7 +93,8 @@ function get_v2ray_config_from_subscription() {
 
     if [[ -s "${VMESS_FILENAME}" ]]; then
         base64 -d "${VMESS_FILENAME}" > "${DECODE_FILENAME}"
-        sed -i -e 's|^vmess://||g' -e '/^ss:\/\//d' "${DECODE_FILENAME}"
+        # sed -i -e 's|^vmess://||g' -e '/^ss:\/\//d' -e '/^ssr:\/\//d' "${DECODE_FILENAME}"
+        sed -i '/^vmess:\/\//!d' "${DECODE_FILENAME}"
     fi
 
     if [[ ! -s "${DECODE_FILENAME}" ]]; then
