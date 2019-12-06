@@ -19,9 +19,7 @@ else
     fi
 fi
 
-if [[ -z "$ostype" ]]; then
-    get_os_type
-fi
+[[ -z "$ostype" ]] && get_os_type
 
 
 # # pacapt - An Arch's pacman-like package manager for some Unices
@@ -140,11 +138,13 @@ colorEcho ${BLUE} "Updating custom plugins..."
 # sh -c "$(curl -fsSL https://raw.githubusercontent.com/psprint/zsh-navigation-tools/master/doc/install.sh)"
 
 # fast-syntax-highlighting
-colorEcho ${BLUE} "Updating fast-syntax-highlighting..."
-if [[ -d $ZSH_CUSTOM/plugins/fast-syntax-highlighting ]]; then
-    cd $ZSH_CUSTOM/plugins/fast-syntax-highlighting && git pull
-else
-    git clone https://github.com/zdharma/fast-syntax-highlighting $ZSH_CUSTOM/plugins/fast-syntax-highlighting
+if [[ $ostype != "windows" ]]; then
+    colorEcho ${BLUE} "Updating fast-syntax-highlighting..."
+    if [[ -d $ZSH_CUSTOM/plugins/fast-syntax-highlighting ]]; then
+        cd $ZSH_CUSTOM/plugins/fast-syntax-highlighting && git pull
+    else
+        git clone https://github.com/zdharma/fast-syntax-highlighting $ZSH_CUSTOM/plugins/fast-syntax-highlighting
+    fi
 fi
 
 # zsh-syntax-highlighting
@@ -290,7 +290,11 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 
 [[ "$(command -v fuck)" ]] && Plugins="${Plugins} thefuck"
 
-Plugins="${Plugins} zsh-interactive-cd history-substring-search fast-syntax-highlighting zsh-autosuggestions"
+if [[ $ostype == "windows" ]]; then
+    Plugins="${Plugins} zsh-interactive-cd history-substring-search zsh-autosuggestions zsh-syntax-highlighting"
+else
+    Plugins="${Plugins} zsh-interactive-cd history-substring-search zsh-autosuggestions fast-syntax-highlighting"
+fi
 
 ## zsh-syntax-highlighting must be the last plugin sourced
 # if [[ ! $(grep "  zsh-syntax-highlighting" ~/.zshrc) ]]; then
