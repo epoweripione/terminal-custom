@@ -30,6 +30,7 @@ fi
 
 
 ostype=$(uname)
+ostype_wsl=$(uname -r)
 
 # pacapt - An Arch's pacman-like package manager for some Unices
 # https://github.com/icy/pacapt
@@ -126,14 +127,15 @@ chmod +x ~/yarn_packages_installer.sh
 
 
 # WSL
-if [[ $(uname -r) =~ "Microsoft" ]]; then
-    cp -f ~/terminal-custom/wsl/wsl_init.sh ~
+if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
+    cp -f ~/terminal-custom/wsl/*.sh ~
     chmod +x ~/wsl_init.sh
+    chmod +x ~/wsl2_init.sh
 fi
 
 
 # MSYS2
-if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
+if [[ "$ostype" =~ "MSYS_NT" || "$ostype" =~ "MINGW" || "$ostype" =~ "CYGWIN_NT" ]]; then
     cp -f ~/terminal-custom/msys2/*.sh ~
     chmod +x ~/chromium_download.sh
     chmod +x ~/msys2_clean_cache.sh

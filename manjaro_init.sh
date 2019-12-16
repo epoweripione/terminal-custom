@@ -13,6 +13,8 @@ else
 fi
 
 
+CURRENT_DIR=$(pwd)
+
 # socks5 proxy
 # git
 read -p "Use socks5 proxy for github,gitlab?[y/N]:" GIT_PROXY_CHOICE
@@ -34,23 +36,23 @@ else
     sed -i "/^--socks5-hostname.*/d" $HOME/.curlrc
 fi
 
-# snap
-read -p "Use socks5 proxy for snap?[y/N]:" SNAP_PROXY_CHOICE
-if [[ "$SNAP_PROXY_CHOICE" == 'y' || "$SNAP_PROXY_CHOICE" == 'Y' ]]; then
-    read -p "Socks5 proxy address?[127.0.0.1:55880]:" Sock5Address
-    [[ -z "$Sock5Address" ]] && Sock5Address=127.0.0.1:55880
+# # snap
+# read -p "Use socks5 proxy for snap?[y/N]:" SNAP_PROXY_CHOICE
+# if [[ "$SNAP_PROXY_CHOICE" == 'y' || "$SNAP_PROXY_CHOICE" == 'Y' ]]; then
+#     read -p "Socks5 proxy address?[127.0.0.1:55880]:" Sock5Address
+#     [[ -z "$Sock5Address" ]] && Sock5Address=127.0.0.1:55880
 
-    # sudo systemctl edit snapd
-    sudo mkdir -p "/etc/systemd/system/snapd.service.d/"
-    echo -e "[Service]" \
-        | sudo tee -a "/etc/systemd/system/snapd.service.d/override.conf" >/dev/null
-    echo -e "Environment=\"http_proxy=socks5://${Sock5Address}\"" \
-        | sudo tee -a "/etc/systemd/system/snapd.service.d/override.conf" >/dev/null
-    echo -e "Environment=\"https_proxy=socks5://${Sock5Address}\"" \
-        | sudo tee -a "/etc/systemd/system/snapd.service.d/override.conf" >/dev/null
+#     # sudo systemctl edit snapd
+#     sudo mkdir -p "/etc/systemd/system/snapd.service.d/"
+#     echo -e "[Service]" \
+#         | sudo tee -a "/etc/systemd/system/snapd.service.d/override.conf" >/dev/null
+#     echo -e "Environment=\"http_proxy=socks5://${Sock5Address}\"" \
+#         | sudo tee -a "/etc/systemd/system/snapd.service.d/override.conf" >/dev/null
+#     echo -e "Environment=\"https_proxy=socks5://${Sock5Address}\"" \
+#         | sudo tee -a "/etc/systemd/system/snapd.service.d/override.conf" >/dev/null
 
-    sudo systemctl daemon-reload && sudo systemctl restart snapd
-fi
+#     sudo systemctl daemon-reload && sudo systemctl restart snapd
+# fi
 
 
 # pacman
@@ -152,6 +154,17 @@ if ! check_webservice_up www.google.com; then
     [[ -x "$(command -v yay)" ]] && \
         yay --aururl "https://aur.tuna.tsinghua.edu.cn" --save
 fi
+
+
+# # autojump
+# # https://github.com/wting/autojump/issues/593
+# cd ${CURRENT_DIR} && \
+#     wget https://aur.archlinux.org/cgit/aur.git/snapshot/autojump.tar.gz && \
+#     tar -xzvf autojump.tar.gz && \
+#     cd autojump && sed -i "s/3.8/3.7/g" PKGBUILD && \
+#     makepkg && \
+#     sudo pacman -U autojump-22.5.3-5-any.pkg.tar.xz && \
+#     cd ${CURRENT_DIR} && rm -f autojump.tar.gz && rm -rf autojump
 
 
 # Fonts
@@ -573,3 +586,7 @@ if [[ "$CURL_PROXY_CHOICE" == 'y' || "$CURL_PROXY_CHOICE" == 'Y' ]]; then
         sed -i "/^--socks5-hostname.*/d" $HOME/.curlrc
     fi
 fi
+
+
+cd ${CURRENT_DIR}
+colorEcho ${GREEN} "Done!"

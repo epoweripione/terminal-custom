@@ -1,6 +1,7 @@
 # Custom ZSH configuration
 
 ostype=$(uname)
+ostype_wsl=$(uname -r)
 
 # custom PS2
 # export PS2="> "
@@ -38,7 +39,7 @@ setopt localoptions rmstarsilent
 
 
 # complete hard drives in MSYS2
-if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
+if [[ "$ostype" =~ "MSYS_NT" || "$ostype" =~ "MINGW" || "$ostype" =~ "CYGWIN_NT" ]]; then
     drives=$(mount | sed -rn 's#^[A-Z]: on /([a-z]).*#\1#p' | tr '\n' ' ')
     zstyle ':completion:*' fake-files /: "/:$drives"
     unset drives
@@ -123,7 +124,7 @@ fi
 
 
 # macOS
-if [[ $ostype == "Darwin" ]]; then
+if [[ "$ostype" == "Darwin" ]]; then
     if [[ -x "$(command -v greadlink)" ]]; then
         alias readlink=greadlink
     fi
@@ -131,7 +132,7 @@ fi
 
 
 # Extend variable in MSYS2 to use node,npm,php,composer... with winpty
-if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
+if [[ "$ostype" =~ "MSYS_NT" || "$ostype" =~ "MINGW" || "$ostype" =~ "CYGWIN_NT" ]]; then
     export PATH=$PATH:/c/nodejs:/c/Users/$USERNAME/AppData/Roaming/npm:/c/php/php7:/c/php/composer/vendor/bin
 
     # dotnet
@@ -431,8 +432,8 @@ else
     alias decodeURIComponent="sed 's/%/\\\\x/g' | xargs -0 printf '%b'"
 fi
 
-# WSL
-if [[ $(uname -r) =~ "Microsoft" ]]; then
+# WSL1
+if [[ "$ostype_wsl" =~ "Microsoft" ]]; then
     # Docker
     if [[ -d "/c/Program Files/Docker Toolbox" ]]; then
         # export PATH="$PATH:/c/Program\ Files/Docker\ Toolbox"
@@ -453,20 +454,21 @@ if [[ $(uname -r) =~ "Microsoft" ]]; then
 
         alias docker-machine="$DOCKER_INSTALL_PATH/resources/bin/docker-machine.exe"
     fi
+fi
 
-
+# WSL1 & WSL2
+if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
     # start services upon WSL launch
-    if [[ $UID -eq 0 ]]; then
-        # libnss-winbind
-        if (( $(ps -ef | grep -v grep | grep winbind | wc -l) == 0 )); then
-            if [[ $(systemctl is-enabled winbind 2>/dev/null) ]]; then
-            # if systemctl list-unit-files --type=service | grep "winbind.service" | grep "enabled" >/dev/null 2>&1; then
-                service winbind start
-            fi
-        fi
+    # libnss-winbind
+    if (( $(ps -ef | grep -v grep | grep winbind | wc -l) == 0 )); then
+        [[ $(systemctl is-enabled winbind 2>/dev/null) ]] && \
+            sudo service winbind start
+        # if systemctl list-unit-files --type=service | grep "winbind.service" | grep "enabled" >/dev/null 2>&1; then
+        #     service winbind start
+        # fi
     fi
 
     # fast-syntax-highlighting: fix Segmentation fault (core dumped) when input char -
     # https://github.com/zdharma/fast-syntax-highlighting/issues/108
-    FAST_HIGHLIGHT[chroma-git]="chroma/-ogit.ch"
+    # FAST_HIGHLIGHT[chroma-git]="chroma/-ogit.ch"
 fi

@@ -213,11 +213,11 @@ apt install -y yarn --no-install-recommends
 
 
 # .NET Core SDK
-## https://dotnet.microsoft.com/download/linux-package-manager/debian10/sdk-3.0.100
+## https://docs.microsoft.com/zh-cn/dotnet/core/install/linux-package-manager-debian10
 ## How to use: dotnet --help
 colorEcho ${BLUE} "Installing .NET Core SDK..."
 # apt install -y dotnet-sdk-2.2
-apt install -y dotnet-sdk-3.0
+apt install -y dotnet-sdk-3.1
 
 
 # jabba & JDK

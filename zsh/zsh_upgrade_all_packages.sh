@@ -367,7 +367,7 @@ if [[ -d "/srv/frp" ]]; then
             cp -rf /srv/frp_*/* /srv/frp && \
             cp -f /srv/backup_frp/*.ini /srv/frp && \
             rm -rf /srv/frp_*
-        
+
         if [[ -s "/srv/frp/frps.ini" ]]; then
             nohup /srv/frp/frps -c /srv/frp/frps.ini >/dev/null 2>&1 & disown
         fi
@@ -380,7 +380,7 @@ if [[ -x "$(command -v v2ray)" ]]; then
     if [[ -x "$(command -v v2ray-util)" ]]; then
         colorEcho ${BLUE} "Updating multi-v2ray..."
         # https://github.com/Jrohy/multi-v2ray
-        v2ray update.sh && v2ray update && v2ray restart
+        v2ray update.sh >/dev/null && v2ray update && v2ray restart
 
         # CHECK_URL="https://api.github.com/repos/Jrohy/multi-v2ray/releases/latest"
 

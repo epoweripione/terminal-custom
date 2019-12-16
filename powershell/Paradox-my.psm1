@@ -11,7 +11,7 @@ function Write-Theme {
     $prompt = Set-Newline
 
     $lastColor = $sl.Colors.PromptBackgroundColor
-    $prompt += Write-Prompt -Object $sl.PromptSymbols.StartSymbol -ForegroundColor $sl.Colors.PromptForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
+    $prompt += Write-Prompt -Object " $($sl.PromptSymbols.StartSymbol) " -ForegroundColor $sl.Colors.PromptForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
 
     #check the last command state and indicate if failed
     If ($lastCommandFailed) {
@@ -53,6 +53,13 @@ function Write-Theme {
     # Writes the postfix to the prompt
     $prompt += Write-Prompt -Object $sl.PromptSymbols.SegmentForwardSymbol -ForegroundColor $lastColor
 
+    # # Check the last command state and indicate if failed
+    # If ($lastCommandFailed) {
+    #     $prompt += Write-Prompt -Object " $($sl.PromptSymbols.FailedCommandSymbol)" -ForegroundColor $sl.Colors.CommandFailedIconForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
+    # } else {
+    #     $prompt += Write-Prompt -Object " $($sl.PromptSymbols.SuccessCommandSymbol)" -ForegroundColor $sl.Colors.CommandSuccessIconForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
+    # }
+
     # $timeStamp = Get-Date -UFormat %r
     # $timestamp = "[$timeStamp]"
 
@@ -77,11 +84,17 @@ function Write-Theme {
 }
 
 $sl = $global:ThemeSettings #local settings
-$sl.PromptSymbols.StartSymbol = ' '
+$sl.PromptSymbols.StartSymbol = [char]::ConvertFromUtf32(0xf17a) # 
+# $sl.PromptSymbols.StartSymbol = [char]::ConvertFromUtf32(0xe70c) # 
 #                 ❯      ❮    ➤       ➜    ᐅ
 # 0xE0B0 0xE602 0x276F 0x276E 0x27A4 0x279C 0x1405
 $sl.PromptSymbols.PromptIndicator = [char]::ConvertFromUtf32(0xE602)
 $sl.PromptSymbols.SegmentForwardSymbol = [char]::ConvertFromUtf32(0xE0B4)
+# $sl.PromptSymbols.SegmentBackwardSymbol = [char]::ConvertFromUtf32(0xE0B2)
+$sl.PromptSymbols.TimeSymbol = ' ' + [char]::ConvertFromUtf32(0x235F)
+$sl.PromptSymbols.FailedCommandSymbol = [char]::ConvertFromUtf32(0x2718)
+$sl.PromptSymbols.SuccessCommandSymbol = [char]::ConvertFromUtf32(0x2714)
+
 $sl.Colors.PromptForegroundColor = [ConsoleColor]::White
 $sl.Colors.PromptSymbolColor = [ConsoleColor]::White
 $sl.Colors.PromptHighlightColor = [ConsoleColor]::DarkBlue

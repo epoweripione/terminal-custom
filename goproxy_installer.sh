@@ -25,10 +25,17 @@ fi
 
 # goproxy
 # https://github.com/snail007/goproxy
-if [[ ! -x "$(command -v proxy)" ]]; then
+if [[ ! -d "/etc/proxy" || ! -x "$(command -v proxy)" ]]; then
     colorEcho ${BLUE} "Installing goproxy..."
     curl -SL https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh | bash
 fi
+
+if [[ -d "/etc/proxy" && -x "$(command -v proxy)" ]]; then
+    if [[ ! -e "/etc/proxy/proxy.crt" ]]; then
+        cd /etc/proxy && proxy keygen -C proxy -d 365 >/dev/null 2>&1 
+    fi
+fi
+
 
 # ProxyAdmin
 # https://github.com/snail007/proxy_admin_free

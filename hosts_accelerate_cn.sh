@@ -101,52 +101,72 @@ fi
 
 colorEcho ${BLUE} "Setting hosts for github..."
 # first char with `-`: Same IP as prior host
-HostsList=(
-    github.com
-    www.github.com
-    api.github.com
-    gist.github.com
-    codeload.github.com
-    assets-cdn.github.com
-    github.global.ssl.fastly.net
-    github-cloud.s3.amazonaws.com
-    github-production-release-asset-2e65be.s3.amazonaws.com
-    github.githubassets.com
-    raw.githubusercontent.com
-    -gist.githubusercontent.com
-    -cloud.githubusercontent.com
-    -camo.githubusercontent.com
-    -avatars0.githubusercontent.com
-    -avatars1.githubusercontent.com
-    -avatars2.githubusercontent.com
-    -avatars3.githubusercontent.com
-    -avatars4.githubusercontent.com
-    -avatars5.githubusercontent.com
-    -avatars6.githubusercontent.com
-    -avatars7.githubusercontent.com
-    -avatars8.githubusercontent.com
-)
+HostListFile="./hosts_accelerate_cn.list"
+if [[ -s "$HostListFile" ]]; then
+    # HostListFileContent=$(cat $HostListFile | tr "\n" " ")
+    # HostsList=($(echo ${HostListFileContent}))
+    HostsList=()
+    # || In case the file has an incomplete (missing newline) last line
+    while read -r READLINE || [[ "$READLINE" ]]; do
+        HostsList+=("$READLINE")
+    done < "${HostListFile}"
+else
+    HostsList=(
+        github.com
+        www.github.com
+        api.github.com
+        gist.github.com
+        codeload.github.com
+        assets-cdn.github.com
+        github.global.ssl.fastly.net
+        github-cloud.s3.amazonaws.com
+        github-production-release-asset-2e65be.s3.amazonaws.com
+        github.githubassets.com
+        raw.githubusercontent.com
+        -gist.githubusercontent.com
+        -cloud.githubusercontent.com
+        -camo.githubusercontent.com
+        -avatars0.githubusercontent.com
+        -avatars1.githubusercontent.com
+        -avatars2.githubusercontent.com
+        -avatars3.githubusercontent.com
+        -avatars4.githubusercontent.com
+        -avatars5.githubusercontent.com
+        -avatars6.githubusercontent.com
+        -avatars7.githubusercontent.com
+        -avatars8.githubusercontent.com
+    )
+fi
 
 IP_HOSTS=""
 
-# begin line
-if [[ $(grep "^# Github Start" ${HostsFile}) ]]; then
-    LineBegin=$(cat -n ${HostsFile} | grep '# Github Start' | awk '{print $1}')
-    LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
-    if [[ -n "$LineBegin" && -n "$LineEnd" && -z "$TEST_ONLY" ]]; then
-        DeleteBegin=$((${LineBegin}+1))
-        DeleteEnd=$((${LineEnd}-1))
-        sudo sed -i "${DeleteBegin},${DeleteEnd}d" ${HostsFile}
+# Delete exist host entry
+# if [[ $(grep "^# Github Start" ${HostsFile}) ]]; then
+#     LineBegin=$(cat -n ${HostsFile} | grep '# Github Start' | awk '{print $1}')
+#     LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
+#     if [[ -n "$LineBegin" && -n "$LineEnd" && -z "$TEST_ONLY" ]]; then
+#         DeleteBegin=$((${LineBegin}+1))
+#         DeleteEnd=$((${LineEnd}-1))
+#         sudo sed -i "${DeleteBegin},${DeleteEnd}d" ${HostsFile}
 
-        LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
-    fi
-else
-    # echo -e "\n# Github Start" | sudo tee -a ${HostsFile}
-    IP_HOSTS="\n# Github Start"
-    sudo sed -i "/github/d" ${HostsFile}
-fi
+#         LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
+#     fi
+# else
+#     # echo -e "\n# Github Start" | sudo tee -a ${HostsFile}
+#     IP_HOSTS="\n# Github Start"
+#     sudo sed -i "/github/d" ${HostsFile}
+# fi
 
 # sudo sed -i "/[Gg]ithub/d" ${HostsFile}
+for TargetHost in ${HostsList[@]}; do
+    TargetHost=$(echo ${TargetHost} | sed 's/^-//')
+    if [[ $(echo ${TargetHost} | grep "^#") ]]; then
+        sed -i "/^${TargetHost}$/d" ${HostsFile}
+    else
+        sed -i "/[[:space:]]${TargetHost}$/d" ${HostsFile}
+    fi
+fi
+
 [[ "$CHECK_METHOD" == "reset" ]] && exit 0
 
 # https://amazonaws.com.ipaddress.com/github-cloud.s3.amazonaws.com
@@ -154,13 +174,17 @@ fi
 # https://github.com.ipaddress.com/assets-cdn.github.com
 # https://fastly.net.ipaddress.com/github.global.ssl.fastly.net
 for TargetHost in ${HostsList[@]}; do
-    # echo ${TargetHost}
+    if [[ $(echo ${TargetHost} | grep "^#") ]]; then
+        IP_HOSTS="${IP_HOSTS}\n${TargetHost}"
+        continue
+    fi
 
     SameIPPrior=""
     # first char with `-`: Same IP as prior host
     if [[ $(echo ${TargetHost} | grep "^-") ]]; then
         SameIPPrior="yes"
-        TargetHost=$(echo ${TargetHost##-}) # remove -
+        # TargetHost=$(echo ${TargetHost##-}) # remove -
+        TargetHost=$(echo ${TargetHost} | sed 's/^-//')
     fi
 
     colorEchoN ${BLUE} "Checking ${TargetHost}"
@@ -187,6 +211,17 @@ for TargetHost in ${HostsList[@]}; do
     if [[ -n "$TargetIP" ]]; then
         if [[ -x "$(command -v geoiplookup)" ]]; then
             TargetIPGeo=$(geoiplookup ${TargetIP} | head -n1 | cut -d':' -f2-)
+            # TargetIPGeo=""
+            # # IPGeo=$(curl -sL --connect-timeout 5 --max-time 15 https://ipinfo.io/${TargetIP}/country)
+            # IPGeo=$(curl -sL --connect-timeout 5 --max-time 15 \
+            #                 https://ipinfo.io/${TargetIP}/geo \
+            #                 | sed -e 's/[{}", ]//g' -e 's/\r//g')
+            # if [[ -n "$IPGeo" ]]; then
+            #     IPGeoCountry=$(echo "${IPGeo}" | grep '^country:' | cut -d':' -f2-)
+            #     IPGeoRegion=$(echo "${IPGeo}" | grep '^region:' | cut -d':' -f2-)
+            #     IPGeoCity=$(echo "${IPGeo}" | grep '^city:' | cut -d':' -f2-)
+            #     TargetIPGeo="${IPGeoCity}, ${IPGeoRegion}, ${IPGeoCountry}"
+            # fi
         fi
         colorEcho ${YELLOW} " ${TargetIP}(${TargetIPGeo/[[:space:]]/})"
 
@@ -203,19 +238,23 @@ done
 [[ -n "$IP_HOSTS" ]] && echo -e "${IP_HOSTS}"
 
 if [[ -n "$IP_HOSTS" && -z "$TEST_ONLY" ]]; then
-    if [[ ! $(grep "^# Github End" ${HostsFile}) ]]; then
-        IP_HOSTS="${IP_HOSTS}\n# Github End"
-    fi
-
-    if [[ -n "$LineBegin" ]]; then
-        sudo sed -i "${LineBegin}a ${IP_HOSTS}" ${HostsFile}
-    elif [[ -n "$LineEnd" ]]; then
-        sudo sed -i "${LineEnd}i ${IP_HOSTS}" ${HostsFile}
-    else
-        # echo -e "${IP_HOSTS}" | sudo tee -a ${HostsFile}
-        echo -e "${IP_HOSTS}" | sudo tee -a ${HostsFile} >/dev/null
-    fi
+    echo -e "${IP_HOSTS}" | sudo tee -a ${HostsFile} >/dev/null
 fi
+
+# if [[ -n "$IP_HOSTS" && -z "$TEST_ONLY" ]]; then
+#     if [[ ! $(grep "^# Github End" ${HostsFile}) ]]; then
+#         IP_HOSTS="${IP_HOSTS}\n# Github End"
+#     fi
+
+#     if [[ -n "$LineBegin" ]]; then
+#         sudo sed -i "${LineBegin}a ${IP_HOSTS}" ${HostsFile}
+#     elif [[ -n "$LineEnd" ]]; then
+#         sudo sed -i "${LineEnd}i ${IP_HOSTS}" ${HostsFile}
+#     else
+#         # echo -e "${IP_HOSTS}" | sudo tee -a ${HostsFile}
+#         echo -e "${IP_HOSTS}" | sudo tee -a ${HostsFile} >/dev/null
+#     fi
+# fi
 
 
 # Flush DNS cache
