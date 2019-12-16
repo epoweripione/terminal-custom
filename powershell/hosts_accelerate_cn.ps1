@@ -189,7 +189,7 @@ foreach ($TargetHost in $HostsList) {
     # add host entry
     if (-Not ($TargetIP -eq "")) {
         $IPGeo = curl -sL --connect-timeout 5 --max-time 15 https://ipinfo.io/$TargetIP/country
-        Write-Host " $TargetIP($IPGeo)"
+        Write-Host " $TargetIP($IPGeo)" -ForegroundColor Yellow
         $IP_HOSTS = "$IP_HOSTS`n$TargetIP $TargetHost"
     }
 }
@@ -201,4 +201,5 @@ foreach ($TargetHost in $HostsList) {
 
 # flush dns
 ipconfig -flushdns | Out-Null
+
 Write-Host "Done." -ForegroundColor Blue
