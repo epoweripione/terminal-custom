@@ -99,7 +99,7 @@ if [[ "$CHECK_METHOD" == "dig" && -x "$(command -v dig)" ]]; then
 fi
 
 
-colorEcho ${BLUE} "Setting hosts for github..."
+colorEcho ${BLUE} "Reading hosts list..."
 # first char with `-`: Same IP as prior host
 HostListFile="./hosts_accelerate_cn.list"
 if [[ -s "$HostListFile" ]]; then
@@ -138,9 +138,8 @@ else
     )
 fi
 
-IP_HOSTS=""
-
 # Delete exist host entry
+colorEcho ${BLUE} "Deleting exist entry in hosts..."
 # if [[ $(grep "^# Github Start" ${HostsFile}) ]]; then
 #     LineBegin=$(cat -n ${HostsFile} | grep '# Github Start' | awk '{print $1}')
 #     LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
@@ -170,7 +169,7 @@ for TargetHost in ${HostsList[@]}; do
     else
         sed -i "/[[:space:]]${TargetHost}$/d" ${HostsFile}
     fi
-fi
+done
 
 [[ "$CHECK_METHOD" == "reset" ]] && exit 0
 
@@ -178,6 +177,8 @@ fi
 # https://github.com.ipaddress.com/
 # https://github.com.ipaddress.com/assets-cdn.github.com
 # https://fastly.net.ipaddress.com/github.global.ssl.fastly.net
+colorEcho ${BLUE} "Setting host entries..."
+IP_HOSTS=""
 for TargetHost in ${HostsList[@]}; do
     # remove both leading and trailing spaces
     TargetHost=$(echo ${TargetHost} | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')

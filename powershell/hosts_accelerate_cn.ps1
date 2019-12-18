@@ -158,6 +158,7 @@ if ($hostExistCNT -gt 0) {
 }
 
 # get ip from ipaddress.com
+Write-Host "Setting host entries..." -ForegroundColor Blue
 $IP_HOSTS = ""
 foreach ($TargetHost in $HostsList) {
     $TargetHost = $TargetHost.Trim()

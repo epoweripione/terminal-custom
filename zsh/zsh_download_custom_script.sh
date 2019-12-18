@@ -76,6 +76,8 @@ chmod +x ~/pacapt_installer.sh
 chmod +x ~/proxychains_installer.sh
 chmod +x ~/sdkman_installer.sh
 
+cp -f ~/hosts_accelerate_cn.list ~
+
 chmod +x ~/speedtest.sh
 chmod +x ~/analyze_sys_performance.sh
 

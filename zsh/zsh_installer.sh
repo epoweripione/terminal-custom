@@ -38,12 +38,22 @@ if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     # GeoIP binary and database
     # http://kbeezie.com/geoiplookup-command-line/
     if pacman -Si geoip-bin >/dev/null 2>&1; then
-        sudo pacman --noconfirm -S geoip-bin geoip-database
+        sudo pacman --noconfirm -S geoip-bin
     else
         if pacman -Si GeoIP >/dev/null 2>&1; then
-            sudo pacman --noconfirm -S GeoIP GeoIP-data
+            sudo pacman --noconfirm -S GeoIP
         else
-            sudo pacman --noconfirm -S geoip geoip-data
+            sudo pacman --noconfirm -S geoip
+        fi
+    fi
+
+    if pacman -Si geoip-database >/dev/null 2>&1; then
+        sudo pacman --noconfirm -S geoip-database
+    else
+        if pacman -Si GeoIP-data >/dev/null 2>&1; then
+            sudo pacman --noconfirm -S GeoIP-data
+        else
+            sudo pacman --noconfirm -S geoip-data
         fi
     fi
 
