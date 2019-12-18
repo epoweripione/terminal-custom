@@ -128,6 +128,10 @@ Write-Host "Deleting exist entry in hosts..." -ForegroundColor Blue
 $hostsContent = Get-Content $Hostfile
 $hostExistCNT = 0
 foreach ($TargetHost in $HostsList) {
+    $TargetHost = $TargetHost.Trim()
+    if (($TargetHost -eq $null) -or ($TargetHost -eq "")) {
+        continue
+    }
     # first char with `-`: Same IP as prior host
     if ($TargetHost.Substring(0,1) -eq "-") {
         $TargetHost = $TargetHost.Substring(1)
@@ -156,11 +160,18 @@ if ($hostExistCNT -gt 0) {
 # get ip from ipaddress.com
 $IP_HOSTS = ""
 foreach ($TargetHost in $HostsList) {
+    $TargetHost = $TargetHost.Trim()
+    # empty line as newline
+    if (($TargetHost -eq $null) -or ($TargetHost -eq "")) {
+        $IP_HOSTS="$IP_HOSTS`n`n"
+        continue
+    }
+    # comment
     if ($TargetHost.Substring(0,1) -eq "#") {
         $IP_HOSTS="$IP_HOSTS`n$TargetHost"
         continue
     }
-    # first char with `-`: Same IP as prior host
+    # first char with `-`: Same IP as prior host entry
     $SameIPPrior = "no"
     if ($TargetHost.Substring(0,1) -eq "-") {
         $SameIPPrior = "yes"

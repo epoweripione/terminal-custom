@@ -159,7 +159,12 @@ IP_HOSTS=""
 
 # sudo sed -i "/[Gg]ithub/d" ${HostsFile}
 for TargetHost in ${HostsList[@]}; do
+    # remove both leading and trailing spaces
+    TargetHost=$(echo ${TargetHost} | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+
     TargetHost=$(echo ${TargetHost} | sed 's/^-//')
+    if [[ -z "$TargetHost" ]] && continue
+
     if [[ $(echo ${TargetHost} | grep "^#") ]]; then
         sed -i "/^${TargetHost}$/d" ${HostsFile}
     else
@@ -174,13 +179,20 @@ fi
 # https://github.com.ipaddress.com/assets-cdn.github.com
 # https://fastly.net.ipaddress.com/github.global.ssl.fastly.net
 for TargetHost in ${HostsList[@]}; do
+    # remove both leading and trailing spaces
+    TargetHost=$(echo ${TargetHost} | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+    # empty line as newline
+    if[[ -z "$TargetHost" ]]; then
+        IP_HOSTS="${IP_HOSTS}\n\n"
+        continue
+    fi
+    # comment
     if [[ $(echo ${TargetHost} | grep "^#") ]]; then
         IP_HOSTS="${IP_HOSTS}\n${TargetHost}"
         continue
     fi
-
+    # first char with `-`: Same IP as prior host entry
     SameIPPrior=""
-    # first char with `-`: Same IP as prior host
     if [[ $(echo ${TargetHost} | grep "^-") ]]; then
         SameIPPrior="yes"
         # TargetHost=$(echo ${TargetHost##-}) # remove -
