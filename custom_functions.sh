@@ -663,17 +663,19 @@ function get_network_wan_ipv6() {
 function get_network_wan_geo() {
     unset WAN_NET_IP_GEO
 
-    # Country lookup: China
-    WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 https://ifconfig.co/country`
-    if [[ -z "$WAN_NET_IP_GEO" ]]; then
-        # Country lookup: CN
-        WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 https://ifconfig.co/country-iso`
-    fi
-
-    if [[ -z "$WAN_NET_IP_GEO" && -x "$(command -v geoiplookup)" ]]; then
+    if [[ -x "$(command -v geoiplookup)" ]]; then
         get_network_wan_ipv4
         if [[ -n "$WAN_NET_IP" ]]; then
-            WAN_NET_IP_GEO=`geoiplookup ${WAN_NET_IP}`
+            WAN_NET_IP_GEO=`geoiplookup ${WAN_NET_IP} | head -n1 | cut -d':' -f2-`
+        fi
+    fi
+
+    if [[ -z "$WAN_NET_IP_GEO" ]]; then
+        # Country lookup: China
+        WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 https://ifconfig.co/country`
+        if [[ -z "$WAN_NET_IP_GEO" ]]; then
+            # Country lookup: CN
+            WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 https://ifconfig.co/country-iso`
         fi
     fi
 }
