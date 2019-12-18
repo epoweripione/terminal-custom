@@ -157,7 +157,9 @@ colorEcho ${BLUE} "Deleting exist entry in hosts..."
 # fi
 
 # sudo sed -i "/[Gg]ithub/d" ${HostsFile}
-for TargetHost in ${HostsList[@]}; do
+# for (( i = 0; i < ${#HostsList[@]}; i++ )); do
+#     TargetHost=${HostsList[$i]}
+for TargetHost in "${HostsList[@]}"; do
     # remove both leading and trailing spaces
     TargetHost=$(echo ${TargetHost} | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
 
@@ -179,7 +181,7 @@ done
 # https://fastly.net.ipaddress.com/github.global.ssl.fastly.net
 colorEcho ${BLUE} "Setting host entries..."
 IP_HOSTS=""
-for TargetHost in ${HostsList[@]}; do
+for TargetHost in "${HostsList[@]}"; do
     # remove both leading and trailing spaces
     TargetHost=$(echo ${TargetHost} | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
     # empty line as newline

@@ -120,8 +120,23 @@ if ((Test-Path $HostListFile) -and ((Get-Item $HostListFile).length -gt 0)) {
 
 # local WAN ip
 Write-Host "Getting Local WAN IP" -ForegroundColor Blue -NoNewline
-$LocalWANIP = curl -sL -4 https://ifconfig.co/
-Write-Host " $LocalWANIP"
+$WANHostsList=@(
+    "https://ifconfig.co/"
+    "https://v4.ident.me/"
+    "http://icanhazip.com/"
+    "http://ipinfo.io/ip"
+)
+foreach ($TargetHost in $WANHostsList) {
+    $LocalWANIP = curl -sL -4 "$TargetHost"
+    $LocalWANIP = ($LocalWANIP | Select-String -Pattern "\d{1,3}(\.\d{1,3}){3}" -AllMatches).Matches.Value
+    $LocalWANIP = $LocalWANIP | Select -first 1
+    if (($LocalWANIP -eq $null) -or ($LocalWANIP -eq "")) {
+        continue
+    } else {
+        Write-Host " $LocalWANIP"
+        break
+    }
+}
 
 # delete exist entry
 Write-Host "Deleting exist entry in hosts..." -ForegroundColor Blue
