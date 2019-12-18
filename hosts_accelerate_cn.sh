@@ -162,7 +162,7 @@ for TargetHost in ${HostsList[@]}; do
     TargetHost=$(echo ${TargetHost} | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
 
     TargetHost=$(echo ${TargetHost} | sed 's/^-//')
-    if [[ -z "$TargetHost" ]] && continue
+    [[ -z "$TargetHost" ]] && continue
 
     if [[ $(echo ${TargetHost} | grep "^#") ]]; then
         sed -i "/^${TargetHost}$/d" ${HostsFile}
