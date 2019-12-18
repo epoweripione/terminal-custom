@@ -165,9 +165,9 @@ for TargetHost in ${HostsList[@]}; do
     [[ -z "$TargetHost" ]] && continue
 
     if [[ $(echo ${TargetHost} | grep "^#") ]]; then
-        sed -i "/^${TargetHost}$/d" ${HostsFile}
+        sudo sed -i "/^${TargetHost}$/d" ${HostsFile}
     else
-        sed -i "/[[:space:]]${TargetHost}$/d" ${HostsFile}
+        sudo sed -i "/[[:space:]]${TargetHost}$/d" ${HostsFile}
     fi
 done
 
@@ -183,7 +183,7 @@ for TargetHost in ${HostsList[@]}; do
     # remove both leading and trailing spaces
     TargetHost=$(echo ${TargetHost} | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
     # empty line as newline
-    if[[ -z "$TargetHost" ]]; then
+    if [[ -z "$TargetHost" ]]; then
         IP_HOSTS="${IP_HOSTS}\n\n"
         continue
     fi
