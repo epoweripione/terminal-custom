@@ -632,7 +632,9 @@ function get_network_wan_ipv4() {
     )
 
     for target_host in ${remote_host_list[@]}; do
-        WAN_NET_IP=$(curl -s -4 --connect-timeout 5 --max-time 10 ${target_host})
+        WAN_NET_IP=$(curl -s -4 --connect-timeout 5 --max-time 10 ${target_host} \
+                        | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
+                        | head -n1)
         [[ -n "$WAN_NET_IP" ]] && break
     done
     # WAN_NET_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
@@ -651,7 +653,9 @@ function get_network_wan_ipv6() {
     )
 
     for target_host in ${remote_host_list[@]}; do
-        WAN_NET_IPV6=$(curl -s -6 --connect-timeout 5 --max-time 10 ${target_host})
+        WAN_NET_IPV6=$(curl -s -6 --connect-timeout 5 --max-time 10 ${target_host} \
+                        | grep -Eo '^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$' \
+                        | head -n1)
         [[ -n "$WAN_NET_IPV6" ]] && break
     done
 }
