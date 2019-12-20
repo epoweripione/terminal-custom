@@ -186,7 +186,7 @@ for TargetHost in "${HostsList[@]}"; do
     TargetHost=$(echo ${TargetHost} | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
     # empty line as newline
     if [[ -z "$TargetHost" ]]; then
-        IP_HOSTS="${IP_HOSTS}\n\n"
+        IP_HOSTS="${IP_HOSTS}\n"
         continue
     fi
     # comment

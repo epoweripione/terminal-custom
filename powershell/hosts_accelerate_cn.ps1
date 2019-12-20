@@ -179,7 +179,7 @@ foreach ($TargetHost in $HostsList) {
     $TargetHost = $TargetHost.Trim()
     # empty line as newline
     if (($TargetHost -eq $null) -or ($TargetHost -eq "")) {
-        $IP_HOSTS="$IP_HOSTS`n`n"
+        $IP_HOSTS="$IP_HOSTS`n"
         continue
     }
     # comment

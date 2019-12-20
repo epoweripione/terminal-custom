@@ -155,6 +155,14 @@ else
     git clone https://github.com/zsh-users/zsh-syntax-highlighting $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
 fi
 
+# zsh-history-substring-search
+colorEcho ${BLUE} "Updating zsh-history-substring-search..."
+if [[ -d $ZSH_CUSTOM/plugins/zsh-history-substring-search ]]; then
+    cd $ZSH_CUSTOM/plugins/zsh-history-substring-search && git pull
+else
+    git clone https://github.com/zsh-users/zsh-history-substring-search $ZSH_CUSTOM/plugins/zsh-history-substring-search
+fi
+
 # zsh-autosuggestions
 colorEcho ${BLUE} "Updating zsh-autosuggestions..."
 if [[ -d $ZSH_CUSTOM/plugins/zsh-autosuggestions ]]; then
@@ -290,17 +298,15 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 
 [[ "$(command -v fuck)" ]] && Plugins="${Plugins} thefuck"
 
+Plugins="${Plugins} zsh-interactive-cd zsh-autosuggestions"
+
 if [[ $ostype == "windows" ]]; then
-    Plugins="${Plugins} zsh-interactive-cd history-substring-search zsh-autosuggestions zsh-syntax-highlighting"
+    Plugins="${Plugins} zsh-syntax-highlighting"
 else
-    Plugins="${Plugins} zsh-interactive-cd history-substring-search zsh-autosuggestions fast-syntax-highlighting"
+    Plugins="${Plugins} fast-syntax-highlighting"
 fi
 
-## zsh-syntax-highlighting must be the last plugin sourced
-# if [[ ! $(grep "  zsh-syntax-highlighting" ~/.zshrc) ]]; then
-#     sed -i '/^  git$/a\  zsh-syntax-highlighting' ~/.zshrc
-# fi
-# Plugins="${Plugins} zsh-syntax-highlighting"
+Plugins="${Plugins} zsh-history-substring-search"
 
 
 PluginList=($(echo ${Plugins}))
