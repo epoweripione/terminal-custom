@@ -20,7 +20,7 @@ else
 fi
 
 [[ -z "$ostype" ]] && get_os_type
-
+[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
 # # pacapt - An Arch's pacman-like package manager for some Unices
 # # https://github.com/icy/pacapt
@@ -61,6 +61,37 @@ fi
 colorEcho ${BLUE} "Updating Oh-my-zsh..."
 # upgrade_oh_my_zsh
 cd $ZSH && git pull
+
+
+# tmux
+if [[ ! -x "$(command -v tmux)" ]]; then
+    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+        if pacman -Si tmux >/dev/null 2>&1; then
+            colorEcho ${BLUE} "Installing tmux..."
+            sudo pacman --noconfirm -S tmux
+        fi
+    fi
+fi
+
+if [[ -x "$(command -v tmux)" ]]; then
+    # Oh My Tmux: https://github.com/gpakosz/.tmux
+    if [[ -d "$HOME/.tmux" ]]; then
+        cd $HOME/.tmux && git pull
+    else
+        git clone https://github.com/gpakosz/.tmux $HOME/.tmux && \
+            cd $HOME && \
+            ln -s -f .tmux/.tmux.conf && \
+            cp .tmux/.tmux.conf.local .
+    fi
+    # custom settings for tmux
+    if [[ -s "$HOME/.tmux.conf.local" ]]; then
+        #    
+        sed -i "s/^tmux_conf_theme_left_separator_main=.*/tmux_conf_theme_left_separator_main='\\\uE0B4'/" $HOME/.tmux.conf.local
+        sed -i "s/^tmux_conf_theme_left_separator_sub=.*/tmux_conf_theme_left_separator_sub='\\\uE0B5'/" $HOME/.tmux.conf.local
+        sed -i "s/^tmux_conf_theme_right_separator_main=.*/tmux_conf_theme_right_separator_main='\\\uE0B6'/" $HOME/.tmux.conf.local
+        sed -i "s/^tmux_conf_theme_right_separator_sub=.*/tmux_conf_theme_right_separator_sub='\\\uE0B7'/" $HOME/.tmux.conf.local
+    fi
+fi
 
 
 # neofetch
@@ -287,6 +318,7 @@ Plugins="git"
 Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 # Plugins="${Plugins} command-time"
 
+[[ -x "$(command -v tmux)" ]] && Plugins="${Plugins} tmux"
 [[ -x "$(command -v fzf)" || -d ~/.fzf ]] && Plugins="${Plugins} fzf"
 [[ -x "$(command -v autojump)" ]] && Plugins="${Plugins} autojump"
 [[ -x "$(command -v composer)" ]] && Plugins="${Plugins} composer"
@@ -382,5 +414,5 @@ if [[ -d ~/.local/share/nano ]]; then
 fi
 
 
-cd $HOME
+cd "${CURRENT_DIR}"
 # colorEcho ${GREEN} "Update finished!"

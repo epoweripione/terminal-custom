@@ -30,13 +30,16 @@ fi
 # Install ZSH Shell
 colorEcho ${BLUE} "Installing pre-request packages..."
 if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+    colorEcho ${BLUE} "Updating installed packages..."
     sudo pacman --noconfirm -Syu
 
     # install pre-request packages
+    colorEcho ${BLUE} "Installing pre-request packages..."
     sudo pacman --noconfirm -S git curl wget g++ gcc make zip unzip
 
     # GeoIP binary and database
     # http://kbeezie.com/geoiplookup-command-line/
+    colorEcho ${BLUE} "Installing GeoIP binary and database..."
     if pacman -Si geoip-bin >/dev/null 2>&1; then
         sudo pacman --noconfirm -S geoip-bin
     else
@@ -59,10 +62,30 @@ if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
 
     # autojump
     # https://github.com/wting/autojump
+    colorEcho ${BLUE} "Installing autojump..."
     if pacman -Si autojump-zsh >/dev/null 2>&1; then
         sudo pacman --noconfirm -S autojump autojump-zsh
     else
         sudo pacman --noconfirm -S autojump
+    fi
+
+    # jq
+    # https://stedolan.github.io/jq/
+    colorEcho ${BLUE} "Installing jq..."
+    if pacman -Si jq >/dev/null 2>&1; then
+        sudo pacman --noconfirm -S jq
+    fi
+
+    # tmux
+    # https://github.com/tmux/tmux
+    colorEcho ${BLUE} "Installing tmux..."
+    if pacman -Si tmux >/dev/null 2>&1; then
+        sudo pacman --noconfirm -S tmux
+    else
+        git clone https://github.com/tmux/tmux && \
+            cd tmux && \
+            sudo sh autogen.sh && \
+            sudo ./configure && sudo make
     fi
 fi
 

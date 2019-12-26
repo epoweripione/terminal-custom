@@ -458,5 +458,5 @@ if [[ -n "$ZSH" ]]; then
 fi
 
 
-cd ${CURRENT_DIR}
+cd "${CURRENT_DIR}"
 colorEcho ${GREEN} "Upgarde all packages done!"
