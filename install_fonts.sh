@@ -87,15 +87,15 @@ fi
 # fi
 
 colorEcho ${BLUE} "Downloading nerd-fonts & font-patcher..."
-# Use remote server to reduce `git clone` network traffic in local machine
+## Use remote server to reduce `git clone` network traffic in local machine
 # git clone --depth 1 https://github.com/ryanoasis/nerd-fonts ~/nerd-fonts && \
 # 	rm -rf ~/nerd-fonts/patched-fonts ~/nerd-fonts/.git && \
 # 	: && \
 # 	# fix latest version issue patch char i,j not correct
-# 	rm -f ~/nerd-fonts/font-patcher && \
-# 		curl -SL -o ~/nerd-fonts/font-patcher \
-# 			https://github.com/ryanoasis/nerd-fonts/raw/3241ea6e44191ec89c0260f51112dec691363ebd/font-patcher
-# 	: && \
+# 	# rm -f ~/nerd-fonts/font-patcher && \
+# 	# 	curl -SL -o ~/nerd-fonts/font-patcher \
+# 	# 		https://github.com/ryanoasis/nerd-fonts/raw/3241ea6e44191ec89c0260f51112dec691363ebd/font-patcher
+# 	# : && \
 # 	cd ~ && zip -q -r nerd-fonts.zip ./nerd-fonts && \
 # 	mv ~/nerd-fonts.zip /srv/web/www/default
 
@@ -108,7 +108,6 @@ if [[ -z "$NerdFont_URL" ]]; then
 	else
 		git clone --depth 1 https://github.com/ryanoasis/nerd-fonts ~/nerd-fonts
 	fi
-	# rm -rf ~/nerd-fonts/patched-fonts
 else
 	[[ -d "~/nerd-fonts" ]] && rm -rf ~/nerd-fonts
 	wget -c -O ~/nerd-fonts.zip "$NerdFont_URL" && \
@@ -143,27 +142,27 @@ mkdir -p ~/patched-fonts
 #   unzip -q ~/patched-fonts/Iosevka.zip -d ~/patched-fonts/Iosevka && \
 #   rm -f ~/patched-fonts/Iosevka.zip
 
-colorEcho ${BLUE} "Downloading FuraCode Nerd Font Complete Mono 2.0.0..."
+colorEcho ${BLUE} "Downloading FiraCode Nerd Font Complete Mono 2.0.0..."
 # https://github.com/tonsky/FiraCode
 ## Patch fonts
 # cd ~/nerd-fonts
 # for font in /e/VSCodeProjects/nerd-fonts/FiraCode_2/*.ttf; do fontforge -script font-patcher -out /e/VSCodeProjects/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done
-# cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/FuraCode-Mono-2.0.0.zip . -i "Fura Code*.ttf"
-curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.3.2/FuraCode-Mono-2.0.0.zip -o ~/patched-fonts/FuraCode-Mono.zip
-mkdir -p ~/patched-fonts/FuraCode-Mono && \
-	unzip -q ~/patched-fonts/FuraCode-Mono.zip -d ~/patched-fonts/FuraCode-Mono && \
-	rm -f ~/patched-fonts/FuraCode-Mono.zip
+# cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/FiraCode-Mono-2.0.0.zip . -i "Fira Code*.ttf"
+curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.3.3/FiraCode-Mono-2.0.0.zip -o ~/patched-fonts/FiraCode-Mono.zip
+mkdir -p ~/patched-fonts/FiraCode-Mono && \
+	unzip -q ~/patched-fonts/FiraCode-Mono.zip -d ~/patched-fonts/FiraCode-Mono && \
+	rm -f ~/patched-fonts/FiraCode-Mono.zip
 
-colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono 2.3.2..."
+colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono 2.3.3..."
 # https://github.com/be5invis/Iosevka
 ## Patch fonts
 # cd ~/nerd-fonts
 # for font in /e/VSCodeProjects/nerd-fonts/Iosevka/*.ttf; do fontforge -script font-patcher -out /e/VSCodeProjects/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done
-# cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/iosevka-term-ss05-nerd-2.3.2.zip . -i "Iosevka Term*.ttf"
-curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.3.2/iosevka-term-ss05-nerd-2.3.2.zip -o ~/patched-fonts/iosevka-term-ss05-nerd.zip
-mkdir -p ~/patched-fonts/iosevka-term-ss05-nerd && \
-	unzip -q ~/patched-fonts/iosevka-term-ss05-nerd.zip -d ~/patched-fonts/iosevka-term-ss05-nerd && \
-	rm -f ~/patched-fonts/iosevka-term-ss05-nerd.zip
+# cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/iosevka-term-ss05-Mono-2.3.3.zip . -i "Iosevka Term SS05*.ttf"
+curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v2.3.3/iosevka-term-ss05-Mono-2.3.3.zip -o ~/patched-fonts/iosevka-term-ss05-Mono.zip
+mkdir -p ~/patched-fonts/iosevka-term-ss05-Mono && \
+	unzip -q ~/patched-fonts/iosevka-term-ss05-Mono.zip -d ~/patched-fonts/iosevka-term-ss05-Mono && \
+	rm -f ~/patched-fonts/iosevka-term-ss05-Mono.zip
 
 # Install Script
 curl -fSL https://github.com/ryanoasis/nerd-fonts/raw/master/install.sh -o ~/nerdfonts_installer.sh && chmod +x ~/nerdfonts_installer.sh

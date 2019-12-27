@@ -94,19 +94,18 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     # scoop config proxy 127.0.0.1:55881
     # scoop config rm proxy
     Write-Host "Installing scoop apps..." -ForegroundColor Blue
+
+    # main
+    # https://github.com/ScoopInstaller/Main
     scoop install aria2
     scoop config aria2-enabled true
 
-    scoop install sudo
-    scoop install git
+    scoop install sudo git
     scoop update
     # scoop update *
 
     # list all known buckets
     # scoop bucket known
-
-    # main
-    # https://github.com/ScoopInstaller/Main
 
     # extras
     # https://github.com/lukesampson/scoop-extras
@@ -129,6 +128,11 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     # https://github.com/kodybrown/scoop-nirsoft
     scoop bucket add nirsoft
     # scoop install openedfilesview
+
+    # python
+    scoop bucket add versions
+    scoop install python
+    # scoop install python27
 
     # Scoop buckets by Github score
     # https://github.com/rasa/scoop-directory/blob/master/by-score.md

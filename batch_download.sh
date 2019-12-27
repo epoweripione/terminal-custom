@@ -141,10 +141,10 @@ done < "$DOWNLOAD_FILES_URL"
 # # 	rm -rf ~/nerd-fonts/patched-fonts ~/nerd-fonts/.git && \
 # # 	: && \
 # # 	# fix latest version issue patch char i,j not correct
-# # 	rm -f ~/nerd-fonts/font-patcher && \
-# # 		curl -SL -o ~/nerd-fonts/font-patcher \
-# # 			https://github.com/ryanoasis/nerd-fonts/raw/3241ea6e44191ec89c0260f51112dec691363ebd/font-patcher
-# # 	: && \
+# # 	# rm -f ~/nerd-fonts/font-patcher && \
+# # 	# 	curl -SL -o ~/nerd-fonts/font-patcher \
+# # 	# 		https://github.com/ryanoasis/nerd-fonts/raw/3241ea6e44191ec89c0260f51112dec691363ebd/font-patcher
+# # 	# : && \
 # # 	cd ~ && zip -qyr nerd-fonts.zip ./nerd-fonts && \
 # # 	mv ~/nerd-fonts.zip /srv/web/www/default
 # if [[ -s "${DOWNLOAD_DIR}/nerd-fonts.zip" ]]; then
