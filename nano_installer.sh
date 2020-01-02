@@ -20,6 +20,7 @@ fi
 
 # https://www.nano-editor.org/dist/latest/faq.html
 # http://mybookworld.wikidot.com/compile-nano-from-source
+colorEcho ${BLUE} "Checking update for nano..."
 if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     # Remove old version nano
     if pacman -Q nano >/dev/null 2>&1; then
@@ -88,49 +89,4 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         sudo ./configure --prefix=/usr --enable-utf8 && \
         sudo make && sudo make install && \
         sudo rm -rf /tmp/*
-fi
-
-
-# nano-syntax-highlighting
-if [[ -d ~/.local/share/nano/.git ]]; then
-    cd ~/.local/share/nano && git pull
-else
-    mkdir -p ~/.local/share/nano
-    git clone https://github.com/scopatz/nanorc ~/.local/share/nano
-fi
-
-
-# nano settings
-colorEcho ${BLUE} "nano settings..."
-if [[ ! $(grep "set titlecolor" ~/.nanorc) ]]; then
-    echo "set titlecolor brightwhite,red" >> ~/.nanorc
-fi
-
-if [[ ! $(grep "set statuscolor" ~/.nanorc) ]]; then
-    echo "set statuscolor brightwhite,red" >> ~/.nanorc
-fi
-
-if [[ ! $(grep "set selectedcolor" ~/.nanorc) ]]; then
-    echo "set selectedcolor brightwhite,cyan" >> ~/.nanorc
-fi
-
-if [[ ! $(grep "set numbercolor" ~/.nanorc) ]]; then
-    echo "set numbercolor magenta" >> ~/.nanorc
-fi
-
-if [[ ! $(grep "set keycolor" ~/.nanorc) ]]; then
-    echo "set keycolor brightmagenta" >> ~/.nanorc
-fi
-
-if [[ ! $(grep "set functioncolor" ~/.nanorc) ]]; then
-    echo "set functioncolor magenta" >> ~/.nanorc
-fi
-
-if [[ -d ~/.local/share/nano ]]; then
-    if [[ ! $(grep "\~/.local/share/nano/\*\.nanorc" ~/.nanorc) ]]; then
-        echo "include \"~/.local/share/nano/*.nanorc\"" >> ~/.nanorc
-    fi
-    # if [[ ! $(grep "/usr/share/nano/nano-syntax-highlighting/\*\.nanorc" ~/.nanorc) ]]; then
-    #     echo "include \"/usr/share/nano/nano-syntax-highlighting/*.nanorc\"" >> ~/.nanorc
-    # fi
 fi
