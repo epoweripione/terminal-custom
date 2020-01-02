@@ -12,7 +12,7 @@ fi
 filename="$1"
 while read -r line; do
     if [[ -n "$line" ]]; then
-        echo "$line: "
+        echo -n "$line: "
         ./ssl-cert-info.sh --host $line --end
     fi
 done < "$filename"

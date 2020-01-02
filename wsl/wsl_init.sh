@@ -59,9 +59,9 @@ fi
 
 
 # Install packages
-## Use USTC mirror & Install prerequest packages
+## Use USTC mirror & Install pre-requisite packages
 if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
-    colorEcho ${BLUE} "Use USTC mirror & Install prerequest packages..."
+    colorEcho ${BLUE} "Use USTC mirror & Install pre-requisite packages..."
     sed -i 's|deb.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
         sed -i 's|security.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list
 fi

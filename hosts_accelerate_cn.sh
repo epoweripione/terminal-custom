@@ -139,39 +139,40 @@ else
 fi
 
 # Delete exist host entry
-colorEcho ${BLUE} "Deleting exist entry in hosts..."
-# if [[ $(grep "^# Github Start" ${HostsFile}) ]]; then
-#     LineBegin=$(cat -n ${HostsFile} | grep '# Github Start' | awk '{print $1}')
-#     LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
-#     if [[ -n "$LineBegin" && -n "$LineEnd" && -z "$TEST_ONLY" ]]; then
-#         DeleteBegin=$((${LineBegin}+1))
-#         DeleteEnd=$((${LineEnd}-1))
-#         sudo sed -i "${DeleteBegin},${DeleteEnd}d" ${HostsFile}
+if [[ -z "$TEST_ONLY" ]]; then
+    colorEcho ${BLUE} "Deleting exist entry in hosts..."
+    # if [[ $(grep "^# Github Start" ${HostsFile}) ]]; then
+    #     LineBegin=$(cat -n ${HostsFile} | grep '# Github Start' | awk '{print $1}')
+    #     LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
+    #     if [[ -n "$LineBegin" && -n "$LineEnd" && -z "$TEST_ONLY" ]]; then
+    #         DeleteBegin=$((${LineBegin}+1))
+    #         DeleteEnd=$((${LineEnd}-1))
+    #         sudo sed -i "${DeleteBegin},${DeleteEnd}d" ${HostsFile}
+    #         LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
+    #     fi
+    # else
+    #     # echo -e "\n# Github Start" | sudo tee -a ${HostsFile}
+    #     IP_HOSTS="\n# Github Start"
+    #     sudo sed -i "/github/d" ${HostsFile}
+    # fi
 
-#         LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
-#     fi
-# else
-#     # echo -e "\n# Github Start" | sudo tee -a ${HostsFile}
-#     IP_HOSTS="\n# Github Start"
-#     sudo sed -i "/github/d" ${HostsFile}
-# fi
+    # sudo sed -i "/[Gg]ithub/d" ${HostsFile}
+    # for (( i = 0; i < ${#HostsList[@]}; i++ )); do
+    #     TargetHost=${HostsList[$i]}
+    for TargetHost in "${HostsList[@]}"; do
+        # remove both leading and trailing spaces
+        TargetHost=$(echo ${TargetHost} | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
 
-# sudo sed -i "/[Gg]ithub/d" ${HostsFile}
-# for (( i = 0; i < ${#HostsList[@]}; i++ )); do
-#     TargetHost=${HostsList[$i]}
-for TargetHost in "${HostsList[@]}"; do
-    # remove both leading and trailing spaces
-    TargetHost=$(echo ${TargetHost} | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+        TargetHost=$(echo ${TargetHost} | sed 's/^-//')
+        [[ -z "$TargetHost" ]] && continue
 
-    TargetHost=$(echo ${TargetHost} | sed 's/^-//')
-    [[ -z "$TargetHost" ]] && continue
-
-    if [[ $(echo ${TargetHost} | grep "^#") ]]; then
-        sudo sed -i "/^${TargetHost}$/d" ${HostsFile}
-    else
-        sudo sed -i "/[[:space:]]${TargetHost}$/d" ${HostsFile}
-    fi
-done
+        if [[ $(echo ${TargetHost} | grep "^#") ]]; then
+            sudo sed -i "/^${TargetHost}$/d" ${HostsFile}
+        else
+            sudo sed -i "/[[:space:]]${TargetHost}$/d" ${HostsFile}
+        fi
+    done
+fi
 
 [[ "$CHECK_METHOD" == "reset" ]] && exit 0
 

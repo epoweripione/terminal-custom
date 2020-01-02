@@ -60,7 +60,7 @@ fi
 
 
 # Install packages
-# Use USTC mirror & Install prerequest packages
+# Use USTC mirror & Install pre-requisite packages
 if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
     colorEcho ${BLUE} "Setting apt mirror..."
     sudo sed -i 's|ftp.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
@@ -68,7 +68,7 @@ if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
         sudo sed -i 's|security.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list
 fi
 
-colorEcho ${BLUE} "Installing prerequest packages..."
+colorEcho ${BLUE} "Installing pre-requisite packages..."
 sudo apt update && \
     sudo apt install -y apt-transport-https apt-utils ca-certificates \
         lsb-release software-properties-common curl wget

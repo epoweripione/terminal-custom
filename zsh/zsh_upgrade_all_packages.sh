@@ -421,8 +421,10 @@ fi
 
 
 # [[ -s "$HOME/proxychains_installer.sh" ]] && source "$HOME/proxychains_installer.sh"
-[[ -s "$HOME/bat_installer.sh" ]] && source "$HOME/bat_installer.sh"
 
+[[ -s "$HOME/nano_installer.sh" ]] && source "$HOME/nano_installer.sh"
+
+[[ -s "$HOME/bat_installer.sh" ]] && source "$HOME/bat_installer.sh"
 
 
 if [[ -x "$(command -v conda)" ]]; then

@@ -22,25 +22,35 @@ fi
 # http://mybookworld.wikidot.com/compile-nano-from-source
 if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     # Remove old version nano
-    sudo pacman --noconfirm -R nano
+    if pacman -Q nano >/dev/null 2>&1; then
+        sudo pacman --noconfirm -R nano
+    fi
 
-    if pacman -Si ncurses >/dev/null 2>&1; then
-        sudo pacman --noconfirm -S ncurses
-    else
-        if pacman -Si ncurses-devel >/dev/null 2>&1; then
-            sudo pacman --noconfirm -S ncurses-devel
-        else
-            sudo pacman --noconfirm -S libncurses5-dev libncursesw5-dev
+    # Pre-requisite packages
+    PackagesList=(
+        ncurses
+        ncurses-devel
+        libncurses-dev
+        libncursesw-dev
+        libncurses5-dev
+        libncursesw5-dev
+    )
+    for TargetPackage in "${PackagesList[@]}"; do
+        if pacman -Si "$TargetPackage" >/dev/null 2>&1; then
+            if ! pacman -Q "$TargetPackage" >/dev/null 2>&1; then
+                sudo pacman --noconfirm -S "$TargetPackage"
+            fi
         fi
-    fi
-else
-    if check_release_package_manager packageManager yum; then
-        sudo yum update -y && sudo yum -y -q install ncurses-devel
-    elif check_release_package_manager packageManager apt; then
-        sudo apt-get update && sudo apt-get -y install libncurses5-dev libncursesw5-dev
-    elif check_release_package_manager packageManager pacman; then
-        sudo pacman -Sy && sudo pacman --noconfirm -S ncurses
-    fi
+    done
+# else
+#     if check_release_package_manager packageManager yum; then
+#         sudo yum update -y && sudo yum -y -q install ncurses-devel
+#     elif check_release_package_manager packageManager apt; then
+#         sudo apt-get update && sudo apt-get -y install libncurses-dev libncursesw-dev
+#         sudo apt-get update && sudo apt-get -y install libncurses5-dev libncursesw5-dev
+#     elif check_release_package_manager packageManager pacman; then
+#         sudo pacman -Sy && sudo pacman --noconfirm -S ncurses
+#     fi
 fi
 
 
@@ -124,6 +134,3 @@ if [[ -d ~/.local/share/nano ]]; then
     #     echo "include \"/usr/share/nano/nano-syntax-highlighting/*.nanorc\"" >> ~/.nanorc
     # fi
 fi
-
-cd $HOME
-# colorEcho ${GREEN} "Done!"
