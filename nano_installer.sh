@@ -58,11 +58,12 @@ fi
 # ncurses
 # cd /tmp && \
 #     curl -SL http://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz -o ncurses.tar.gz && \
-#     tar zxvf ncurses.tar.gz && \
-#     mv ncurses-* ncurses && cd ncurses && \
-#     ./configure --prefix=/opt/ncurses && \
-#     make && make install && \
-#     rm -rf /tmp/*
+#     sudo tar zxvf ncurses.tar.gz && \
+#     sudo mv ncurses-* ncurses && cd ncurses && \
+#     sudo ./configure --prefix=/opt/ncurses && \
+#     sudo make && sudo make install && \
+#     sudo rm -f /tmp/ncurses.tar.gz && \
+#     sudo rm -rf /tmp/ncurses
 
 
 # compile & install nano
@@ -84,9 +85,10 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     # curl -SL $DOWNLOAD_URL -o nano.tar.gz
     cd /tmp && \
         wget -O nano.tar.gz $DOWNLOAD_URL && \
-        sudo tar zxvf nano.tar.gz && \
+        sudo tar xzvf nano.tar.gz && \
         sudo mv nano-* nano && cd nano && \
         sudo ./configure --prefix=/usr --enable-utf8 && \
         sudo make && sudo make install && \
-        sudo rm -rf /tmp/*
+        sudo rm -f /tmp/nano.tar.gz && \
+        sudo rm -rf /tmp/nano
 fi

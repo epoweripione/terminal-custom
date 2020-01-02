@@ -28,53 +28,39 @@ if [[ ! -x "$(command -v pacapt)" ]]; then
 fi
 
 # Install ZSH Shell
-colorEcho ${BLUE} "Installing pre-request packages..."
 if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     colorEcho ${BLUE} "Updating installed packages..."
     sudo pacman --noconfirm -Syu
 
-    # install pre-request packages
-    colorEcho ${BLUE} "Installing pre-request packages..."
+    colorEcho ${BLUE} "Installing pre-requisite packages..."
     sudo pacman --noconfirm -S git curl wget g++ gcc make zip unzip
 
     # GeoIP binary and database
     # http://kbeezie.com/geoiplookup-command-line/
-    colorEcho ${BLUE} "Installing GeoIP binary and database..."
-    if pacman -Si geoip-bin >/dev/null 2>&1; then
-        sudo pacman --noconfirm -S geoip-bin
-    else
-        if pacman -Si GeoIP >/dev/null 2>&1; then
-            sudo pacman --noconfirm -S GeoIP
-        else
-            sudo pacman --noconfirm -S geoip
-        fi
-    fi
-
-    if pacman -Si geoip-database >/dev/null 2>&1; then
-        sudo pacman --noconfirm -S geoip-database
-    else
-        if pacman -Si GeoIP-data >/dev/null 2>&1; then
-            sudo pacman --noconfirm -S GeoIP-data
-        else
-            sudo pacman --noconfirm -S geoip-data
-        fi
-    fi
-
     # autojump
     # https://github.com/wting/autojump
-    colorEcho ${BLUE} "Installing autojump..."
-    if pacman -Si autojump-zsh >/dev/null 2>&1; then
-        sudo pacman --noconfirm -S autojump autojump-zsh
-    else
-        sudo pacman --noconfirm -S autojump
-    fi
-
     # jq
     # https://stedolan.github.io/jq/
-    colorEcho ${BLUE} "Installing jq..."
-    if pacman -Si jq >/dev/null 2>&1; then
-        sudo pacman --noconfirm -S jq
-    fi
+
+    # Pre-requisite packages
+    PackagesList=(
+        geoip
+        GeoIP
+        geoip-bin
+        geoip-database
+        geoip-data
+        GeoIP-data
+        autojump
+        autojump-zsh
+        jq
+    )
+    for TargetPackage in "${PackagesList[@]}"; do
+        if pacman -Si "$TargetPackage" >/dev/null 2>&1; then
+            if ! pacman -Q "$TargetPackage" >/dev/null 2>&1; then
+                sudo pacman --noconfirm -S "$TargetPackage"
+            fi
+        fi
+    done
 
     # tmux
     # https://github.com/tmux/tmux
@@ -106,12 +92,13 @@ if [[ ! -x "$(command -v zsh)" ]]; then
         DOWNLOAD_URL=https://nchc.dl.sourceforge.net/project/zsh/zsh/${REMOTE_VERSION}/zsh-${REMOTE_VERSION}.tar.xz
         cd /tmp && \
             sudo curl -SL -o zsh.tar.xz $DOWNLOAD_URL && \
-            sudo tar -xvJf zsh.tar.xz && \
+            sudo tar xJvf zsh.tar.xz && \
             sudo mv zsh-* zsh && \
             cd zsh && \
             sudo ./configure && sudo make && sudo make install && \
-            cd - && \
-            sudo rm -rf /tmp/*
+            cd /tmp && \
+            sudo rm -f /tmp/zsh.tar.xz && \
+            sudo rm -rf /tmp/zsh
 
         if [[ ! -x "$(command -v zsh)" ]]; then
             if [[ -s "/usr/local/bin/zsh" ]]; then

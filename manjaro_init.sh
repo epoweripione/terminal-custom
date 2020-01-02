@@ -116,8 +116,8 @@ if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]
 fi
 
 
-# pre-request packages
-colorEcho ${BLUE} "Installing pre-request packages..."
+# pre-requisite packages
+colorEcho ${BLUE} "Installing pre-requisite packages..."
 sudo pacman --noconfirm -S git curl wget unzip
 
 

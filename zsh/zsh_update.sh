@@ -31,7 +31,7 @@ fi
 #         sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
 # fi
 
-# # install pre-request packages
+# # install pre-requisite packages
 # if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
 #     pacman -S curl wget g++ gcc make git zip unzip
 # fi
