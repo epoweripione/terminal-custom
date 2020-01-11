@@ -76,8 +76,10 @@ fi
 if [[ -x "$(command -v tmux)" ]]; then
     # Oh My Tmux: https://github.com/gpakosz/.tmux
     if [[ -d "$HOME/.tmux" ]]; then
+        colorEcho ${BLUE} "Updating Oh My Tmux..."
         cd $HOME/.tmux && git pull
     else
+        colorEcho ${BLUE} "Installing Oh My Tmux..."
         git clone https://github.com/gpakosz/.tmux $HOME/.tmux && \
             cd $HOME && \
             ln -s -f .tmux/.tmux.conf && \

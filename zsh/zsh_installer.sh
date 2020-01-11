@@ -52,6 +52,7 @@ if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
         GeoIP-data
         autojump
         autojump-zsh
+        screen
         jq
     )
     for TargetPackage in "${PackagesList[@]}"; do

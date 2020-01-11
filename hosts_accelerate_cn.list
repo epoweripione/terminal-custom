@@ -24,3 +24,18 @@ raw.githubusercontent.com
 -avatars7.githubusercontent.com
 -avatars8.githubusercontent.com
 # Github End
+
+# Gitlab Start
+gitlab.com
+# Gitlab End
+
+# SDKMAN Start
+sdkman.io
+api.sdkman.io
+# SDKMAN End
+
+# Anaconda Start
+anaconda.com
+-www.anaconda.com
+-repo.anaconda.com
+# Anaconda End
