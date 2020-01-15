@@ -81,7 +81,7 @@ if [[ -n "$BAT_FILENAME" ]]; then
     fi
 
     DOWNLOAD_URL=https://github.com/sharkdp/bat/releases/download/${REMOTE_VERSION}/${BAT_FILENAME}
-    curl -SL -o bat.tar.gz $DOWNLOAD_URL && \
+    curl -SL -o bat.tar.gz -C- $DOWNLOAD_URL && \
         sudo tar -zxPf bat.tar.gz -C /usr/local && \
         rm -f bat.tar.gz && \
         cd /usr/local && \

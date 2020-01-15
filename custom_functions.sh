@@ -125,13 +125,41 @@ function get_arch() {
 		i686 | i586 | i486 | i386 | x86)
 			spruce_type='386'
 			;;
+		*armv7* | armv6l)
+            spruce_type="arm"
+            ;;
+		*armv8* | aarch64)
+            spruce_type="arm64"
+            ;;
+		*mips64le*)
+            spruce_type="mips64le"
+            ;;
+		*mips64*)
+            spruce_type="mips64"
+            ;;
+		*mipsle*)
+            spruce_type="mipsle"
+            ;;
+		*mips*)
+            spruce_type="mips"
+            ;;
+		*s390x*)
+            spruce_type="s390x"
+            ;;
+		*ppc64le*)
+            spruce_type="ppc64le"
+            ;;
+		*ppc64*)
+            spruce_type="ppc64"
+            ;;
 		*)
-			cat 1>&2 <<-EOF
-			This script only support 32bit and 64bit architecture!
-			Your OS is: $architecture.
-			EOF
-			exit 1
-			;;
+            spruce_type=""
+			# cat 1>&2 <<-EOF
+			# This script only support 32bit and 64bit architecture!
+			# Your OS is: $architecture.
+			# EOF
+			# exit 1
+            ;;
 	esac
 }
 
