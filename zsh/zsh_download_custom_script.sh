@@ -100,6 +100,7 @@ chmod +x ~/webmin_installer.sh
 
 chmod +x ~/batch_download.sh
 chmod +x ~/manjaro_init.sh
+chmod +x ~/termux_init.sh
 
 chmod +x ~/vs-code-extensions-installer.sh
 cp -f ~/terminal-custom/vscode_extensions.list ~

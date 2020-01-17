@@ -57,31 +57,31 @@
 # Set-ExecutionPolicy AllSigned
 
 
-# Chocolatey
-# https://chocolatey.org/install
-Write-Host "Installing chocolatey..." -ForegroundColor Blue
-Set-ExecutionPolicy Bypass -Scope Process -Force
-iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+## Chocolatey
+## https://chocolatey.org/install
+# Write-Host "Installing chocolatey..." -ForegroundColor Blue
+# Set-ExecutionPolicy Bypass -Scope Process -Force
+# iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
-if (-Not ((Get-Command "choco" -ErrorAction SilentlyContinue) -eq $null)) {
-    Write-Host "chocolatey install failed!"
-}
+# if (-Not ((Get-Command "choco" -ErrorAction SilentlyContinue) -eq $null)) {
+#     Write-Host "chocolatey install failed!"
+# }
 
-if (Get-Command "choco" -ErrorAction SilentlyContinue) {
-    # # Use proxy for choco, ie: http://127.0.0.1:55881
-    # $HTTP_PROXY_ADDR = Read-Host 'Proxy address for chocolatey?[http://127.0.0.1:55881] '
-    # # if ($HTTP_PROXY_ADDR -eq "") {
-    # #     # choco config unset proxy
-    # #     $HTTP_PROXY_ADDR = "http://127.0.0.1:55881"
-    # # }
-    # if (-Not ($HTTP_PROXY_ADDR -eq "")) {
-    #     choco config set proxy $HTTP_PROXY_ADDR
-    # }
+# if (Get-Command "choco" -ErrorAction SilentlyContinue) {
+#     # # Use proxy for choco, ie: http://127.0.0.1:55881
+#     # $HTTP_PROXY_ADDR = Read-Host 'Proxy address for chocolatey?[http://127.0.0.1:55881] '
+#     # # if ($HTTP_PROXY_ADDR -eq "") {
+#     # #     # choco config unset proxy
+#     # #     $HTTP_PROXY_ADDR = "http://127.0.0.1:55881"
+#     # # }
+#     # if (-Not ($HTTP_PROXY_ADDR -eq "")) {
+#     #     choco config set proxy $HTTP_PROXY_ADDR
+#     # }
 
-    Write-Host "Installing chocolatey apps..." -ForegroundColor Blue
-    choco install -y chocolateygui
-    # choco upgrade -y all
-}
+#     Write-Host "Installing chocolatey apps..." -ForegroundColor Blue
+#     choco install -y chocolateygui
+#     # choco upgrade -y all
+# }
 
 
 # Scoop
