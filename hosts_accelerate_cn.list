@@ -29,6 +29,11 @@ raw.githubusercontent.com
 gitlab.com
 # Gitlab End
 
+# Sourceforge Start
+sourceforge.net
+-downloads.sourceforge.net
+# Sourceforge End
+
 # SDKMAN Start
 sdkman.io
 api.sdkman.io

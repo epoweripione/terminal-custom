@@ -131,17 +131,21 @@ fi
 
 
 # Launch ZSH in BASH
-# if [[ ! $(grep "exec zsh" ~/.bashrc) ]]; then
-# tee -a ~/.bashrc <<-'EOF'
+ostype_wsl=$(uname -r)
 
-# # Launch ZSH
-# if [[ "${ZSH_VERSION:-unset}" = "unset" ]]; then
-#     export SHELL=$(which zsh)
-#     exec zsh
-# fi
-# EOF
-# fi
+# WSL1 & WSL2
+if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
+    if [[ ! $(grep "exec zsh" ~/.bashrc) ]]; then
+        tee -a ~/.bashrc >/dev/null <<-'EOF'
 
+# Launch ZSH
+if [[ "${ZSH_VERSION:-unset}" = "unset" ]]; then
+    export SHELL=$(which zsh)
+    exec zsh
+fi
+EOF
+    fi
+fi
 
 ## Install oh-my-zsh
 if [[ -d ~/.oh-my-zsh ]]; then

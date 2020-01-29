@@ -25,7 +25,7 @@ colorEcho ${BLUE} "custom configuration..."
 if [[ ! $(grep "zsh_custom_conf.sh" ~/.zshrc) ]]; then
     echo -e "\n# Custom configuration\nsource ~/zsh_custom_conf.sh" >> ~/.zshrc
 fi
-# tee -a ~/.zshrc <<-'EOF'
+# tee -a ~/.zshrc >/dev/null <<-'EOF'
 
 # # Custom configuration
 # source ~/zsh_custom_conf.sh

@@ -3,7 +3,7 @@
 function check_webservice_up() {
     param($webservice_url)
 
-    if (($webservice_url -eq $null) -or ($webservice_url -eq "")) {
+    if (($null -eq $webservice_url) -or ($webservice_url -eq "")) {
         $webservice_url = "www.google.com"
     }
 
@@ -24,7 +24,7 @@ function check_socks5_proxy_up() {
         [string] $webservice_url
     )
 
-    if (($webservice_url -eq $null) -or ($webservice_url -eq "")) {
+    if (($null -eq $webservice_url) -or ($webservice_url -eq "")) {
         $webservice_url = "www.google.com"
     }
 
@@ -39,9 +39,9 @@ function check_socks5_proxy_up() {
 
 # socks proxy
 if (-Not (check_webservice_up)) {
-    $SOCKS_PROXY_ADDR = Read-Host 'Scoks proxy address for github download?[127.0.0.1:55881] '
-    if (-Not (($SOCKS_PROXY_ADDR -eq $null) -or ($SOCKS_PROXY_ADDR -eq ""))) {
-        $SOCKS_PROXY_ADDR = "127.0.0.1:55881"
+    $SOCKS_PROXY_ADDR = "127.0.0.1:55880"
+    if($PROMPT_VALUE = Read-Host "Scoks proxy address for github download?[$($SOCKS_PROXY_ADDR)]") {
+        $SOCKS_PROXY_ADDR = $PROMPT_VALUE
     }
     if (-Not (check_socks5_proxy_up $SOCKS_PROXY_ADDR)) {
         $SOCKS_PROXY_ADDR = ""
@@ -68,7 +68,7 @@ if (Test-Path $DOWNLOAD_HOST) {
     Remove-Item $DOWNLOAD_HOST
 }
 
-if (($SOCKS_PROXY_ADDR -eq $null) -or ($SOCKS_PROXY_ADDR -eq "")) {
+if (($null -eq $SOCKS_PROXY_ADDR) -or ($SOCKS_PROXY_ADDR -eq "")) {
     curl -L --connect-timeout 5 -o "$DOWNLOAD_HOST" "$DOWNLOAD_URL"
 } else {
     curl -L --connect-timeout 5 --socks5-hostname "$SOCKS_PROXY_ADDR" -o "$DOWNLOAD_HOST" "$DOWNLOAD_URL"
@@ -129,8 +129,8 @@ $WANHostsList=@(
 foreach ($TargetHost in $WANHostsList) {
     $LocalWANIP = curl -sL -4 "$TargetHost"
     $LocalWANIP = ($LocalWANIP | Select-String -Pattern "\d{1,3}(\.\d{1,3}){3}" -AllMatches).Matches.Value
-    $LocalWANIP = $LocalWANIP | Select -first 1
-    if (($LocalWANIP -eq $null) -or ($LocalWANIP -eq "")) {
+    $LocalWANIP = $LocalWANIP | Select-Object -first 1
+    if (($null -eq $LocalWANIP) -or ($LocalWANIP -eq "")) {
         continue
     } else {
         Write-Host " $LocalWANIP"
@@ -144,7 +144,7 @@ $hostsContent = Get-Content $Hostfile
 $hostExistCNT = 0
 foreach ($TargetHost in $HostsList) {
     $TargetHost = $TargetHost.Trim()
-    if (($TargetHost -eq $null) -or ($TargetHost -eq "")) {
+    if (($null -eq $TargetHost) -or ($TargetHost -eq "")) {
         continue
     }
     # first char with `-`: Same IP as prior host
@@ -178,7 +178,7 @@ $IP_HOSTS = ""
 foreach ($TargetHost in $HostsList) {
     $TargetHost = $TargetHost.Trim()
     # empty line as newline
-    if (($TargetHost -eq $null) -or ($TargetHost -eq "")) {
+    if (($null -eq $TargetHost) -or ($TargetHost -eq "")) {
         $IP_HOSTS="$IP_HOSTS`n"
         continue
     }
@@ -211,12 +211,15 @@ foreach ($TargetHost in $HostsList) {
     if ($SameIPPrior -eq "no") {
         $IPContent = curl -sL --connect-timeout 5 --max-time 15 $TargetURL
         $TargetIP = ($IPContent | Select-String -Pattern "\d{1,3}(\.\d{1,3}){3}" -AllMatches).Matches.Value
-        $TargetIP = $TargetIP | Where {$_ -NotContains $LocalWANIP} | Select -first 1
+        $TargetIP = $TargetIP | Where-Object {$_ -NotContains $LocalWANIP} | Select-Object -first 1
     }
     # add host entry
-    if (-Not ($TargetIP -eq "")) {
-        $IPGeo = curl -sL --connect-timeout 5 --max-time 15 https://ipinfo.io/$TargetIP/country
-        Write-Host " $TargetIP($IPGeo)" -ForegroundColor Yellow
+    if (($null -eq $TargetIP) -or ($TargetIP -eq "")) {
+        Write-Host "(Error)" -ForegroundColor Red
+    } else {
+        # $IPGeo = curl -sL --connect-timeout 5 --max-time 15 https://ipinfo.io/$TargetIP/country
+        # Write-Host " $TargetIP($IPGeo)" -ForegroundColor Yellow
+        Write-Host " $TargetIP" -ForegroundColor Yellow
         $IP_HOSTS = "$IP_HOSTS`n$TargetIP $TargetHost"
     }
 }

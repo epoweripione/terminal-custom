@@ -4,11 +4,10 @@
 ## 1. Install curl first
 ## 2. Install zsh and oh-my-zsh: source <(curl -sL https://git.io/fA8Jb)
 ##                               source <(curl -sL http://t.cn/AigJm9ut)
-## 3. Init: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh && ~/zsh_init.sh
-##          source <(curl -sL http://t.cn/AigJuOCW) && ~/zsh_update.sh && ~/zsh_init.sh
-## 4. Update: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_update.sh
-##            source <(curl -sL http://t.cn/AigJuOCW) && ~/zsh_update.sh
-
+## 3. Init: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_upgrade_all_packages.sh && ~/zsh_init.sh
+##          source <(curl -sL http://t.cn/AigJuOCW) && ~/zsh_upgrade_all_packages.sh && ~/zsh_init.sh
+## 4. Update: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_upgrade_all_packages.sh
+##            source <(curl -sL http://t.cn/AigJuOCW) && ~/zsh_upgrade_all_packages.sh
 CURRENT_DIR=$(pwd)
 
 #######color code########

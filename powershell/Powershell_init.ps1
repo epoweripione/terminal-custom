@@ -43,11 +43,16 @@
 
 
 # hosts
-& "$PSScriptRoot\hosts_accelerate_cn.ps1"
+# & "$PSScriptRoot\hosts_accelerate_cn.ps1"
 
 
 # Remove built in windows 10 apps
 & "$PSScriptRoot\Remove_built-in_apps.ps1"
+
+# Chromium
+[System.Environment]::SetEnvironmentVariable("GOOGLE_API_KEY", "no")
+[System.Environment]::SetEnvironmentVariable("GOOGLE_DEFAULT_CLIENT_ID", "no")
+[System.Environment]::SetEnvironmentVariable("GOOGLE_DEFAULT_CLIENT_SECRET", "no")
 
 
 # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy
@@ -86,69 +91,137 @@
 
 # Scoop
 # https://scoop.sh/
-Write-Host "Installing scoop..." -ForegroundColor Blue
-Set-ExecutionPolicy RemoteSigned -scope CurrentUser
-iwr -useb get.scoop.sh | iex
+if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
+    Write-Host "Installing scoop..." -ForegroundColor Blue
+ 
+    ## If you're behind a proxy you might need to run one or more of these commands first:
+    ## If you want to use a proxy that isn't already configured in Internet Options
+    # [net.webrequest]::defaultwebproxy = new-object net.webproxy "http://proxy.example.org:8080"
+    ## If you want to use the Windows credentials of the logged-in user to authenticate with your proxy
+    # [net.webrequest]::defaultwebproxy.credentials = [net.credentialcache]::defaultcredentials
+    ## If you want to use other credentials (replace 'username' and 'password')
+    # [net.webrequest]::defaultwebproxy.credentials = new-object net.networkcredential 'username', 'password'
+ 
+    Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+    Invoke-WebRequest -useb get.scoop.sh | Invoke-Expression
+
+    # $env:SCOOP='D:\Applications\Scoop'
+    # $env:SCOOP_GLOBAL='D:\Applications\Scoop\globalApps'
+    # [environment]::setEnvironmentVariable('SCOOP',$env:SCOOP,'User')
+    # [environment]::setEnvironmentVariable('SCOOP_GLOBAL',$env:SCOOP_GLOBAL,'Machine')
+    # Invoke-WebRequest -useb get.scoop.sh | Invoke-Expression
+    # scoop install -g <app>
+}
 
 if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     # scoop config proxy 127.0.0.1:55881
     # scoop config rm proxy
     Write-Host "Installing scoop apps..." -ForegroundColor Blue
 
-    # main
-    # https://github.com/ScoopInstaller/Main
-    scoop install aria2
-    scoop config aria2-enabled true
-
-    scoop install sudo git
-    scoop update
-    # scoop update *
+    ## scoop config proxy [username:password@]host:port
+    ## Use your Windows credentials with the default proxy configured in Internet Options
+    # scoop config proxy currentuser@default
+    ## Use hard-coded credentials with the default proxy configured in Internet Options
+    # scoop config proxy user:password@default
+    ## Use a proxy that isn't configured in Internet Options
+    # scoop config proxy proxy.example.org:8080
+    # scoop config proxy username:password@proxy.example.org:8080
+    ## Bypassing the proxy configured in Internet Options
+    # scoop config rm proxy
 
     # list all known buckets
     # scoop bucket known
 
+    # Scoop buckets by Github score
+    # https://github.com/rasa/scoop-directory/blob/master/by-score.md
+
+    # main
+    # https://github.com/ScoopInstaller/Main
     # extras
     # https://github.com/lukesampson/scoop-extras
     scoop bucket add extras
-    scoop install screentogif
-
     # nerd-fonts
     # https://github.com/matthewjberger/scoop-nerd-fonts
     scoop bucket add nerd-fonts
-    # scoop install FiraCode
-    # scoop install SarasaGothic-SC
-
     # java
     # https://github.com/ScoopInstaller/Java
     scoop bucket add java
-    scoop install zulu8
-    # scoop install zulu11
-
     # nirsoft http://www.nirsoft.net/
     # https://github.com/kodybrown/scoop-nirsoft
     scoop bucket add nirsoft
-    # scoop install openedfilesview
-
-    # python
+    # vesion
+    # https://github.com/ScoopInstaller/Versions
     scoop bucket add versions
-    scoop install python
-    # scoop install python27
-
-    # Scoop buckets by Github score
-    # https://github.com/rasa/scoop-directory/blob/master/by-score.md
+    # other
     scoop bucket add dorado https://github.com/h404bi/dorado
+    scoop bucket add dodorz https://github.com/dodorz/scoop-bucket
+
+    if (-Not (scoop info aria2 6>$null)) {
+        Write-Host "Installing aria2..." -ForegroundColor Blue
+        scoop install aria2
+        scoop config aria2-enabled true
+    }
+
+    Write-Host "Installing sudo..." -ForegroundColor Blue
+    if (-Not (scoop info sudo 6>$null)) {scoop install sudo}
+
+    Write-Host "Installing git..." -ForegroundColor Blue
+    if (-Not (scoop info git 6>$null)) {scoop install git}
+
+    Write-Host "Updating scoop..." -ForegroundColor Blue
+    scoop update
+    # scoop update *
+
+    $Apps = @(
+        "firefox-zh-cn"
+        "nodejs-lts"
+        "zulu8"
+        "python"
+        "php"
+        "composer"
+        "cacert"
+        "windowsterminal"
+        "lxrunoffline"
+        "freedownloadmanager"
+        "snipaste-beta"
+        "ffmpeg"
+        "screentogif"
+    )
+
+    $InstalledApps = scoop list 6>&1 | Out-String
+    $InstalledApps = $InstalledApps -replace "`r`n"," " -replace "    "," " -replace "   "," " -replace "  "," "
+    # $InstalledApps = $InstalledApps -replace "`r`n"," " -replace "    ","`n"
+    # $InstalledApps = $InstalledApps -replace "  "," " -replace "`n\*"," *"
+    foreach ($TargetApp in $Apps) {
+        if (-Not ($InstalledApps -match "$TargetApp \*failed\*")) {
+            Write-Host "Uninstalling $TargetApp..." -ForegroundColor Blue
+            scoop uninstall $TargetApp
+            scoop cache rm $TargetApp
+        }
+    }
+
+    foreach ($TargetApp in $Apps) {
+        if (-Not ($InstalledApps -match "$TargetApp")) {
+            Write-Host "Installing $TargetApp..." -ForegroundColor Blue
+            scoop install $TargetApp
+        }
+    }
+
+    # scoop install FiraCode
+    # scoop install SarasaGothic-SC
+    # scoop install zulu11
+    # scoop install openedfilesview
+    # scoop install python27
     # scoop install dorado/miniconda3
+    # netsh winhttp reset proxy
 } else {
     Write-Host "scoop install failed!"
 }
 
 
-# Windows Terminal
-# https://github.com/microsoft/terminal
-# choco install -y microsoft-windows-terminal
-if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
-    Write-Host "Installing microsoft windows terminal..." -ForegroundColor Blue
-    scoop windows-terminal
+# https://github.com/lukesampson/scoop/wiki/Custom-PHP-configuration
+if (Get-Command "php" -ErrorAction SilentlyContinue) {
+    
 }
 
 
@@ -175,12 +248,5 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
 # }
 # ~\tools\ColorTool\ColorTool.exe -b OneHalfDark.itermcolors
 
-
-# LxRunOffline
-# https://github.com/DDoSolitary/LxRunOffline
-if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
-    Write-Host "Installing lxrunoffline..." -ForegroundColor Blue
-    scoop install -y lxrunoffline
-}
 
 Write-Host "Done." -ForegroundColor Blue

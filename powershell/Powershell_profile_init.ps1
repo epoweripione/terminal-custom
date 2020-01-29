@@ -2,7 +2,7 @@
 
 # Profile
 if (-Not (Test-Path $PROFILE)) {
-    New-Item $PROFILE –Type File –Force
+    New-Item $PROFILE –Type File –Force | Out-Null
 }
 
 # https://docs.microsoft.com/en-us/nuget/install-nuget-client-tools
@@ -11,21 +11,35 @@ if (-Not (Test-Path $PROFILE)) {
 # Install-PackageProvider -Name "NuGet" -Force
 
 # https://www.powershellgallery.com/
-Write-Host "Settings powershell repository..." -ForegroundColor Blue
+Write-Host "Setting powershell repository..." -ForegroundColor Blue
 Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
 
 Write-Host "Installing powershell modules..." -ForegroundColor Blue
 # Find-Module, Get-InstalledModule, Update-Module, Uninstall-Module
-Install-Module -Name PSReadLine -AllowPrerelease -SkipPublisherCheck -Force
+if (-Not (Get-Module -ListAvailable -Name "PSReadLine")) {
+    Install-Module -Name "PSReadLine" -AllowPrerelease -SkipPublisherCheck -Force
+}
 
-Install-Module Find-String,PSColors,TabExpansionPlusPlus -AllowClobber
-Add-Content $PROFILE "`nImport-Module Find-String"
-Add-Content $PROFILE "Import-Module PSColors"
-Add-Content $PROFILE "Import-Module TabExpansionPlusPlus"
+$ModuleNames = @(
+    "Find-String"
+    "Posh-git"
+    "oh-my-posh"
+    "Get-ChildItemColor"
+)
 
-Install-Module Posh-git,oh-my-posh
-Add-Content $PROFILE "Import-Module Posh-git"
-Add-Content $PROFILE "Import-Module oh-my-posh"
+foreach ($TargetModule in $ModuleNames) {
+    if (-Not (Get-Module -ListAvailable -Name $TargetModule)) {
+        Install-Module -Name $TargetModule -AllowClobber
+    }
+}
+
+foreach ($TargetModule in $ModuleNames) {
+    if (Get-Module -ListAvailable -Name $TargetModule) {
+        if (-Not (Get-Module -Name $TargetModule)) {
+            Add-Content $PROFILE "Import-Module $TargetModule"
+        }
+    }
+}
 
 # theme
 Write-Host "Setting powershell theme..." -ForegroundColor Blue
@@ -45,16 +59,13 @@ if (Test-Path $THEME_FILE) {
 
 # Custom
 Write-Host "Other powershell settings..." -ForegroundColor Blue
-Install-Module Get-ChildItemColor
-
 @'
 
 ## Color coding Get-ChildItem
-Import-Module Get-ChildItemColor
+# Import-Module Get-ChildItemColor
 
 Set-Alias l Get-ChildItemColor -option AllScope
 Set-Alias ls Get-ChildItemColorFormatWide -option AllScope
-
 
 ## PSReadLine
 # With these settings, I can press up and down arrows for history substring search, and the tab completion shows me available candidates.
@@ -74,7 +85,6 @@ Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 Set-PSReadlineKeyHandler -Chord 'Shift+Tab' -Function Complete
 Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
-
 ## cddash
 # You can use the following to have the "dash" functionality - namely, you can go back to the previous location by typing cd -. It is from http://goo.gl/xRbYbk.
 function cddash {
@@ -92,7 +102,6 @@ function cddash {
 }
 
 Set-Alias -Name cd -value cddash -Option AllScope
-
 
 ## python encoding
 $env:PYTHONIOENCODING="utf-8"
@@ -115,4 +124,4 @@ Set-Alias gst GitStat
 Set-Alias myip GetMyIp
 Set-Alias pls PrettyLS
 Set-Alias suu UpdateScoop
-'@ | tee $PROFILE -Append | Out-Null
+'@ | Tee-Object $PROFILE -Append | Out-Null

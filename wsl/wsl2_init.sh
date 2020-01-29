@@ -49,7 +49,7 @@ fi
 colorEcho ${BLUE} "Custom WSL settings..."
 # make drives mounted at /c or /e instead of /mnt/c and /mnt/e.
 if [[ ! $(grep "automount" /etc/wsl.conf) ]]; then
-    sudo tee /etc/wsl.conf <<-'EOF'
+    sudo tee /etc/wsl.conf >/dev/null <<-'EOF'
 [automount]
 enabled = true
 root = /

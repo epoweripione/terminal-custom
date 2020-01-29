@@ -3,7 +3,7 @@
 function check_webservice_up() {
     param($webservice_url)
 
-    if (($webservice_url -eq $null) -or ($webservice_url -eq "")) {
+    if (($null -eq $webservice_url) -or ($webservice_url -eq "")) {
         $webservice_url = "www.google.com"
     }
 
@@ -40,7 +40,7 @@ function check_socks5_proxy_up() {
 # socks proxy
 if (-Not (check_webservice_up)) {
     $SOCKS_PROXY_ADDR = Read-Host 'Scoks proxy address for github download?[127.0.0.1:55881] '
-    if (-Not (($SOCKS_PROXY_ADDR -eq $null) -or ($SOCKS_PROXY_ADDR -eq ""))) {
+    if (-Not (($null -eq $SOCKS_PROXY_ADDR) -or ($SOCKS_PROXY_ADDR -eq ""))) {
         $SOCKS_PROXY_ADDR = "127.0.0.1:55881"
     }
     if (-Not (check_socks5_proxy_up $SOCKS_PROXY_ADDR)) {
@@ -49,10 +49,10 @@ if (-Not (check_webservice_up)) {
 }
 
 
-cd ~
+Set-Location ~
 
 $DOWNLOAD_URL = "https://github.com/epoweripione/terminal-custom/archive/master.zip"
-if (($SOCKS_PROXY_ADDR -eq $null) -or ($SOCKS_PROXY_ADDR -eq "")) {
+if (($null -eq $SOCKS_PROXY_ADDR) -or ($SOCKS_PROXY_ADDR -eq "")) {
     curl -L -o "terminal-custom.zip" "$DOWNLOAD_URL"
 } else {
     curl -L --socks5-hostname "$socks_proxy_url" -o "terminal-custom.zip" "$DOWNLOAD_URL"
