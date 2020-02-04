@@ -194,9 +194,9 @@ $installed = $output -split "\s"
 
 foreach ($ext in $extensions) {
     if ($installed.Contains($ext)) {
-        Write-Host $ext "already installed." -ForegroundColor Gray
+        Write-Host $ext "$ext already installed." -ForegroundColor Green
     } else {
-        Write-Host "Installing" $ext "..." -ForegroundColor White
+        Write-Host "Installing $ext..." -ForegroundColor Blue
         code --install-extension $ext
     }
 }

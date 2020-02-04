@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/zh-cn/windows/wsl/wsl2-install
 # Please make sure that virtualization is enabled inside BIOS
 # 1. run PowerShell as Admin
-# Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+# Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart
 # Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
 # 2. restart computer
 # 3. make WSL 2 as default architecture
@@ -151,6 +151,11 @@ sudo apt install -y dotnet-sdk-3.1
 if [[ ! -d "$HOME/.ssh" ]]; then
     mkdir -p $HOME/.ssh && chmod 700 $HOME/.ssh/ # && chmod 600 $HOME/.ssh/*
 fi
+
+
+# Allow members of the group sudo to execute any command without password prompt
+# sudo sed -i 's/%sudo.*/%sudo   ALL=(ALL:ALL) NOPASSWD:ALL/' /etc/sudoers
+echo "%sudo ALL=NOPASSWD:$(which service)" | sudo tee -a /etc/sudoers >/dev/null
 
 
 colorEcho ${GREEN} "WSL init done, please restart WSL!"

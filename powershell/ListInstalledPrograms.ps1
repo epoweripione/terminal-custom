@@ -9,7 +9,7 @@ License: BSD 3-Clause
 
 Function ListPrograms {
 	param($RegPath)
-	$QueryPath = dir $RegPath -Name
+	$QueryPath = Get-ChildItem $RegPath -Name
 	foreach($Name in $QueryPath) {
         (Get-ItemProperty -Path $RegPath$Name).DisplayName
 #        (Get-ItemProperty -Path $RegPath$Name).Publisher

@@ -1,5 +1,13 @@
 #Requires -RunAsAdministrator
 
+# https://docs.microsoft.com/zh-cn/windows/wsl/wsl2-index
+# https://docs.microsoft.com/zh-cn/windows/wsl/wsl2-install
+# Please make sure that virtualization is enabled inside BIOS
+# 1. run PowerShell as Admin
+# Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart
+# Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
+# 2. restart computer
+
 # https://docs.microsoft.com/zh-cn/windows/wsl/install-manual
 $WSL_NAME = "debian"
 $WSL_URL = "https://aka.ms/wsl-debian-gnulinux"

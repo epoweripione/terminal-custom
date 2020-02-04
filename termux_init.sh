@@ -24,8 +24,8 @@ fi
 mkdir -p "$HOME/.termux"
 tee "$HOME/.termux/termux.properties" >/dev/null <<-'EOF'
 extra-keys = [ \
-        ['ESC','/','BACKSLASH','|','~','HOME','UP','END','PGUP','DEL'], \
-        ['ENTER','TAB','CTRL','ALT','&','LEFT','DOWN','RIGHT','PGDN','BKSP'] \
+        ['ESC','/','BACKSLASH','|','_','HOME','UP','END','PGUP','DEL'], \
+        ['ENTER','TAB','-','CTRL','ALT','LEFT','DOWN','RIGHT','PGDN','BKSP'] \
     ]
 EOF
 

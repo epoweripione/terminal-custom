@@ -34,6 +34,11 @@ sourceforge.net
 -downloads.sourceforge.net
 # Sourceforge End
 
+# PowershellGallery Start
+www.powershellgallery.com
+psg-prod-eastus.azureedge.net
+# PowershellGallery end
+
 # SDKMAN Start
 sdkman.io
 api.sdkman.io
