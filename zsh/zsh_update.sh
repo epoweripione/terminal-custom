@@ -262,8 +262,8 @@ ln -s $ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme $ZSH_CUSTOM/themes
 #     git clone https://github.com/bhilburn/powerlevel9k $ZSH_CUSTOM/themes/powerlevel9k
 # fi
 
-[[ -L $ZSH_CUSTOM/themes/powerlevel9k.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/powerlevel9k.zsh-theme
-ln -s $ZSH_CUSTOM/themes/powerlevel9k/powerlevel9k.zsh-theme $ZSH_CUSTOM/themes/powerlevel9k.zsh-theme
+# [[ -L $ZSH_CUSTOM/themes/powerlevel9k.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/powerlevel9k.zsh-theme
+# ln -s $ZSH_CUSTOM/themes/powerlevel9k/powerlevel9k.zsh-theme $ZSH_CUSTOM/themes/powerlevel9k.zsh-theme
 
 # Powerlevel10k
 colorEcho ${BLUE} "Updating powerlevel10k..."
