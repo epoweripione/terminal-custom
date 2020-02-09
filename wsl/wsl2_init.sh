@@ -129,8 +129,12 @@ fi
 sudo service winbind start # /etc/init.d/winbind start
 
 
-# # wslu
-# # https://github.com/wslutilities/wslu
+# fix ping: socket: Operation not permitted
+sudo chmod u+s /bin/ping
+
+
+## wslu
+## https://github.com/wslutilities/wslu
 # colorEcho ${BLUE} "Install git wslu..."
 # curl -s \
 #         https://packagecloud.io/install/repositories/whitewaterfoundry/wslu/script.deb.sh \

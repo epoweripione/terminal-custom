@@ -420,6 +420,39 @@ if [[ -n "$V2RAYCORE" ]]; then
 fi
 
 
+if [[ -d "/srv/trojan" ]]; then
+    CHECK_URL="https://api.github.com/repos/trojan-gfw/trojan/releases/latest"
+
+    CURRENT_VERSION=$(/srv/trojan/trojan --version 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        if pgrep -f "trojan" 2>&1; then
+            pkill -f "trojan"
+        fi
+
+        DOWNLOAD_URL=https://github.com/trojan-gfw/trojan/releases/download/v${REMOTE_VERSION}/trojan-${REMOTE_VERSION}-${ostype}-${spruce_type}.tar.xz
+        curl -SL -o trojan.tar.xz -C- $DOWNLOAD_URL && \
+            tar -JxPf trojan.tar.xz -C /srv/ && \
+            rm trojan.tar.xz
+
+        if [[ ! -s "/etc/systemd/system/trojan.service" ]]; then
+            cp -f /srv/trojan/examples/trojan.service-example /etc/systemd/system/trojan.service
+            sed -i "s|ExecStart=.*|ExecStart=/srv/trojan/trojan -c /etc/trojan/trojan.json|" /etc/systemd/system/trojan.service
+        fi
+
+        if [[ -s "/etc/trojan/trojan.json" ]]; then
+            # nohup /srv/trojan/trojan -c /etc/trojan/trojan.json >/dev/null 2>&1 & disown
+            # systemctl enable trojan && systemctl start trojan
+            [[ $(systemctl is-enabled trojan 2>/dev/null) ]] || systemctl enable trojan
+            systemctl restart trojan
+        else
+            mkdir -p /etc/trojan && \
+                cp -f /srv/trojan/examples/server.json-example /etc/trojan/trojan.json
+        fi
+    fi
+fi
+
+
 # [[ -s "$HOME/proxychains_installer.sh" ]] && source "$HOME/proxychains_installer.sh"
 
 [[ -s "$HOME/nano_installer.sh" ]] && source "$HOME/nano_installer.sh"

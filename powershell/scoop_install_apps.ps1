@@ -117,6 +117,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "filezilla"
         "hashtab"
         "motrix"
+        "powertoys"
         "syncbackfree"
         "syncthing"
         "sysinternals"

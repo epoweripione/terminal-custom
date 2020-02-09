@@ -86,6 +86,8 @@ chmod +x ~/pecl_install_php_extensions.sh
 chmod +x ~/cross_gfw_installer.sh
 chmod +x ~/cross_gfw_config.sh
 
+chmod +x ~/dnsmasq_installer.sh
+
 chmod +x ~/ip2location_installer.sh
 chmod +x ~/ip2location_distance.sh
 

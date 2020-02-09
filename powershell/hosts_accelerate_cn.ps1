@@ -215,11 +215,21 @@ foreach ($TargetHost in $HostsList) {
     }
     # add host entry
     if (($null -eq $TargetIP) -or ($TargetIP -eq "")) {
-        Write-Host "(Error)" -ForegroundColor Red
+        Write-Host " (Error)" -ForegroundColor Red
     } else {
         # $IPGeo = curl -sL --connect-timeout 5 --max-time 15 https://ipinfo.io/$TargetIP/country
-        # Write-Host " $TargetIP($IPGeo)" -ForegroundColor Yellow
-        Write-Host " $TargetIP" -ForegroundColor Yellow
+        $IPGeoURL = "http://ip-api.com/json/$TargetIP"
+        try {
+            $IPGeoRequest = Invoke-RestMethod -Method Get -URI $IPGeoURL  
+        } catch {
+            $IPGeoRequest = $null
+        }
+        $IPGeo = $IPGeoRequest.countryCode
+        if (($null -eq $IPGeo) -or ($IPGeo = "")) {
+            Write-Host " $TargetIP" -ForegroundColor Yellow
+        } else {
+            Write-Host " $TargetIP($IPGeo)" -ForegroundColor Yellow
+        }
         $IP_HOSTS = "$IP_HOSTS`n$TargetIP $TargetHost"
     }
 }

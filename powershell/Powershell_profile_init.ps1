@@ -115,6 +115,7 @@ function GitStat {git status}
 function GoBack {Set-Location ..}
 function GetMyIp {curl -sL -4 https://ifconfig.co/}
 function UpdateScoop {scoop update; scoop update *}
+function EditHosts {notepad $env:windir\System32\drivers\etc\hosts}
 
 ## Other alias
 Set-Alias open Invoke-Item
@@ -124,4 +125,5 @@ Set-Alias gst GitStat
 Set-Alias myip GetMyIp
 Set-Alias pls PrettyLS
 Set-Alias suu UpdateScoop
+Set-Alias hosts EditHosts
 '@ | Tee-Object $PROFILE -Append | Out-Null

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [[ $UID -ne 0 ]]; then
-    echo "Please run this script as root user!"
-    exit 0
-fi
+# if [[ $UID -ne 0 ]]; then
+#     echo "Please run this script as root user!"
+#     exit 0
+# fi
 
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
@@ -39,12 +39,12 @@ fi
 # GeoIP binary and database
 # http://kbeezie.com/geoiplookup-command-line/
 if pacman -Si geoip-bin >/dev/null 2>&1; then
-    pacman -S --noconfirm geoip-bin geoip-database
+    sudo pacman -S --noconfirm geoip-bin geoip-database
 else
     if pacman -Si GeoIP >/dev/null 2>&1; then
-        pacman -S --noconfirm GeoIP GeoIP-data
+        sudo pacman -S --noconfirm GeoIP GeoIP-data
     else
-        pacman -S --noconfirm geoip geoip-data
+        sudo pacman -S --noconfirm geoip geoip-data
     fi
 fi
 
