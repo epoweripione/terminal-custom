@@ -20,9 +20,13 @@ set_proxy_mirrors_env
 # Github & Gitlab proxy
 CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
 if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
-    [[ -s "$HOME/cross_gfw_config.sh" ]] && bash "$HOME/cross_gfw_config.sh"
+    PROXY_ADDRESS="127.0.0.1:7891" # clash
+    if ! check_socks5_proxy_up ${PROXY_ADDRESS}; then
+        PROXY_ADDRESS="127.0.0.1:55880" # v2ray
+        [[ -s "$HOME/cross_gfw_config.sh" ]] && bash "$HOME/cross_gfw_config.sh"
+    fi
 
-    set_git_socks5_proxy github.com,gitlab.com 127.0.0.1:55880
+    set_git_socks5_proxy github.com,gitlab.com "$PROXY_ADDRESS"
 
     [[ -n "$GIT_SOCKS5_PROXY_URL" ]] && \
         echo "--socks5-hostname \"${GIT_SOCKS5_PROXY_URL}\"" > ${CURL_SOCKS5_CONFIG} || \
