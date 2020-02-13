@@ -106,6 +106,8 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "vscode"
         "colortool"
         "windowsterminal"
+        "clash-for-windows"
+        "v2rayn"
         "lxrunoffline"
         "freedownloadmanager"
         "snipaste-beta"

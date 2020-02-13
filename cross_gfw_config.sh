@@ -36,7 +36,7 @@ else
 fi
 PROXY_URL="127.0.0.1:${PROXY_PORT}"
 
-[[ $# > 1 ]] && SUBSCRIBE_URL=$1
+[[ $# > 1 ]] && SUBSCRIBE_URL=$2
 [[ -z "$SUBSCRIBE_URL" ]] && SUBSCRIBE_URL="https://jiang.netlify.com/"
 
 
@@ -84,7 +84,7 @@ function get_v2ray_config_from_subscription() {
     local VMESS_FILENAME="/tmp/v2ray.vmess"
     local DECODE_FILENAME="/tmp/v2ray_decode.vmess"
 
-    colorEcho ${BLUE} "Geting v2ray subscriptions..."
+    colorEcho ${BLUE} "Getting v2ray subscriptions..."
     curl -sSf --connect-timeout 10 --max-time 30 "${SUBSCRIBE_URL}" -o "${VMESS_FILENAME}"
     if [[ $? != 0  ]]; then
         colorEcho ${RED} "Can't get the subscriptions from ${SUBSCRIBE_URL}!"

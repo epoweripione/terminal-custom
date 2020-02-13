@@ -224,7 +224,8 @@ foreach ($TargetHost in $HostsList) {
         } catch {
             $IPGeoRequest = $null
         }
-        $IPGeo = $IPGeoRequest.countryCode
+        $IPGeo = $IPGeoRequest.country
+        # $IPGeo = $IPGeoRequest.countryCode
         if (($null -eq $IPGeo) -or ($IPGeo = "")) {
             Write-Host " $TargetIP" -ForegroundColor Yellow
         } else {

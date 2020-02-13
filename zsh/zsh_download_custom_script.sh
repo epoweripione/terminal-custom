@@ -83,6 +83,7 @@ chmod +x ~/analyze_sys_performance.sh
 chmod +x ~/php_debian_installer.sh
 chmod +x ~/pecl_install_php_extensions.sh
 
+chmod +x ~/clash_client_config.sh
 chmod +x ~/cross_gfw_installer.sh
 chmod +x ~/cross_gfw_config.sh
 

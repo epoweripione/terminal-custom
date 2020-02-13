@@ -469,10 +469,17 @@ prompt_user_host() {
 
   if [[ $(print -P "%#") == '#' ]]; then
     visual_user_icon+="%F{red}\u26A1%f " # ROOT_ICON $'\u26A1' ⚡ $'\uE614' 
-  elif sudo -n true 2>/dev/null; then
-    visual_user_icon+="%F{red}\uF09C%f " # SUDO_ICON 
   else
-    visual_user_icon+="%F{yellow}\uF415%f " # USER_ICON 
+    local os_msys=$(uname)
+    if [[ "$os_msys" =~ "MSYS_NT" || "$os_msys" =~ "MINGW" || "$os_msys" =~ "CYGWIN_NT" ]]; then
+      visual_user_icon+="%F{yellow}\uF415%f " # USER_ICON 
+    else
+      if sudo -n true 2>/dev/null; then
+        visual_user_icon+="%F{red}\uF09C%f " # SUDO_ICON 
+      else
+        visual_user_icon+="%F{yellow}\uF415%f " # USER_ICON 
+      fi
+    fi
   fi
   
   if [[ -n "$USER" ]]; then

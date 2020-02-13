@@ -1,0 +1,2 @@
+  - {name: trojan, type: socks5, server: 127.0.0.1, port: 1080}
+  - {name: v2ray, type: vmess, server: www.example.com, port: 443, uuid: uuid, alterId: 64, cipher: auto, tls: true, network: ws, ws-path: /path/, ws-headers: {Host: www.example.com}}

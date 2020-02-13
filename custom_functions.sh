@@ -957,6 +957,40 @@ function draw_progress_bar() {
 # printf "\n"
 
 
+function Install_systemd_Service() {
+    local service_name=$1
+    local service_exec=$2
+    local service_file
+
+    [[ $# < 2 ]] && return 1
+    [[ -z "$service_name" ]] && return 1
+    [[ -z "$service_exec" ]] && return 1
+
+    service_file="/etc/systemd/system/${service_name}.service"
+    if [[ ! -s "$service_file" ]]; then
+        sudo tee "$service_file" >/dev/null <<-EOF
+[Unit]
+Description=${service_name}
+After=network.target network-online.target nss-lookup.target
+
+[Service]
+Type=simple
+StandardError=journal
+User=nobody
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+ExecStart=${service_exec}
+ExecReload=/bin/kill -HUP \$MAINPID
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+fi
+
+sudo systemctl enable "$service_name" && sudo systemctl restart "$service_name"
+}
+
 ## Dateutils
 # http://www.fresse.org/dateutils/
 # apt install -y dateutils

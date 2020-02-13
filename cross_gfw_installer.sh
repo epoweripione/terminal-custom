@@ -69,10 +69,10 @@ fi
 # https://github.com/Jrohy/multi-v2ray
 # /etc/v2ray_util/util.cfg
 # /etc/v2ray/config.json
-rm -rf /etc/localtime && \
+sudo rm -rf /etc/localtime && \
     TZ="Asia/Shanghai" && \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ > /etc/timezone
+    sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ | sudo tee /etc/timezone >/dev/null
 
 if [[ ! -x "$(command -v v2ray-util)" ]]; then
     source <(curl -sL https://multi.netlify.com/v2ray.sh) --zh
@@ -82,8 +82,8 @@ fi
 # # V2Ray Client
 # # https://www.v2ray.com/chapter_00/install.html
 # bash <(curl -L -s https://install.direct/go.sh) && \
-#     systemctl enable v2ray && \
-#     systemctl start v2ray && \
+#     sudo systemctl enable v2ray && \
+#     sudo systemctl start v2ray && \
 #     sudo ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
 
 # service v2ray start|stop|status|reload|restart|force-reload
@@ -91,34 +91,71 @@ fi
 
 # trojan
 # https://github.com/trojan-gfw/trojan
-if [[ ! -d "/srv/trojan" ]]; then
+if [[ ! -s "/srv/trojan/trojan" ]]; then
     CHECK_URL="https://api.github.com/repos/trojan-gfw/trojan/releases/latest"
 
     CURRENT_VERSION="0.0.0"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        if pgrep -f "trojan" 2>&1; then
-            pkill -f "trojan"
-        fi
-
         DOWNLOAD_URL=https://github.com/trojan-gfw/trojan/releases/download/v${REMOTE_VERSION}/trojan-${REMOTE_VERSION}-${ostype}-${spruce_type}.tar.xz
         curl -SL -o trojan.tar.xz -C- $DOWNLOAD_URL && \
             tar -JxPf trojan.tar.xz -C /srv/ && \
             rm trojan.tar.xz
 
         if [[ ! -s "/etc/systemd/system/trojan.service" ]]; then
-            cp -f /srv/trojan/examples/trojan.service-example /etc/systemd/system/trojan.service
-            sed -i "s|ExecStart=.*|ExecStart=/srv/trojan/trojan -c /etc/trojan/trojan.json|" /etc/systemd/system/trojan.service
+            sudo cp -f /srv/trojan/examples/trojan.service-example /etc/systemd/system/trojan.service
+            sudo sed -i "s|ExecStart=.*|ExecStart=/srv/trojan/trojan -c /etc/trojan/trojan.json|" /etc/systemd/system/trojan.service
         fi
 
         if [[ -s "/etc/trojan/trojan.json" ]]; then
-            # nohup /srv/trojan/trojan -c /etc/trojan/trojan.json >/dev/null 2>&1 & disown
-            # systemctl enable trojan && systemctl start trojan
-            [[ $(systemctl is-enabled trojan 2>/dev/null) ]] || systemctl enable trojan
-            systemctl restart trojan
+            # sudo systemctl enable trojan && sudo systemctl start trojan
+            [[ $(systemctl is-enabled trojan 2>/dev/null) ]] || sudo systemctl enable trojan
+            sudo systemctl restart trojan
         else
-            mkdir -p /etc/trojan && \
-                cp -f /srv/trojan/examples/server.json-example /etc/trojan/trojan.json
+            sudo mkdir -p /etc/trojan && \
+                sudo cp -f /srv/trojan/examples/server.json-example /etc/trojan/trojan.json
         fi
     fi
+fi
+
+# clash
+# https://github.com/Dreamacro/clash
+if [[ ! -x "$(command -v clash)" ]]; then
+    CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
+
+    CURRENT_VERSION="0.0.0"
+    # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION="0.17.1"
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        DOWNLOAD_URL=https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${ostype}-${spruce_type}-v${REMOTE_VERSION}.gz
+        curl -SL -o clash-${ostype}-${spruce_type}.gz -C- $DOWNLOAD_URL && \
+            mkdir -p /srv/clash && \
+            mv clash-${ostype}-${spruce_type}.gz /srv/clash && \
+            cd /srv/clash && \
+            gzip -d clash-${ostype}-${spruce_type}.gz && \
+            rm clash-${ostype}-${spruce_type}.gz && \
+            chmod +x clash-linux-amd64 && \
+            sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true && \
+            cd - && \
+            /srv/clash/clash
+    fi
+    # nohup /srv/clash/clash -d /srv/clash >/dev/null 2>&1 & disown
+fi
+
+# subconverter
+# https://github.com/tindy2013/subconverter
+if [[ ! -s "/srv/subconverter/subconverter" ]]; then
+    CHECK_URL="https://api.github.com/repos/tindy2013/subconverter/releases/latest"
+
+    CURRENT_VERSION="0.0.0"
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        DOWNLOAD_URL=https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${ostype}${VDIS}.tar.gz
+        curl -SL -o subconverter.tar.gz -C- $DOWNLOAD_URL && \
+            mkdir -p /srv/subconverter && \
+            tar -zxPf subconverter.tar.gz -C /srv/subconverter && \
+            rm subconverter.tar.gz
+    fi
+    # nohup /srv/subconverter/subconverter >/dev/null 2>&1 & disown
+    # http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F&config=https%3A%2F%2Fraw.githubusercontent.com%2FACL4SSR%2FACL4SSR%2Fmaster%2FClash%2Fpref.ini
 fi
