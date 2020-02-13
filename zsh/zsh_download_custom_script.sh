@@ -52,6 +52,11 @@ fi
 # copy shell script to HOME
 colorEcho ${BLUE} "Copying shell script to $HOME..."
 cp -f ~/terminal-custom/*.sh ~
+cp -f ~/terminal-custom/*.yml ~
+cp -f ~/terminal-custom/*.list ~
+cp -f ~/terminal-custom/*.c ~
+cp -f ~/terminal-custom/*.py ~
+
 chmod +x ~/hosts_update.sh
 chmod +x ~/generate_random_string.sh
 chmod +x ~/install_fonts.sh
@@ -74,8 +79,6 @@ chmod +x ~/nano_installer.sh
 chmod +x ~/pacapt_installer.sh
 chmod +x ~/proxychains_installer.sh
 chmod +x ~/sdkman_installer.sh
-
-cp -f ~/terminal-custom/hosts_accelerate_cn.list ~
 
 chmod +x ~/speedtest.sh
 chmod +x ~/analyze_sys_performance.sh
@@ -105,9 +108,6 @@ chmod +x ~/manjaro_init.sh
 chmod +x ~/termux_init.sh
 
 chmod +x ~/vs-code-extensions-installer.sh
-cp -f ~/terminal-custom/vscode_extensions.list ~
-
-cp -f ~/terminal-custom/terminal_256colors.py ~
 
 cp -f ~/terminal-custom/zsh/*.sh ~
 chmod +x ~/zsh_change_theme.sh

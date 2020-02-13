@@ -180,7 +180,7 @@ fi
 
 # [PROXY_CUSTOM]
 colorEcho ${BLUE} "Setting custom proxy..."
-PROXY_CUSTOM_FILE="./clash_proxy_custom.yml"
+PROXY_CUSTOM_FILE="/srv/clash/clash_proxy_custom.yml"
 if [[ -s "$PROXY_CUSTOM_FILE" ]]; then
     PROXY_CUSTOM=$(cat "$PROXY_CUSTOM_FILE")
 fi
