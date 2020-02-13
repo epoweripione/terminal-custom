@@ -224,7 +224,7 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
 
         # FIRST_PROXY_LINE=$(echo "$PROXY_GROUP1" | grep -E -n "\-\s${PROXY_NAME[0]}" | cut -d: -f1)
         for TargetName in "${CUSTOM_NAME[@]}"; do
-            PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" | sed "/- ${PROXY_NAME[0]//\//\\/}/i\      - ${TargetName}")
+            PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" | sed "/- ${PROXY_NAME[0]//\//\\/}$/i\      - ${TargetName}")
             # PROXY_GROUP1=$(echo "$PROXY_GROUP1" | sed "${FIRST_PROXY_LINE}i\      - ${TargetName}")
             # PROXY_GROUP2=$(echo "$PROXY_GROUP2" | sed "${FIRST_PROXY_LINE}i\      - ${TargetName}")
         done
@@ -232,7 +232,7 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
 
     # delete proxy list after 3th group
     for TargetName in "${PROXY_NAME[@]}"; do
-        PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" | sed "/- ${TargetName//\//\\/}/d")
+        PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" | sed "/- ${TargetName//\//\\/}$/d")
     done
 
     PROXY_GROUP=$(echo -e "${PROXY_GROUP_MAIN}\n${PROXY_GROUP_REST}")
