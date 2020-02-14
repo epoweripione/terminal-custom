@@ -154,7 +154,12 @@ if [[ ! -s "/srv/subconverter/subconverter" ]]; then
         curl -SL -o subconverter.tar.gz -C- $DOWNLOAD_URL && \
             mkdir -p /srv/subconverter && \
             tar -zxPf subconverter.tar.gz -C /srv/subconverter && \
-            rm subconverter.tar.gz
+            rm subconverter.tar.gz && \
+            echo ${REMOTE_VERSION} > /srv/subconverter/.version
+    fi
+
+    if [[ -s "/srv/subconverter/subconverter" ]]; then
+        Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"
     fi
     # nohup /srv/subconverter/subconverter >/dev/null 2>&1 & disown
     # http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F&config=https%3A%2F%2Fraw.githubusercontent.com%2FACL4SSR%2FACL4SSR%2Fmaster%2FClash%2Fpref.ini

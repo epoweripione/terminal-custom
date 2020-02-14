@@ -1013,7 +1013,7 @@ RestartSec=5s
 [Install]
 WantedBy=multi-user.target
 EOF
-fi
+    fi
 
 sudo systemctl enable "$service_name" && sudo systemctl restart "$service_name"
 }

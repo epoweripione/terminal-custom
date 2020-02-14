@@ -1,4 +1,5 @@
 # https://github.com/Dreamacro/clash
+# Clash for Windows: https://docs.cfw.lbyczf.com/
 # Manager from web UI(RESTful API): http://clash.razord.top/ or http://yacd.haishan.me/
 # port of HTTP
 port: 7890
@@ -174,4 +175,4 @@ Proxy Group:
 
 # https://github.com/ACL4SSR/ACL4SSR
 Rule:
-# [RULES]http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F&config=https%3A%2F%2Fraw.githubusercontent.com%2FACL4SSR%2FACL4SSR%2Fmaster%2FClash%2Fpref.ini
+# [RULES]http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F&config=https%3A%2F%2Fraw.githubusercontent.com%2FACL4SSR%2FACL4SSR%2Fmaster%2FClash%2Fconfig%2FACL4SSR_WithChinaIp_WithGFW.ini

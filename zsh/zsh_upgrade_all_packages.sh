@@ -368,7 +368,7 @@ if [[ -x "$(command -v v2ray)" ]]; then
     if [[ -x "$(command -v v2ray-util)" ]]; then
         colorEcho ${BLUE} "Updating multi-v2ray..."
         # https://github.com/Jrohy/multi-v2ray
-        v2ray update.sh >/dev/null && v2ray update && v2ray restart
+        v2ray update.sh >/dev/null && v2ray restart
 
         # CHECK_URL="https://api.github.com/repos/Jrohy/multi-v2ray/releases/latest"
 
@@ -437,6 +437,33 @@ if [[ -s "/srv/trojan/trojan" ]]; then
             sudo mkdir -p /etc/trojan && \
                 sudo cp -f /srv/trojan/examples/server.json-example /etc/trojan/trojan.json
         fi
+    fi
+fi
+
+
+if [[ -s "/srv/subconverter/subconverter" ]]; then
+    colorEcho ${BLUE} "Updating subconverter..."
+    CHECK_URL="https://api.github.com/repos/tindy2013/subconverter/releases/latest"
+
+    if [[ -s "/srv/subconverter/.version" ]]; then
+        CURRENT_VERSION=$(head -n1 /srv/subconverter/.version)
+    else
+        CURRENT_VERSION="v0.0"
+    fi
+
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] && systemctl stop subconverter
+
+        DOWNLOAD_URL=https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${ostype}${VDIS}.tar.gz
+        curl -SL -o subconverter.tar.gz -C- $DOWNLOAD_URL && \
+            mkdir -p /srv/subconverter && \
+            tar -zxPf subconverter.tar.gz -C /srv/subconverter && \
+            rm subconverter.tar.gz && \
+            echo ${REMOTE_VERSION} > /srv/subconverter/.version
+
+        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] || sudo systemctl enable subconverter
+        sudo systemctl restart subconverter
     fi
 fi
 
