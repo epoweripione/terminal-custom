@@ -79,3 +79,72 @@ function  GetDISMOnlineCapabilities() {
 
     return $objResult
 }
+
+function GetIPGeolocation() {
+
+    param($ipaddress)
+
+    $resource = "http://ip-api.com/json/$ipaddress"
+    try {
+        $geoip = Invoke-RestMethod -Method Get -URI $resource
+    } catch {
+        Write-Verbose -Message "Catched an error"
+        $PSCmdlet.ThrowTerminatingError($PSitem)
+    }
+
+    # $geoip | Get-Member
+    $hash = @{
+        IP = $geoip.query
+        CountryCode = $geoip.countryCode
+        Country = $geoip.country
+        Region = $geoip.region
+        RegionName = $geoip.regionName
+        AS = $geoip.as
+        ISP = $geoip.isp
+        ORG = $geoip.org
+        City = $geoip.city
+        ZipCode = $geoip.zip
+        TimeZone = $geoip.timezone
+        Latitude = $geoip.lat
+        Longitude = $geoip.lon
+        }
+
+    $result = New-Object PSObject -Property $hash
+
+    return $result
+}
+function check_webservice_up() {
+    param($webservice_url)
+
+    if (($null -eq $webservice_url) -or ($webservice_url -eq "")) {
+        $webservice_url = "www.google.com"
+    }
+
+    curl -fsSL --connect-timeout 3 --max-time 5 -I "$webservice_url"
+    if ($?) {
+        return $true
+    } else {
+        return $false
+    }
+}
+
+function check_socks5_proxy_up() {
+    Param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string] $socks_proxy_url,
+        [Parameter(Mandatory=$false, Position=1)]
+        [string] $webservice_url
+    )
+
+    if (($null -eq $webservice_url) -or ($webservice_url -eq "")) {
+        $webservice_url = "www.google.com"
+    }
+
+    curl -fsSL --connect-timeout 3 --max-time 5 --socks5-hostname "$socks_proxy_url" -I "$webservice_url"
+    if ($?) {
+        return $true
+    } else {
+        return $false
+    }
+}

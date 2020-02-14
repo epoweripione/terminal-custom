@@ -3,7 +3,7 @@ param (
 	[string]$ip
 )
 
-function GetIPGeolocation() {
+function GetIPGeolocation_ipinfo() {
 
     param($ipaddress)
 
@@ -32,7 +32,7 @@ function GetIPGeolocation() {
     return $result
 }
 
-function GetIPGeolocation_ipapi() {
+function GetIPGeolocation() {
 
     param($ipaddress)
 

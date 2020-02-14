@@ -2,6 +2,7 @@
 
 # Usage:
 # ./clash_client_config.sh /srv/clash/config.yaml /srv/web/www/default/clash_config.yml
+# (crontab -l 2>/dev/null || true; echo "0 8,12,15,20 * * * /root/clash_client_config.sh /srv/clash/config.yaml /srv/web/www/default/clash_config.yml >/dev/null") | crontab -
 
 trap 'rm -r "$WORKDIR"' EXIT
 
@@ -213,8 +214,6 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     # GROUP_CNT=$(echo "$PROXY_GROUP" | grep -E "\-\sname:" | wc -l)
     PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP" | awk "/- name:/{i++}i<=2")
     PROXY_GROUP_REST=$(echo "$PROXY_GROUP" | awk "/- name:/{i++}i>2")
-    # PROXY_GROUP1=$(echo "$PROXY_GROUP" | awk "/- name:/{i++}i=1")
-    # PROXY_GROUP2=$(echo "$PROXY_GROUP" | awk "/- name:/{i++}i=2")
 
     # add custom proxy to 1st,2nd group,before 1st proxy list
     if [[ -n "$PROXY_CUSTOM" ]]; then
@@ -222,21 +221,27 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         CUSTOM_NAME=()
         while read -r line; do CUSTOM_NAME+=("$line"); done <<<"$CUSTOM_LIST"
 
-        # FIRST_PROXY_LINE=$(echo "$PROXY_GROUP1" | grep -E -n "\-\s${PROXY_NAME[0]}" | cut -d: -f1)
+        # FIRST_PROXY_NAME=$(echo "${PROXY_NAME[0]}" | sed 's/[^a-zA-Z 0-9]/\\&/g')
+        FIRST_PROXY_NAME=$(echo "${PROXY_NAME[0]}" \
+            | sed -e 's/^"//' -e 's/"$//' \
+            | sed 's/[\\/:\*\?<>\|\$\(\)\[\^\{\}\+\.\=\!]/\\&/g' \
+            | sed 's/]/\\&/g')
         for TargetName in "${CUSTOM_NAME[@]}"; do
-            PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" | sed "/- ${PROXY_NAME[0]//\//\\/}$/i\      - ${TargetName}")
-            # PROXY_GROUP1=$(echo "$PROXY_GROUP1" | sed "${FIRST_PROXY_LINE}i\      - ${TargetName}")
-            # PROXY_GROUP2=$(echo "$PROXY_GROUP2" | sed "${FIRST_PROXY_LINE}i\      - ${TargetName}")
+            PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" | sed "/- ${FIRST_PROXY_NAME}$/i\      - ${TargetName}")
         done
     fi
 
     # delete proxy list after 3th group
     for TargetName in "${PROXY_NAME[@]}"; do
-        PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" | sed "/- ${TargetName//\//\\/}$/d")
+        TargetName=$(echo "${TargetName}" \
+            | sed -e 's/^"//' -e 's/"$//' \
+            | sed 's/[\\/:\*\?<>\|\$\(\)\[\^\{\}\+\.\=\!]/\\&/g' \
+            | sed 's/]/\\&/g')
+        PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" | sed "/- ${TargetName}$/d")
     done
 
     PROXY_GROUP=$(echo -e "${PROXY_GROUP_MAIN}\n${PROXY_GROUP_REST}")
-    
+
     # add blank line before each group
     PROXY_GROUP=$(echo "$PROXY_GROUP" | sed "s/  - name:/\n&/" | sed '1d')
 fi
@@ -258,7 +263,6 @@ fi
 
 START_LINE=$((${CFW_BYPASS_LINE} + 1))
 ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_CUSTOM_LINE} p" "$CLASH_CONFIG")
-# while read -r line; do printf "%s\n" "${line}" >> "$TARGET_CONFIG_FILE"; done <<<"$ADD_CONTENT"
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$PROXY_CUSTOM" ]]; then
@@ -268,7 +272,6 @@ fi
 
 START_LINE=$((${PROXY_CUSTOM_LINE} + 1))
 ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_LINE} p" "$CLASH_CONFIG")
-# while read -r line; do printf "%s\n" "${line}" >> "$TARGET_CONFIG_FILE"; done <<<"$ADD_CONTENT"
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$PROXY" ]]; then
@@ -278,7 +281,6 @@ fi
 
 START_LINE=$((${PROXY_LINE} + 1))
 ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_GROUP_LINE} p" "$CLASH_CONFIG")
-# while read -r line; do printf "%s\n" "${line}" >> "$TARGET_CONFIG_FILE"; done <<<"$ADD_CONTENT"
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$PROXY_GROUP" ]]; then
@@ -288,7 +290,6 @@ fi
 
 START_LINE=$((${PROXY_GROUP_LINE} + 1))
 ADD_CONTENT=$(sed -n "${START_LINE},${RULES_LINE} p" "$CLASH_CONFIG")
-# while read -r line; do printf "%s\n" "${line}" >> "$TARGET_CONFIG_FILE"; done <<<"$ADD_CONTENT"
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$RULES" ]]; then

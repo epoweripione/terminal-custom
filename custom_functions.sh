@@ -952,8 +952,8 @@ function draw_progress_bar() {
 #     # Check if we reached 100%
 #     [[ $PROGRESS_CUR == $PROGRESS_CNT ]] && break
 #     # sleep 0.1  # Wait before redrawing
-# done                                           
-# # Go to the newline at the end of progress     
+# done
+# # Go to the newline at the end of progress
 # printf "\n"
 
 
@@ -1000,4 +1000,26 @@ function date_diff() {
     if [[ $# -eq 2 ]]; then
         echo $(( ($(date -d "$1" +%s) - $(date -d "$2" +%s) )/(60*60*24) ))
     fi
+}
+
+function get_zone_time() {
+    local TZONES="$@"
+    [[ -z "$TZONES" ]] && TZONES="Asia/Shanghai"
+    # /usr/share/zoneinfo
+    # Asia/Shanghai America/Los_Angeles America/New_York
+    CURRENT_UTC_TIME=$(date -u)
+
+    DISPLAY_FORMAT="%F %T %Z %z"
+
+    UTC_TIME=$(date -u -d "$CURRENT_UTC_TIME" +"$DISPLAY_FORMAT")
+    colorEcho ${YELLOW} "UTC Time: ${UTC_TIME}"
+
+    LOCAL_TIME=$(date -d "$CURRENT_UTC_TIME" +"$DISPLAY_FORMAT")
+    colorEcho ${FUCHSIA} "Local Time: ${LOCAL_TIME}"
+
+    ZONE_LIST=($(echo ${TZONES}))
+    for tz in ${ZONE_LIST[@]}; do
+        ZONE_TIME=$(TZ="$tz" date -d "$CURRENT_UTC_TIME" +"$DISPLAY_FORMAT")
+        colorEcho ${BLUE} "${tz}: ${ZONE_TIME}"
+    done
 }

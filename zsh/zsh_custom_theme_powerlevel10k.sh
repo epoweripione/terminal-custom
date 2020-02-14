@@ -10,7 +10,7 @@ function set_zle_rprompt_indent() {
   fi
 
   # WSL
-  [[ "$os_wsl" =~ "Microsoft" ]] && ZLE_RPROMPT_INDENT=6
+  # [[ "$os_wsl" =~ "Microsoft" ]] && ZLE_RPROMPT_INDENT=6
 }
 
 set_zle_rprompt_indent

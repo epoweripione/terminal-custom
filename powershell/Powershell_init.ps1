@@ -155,6 +155,12 @@
 # reset:
 # netsh winhttp reset proxy
 
+if (-Not (Get-Command -Name "check_webservice_up" 2>$null)) {
+    $CUSTOM_FUNCTION="$PSScriptRoot\ps_custom_function.ps1"
+    if ((Test-Path "$CUSTOM_FUNCTION") -and ((Get-Item "$CUSTOM_FUNCTION").length -gt 0)) {
+        . "$CUSTOM_FUNCTION"
+    }
+}
 
 # Init profile
 & "$PSScriptRoot\Powershell_profile_init.ps1"

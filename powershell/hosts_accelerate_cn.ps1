@@ -1,41 +1,11 @@
 #Requires -RunAsAdministrator
 
-function check_webservice_up() {
-    param($webservice_url)
-
-    if (($null -eq $webservice_url) -or ($webservice_url -eq "")) {
-        $webservice_url = "www.google.com"
-    }
-
-    curl -fsSL --connect-timeout 3 --max-time 5 -I "$webservice_url"
-    if ($?) {
-        return $true
-    } else {
-        return $false
+if (-Not (Get-Command -Name "check_webservice_up" 2>$null)) {
+    $CUSTOM_FUNCTION="$PSScriptRoot\ps_custom_function.ps1"
+    if ((Test-Path "$CUSTOM_FUNCTION") -and ((Get-Item "$CUSTOM_FUNCTION").length -gt 0)) {
+        . "$CUSTOM_FUNCTION"
     }
 }
-
-function check_socks5_proxy_up() {
-    Param
-    (
-        [Parameter(Mandatory=$true, Position=0)]
-        [string] $socks_proxy_url,
-        [Parameter(Mandatory=$false, Position=1)]
-        [string] $webservice_url
-    )
-
-    if (($null -eq $webservice_url) -or ($webservice_url -eq "")) {
-        $webservice_url = "www.google.com"
-    }
-
-    curl -fsSL --connect-timeout 3 --max-time 5 --socks5-hostname "$socks_proxy_url" -I "$webservice_url"
-    if ($?) {
-        return $true
-    } else {
-        return $false
-    }
-}
-
 
 # socks proxy
 if (-Not (check_webservice_up)) {

@@ -1,10 +1,17 @@
 #Requires -RunAsAdministrator
 
+if (-Not (Get-Command -Name "check_webservice_up" 2>$null)) {
+    $CUSTOM_FUNCTION="$PSScriptRoot\ps_custom_function.ps1"
+    if ((Test-Path "$CUSTOM_FUNCTION") -and ((Get-Item "$CUSTOM_FUNCTION").length -gt 0)) {
+        . "$CUSTOM_FUNCTION"
+    }
+}
+
 # Scoop
 # https://scoop.sh/
 if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
     Write-Host "Installing scoop..." -ForegroundColor Blue
- 
+
     ## If you're behind a proxy you might need to run one or more of these commands first:
     ## If you want to use a proxy that isn't already configured in Internet Options
     # [net.webrequest]::defaultwebproxy = new-object net.webproxy "http://proxy.example.org:8080"
@@ -12,7 +19,7 @@ if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
     # [net.webrequest]::defaultwebproxy.credentials = [net.credentialcache]::defaultcredentials
     ## If you want to use other credentials (replace 'username' and 'password')
     # [net.webrequest]::defaultwebproxy.credentials = new-object net.networkcredential 'username', 'password'
- 
+
     Set-ExecutionPolicy RemoteSigned -scope CurrentUser
     Invoke-WebRequest -useb get.scoop.sh | Invoke-Expression
 
@@ -39,10 +46,14 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     # scoop config proxy username:password@proxy.example.org:8080
     ## Bypassing the proxy configured in Internet Options
     # scoop config rm proxy
-    $SCOOP_PROXY_ADDR = ""
-    if($PROMPT_VALUE = Read-Host "Proxy address for scoop?") {
-        $SCOOP_PROXY_ADDR = $PROMPT_VALUE
+    $SCOOP_PROXY_ADDR = "127.0.0.1:7890"
+    if (-Not (check_socks5_proxy_up $SCOOP_PROXY_ADDR)) {
+        $SCOOP_PROXY_ADDR = ""
+        if($PROMPT_VALUE = Read-Host "Proxy address for scoop?") {
+            $SCOOP_PROXY_ADDR = $PROMPT_VALUE
+        }
     }
+
     if (-Not (($null -eq $SCOOP_PROXY_ADDR) -or ($SCOOP_PROXY_ADDR -eq ""))) {
         scoop config proxy $SCOOP_PROXY_ADDR
     }
@@ -115,17 +126,18 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "screentogif"
         "diffinity"
         "everything"
-        "explorerplusplus"
         "filezilla"
-        "hashtab"
+        "hashcheck"
         "motrix"
         "powertoys"
         "syncbackfree"
         "syncthing"
         "sysinternals"
-        "tablacusexplorer"
         "utools"
-        "xnviewclassic-full"
+        "xnviewmp"
+        ## dodorz
+        # "explorerplusplus"
+        # "tablacusexplorer"
     )
 
     $InstalledApps = scoop list 6>&1 | Out-String
@@ -154,9 +166,9 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     # scoop install python27
     # scoop install dorado/miniconda3
 
-    if (-Not (($null -eq $SCOOP_PROXY_ADDR) -or ($SCOOP_PROXY_ADDR -eq ""))) {
-        scoop config rm proxy
-    }
+    # if (-Not (($null -eq $SCOOP_PROXY_ADDR) -or ($SCOOP_PROXY_ADDR -eq ""))) {
+    #     scoop config rm proxy
+    # }
 } else {
     Write-Host "scoop install failed!"
 }

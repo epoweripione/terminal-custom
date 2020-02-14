@@ -1,5 +1,6 @@
 // To view the default settings, hold "alt" while clicking on the "Settings" button.
 // For documentation on these settings, see: https://aka.ms/terminal-documentation
+// https://github.com/microsoft/terminal/blob/master/doc/user-docs/UsingJsonSettings.md
 // https://github.com/microsoft/terminal/blob/master/doc/cascadia/SettingsSchema.md
 // %UserProfile%\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState
 {
@@ -8,11 +9,16 @@
     "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
     "initialCols": 120,
     "initialRows": 30,
+    "initialPosition": ",",
+    "rowsToScroll": "system",
+    "launchMode": "maximized",
     "requestedTheme": "system",
     "showTabsInTitlebar": true,
     "showTerminalTitleInTitlebar": true,
     "tabWidthMode": "equal",
     "snapToGridOnResize": false,
+    "copyOnSelect": false,
+    "confirmCloseAllTabs": true,
     "wordDelimiters": " /\\()\"'-.,:;<>~!@#$%^&*|+=[]{}~?\u2502",
 
     "profiles": {
@@ -37,7 +43,9 @@
                 "guid": "{58ad8b0c-3ef8-5f4d-bc6f-13e4c00f2530}",
                 "hidden": false,
                 "name": "Debian",
-                "source": "Windows.Terminal.Wsl"
+                "commandline": "wsl.exe ~ -d Debian"
+                // "startingDirectory": "%USERPROFILE%/wslhome"
+                // "source": "Windows.Terminal.Wsl"
             },
             {
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
@@ -106,6 +114,5 @@
     ],
     // Add any keybinding overrides to this array.
     // To unbind a default keybinding, set the command to "unbound"
-    "keybindings": [],
-    "copyOnSelect": true
+    "keybindings": []
 }
