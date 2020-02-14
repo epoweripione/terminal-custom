@@ -83,7 +83,8 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     scoop bucket add versions
     # other
     scoop bucket add dorado https://github.com/h404bi/dorado
-    scoop bucket add dodorz https://github.com/dodorz/scoop-bucket
+    # dodorz
+    # scoop bucket add dodorz https://github.com/dodorz/scoop-bucket
 
     if (-Not (scoop info aria2 6>$null)) {
         Write-Host "Installing aria2..." -ForegroundColor Blue

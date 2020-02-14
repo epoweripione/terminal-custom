@@ -906,6 +906,33 @@ function set_git_socks5_proxy() {
     done
 }
 
+# Setting github & gitlab & curl socks5 proxy
+function set_github_gitlab_curl_proxy() {
+    CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
+    if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
+        if [[ -z "$HTTPS_PROXY" ]]; then
+            PROXY_ADDRESS="127.0.0.1:7891" # clash
+            if ! check_socks5_proxy_up ${PROXY_ADDRESS}; then
+                PROXY_ADDRESS="127.0.0.1:55880" # v2ray
+                [[ -s "$HOME/cross_gfw_config.sh" ]] && bash "$HOME/cross_gfw_config.sh"
+            fi
+
+            set_git_socks5_proxy github.com,gitlab.com "$PROXY_ADDRESS"
+        else
+            set_git_socks5_proxy github.com,gitlab.com
+        fi
+
+        if [[ -n "$GIT_SOCKS5_PROXY_URL" ]]; then
+            echo "--socks5-hostname \"${GIT_SOCKS5_PROXY_URL}\"" > ${CURL_SOCKS5_CONFIG}
+        else
+            cat /dev/null > ${CURL_SOCKS5_CONFIG}
+        fi
+    else
+        set_git_socks5_proxy github.com,gitlab.com
+        cat /dev/null > ${CURL_SOCKS5_CONFIG}
+    fi
+}
+
 
 ## ProgressBar
 # bar=''

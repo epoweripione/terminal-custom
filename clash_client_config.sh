@@ -180,9 +180,9 @@ if [[ ${GROUP_START_LINE} -gt 0 ]]; then
 fi
 
 # [PROXY_CUSTOM]
-colorEcho ${BLUE} "Setting custom proxy..."
 PROXY_CUSTOM_FILE="/srv/clash/clash_proxy_custom.yml"
 if [[ -s "$PROXY_CUSTOM_FILE" ]]; then
+    colorEcho ${BLUE} "Setting custom proxy..."
     PROXY_CUSTOM=$(cat "$PROXY_CUSTOM_FILE")
 fi
 
@@ -201,6 +201,13 @@ if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
             CFW_BYPASS=$(sed -n "${BYPASS_START_LINE},$ p" "${WORKDIR}/cfw_bypass.yml")
         fi
     fi
+fi
+
+# custom rules
+RULE_CUSTOM_FILE="/srv/clash/clash_rule_custom.yml"
+if [[ -s "$RULE_CUSTOM_FILE" ]]; then
+    colorEcho ${BLUE} "Setting custom RULE..."
+    RULE_CUSTOM=$(cat "$RULE_CUSTOM_FILE")
 fi
 
 # Delete all proxy name from proxy group
@@ -291,6 +298,11 @@ fi
 START_LINE=$((${PROXY_GROUP_LINE} + 1))
 ADD_CONTENT=$(sed -n "${START_LINE},${RULES_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
+
+if [[ -n "$RULE_CUSTOM" ]]; then
+    colorEcho ${BLUE} "  Output custom rules..."
+    echo "${RULE_CUSTOM}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
+fi
 
 if [[ -n "$RULES" ]]; then
     colorEcho ${BLUE} "  Output rules..."
