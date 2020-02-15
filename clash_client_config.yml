@@ -123,6 +123,7 @@ cfw-child-process:
       - "trojan_55980.json"
     options:
       cwd: C:\Tools\trojan
+  - command: v2rayn.exe
 
 # Will be ignored after profile selection
 Proxy:

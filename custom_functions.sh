@@ -984,6 +984,39 @@ function draw_progress_bar() {
 # printf "\n"
 
 
+function Git_Clone_Update() {
+    local REPO=${1:-""}
+    local REPODIR=${2:-""}
+    local BRANCH=${3:-master}
+    local REPOURL=${4:-github.com}
+    
+    if [[ -z "$REPO" ]]; then
+        colorEcho ${RED} "Error! Repository name can't empty!"
+        return 1
+    fi
+
+    if [[ -z "$REPODIR" ]]; then
+        REPODIR=$(echo ${REPO} | awk -F"/" '{print $NF}')
+    fi
+
+    REMOTE=${REMOTE:-https://${REPOURL}/${REPO}.git}
+    if [[ -d "${REPODIR}/.git" ]]; then
+        cd "$REPODIR" && \
+            git pull --rebase --stat origin "$BRANCH" && \
+            cd - >/dev/null
+    else
+        git clone -c core.eol=lf -c core.autocrlf=false \
+            -c fsck.zeroPaddedFilemode=ignore \
+            -c fetch.fsck.zeroPaddedFilemode=ignore \
+            -c receive.fsck.zeroPaddedFilemode=ignore \
+            --depth=1 --branch "$BRANCH" "$REMOTE" "$REPODIR" || {
+            error "git clone of ${REPO} failed!"
+            return 1
+        }
+    fi
+}
+
+
 function Install_systemd_Service() {
     local service_name=$1
     local service_exec=$2

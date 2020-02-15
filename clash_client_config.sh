@@ -57,10 +57,8 @@ fi
 # Update ACL4SSR
 # https://github.com/ACL4SSR/ACL4SSR
 if [[ -s "/srv/subconverter/subconverter" ]]; then
-    [[ -d "/srv/subconverter/ACL4SSR" ]] && rm -rf "/srv/subconverter/ACL4SSR"
-    git clone --depth 1 https://github.com/ACL4SSR/ACL4SSR /srv/subconverter/ACL4SSR && \
-        cp -f /srv/subconverter/ACL4SSR/Clash/*.list /srv/subconverter/rules/ACL4SSR/Clash && \
-        cp -f /srv/subconverter/ACL4SSR/Clash/config/*.ini /srv/subconverter/config
+    colorEcho ${BLUE} "Updating ACL4SSR rules..."
+    Git_Clone_Update "ACL4SSR/ACL4SSR" "/srv/subconverter/ACL4SSR"
 fi
 
 
