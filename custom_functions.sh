@@ -477,11 +477,14 @@ function set_proxy() {
 
     [[ -z "$proxy_url" ]] && proxy_url="http://127.0.0.1:8080"
 
-    # export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
+    export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
     # export no_proxy="localhost,127.0.0.0/8,*.local"
 
     export {http,https,ftp,all}_proxy=${proxy_url}
+
+    # for curl
     export {HTTP,HTTPS,FTP,ALL}_PROXY=${proxy_url}
+    export NO_PROXY="localhost,127.0.0.1,localaddress,.localdomain.com"
 
     # curlrc
     # echo "proxy=${proxy_url}" >> .curlrc
@@ -906,9 +909,26 @@ function set_git_socks5_proxy() {
     done
 }
 
-# Setting github & gitlab & curl socks5 proxy
+## Setting global proxy by clash
+function set_global_proxy_by_clash() {
+    local PROXY_ADDRESS=$1
+
+    if [[ -z "$PROXY_ADDRESS" ]]; then
+        PROXY_ADDRESS="127.0.0.1:7891" # clash
+    fi
+
+    if check_socks5_proxy_up ${PROXY_ADDRESS}; then
+        set_proxy "socks5h://127.0.0.1:7891"
+    else
+        clear_proxy
+    fi
+}
+
+## Setting github & gitlab & curl socks5 proxy
 function set_github_gitlab_curl_proxy() {
-    CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
+    local CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
+    local PROXY_ADDRESS
+
     if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
         if [[ -z "$HTTPS_PROXY" ]]; then
             PROXY_ADDRESS="127.0.0.1:7891" # clash
@@ -1001,18 +1021,31 @@ function Git_Clone_Update() {
 
     REMOTE=${REMOTE:-https://${REPOURL}/${REPO}.git}
     if [[ -d "${REPODIR}/.git" ]]; then
+        colorEcho ${BLUE} "Updating ${REPO}..."
         cd "$REPODIR" && \
             git pull --rebase --stat origin "$BRANCH" && \
             cd - >/dev/null
+        ## master branch
+        # cd "$REPODIR" && \
+        #     git fetch --depth 1 && \
+        #     git reset --hard origin/master && \
+        #     cd - >/dev/null
+        ## checkout other branch
+        # cd "$REPODIR" && \
+        #     git remote set-branches --add orgin "'${remote_branch_name}'"
+        #     git fetch --depth 1 origin ${remote_branch_name} && \
+        #     git checkout ${remote_branch_name} && \
+        #     cd - >/dev/null
     else
+        colorEcho ${BLUE} "Cloning ${REPO}..."
         git clone -c core.eol=lf -c core.autocrlf=false \
             -c fsck.zeroPaddedFilemode=ignore \
             -c fetch.fsck.zeroPaddedFilemode=ignore \
             -c receive.fsck.zeroPaddedFilemode=ignore \
             --depth=1 --branch "$BRANCH" "$REMOTE" "$REPODIR" || {
-            error "git clone of ${REPO} failed!"
-            return 1
-        }
+                error "git clone of ${REPO} failed!"
+                return 1
+            }
     fi
 }
 

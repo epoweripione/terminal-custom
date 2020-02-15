@@ -57,7 +57,6 @@ fi
 # Update ACL4SSR
 # https://github.com/ACL4SSR/ACL4SSR
 if [[ -s "/srv/subconverter/subconverter" ]]; then
-    colorEcho ${BLUE} "Updating ACL4SSR rules..."
     Git_Clone_Update "ACL4SSR/ACL4SSR" "/srv/subconverter/ACL4SSR"
 fi
 

@@ -58,9 +58,8 @@ fi
 
 
 # ZSH
-colorEcho ${BLUE} "Updating Oh-my-zsh..."
 # upgrade_oh_my_zsh
-cd $ZSH && git pull
+[[ -n "$ZSH" ]] && Git_Clone_Update "ohmyzsh/ohmyzsh" "$ZSH"
 
 
 # tmux
@@ -75,15 +74,13 @@ fi
 
 if [[ -x "$(command -v tmux)" ]]; then
     # Oh My Tmux: https://github.com/gpakosz/.tmux
-    if [[ -d "$HOME/.tmux" ]]; then
-        colorEcho ${BLUE} "Updating Oh My Tmux..."
-        cd $HOME/.tmux && git pull
-    else
-        colorEcho ${BLUE} "Installing Oh My Tmux..."
-        git clone https://github.com/gpakosz/.tmux $HOME/.tmux && \
-            cd $HOME && \
+    Git_Clone_Update "gpakosz/.tmux" "$HOME/.tmux"
+
+    if [[ ! -s "$HOME/.tmux.conf.local" ]]; then
+        cd $HOME && \
             ln -s -f .tmux/.tmux.conf && \
-            cp .tmux/.tmux.conf.local .
+            cp .tmux/.tmux.conf.local . && \
+            cd - >/dev/null
     fi
     # custom settings for tmux
     if [[ -s "$HOME/.tmux.conf.local" ]]; then
@@ -107,13 +104,7 @@ if [[ ! -x "$(command -v neofetch)" ]]; then
 fi
 
 if [[ ! -x "$(command -v neofetch)" ]]; then
-    if [[ -d "$HOME/neofetch" ]]; then
-        colorEcho ${BLUE} "Updating neofetch..."
-        cd $HOME/neofetch && git pull
-    else
-        colorEcho ${BLUE} "Installing neofetch..."
-        git clone https://github.com/dylanaraps/neofetch $HOME/neofetch
-    fi
+    Git_Clone_Update "dylanaraps/neofetch" "$HOME/neofetch"
 
     if [[ $ostype == "darwin" ]]; then
         cd $HOME/neofetch && sudo make PREFIX=/usr/local install
@@ -141,30 +132,29 @@ if [[ ! -x "$(command -v fzf)" ]]; then
 fi
 
 if [[ $UID -eq 0 ]]; then
+    Git_Clone_Update "junegunn/fzf" "$HOME/.fzf"
+
     if [[ ! -x "$(command -v fzf)" ]]; then
         colorEcho ${BLUE} "Installing fzf..."
-        git clone --depth 1 https://github.com/junegunn/fzf ~/.fzf && \
-            ~/.fzf/install
-    elif [[ -d "~/.fzf" ]]; then
-        colorEcho ${BLUE} "Updating fzf..."
-        cd ~/.fzf && git pull && ./install --bin
+        $HOME/.fzf/install
+    elif [[ -d "$HOME/.fzf" ]]; then
+        cd "$HOME/.fzf" && ./install --bin && cd - >/dev/null
     fi
 fi
 
 
 # navi
+# Git_Clone_Update "denisidoro/navi" "/opt/navi"
 # if [[ ! -x "$(command -v navi)" ]]; then
 #     colorEcho ${BLUE} "Installing navi..."
-#     git clone --depth 1 http://github.com/denisidoro/navi /opt/navi && \
-#         cd /opt/navi && sudo make install
+#     cd /opt/navi && sudo make install
 # elif [[ -d "/opt/navi" ]]; then
-#     colorEcho ${BLUE} "Updating navi..."
-#     cd /opt/navi && git pull && sudo make update
+#     cd /opt/navi && sudo make update && cd - /dev/null
 # fi
 
 
 # Custom plugins
-colorEcho ${BLUE} "Updating custom plugins..."
+colorEcho ${BLUE} "Oh-my-zsh custom plugins..."
 
 # zsh-navigation-tools
 # echo "Updating zsh-navigation-tools..."
@@ -172,139 +162,59 @@ colorEcho ${BLUE} "Updating custom plugins..."
 
 # fast-syntax-highlighting
 if [[ $ostype != "windows" ]]; then
-    colorEcho ${BLUE} "Updating fast-syntax-highlighting..."
-    if [[ -d $ZSH_CUSTOM/plugins/fast-syntax-highlighting ]]; then
-        cd $ZSH_CUSTOM/plugins/fast-syntax-highlighting && git pull
-    else
-        git clone https://github.com/zdharma/fast-syntax-highlighting $ZSH_CUSTOM/plugins/fast-syntax-highlighting
-    fi
+    Git_Clone_Update "zdharma/fast-syntax-highlighting" "${ZSH_CUSTOM}/plugins/fast-syntax-highlighting"
 fi
 
-# zsh-syntax-highlighting
-colorEcho ${BLUE} "Updating zsh-syntax-highlighting..."
-if [[ -d $ZSH_CUSTOM/plugins/zsh-syntax-highlighting ]]; then
-    cd $ZSH_CUSTOM/plugins/zsh-syntax-highlighting && git pull
-else
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
-fi
+PluginList=(
+    "zsh-users/zsh-syntax-highlighting"
+    "zsh-users/zsh-history-substring-search"
+    "zsh-users/zsh-autosuggestions"
+    "popstas/zsh-command-time"
+    "petervanderdoes/git-flow-completion"
+    "changyuheng/zsh-interactive-cd"
+)
 
-# zsh-history-substring-search
-colorEcho ${BLUE} "Updating zsh-history-substring-search..."
-if [[ -d $ZSH_CUSTOM/plugins/zsh-history-substring-search ]]; then
-    cd $ZSH_CUSTOM/plugins/zsh-history-substring-search && git pull
-else
-    git clone https://github.com/zsh-users/zsh-history-substring-search $ZSH_CUSTOM/plugins/zsh-history-substring-search
-fi
-
-# zsh-autosuggestions
-colorEcho ${BLUE} "Updating zsh-autosuggestions..."
-if [[ -d $ZSH_CUSTOM/plugins/zsh-autosuggestions ]]; then
-    cd $ZSH_CUSTOM/plugins/zsh-autosuggestions && git pull
-else
-    git clone https://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
-fi
-
-# zsh-command-time
-colorEcho ${BLUE} "Updating zsh-command-time..."
-if [[ -d $ZSH_CUSTOM/plugins/command-time ]]; then
-    cd $ZSH_CUSTOM/plugins/command-time && git pull
-else
-    git clone https://github.com/popstas/zsh-command-time $ZSH_CUSTOM/plugins/command-time
-fi
-
-# git-flow-completion
-colorEcho ${BLUE} "Updating git-flow-completion..."
-if [[ -d $ZSH_CUSTOM/plugins/git-flow-completion ]]; then
-    cd $ZSH_CUSTOM/plugins/git-flow-completion && git pull
-else
-    git clone https://github.com/petervanderdoes/git-flow-completion $ZSH_CUSTOM/plugins/git-flow-completion
-fi
-
-# zsh-interactive-cd
-colorEcho ${BLUE} "Updating zsh-interactive-cd..."
-if [[ -d $ZSH_CUSTOM/plugins/zsh-interactive-cd ]]; then
-    cd $ZSH_CUSTOM/plugins/zsh-interactive-cd && git pull
-else
-    git clone https://github.com/changyuheng/zsh-interactive-cd $ZSH_CUSTOM/plugins/zsh-interactive-cd
-fi
+for Target in "${PluginList[@]}"; do
+    TargetName=$(echo ${Target} | awk -F"/" '{print $NF}')
+    Git_Clone_Update "$Target" "${ZSH_CUSTOM}/plugins/${TargetName}"
+done
 
 
 # Custom themes
-colorEcho ${BLUE} "Updating custom themes..."
+colorEcho ${BLUE} "Oh-my-zsh custom themes..."
+ThemeList=(
+    "zakaziko99/agnosterzak-ohmyzsh-theme"
+    "denysdovhan/spaceship-prompt"
+    "romkatv/powerlevel10k"
+    "agkozak/agkozak-zsh-prompt"
+    "eendroroy/alien"
+    "sindresorhus/pure"
+)
+
+for Target in "${ThemeList[@]}"; do
+    TargetName=$(echo ${Target} | awk -F"/" '{print $NF}')
+    Git_Clone_Update "$Target" "${ZSH_CUSTOM}/themes/${TargetName}"
+done
 
 # agnosterzak
-colorEcho ${BLUE} "Updating agnosterzak..."
-if [[ -d $ZSH_CUSTOM/themes/agnosterzak ]]; then
-    cd $ZSH_CUSTOM/themes/agnosterzak && git pull
-else
-    git clone https://github.com/zakaziko99/agnosterzak-ohmyzsh-theme $ZSH_CUSTOM/themes/agnosterzak
-fi
-
 [[ -L $ZSH_CUSTOM/themes/agnosterzak.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/agnosterzak.zsh-theme
 ln -s $ZSH_CUSTOM/themes/agnosterzak/agnosterzak.zsh-theme $ZSH_CUSTOM/themes/agnosterzak.zsh-theme
 
 # spaceship-prompt
-colorEcho ${BLUE} "Updating spaceship-prompt..."
-if [[ -d $ZSH_CUSTOM/themes/spaceship-prompt ]]; then
-    cd $ZSH_CUSTOM/themes/spaceship-prompt && git pull
-else
-    git clone https://github.com/denysdovhan/spaceship-prompt $ZSH_CUSTOM/themes/spaceship-prompt
-fi
-
 [[ -L $ZSH_CUSTOM/themes/spaceship.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/spaceship.zsh-theme
 ln -s $ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme $ZSH_CUSTOM/themes/spaceship.zsh-theme
 
-# # powerlevel9k
-# colorEcho ${BLUE} "Updating powerlevel9k..."
-# if [[ -d $ZSH_CUSTOM/themes/powerlevel9k ]]; then
-#     cd $ZSH_CUSTOM/themes/powerlevel9k && git pull
-# else
-#     git clone https://github.com/bhilburn/powerlevel9k $ZSH_CUSTOM/themes/powerlevel9k
-# fi
-
-# [[ -L $ZSH_CUSTOM/themes/powerlevel9k.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/powerlevel9k.zsh-theme
-# ln -s $ZSH_CUSTOM/themes/powerlevel9k/powerlevel9k.zsh-theme $ZSH_CUSTOM/themes/powerlevel9k.zsh-theme
-
 # Powerlevel10k
-colorEcho ${BLUE} "Updating powerlevel10k..."
-if [[ -d $ZSH_CUSTOM/themes/powerlevel10k ]]; then
-    cd $ZSH_CUSTOM/themes/powerlevel10k && git pull
-else
-    git clone https://github.com/romkatv/powerlevel10k $ZSH_CUSTOM/themes/powerlevel10k
-fi
-
 [[ -L $ZSH_CUSTOM/themes/powerlevel10k.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/powerlevel10k.zsh-theme
 ln -s $ZSH_CUSTOM/themes/powerlevel10k/powerlevel10k.zsh-theme $ZSH_CUSTOM/themes/powerlevel10k.zsh-theme
 
 # agkozak
-colorEcho ${BLUE} "Updating agkozak..."
-if [[ -d $ZSH_CUSTOM/themes/agkozak ]]; then
-    cd $ZSH_CUSTOM/themes/agkozak && git pull
-else
-    git clone https://github.com/agkozak/agkozak-zsh-prompt $ZSH_CUSTOM/themes/agkozak
-fi
-
 [[ -L $ZSH_CUSTOM/themes/agkozak.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/agkozak.zsh-theme
 ln -s $ZSH_CUSTOM/themes/agkozak/agkozak-zsh-prompt.plugin.zsh $ZSH_CUSTOM/themes/agkozak.zsh-theme
 
 # alien
-colorEcho ${BLUE} "Updating alien..."
-if [[ -d $ZSH_CUSTOM/themes/alien ]]; then
-    cd $ZSH_CUSTOM/themes/alien && git pull
-else
-    git clone https://github.com/eendroroy/alien $ZSH_CUSTOM/themes/alien
-fi
-
 [[ -L $ZSH_CUSTOM/themes/alien.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/alien.zsh-theme
 ln -s $ZSH_CUSTOM/themes/alien/alien.plugin.zsh $ZSH_CUSTOM/themes/alien.zsh-theme
-
-# Pure
-colorEcho ${BLUE} "Updating pure..."
-if [[ -d $ZSH_CUSTOM/themes/pure ]]; then
-    cd $ZSH_CUSTOM/themes/pure && git pull
-else
-    git clone https://github.com/sindresorhus/pure $ZSH_CUSTOM/themes/pure
-fi
 
 
 # Enable plugins
@@ -373,12 +283,7 @@ sed -i "${LineBegin}a\\${Plugins}" ~/.zshrc
 
 
 # nano
-colorEcho ${BLUE} "Updating nano-syntax-highlighting..."
-if [[ -d ~/.local/share/nano/.git ]]; then
-    cd ~/.local/share/nano && git pull
-else
-    git clone https://github.com/scopatz/nanorc ~/.local/share/nano
-fi
+Git_Clone_Update "scopatz/nanorc" "$HOME/.local/share/nano"
 
 colorEcho ${BLUE} "nano settings..."
 if [[ ! $(grep "set titlecolor" ~/.nanorc) ]]; then

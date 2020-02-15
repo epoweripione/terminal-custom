@@ -126,6 +126,11 @@ if [[ ! -x "$(command -v zsh)" ]]; then
 fi
 
 
+if [[ -x "$(command -v git)" && -s "$HOME/git_global_config.sh" ]]; then
+    source "$HOME/git_global_config.sh"
+fi
+
+
 # change default shell to zsh
 # chsh -s $(which zsh)
 
