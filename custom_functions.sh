@@ -445,8 +445,8 @@ function version_lt() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)"
 function version_le() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" = "$1"; } # <=
 
 function version_compare() {
-    VERSION1=$1
-    VERSION2=$2
+    local VERSION1=$1
+    local VERSION2=$2
     if version_gt $VERSION1 $VERSION2; then
         echo "$VERSION1 is greater than $VERSION2"
     fi
@@ -1009,6 +1009,7 @@ function Git_Clone_Update() {
     local REPODIR=${2:-""}
     local BRANCH=${3:-master}
     local REPOURL=${4:-github.com}
+    local REMOTE=""
     
     if [[ -z "$REPO" ]]; then
         colorEcho ${RED} "Error! Repository name can't empty!"
@@ -1097,6 +1098,14 @@ function date_diff() {
 
 function get_zone_time() {
     local TZONES="$@"
+    local CURRENT_UTC_TIME
+    local DISPLAY_FORMAT
+    local UTC_TIME
+    local LOCAL_TIME
+    local ZONE_LIST
+    local ZONE_TIME
+    local tz
+
     [[ -z "$TZONES" ]] && TZONES="Asia/Shanghai"
     # /usr/share/zoneinfo
     # Asia/Shanghai America/Los_Angeles America/New_York
