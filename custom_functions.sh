@@ -1009,7 +1009,7 @@ function Git_Clone_Update() {
     local REPODIR=${2:-""}
     local BRANCH=${3:-master}
     local REPOURL=${4:-github.com}
-    local REMOTE=""
+    local REPOREMOTE=""
     
     if [[ -z "$REPO" ]]; then
         colorEcho ${RED} "Error! Repository name can't empty!"
@@ -1020,7 +1020,7 @@ function Git_Clone_Update() {
         REPODIR=$(echo ${REPO} | awk -F"/" '{print $NF}')
     fi
 
-    REMOTE=${REMOTE:-https://${REPOURL}/${REPO}.git}
+    REPOREMOTE="https://${REPOURL}/${REPO}.git"
     if [[ -d "${REPODIR}/.git" ]]; then
         colorEcho ${BLUE} "Updating ${REPO}..."
         cd "$REPODIR" && \
@@ -1043,7 +1043,7 @@ function Git_Clone_Update() {
             -c fsck.zeroPaddedFilemode=ignore \
             -c fetch.fsck.zeroPaddedFilemode=ignore \
             -c receive.fsck.zeroPaddedFilemode=ignore \
-            --depth=1 --branch "$BRANCH" "$REMOTE" "$REPODIR" || {
+            --depth=1 --branch "$BRANCH" "$REPOREMOTE" "$REPODIR" || {
                 error "git clone of ${REPO} failed!"
                 return 1
             }
