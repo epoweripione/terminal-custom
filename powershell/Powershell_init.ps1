@@ -19,7 +19,16 @@
 # Write-Host "Path:" $PSScriptRoot
 
 
+## simple http server
+# cd ~; python -m http.server 80880
+
+
 ## get & set user env
+# $env:UserProfile
+# $env:SystemRoot
+# $env:SystemDrive
+# $env:PROCESSOR_ARCHITECTURE
+# $env:temp
 # $systemenv = [System.Environment]::GetEnvironmentVariable("Path")
 # $systemenv = $systemenv.TrimEnd(';')
 # [System.Environment]::SetEnvironmentVariable("PATH", $systemenv + ";C:\Users\Administrator\Ubuntu")
@@ -30,7 +39,7 @@
 # [System.Environment]::SetEnvironmentVariable("PATH", $userenv + ";C:\Users\Administrator\Ubuntu", "User")
 
 
-## Services
+## Manage System Services
 ## https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/get-service
 # Get-Service -Name "win*" -Exclude "WinRM"
 # Get-Service -Displayname "*network*"
@@ -44,8 +53,6 @@
 #     }
 # Get-Service "s*" | Sort-Object status
 
-
-## Manage System Services
 ## https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/set-service
 # Set-Service -Name "BITS" -StartupType Automatic
 # Set-Service -Name "LanmanWorkstation" -DisplayName "LanMan Workstation"
@@ -53,10 +60,12 @@
 # Set-Service -Name BITS -Description "Transfers files in the background using idle network bandwidth."
 # Set-Service -Name "WinRM" -Status Running -PassThru
 # Get-Service -Name "Schedule" | Set-Service -Status Paused
+
 ## https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/start-service
 # Start-Service -Name "eventlog"
 # Start-Service -DisplayName "*remote*" -WhatIf
 # Get-Service "Wsearch" | Where-Object {$_.status –eq 'Stopped'} |  Start-Service
+
 ## https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/stop-service
 # Get-Service -Name "iisadmin" | Format-List -Property Name, DependentServices
 # Stop-Service -Name "iisadmin" -Force -Confirm

@@ -3,6 +3,7 @@
 // https://github.com/microsoft/terminal/blob/master/doc/user-docs/UsingJsonSettings.md
 // https://github.com/microsoft/terminal/blob/master/doc/cascadia/SettingsSchema.md
 // %UserProfile%\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState
+// command line: wt new-tab -p "Debian"; split-pane -p "PowerShell Core" -H
 {
     "$schema": "https://aka.ms/terminal-profiles-schema",
     "alwaysShowTabs": true,

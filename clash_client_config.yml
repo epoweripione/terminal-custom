@@ -123,7 +123,7 @@ cfw-child-process:
       - "trojan_55980.json"
     options:
       cwd: C:\Tools\trojan
-  - command: v2rayn.exe
+  # - command: v2rayn.exe
 
 # Will be ignored after profile selection
 Proxy:
@@ -176,4 +176,4 @@ Proxy Group:
 
 # https://github.com/ACL4SSR/ACL4SSR
 Rule:
-# [RULES]http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F&config=https%3A%2F%2Fraw.githubusercontent.com%2FACL4SSR%2FACL4SSR%2Fmaster%2FClash%2Fconfig%2FACL4SSR_WithChinaIp_WithGFW.ini
+# [RULES]http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F&config=config%2FACL4SSR_WithChinaIp_WithGFW.ini
