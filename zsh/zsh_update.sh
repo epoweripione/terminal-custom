@@ -198,7 +198,7 @@ done
 
 # agnosterzak
 [[ -L $ZSH_CUSTOM/themes/agnosterzak.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/agnosterzak.zsh-theme
-ln -s $ZSH_CUSTOM/themes/agnosterzak/agnosterzak.zsh-theme $ZSH_CUSTOM/themes/agnosterzak.zsh-theme
+ln -s $ZSH_CUSTOM/themes/agnosterzak-ohmyzsh-theme/agnosterzak.zsh-theme $ZSH_CUSTOM/themes/agnosterzak.zsh-theme
 
 # spaceship-prompt
 [[ -L $ZSH_CUSTOM/themes/spaceship.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/spaceship.zsh-theme
@@ -210,7 +210,7 @@ ln -s $ZSH_CUSTOM/themes/powerlevel10k/powerlevel10k.zsh-theme $ZSH_CUSTOM/theme
 
 # agkozak
 [[ -L $ZSH_CUSTOM/themes/agkozak.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/agkozak.zsh-theme
-ln -s $ZSH_CUSTOM/themes/agkozak/agkozak-zsh-prompt.plugin.zsh $ZSH_CUSTOM/themes/agkozak.zsh-theme
+ln -s $ZSH_CUSTOM/themes/agkozak-zsh-prompt/agkozak-zsh-prompt.plugin.zsh $ZSH_CUSTOM/themes/agkozak.zsh-theme
 
 # alien
 [[ -L $ZSH_CUSTOM/themes/alien.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/alien.zsh-theme
