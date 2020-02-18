@@ -69,6 +69,7 @@ $extensions = @(
 	"eamodio.gitlens"
 	# Remote
 	"ms-vscode-remote.vscode-remote-extensionpack"
+	"ms-vscode-remote.remote-wsl"
 	"ms-vsliveshare.vsliveshare"
 	# Debug & Test
 	"formulahendry.code-runner"

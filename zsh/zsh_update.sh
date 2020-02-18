@@ -37,7 +37,13 @@ fi
 # fi
 
 
-# oh-my-zsh custom plugins & themes
+## oh-my-zsh custom plugins & themes
+# cd $ZSH && \
+#     zip -qyr "$HOME/oh-my-zsh-custom.zip" "./custom" \
+#         -x  "custom/example.zsh" \
+#             "custom/plugins/example*" \
+#             "custom/themes/example.zsh-theme" && \
+#     mv "$HOME/oh-my-zsh-custom.zip" "/srv/web/www/default"
 if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
     if check_webservice_up www.google.com; then
         :
@@ -50,9 +56,17 @@ if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
     if [[ -n "$OHMYZSH_CUSTOM_URL" ]]; then
         # curl -SL -o "/tmp/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
         wget -c -O "/tmp/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
-            rm -rf "$ZSH_CUSTOM" && \
+            cd "$ZSH_CUSTOM" && \
+            find . -maxdepth 2 -regextype posix-extended \
+                ! \( -path "." \
+                    -or -path "./plugins" \
+                    -or -path "./themes" \
+                    -or -path "./plugins/example" \
+                    -or -name "example.*" \
+                \) -exec rm -rf {} \; && \
             unzip -qo "/tmp/oh-my-zsh-custom.zip" -d "$ZSH" && \
-            rm -f "/tmp/oh-my-zsh-custom.zip"
+            rm -f "/tmp/oh-my-zsh-custom.zip" && \
+            cd - >/dev/null
     fi
 fi
 
