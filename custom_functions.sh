@@ -1052,13 +1052,22 @@ function Git_Clone_Update() {
 
 
 function Install_systemd_Service() {
+    # Usage:
+    # Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"
     local service_name=$1
     local service_exec=$2
+    local work_dir=${3:-""}
+    local filename
     local service_file
 
     [[ $# < 2 ]] && return 1
     [[ -z "$service_name" ]] && return 1
     [[ -z "$service_exec" ]] && return 1
+
+    if [[ -z "$work_dir" ]]; then
+        filename=$(echo ${service_exec} | cut -d" " -f1)
+        work_dir=$(dirname $(readlink -f "$filename"))
+    fi
 
     service_file="/etc/systemd/system/${service_name}.service"
     if [[ ! -s "$service_file" ]]; then
@@ -1073,6 +1082,7 @@ StandardError=journal
 User=nobody
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 ExecStart=${service_exec}
+WorkingDirectory=${work_dir}
 ExecReload=/bin/kill -HUP \$MAINPID
 Restart=on-failure
 RestartSec=5s

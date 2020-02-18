@@ -39,14 +39,16 @@ if [[ -z "$TARGET_CONFIG_FILE" ]]; then
     mkdir -p "/srv/clash"
     TARGET_CONFIG_FILE="/srv/clash/config.yaml"
 fi
+TARGET_WITH_CUSTOM_PROXY=$(echo "$TARGET_CONFIG_FILE" | sed 's/\./_custom\./')
 
 [[ $# > 1 ]] && COPY_TO_FILE=$2
 
 
 if ! pgrep -f "subconverter" >/dev/null 2>&1; then
-    if [[ -s "/srv/subconverter/subconverter" ]]; then
-        nohup /srv/subconverter/subconverter >/dev/null 2>&1 & disown
-    fi
+    # if [[ -s "/srv/subconverter/subconverter" ]]; then
+    #     nohup /srv/subconverter/subconverter >/dev/null 2>&1 & disown
+    # fi
+    [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] && sudo systemctl restart subconverter
 fi
 
 if ! pgrep -f "subconverter" >/dev/null 2>&1; then
@@ -315,12 +317,30 @@ if [[ -n "$RULES" ]]; then
     echo "${RULES}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
-sed -i "/^# \[.*/d" "$TARGET_CONFIG_FILE" 
+sed -i "/^# \[.*/d" "$TARGET_CONFIG_FILE"
 
+# Config file with custom proxy
+if [[ -n "$TARGET_WITH_CUSTOM_PROXY" ]]; then
+    cp -f "$TARGET_CONFIG_FILE" "$TARGET_WITH_CUSTOM_PROXY"
+fi
 
+# Remove custom proxy from $TARGET_CONFIG_FILE
+if [[ -n "$PROXY_CUSTOM" ]]; then
+    CUSTOM_START_LINE=$(grep -E -n "^Proxy:" "${TARGET_CONFIG_FILE}" | cut -d: -f1)
+    CUSTOM_START_LINE=$((${CUSTOM_START_LINE} + 1))
+    PROXY_CUSTOM_COUNT=$(echo "$PROXY_CUSTOM" | wc -l)
+    CUSTOM_END_LINE=$((${CUSTOM_START_LINE} + ${PROXY_CUSTOM_COUNT}))
+    sed -i "${CUSTOM_START_LINE},${CUSTOM_END_LINE} d" "$TARGET_CONFIG_FILE" 
+fi
+
+# Copy to file
 if [[ -n "$COPY_TO_FILE" ]]; then
     colorEcho ${BLUE} "Copy config to ${COPY_TO_FILE}..."
     cp -f "$TARGET_CONFIG_FILE" "$COPY_TO_FILE"
+
+    COPY_TO_CUSTOM=$(echo "$COPY_TO_FILE" | sed 's/\./_custom\./')
+    colorEcho ${BLUE} "Copy config with custom proxy to ${COPY_TO_CUSTOM}..."
+    cp -f "$TARGET_WITH_CUSTOM_PROXY" "$COPY_TO_CUSTOM"
 fi
 
 
