@@ -338,9 +338,15 @@ if [[ -n "$COPY_TO_FILE" ]]; then
     colorEcho ${BLUE} "Copy config to ${COPY_TO_FILE}..."
     cp -f "$TARGET_CONFIG_FILE" "$COPY_TO_FILE"
 
+    colorEcho ${BLUE} "Gen md5 for ${COPY_TO_FILE}..."
+    (openssl md5 -hex "${COPY_TO_FILE}" | cut -d" " -f2) > "${COPY_TO_FILE}.md5"
+
     COPY_TO_CUSTOM=$(echo "$COPY_TO_FILE" | sed 's/\./_custom\./')
     colorEcho ${BLUE} "Copy config with custom proxy to ${COPY_TO_CUSTOM}..."
     cp -f "$TARGET_WITH_CUSTOM_PROXY" "$COPY_TO_CUSTOM"
+
+    colorEcho ${BLUE} "Gen md5 for ${COPY_TO_CUSTOM}..."
+    (openssl md5 -hex "${COPY_TO_CUSTOM}" | cut -d" " -f2) > "${COPY_TO_CUSTOM}.md5"
 fi
 
 
