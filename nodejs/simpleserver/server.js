@@ -1,13 +1,19 @@
 // npm init
-// npm install express --save && npm install express-async-handler --save
+// npm i express --save && npm i express-async-handler --save && npm i morgan --save
 
 const express = require('express');
-const asyncHandler = require('express-async-handler')
+const asyncHandler = require('express-async-handler');
+
+var morgan = require('morgan');
 
 const path = require('path');
 const fs = require('fs');
 
 const app = express();
+
+// log using morgan
+// https://github.com/expressjs/morgan
+app.use(morgan('combined'));
 
 var asyncReadFile = function (path) {
     return new Promise(function (resolve, reject) {
@@ -20,7 +26,7 @@ var asyncReadFile = function (path) {
     }).catch((err) => {
         return err
     })
-}
+};
 
 var sendMatchFile = function (filename, checksum, req, res, next) {
     checksum = checksum + "";
@@ -58,13 +64,14 @@ var sendMatchFile = function (filename, checksum, req, res, next) {
             if (err) {
                 next(err);
             } else {
-                console.log('Sent: ', filename);
+                var logDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+                console.log(logDate, 'Sent: ', filename);
             }
         })
     } else {
         res.status(404).send('Sorry, we cannot find that!');
     }
-}
+};
 
 app.get('/', (req, res) => {
     res.send('<p>Welocome!</p>');

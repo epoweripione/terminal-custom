@@ -15,6 +15,20 @@
 # ~\Documents\PowerShell\Scripts\Powershell_init.ps1
 
 
+## PowerShell Core Command-line options
+# pwsh -h
+# Usage: pwsh[.exe] [[-File] <filePath> [args]]
+#                   [-Command { - | <script-block> [-args <arg-array>]
+#                                 | <string> [<CommandParameters>] } ]
+#                   [-ConfigurationName <string>] [-CustomPipeName <string>]
+#                   [-EncodedCommand <Base64EncodedCommand>]
+#                   [-ExecutionPolicy <ExecutionPolicy>] [-InputFormat {Text | XML}]
+#                   [-Interactive] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+#                   [-OutputFormat {Text | XML}] [-Version] [-WindowStyle <style>]
+#                   [-WorkingDirectory <directoryPath>]
+# example: pwsh -Command "& {suu}"
+
+
 # Write-Host "Script:" $PSCommandPath
 # Write-Host "Path:" $PSScriptRoot
 
