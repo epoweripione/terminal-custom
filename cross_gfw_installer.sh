@@ -75,6 +75,8 @@ sudo rm -rf /etc/localtime && \
     echo $TZ | sudo tee /etc/timezone >/dev/null
 
 if [[ ! -x "$(command -v v2ray-util)" ]]; then
+    colorEcho ${BLUE} "Installing v2ray-util..."
+
     source <(curl -sL https://multi.netlify.com/v2ray.sh) --zh
     # source <(curl -sL https://git.io/fNgqx) --zh
 fi
@@ -92,6 +94,8 @@ fi
 # trojan
 # https://github.com/trojan-gfw/trojan
 if [[ ! -s "/srv/trojan/trojan" ]]; then
+    colorEcho ${BLUE} "Installing trojan..."
+
     CHECK_URL="https://api.github.com/repos/trojan-gfw/trojan/releases/latest"
 
     CURRENT_VERSION="0.0.0"
@@ -121,6 +125,8 @@ fi
 # clash
 # https://github.com/Dreamacro/clash
 if [[ ! -s "/srv/clash/clash" ]]; then
+    colorEcho ${BLUE} "Installing clash..."
+
     CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
 
     CURRENT_VERSION="0.0.0"
@@ -144,6 +150,8 @@ fi
 # subconverter
 # https://github.com/tindy2013/subconverter
 if [[ ! -s "/srv/subconverter/subconverter" ]]; then
+    colorEcho ${BLUE} "Installing subconverter..."
+
     CHECK_URL="https://api.github.com/repos/tindy2013/subconverter/releases/latest"
 
     CURRENT_VERSION="0.0.0"

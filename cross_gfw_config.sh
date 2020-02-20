@@ -92,6 +92,8 @@ function install_clash() {
         return 1
     fi
 
+    colorEcho ${BLUE} "Installing clash..."
+
     CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
 
     CURRENT_VERSION="0.0.0"
@@ -118,6 +120,8 @@ function install_subconverter() {
     local DOWNLOAD_URL
     local CHECK_URL
     local REMOTE_VERSION
+
+    colorEcho ${BLUE} "Installing subconverter..."
 
     CHECK_URL="https://api.github.com/repos/tindy2013/subconverter/releases/latest"
 
@@ -366,16 +370,15 @@ function use_clash() {
     if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
         :
     else
-        [[ ! -s "/srv/clash/clash" ]] && install_clash
         [[ ! -s "/srv/subconverter/subconverter" ]] && install_subconverter
-
-        [[ ! -s "/srv/clash/clash" ]] && {
-                colorEcho ${RED} "Please install and run clash first!"
+        [[ -s "/srv/subconverter/subconverter" ]] || {
+                colorEcho ${RED} "Please install and run subconverter first!"
                 return 1
             }
 
-        [[ ! -s "/srv/subconverter/subconverter" ]] && {
-                colorEcho ${RED} "Please install and run subconverter first!"
+        [[ ! -s "/srv/clash/clash" ]] && install_clash
+        [[ -s "/srv/clash/clash" ]] || {
+                colorEcho ${RED} "Please install and run clash first!"
                 return 1
             }
 

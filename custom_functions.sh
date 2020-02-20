@@ -1024,7 +1024,7 @@ function Git_Clone_Update() {
             -c fetch.fsck.zeroPaddedFilemode=ignore \
             -c receive.fsck.zeroPaddedFilemode=ignore \
             --depth=1 --branch "$BRANCH" "$REPOREMOTE" "$REPODIR" || {
-                error "git clone of ${REPO} failed!"
+                colorEcho ${RED} "  git clone of ${REPO} failed!"
                 return 1
             }
     fi
