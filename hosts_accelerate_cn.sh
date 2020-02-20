@@ -58,10 +58,10 @@ else
     fi
 fi
 
-if [[ ! -s "$HostsFile" ]]; then
-    colorEcho ${RED} "${HostsFile} not exist!"
-    exit 1
-fi
+# if [[ ! -s "$HostsFile" ]]; then
+#     colorEcho ${RED} "${HostsFile} not exist!"
+#     exit 1
+# fi
 
 # use dig or curl
 [[ $PARAMS_NUM > 1 ]] && CHECK_METHOD="$2"

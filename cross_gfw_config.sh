@@ -28,16 +28,24 @@ if check_webservice_up www.google.com; then
     exit 0
 fi
 
-
-if [[ $# > 0 ]]; then
-    PROXY_PORT=$1
-else
-    PROXY_PORT="55880"
+# jq
+if [[ ! -x "$(command -v jq)" ]]; then
+    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+        if pacman -Si jq >/dev/null 2>&1; then
+            colorEcho ${BLUE} "Installing jq..."
+            sudo pacman --noconfirm -S jq
+        fi
+    fi
 fi
-PROXY_URL="127.0.0.1:${PROXY_PORT}"
 
-[[ $# > 1 ]] && SUBSCRIBE_URL=$2
-[[ -z "$SUBSCRIBE_URL" ]] && SUBSCRIBE_URL="https://jiang.netlify.com/"
+if [[ ! -x "$(command -v jq)" ]]; then
+    colorEcho ${RED} "jq is not installed!"
+    exit 1
+fi
+
+
+PROXY_PORT=${1:-"55880"}
+PROXY_URL="127.0.0.1:${PROXY_PORT}"
 
 
 # V2Ray Client
@@ -49,7 +57,7 @@ function install_v2ray_client() {
     local CHECK_URL="https://api.github.com/repos/v2ray/v2ray-core/releases/latest"
     local REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
-    CURRENT_VERSION=0.0.0
+    CURRENT_VERSION="0.0.0"
     if [[ $(systemctl is-enabled v2ray 2>/dev/null) ]]; then
         CURRENT_VERSION=$(v2ray --version | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
     fi
@@ -76,6 +84,67 @@ function install_v2ray_client() {
     fi
 }
 
+# clash
+# https://github.com/Dreamacro/clash
+function install_clash() {
+    local CURRENT_VERSION
+    local DOWNLOAD_URL
+    local CHECK_URL
+    local REMOTE_VERSION
+
+    if ! pgrep -f "subconverter" >/dev/null 2>&1; then
+        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] && sudo systemctl restart subconverter
+    fi
+
+    if ! pgrep -f "subconverter" >/dev/null 2>&1; then
+        colorEcho ${RED} "Please install and run subconverter first!"
+        return 1
+    fi
+
+    CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
+
+    CURRENT_VERSION="0.0.0"
+    # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION="0.17.1"
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        DOWNLOAD_URL=https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${ostype}-${spruce_type}-v${REMOTE_VERSION}.gz
+        curl -SL -o clash-${ostype}-${spruce_type}.gz -C- $DOWNLOAD_URL && \
+            mkdir -p /srv/clash && \
+            mv clash-${ostype}-${spruce_type}.gz /srv/clash && \
+            cd /srv/clash && \
+            gzip -d clash-${ostype}-${spruce_type}.gz && \
+            rm clash-${ostype}-${spruce_type}.gz && \
+            chmod +x clash-linux-amd64 && \
+            sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true && \
+            cd - >/dev/null 2>&1
+    fi
+}
+
+# subconverter
+# https://github.com/tindy2013/subconverter
+function install_subconverter() {
+    local CURRENT_VERSION
+    local DOWNLOAD_URL
+    local CHECK_URL
+    local REMOTE_VERSION
+
+    CHECK_URL="https://api.github.com/repos/tindy2013/subconverter/releases/latest"
+
+    CURRENT_VERSION="0.0.0"
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        DOWNLOAD_URL=https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${ostype}${VDIS}.tar.gz
+        curl -SL -o subconverter.tar.gz -C- $DOWNLOAD_URL && \
+            mkdir -p /srv/subconverter && \
+            tar -zxPf subconverter.tar.gz -C /srv/subconverter && \
+            rm subconverter.tar.gz && \
+            echo ${REMOTE_VERSION} > /srv/subconverter/.version
+    fi
+
+    if [[ -s "/srv/subconverter/subconverter" ]]; then
+        Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"
+    fi
+}
 
 # Get v2ray config from subscriptions
 function get_v2ray_config_from_subscription() {
@@ -84,8 +153,11 @@ function get_v2ray_config_from_subscription() {
     local VMESS_FILENAME="/tmp/v2ray.vmess"
     local DECODE_FILENAME="/tmp/v2ray_decode.vmess"
 
+    SUBSCRIBE_URL=${1:-"https://jiang.netlify.com/"}
+
     colorEcho ${BLUE} "Getting v2ray subscriptions..."
-    curl -sSf --connect-timeout 10 --max-time 30 "${SUBSCRIBE_URL}" -o "${VMESS_FILENAME}"
+    curl -sSf -4 --connect-timeout 10 --max-time 30 \
+        -o "${VMESS_FILENAME}" "${SUBSCRIBE_URL}"
     if [[ $? != 0  ]]; then
         colorEcho ${RED} "Can't get the subscriptions from ${SUBSCRIBE_URL}!"
         return 1
@@ -123,22 +195,36 @@ function get_v2ray_config_from_subscription() {
 
     while read -r READLINE; do
         [[ -z "${READLINE}" ]] && continue
+        # VMESS_CONFIG=$(echo "${READLINE}" | base64 -di | sed -e 's/[{}", ]//g' -e 's/\r//g')
+        # [[ -z "${VMESS_CONFIG}" ]] && continue
 
-        VMESS_CONFIG=$(echo "${READLINE}" | base64 -di | sed -e 's/[{}", ]//g' -e 's/\r//g')
+        # VMESS_PS=$(echo "${VMESS_CONFIG}" | grep '^ps:' | cut -d':' -f2-)
+        # VMESS_ADDR=$(echo "${VMESS_CONFIG}" | grep '^add:' | cut -d':' -f2)
+        # VMESS_PORT=$(echo "${VMESS_CONFIG}" | grep '^port:' | cut -d':' -f2)
+        # [[ -z "${VMESS_ADDR}" || -z "${VMESS_PORT}" ]] && continue
+
+        # VMESS_USER_ID=$(echo "${VMESS_CONFIG}" | grep '^id:' | cut -d':' -f2)
+        # VMESS_USER_ALTERID=$(echo "${VMESS_CONFIG}" | grep '^aid:' | cut -d':' -f2)
+        # VMESS_NETWORK=$(echo "${VMESS_CONFIG}" | grep '^net:' | cut -d':' -f2)
+        # VMESS_TYPE=$(echo "${VMESS_CONFIG}" | grep '^type:' | cut -d':' -f2)
+        # VMESS_SECURITY=$(echo "${VMESS_CONFIG}" | grep '^tls:' | cut -d':' -f2)
+        # VMESS_WS_HOST=$(echo "${VMESS_CONFIG}" | grep '^host:' | cut -d':' -f2)
+        # VMESS_WS_PATH=$(echo "${VMESS_CONFIG}" | grep '^path:' | cut -d':' -f2)
+        VMESS_CONFIG=$(echo "${READLINE}" | base64 -di)
         [[ -z "${VMESS_CONFIG}" ]] && continue
 
-        VMESS_PS=$(echo "${VMESS_CONFIG}" | grep '^ps:' | cut -d':' -f2-)
-        VMESS_ADDR=$(echo "${VMESS_CONFIG}" | grep '^add:' | cut -d':' -f2)
-        VMESS_PORT=$(echo "${VMESS_CONFIG}" | grep '^port:' | cut -d':' -f2)
+        VMESS_PS=$(echo "${VMESS_CONFIG}" | jq -r '.ps//empty')
+        VMESS_ADDR=$(echo "${VMESS_CONFIG}" | jq -r '.add//empty')
+        VMESS_PORT=$(echo "${VMESS_CONFIG}" | jq -r '.port//empty')
         [[ -z "${VMESS_ADDR}" || -z "${VMESS_PORT}" ]] && continue
 
-        VMESS_USER_ID=$(echo "${VMESS_CONFIG}" | grep '^id:' | cut -d':' -f2)
-        VMESS_USER_ALTERID=$(echo "${VMESS_CONFIG}" | grep '^aid:' | cut -d':' -f2)
-        VMESS_NETWORK=$(echo "${VMESS_CONFIG}" | grep '^net:' | cut -d':' -f2)
-        VMESS_TYPE=$(echo "${VMESS_CONFIG}" | grep '^type:' | cut -d':' -f2)
-        VMESS_SECURITY=$(echo "${VMESS_CONFIG}" | grep '^tls:' | cut -d':' -f2)
-        VMESS_WS_HOST=$(echo "${VMESS_CONFIG}" | grep '^host:' | cut -d':' -f2)
-        VMESS_WS_PATH=$(echo "${VMESS_CONFIG}" | grep '^path:' | cut -d':' -f2)
+        VMESS_USER_ID=$(echo "${VMESS_CONFIG}" | jq -r '.id//empty')
+        VMESS_USER_ALTERID=$(echo "${VMESS_CONFIG}" | jq -r '.aid//empty')
+        VMESS_NETWORK=$(echo "${VMESS_CONFIG}" | jq -r '.net//empty')
+        VMESS_TYPE=$(echo "${VMESS_CONFIG}" | jq -r '.type//empty')
+        VMESS_SECURITY=$(echo "${VMESS_CONFIG}" | jq -r '.tls//empty')
+        VMESS_WS_HOST=$(echo "${VMESS_CONFIG}" | jq -r '.host//empty')
+        VMESS_WS_PATH=$(echo "${VMESS_CONFIG}" | jq -r '.path//empty')
 
         colorEcho ${BLUE} "Testing ${VMESS_PS} ${VMESS_ADDR}:${VMESS_PORT}..."
         if [[ -z "${VMESS_SECURITY}" ]]; then
@@ -294,21 +380,114 @@ EOF
     fi
 }
 
+function use_clash() {
+    ostype_wsl=$(uname -r)
+    if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
+        :
+    else
+        [[ ! -s "/srv/clash/clash" ]] && install_clash
+        [[ ! -s "/srv/subconverter/subconverter" ]] && install_subconverter
 
-## main
-colorEcho ${BLUE} "Checking & loading socks proxy..."
-if check_socks5_proxy_up ${PROXY_URL}; then
-    colorEcho ${BLUE} "Socks proxy address: ${PROXY_URL}"
-else
-    if [[ ! -x "$(command -v v2ray)" ]]; then
-        install_v2ray_client
+        [[ ! -s "/srv/clash/clash" ]] && {
+                colorEcho ${RED} "Please install and run clash first!"
+                return 1
+            }
+
+        [[ ! -s "/srv/subconverter/subconverter" ]] && {
+                colorEcho ${RED} "Please install and run subconverter first!"
+                return 1
+            }
+
+        if [[ $(systemctl is-enabled clash 2>/dev/null) ]] || {
+                Install_systemd_Service "clash" "/srv/clash/clash -d /srv/clash"
+            }
+
+        if [[ $(systemctl is-enabled clash 2>/dev/null) ]]; then
+            # get clash config
+            [[ -s "$HOME/clash_client_config.sh" ]] && \
+                bash "$HOME/clash_client_config.sh"
+            # restart clash and sleep 3s wait for clash ready
+            sudo systemctl restart clash && sleep 3
+        fi
     fi
 
-    if [[ -x "$(command -v v2ray)" ]]; then
-        if get_v2ray_config_from_subscription; then
-            colorEcho ${BLUE} "Socks proxy address: ${PROXY_URL}"
-        else
-            colorEcho ${RED} "Something wrong when setup proxy ${PROXY_URL}!"
+    return 0
+}
+
+function use_v2ray() {
+    ostype_wsl=$(uname -r)
+    if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
+        :
+    else
+        [[ ! -x "$(command -v v2ray)" ]] && install_v2ray_client
+    fi
+
+    SubListFile="./cross_gfw_subscription.list"
+    if [[ -s "$SubListFile" ]]; then
+        SubList=()
+        while read -r READLINE || [[ "$READLINE" ]]; do
+            SubList+=("$READLINE")
+        done < "${SubListFile}"
+    else
+        SubList=(
+            "https://jiang.netlify.com/"
+        )
+    fi
+
+    colorEcho ${BLUE} "Checking & loading socks proxy..."
+    if check_socks5_proxy_up ${PROXY_URL}; then
+        colorEcho ${BLUE} "Socks proxy address: ${PROXY_URL}"
+    else
+        if [[ -x "$(command -v v2ray)" ]]; then
+            SubError="yes"
+            for TargetSub in "${SubList[@]}"; do
+                if get_v2ray_config_from_subscription "$TargetSub"; then
+                    colorEcho ${BLUE} "Socks proxy address: ${PROXY_URL}"
+                    SubError="no"
+                    break
+                fi
+            done
+
+            if [[ "$SubError" == "yes" ]]; then
+                colorEcho ${RED} "Something wrong when setup proxy ${PROXY_URL}!"
+                return 1
+            else
+                return 0
+            fi
+        fi
+    fi
+}
+
+function set_socks5_proxy() {
+    local SOCKS5_PROXY=${1:-"127.0.0.1:55880"}
+
+    set_git_socks5_proxy "github.com,gitlab.com" "${SOCKS5_PROXY}"
+    set_curl_proxy "${SOCKS5_PROXY}" "${CURL_SOCKS5_CONFIG}"
+}
+
+function clear_socks5_proxy() {
+    set_git_socks5_proxy "github.com,gitlab.com"
+    cat /dev/null > "${CURL_SOCKS5_CONFIG}"
+}
+
+
+## main
+CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
+
+# Set proxy or mirrors env in china
+set_proxy_mirrors_env
+
+# clear all proxy first
+clear_proxy
+clear_socks5_proxy
+
+# set global clash socks5 proxy or v2ray socks5 proxy
+if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
+    use_clash && set_global_socks5_proxy "127.0.0.1:7891"
+
+    if [[ -z "$HTTPS_PROXY" ]]; then
+        if use_v2ray; then
+            set_socks5_proxy "127.0.0.1:55880"
         fi
     fi
 fi

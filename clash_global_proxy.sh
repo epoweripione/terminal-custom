@@ -99,29 +99,6 @@ function check_socks5_proxy_up() {
     fi
 }
 
-## Setting apt proxy
-function set_apt_proxy_by_clash() {
-    local PROXY_ADDRESS=$1
-
-    [[ -z "$PROXY_ADDRESS" ]] && PROXY_ADDRESS="127.0.0.1:7890"
-
-    echo -e "Acquire::http::proxy \"http://${PROXY_ADDRESS}/\";" "/etc/apt/apt.conf.d/80proxy"
-    echo -e "Acquire::https::proxy \"https://${PROXY_ADDRESS}/\";" "/etc/apt/apt.conf.d/80proxy"
-    echo -e "Acquire::ftp::proxy \"ftp://${PROXY_ADDRESS}/\";" "/etc/apt/apt.conf.d/80proxy"
-}
-
-## Setting wget proxy
-function set_wget_proxy_by_clash() {
-    local PROXY_ADDRESS=$1
-
-    [[ -z "$PROXY_ADDRESS" ]] && PROXY_ADDRESS="127.0.0.1:7890"
-
-    echo "use_proxy = on" "$HOME/.wgetrc"
-    echo "http_proxy = http://${PROXY_ADDRESS}/" "$HOME/.wgetrc"
-    echo "https_proxy = http://${PROXY_ADDRESS}/" "$HOME/.wgetrc"
-    echo "ftp_proxy = http://${PROXY_ADDRESS}/" "$HOME/.wgetrc"
-}
-
 ## Setting global proxy by clash
 function set_global_proxy_by_clash() {
     local PROXY_ADDRESS=$1

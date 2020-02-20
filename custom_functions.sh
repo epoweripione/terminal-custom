@@ -909,99 +909,85 @@ function set_git_socks5_proxy() {
     done
 }
 
-## Setting global proxy by clash
-function set_global_proxy_by_clash() {
+
+## Setting global socks5 proxy
+function set_global_socks5_proxy() {
     local PROXY_ADDRESS=$1
 
-    if [[ -z "$PROXY_ADDRESS" ]]; then
-        PROXY_ADDRESS="127.0.0.1:7891" # clash
-    fi
+    [[ -z "$PROXY_ADDRESS" ]] && PROXY_ADDRESS="127.0.0.1:7891"
 
     if check_socks5_proxy_up ${PROXY_ADDRESS}; then
-        set_proxy "socks5h://127.0.0.1:7891"
+        set_proxy "socks5h://${PROXY_ADDRESS}"
     else
         clear_proxy
     fi
 }
 
-## Setting github & gitlab & curl socks5 proxy
-function set_github_gitlab_curl_proxy() {
-    local CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
-    local PROXY_ADDRESS
 
-    if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
-        if [[ -z "$HTTPS_PROXY" ]]; then
-            PROXY_ADDRESS="127.0.0.1:7891" # clash
-            if ! check_socks5_proxy_up ${PROXY_ADDRESS}; then
-                PROXY_ADDRESS="127.0.0.1:55880" # v2ray
-                [[ -s "$HOME/cross_gfw_config.sh" ]] && bash "$HOME/cross_gfw_config.sh"
-            fi
+## Setting apt proxy
+function set_apt_proxy() {
+    local PROXY_ADDRESS=${1:-"127.0.0.1:7890"}
+    local APT_PROXY_CONFIG=${2:-"/etc/apt/apt.conf.d/80proxy"}
 
-            set_git_socks5_proxy github.com,gitlab.com "$PROXY_ADDRESS"
-        else
-            set_git_socks5_proxy github.com,gitlab.com
-        fi
+    [[ ! -x "$(command -v apt)" ]] && return 0
 
-        if [[ -n "$GIT_SOCKS5_PROXY_URL" ]]; then
-            echo "--socks5-hostname \"${GIT_SOCKS5_PROXY_URL}\"" > ${CURL_SOCKS5_CONFIG}
-        else
-            cat /dev/null > ${CURL_SOCKS5_CONFIG}
-        fi
+    if [[ -n "$PROXY_ADDRESS" ]]; then
+        echo -e "Acquire::http::proxy \"http://${PROXY_ADDRESS}/\";" \
+            | sudo tee "$APT_PROXY_CONFIG" >/dev/null
+        echo -e "Acquire::https::proxy \"https://${PROXY_ADDRESS}/\";" \
+            | sudo tee "$APT_PROXY_CONFIG" >/dev/null
+        echo -e "Acquire::ftp::proxy \"ftp://${PROXY_ADDRESS}/\";" \
+            | sudo tee "$APT_PROXY_CONFIG" >/dev/null
     else
-        set_git_socks5_proxy github.com,gitlab.com
-        cat /dev/null > ${CURL_SOCKS5_CONFIG}
+        [[ -s "$APT_PROXY_CONFIG" ]] && \
+            sudo rm -f "$APT_PROXY_CONFIG"
     fi
 }
 
 
-## ProgressBar
-# bar=''
-# for ((i=0;$i<=100;i++)); do
-#     printf "Progress:[%-100s]%d%%\r" $bar $i
-#     sleep 0.1
-#     bar=#$bar
-# done
-# echo
-function draw_progress_bar() {
-    # https://stackoverflow.com/questions/238073/how-to-add-a-progress-bar-to-a-shell-script
-    # progress bar length in characters
-    [[ -z "$PROGRESS_BAR_WIDTH" ]] && PROGRESS_BAR_WIDTH=50
+## Setting wget proxy
+function set_wget_proxy() {
+    local PROXY_ADDRESS=${1:-"127.0.0.1:7890"}
+    local WGET_PROXY_CONFIG=${2:-"$HOME/.wgetrc"}
 
-    # Arguments: current value, max value, unit of measurement (optional)
-    local __value=$1
-    local __max=$2
-    local __unit=${3:-""}  # if unit is not supplied, do not display it
+    [[ ! -x "$(command -v wget)" ]] && return 0
 
-    # Calculate percentage
-    if (( $__max < 1 )); then __max=1; fi  # anti zero division protection
-    local __percentage=$(( 100 - ($__max*100 - $__value*100) / $__max ))
-
-    # Rescale the bar according to the progress bar width
-    local __num_bar=$(( $__percentage * $PROGRESS_BAR_WIDTH / 100 ))
-
-    # Draw progress bar
-    printf "["
-    for b in $(seq 1 $__num_bar); do printf "#"; done
-    for s in $(seq 1 $(( $PROGRESS_BAR_WIDTH - $__num_bar ))); do printf " "; done
-    if [[ -n "$__unit" ]]; then
-        printf "] $__percentage%% ($__value / $__max $__unit)\r"
+    if [[ -n "$PROXY_ADDRESS" ]]; then
+        echo "use_proxy = on" >> "$WGET_PROXY_CONFIG"
+        echo "http_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_PROXY_CONFIG"
+        echo "https_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_PROXY_CONFIG"
+        echo "ftp_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_PROXY_CONFIG"
     else
-        printf "] $__percentage%% ($__value / $__max)\r"
+        if [[ -s "$WGET_PROXY_CONFIG" ]]; then
+            sed -i "/^use_proxy.*/d" "$WGET_PROXY_CONFIG"
+            sed -i "/^http_proxy.*/d" "$WGET_PROXY_CONFIG"
+            sed -i "/^https_proxy.*/d" "$WGET_PROXY_CONFIG"
+            sed -i "/^ftp_proxy.*/d" "$WGET_PROXY_CONFIG"
+        fi
     fi
 }
-## Usage:
-# PROGRESS_CNT=100
-# PROGRESS_CUR=1
-# while true; do
-#     PROGRESS_CUR=$(($PROGRESS_CUR+1))
-#     # Draw a progress bar
-#     draw_progress_bar $PROGRESS_CUR $PROGRESS_CNT "files"
-#     # Check if we reached 100%
-#     [[ $PROGRESS_CUR == $PROGRESS_CNT ]] && break
-#     # sleep 0.1  # Wait before redrawing
-# done
-# # Go to the newline at the end of progress
-# printf "\n"
+
+
+## Setting curl proxy
+function set_curl_proxy() {
+    local PROXY_ADDRESS=${1:-"127.0.0.1:7891"}
+    local CURL_SOCKS5_CONFIG=${2:-"$HOME/.curlrc"}
+
+    [[ ! -x "$(command -v curl)" ]] && return 0
+
+    if [[ -n "$PROXY_ADDRESS" ]]; then
+        echo "--socks5-hostname \"${PROXY_ADDRESS}\"" >> "${CURL_SOCKS5_CONFIG}"
+    else
+        [[ -s "$CURL_SOCKS5_CONFIG" ]] && \
+            sed -i "/^--socks5-hostname.*/d" "${CURL_SOCKS5_CONFIG}"
+    fi
+}
+
+
+## Setting by pass gfw proxy
+function set_by_pass_gfw_proxy() {
+    [[ -s "$HOME/cross_gfw_config.sh" ]] && bash "$HOME/cross_gfw_config.sh"
+}
 
 
 function Git_Clone_Update() {
@@ -1025,18 +1011,18 @@ function Git_Clone_Update() {
         colorEcho ${BLUE} "Updating ${REPO}..."
         cd "$REPODIR" && \
             git pull --rebase --stat origin "$BRANCH" && \
-            cd - >/dev/null
+            cd - >/dev/null 2>&1
         ## master branch
         # cd "$REPODIR" && \
         #     git fetch --depth 1 && \
         #     git reset --hard origin/master && \
-        #     cd - >/dev/null
+        #     cd - >/dev/null 2>&1
         ## checkout other branch
         # cd "$REPODIR" && \
         #     git remote set-branches --add orgin "'${remote_branch_name}'"
         #     git fetch --depth 1 origin ${remote_branch_name} && \
         #     git checkout ${remote_branch_name} && \
-        #     cd - >/dev/null
+        #     cd - >/dev/null 2>&1
     else
         colorEcho ${BLUE} "Cloning ${REPO}..."
         git clone -c core.eol=lf -c core.autocrlf=false \
@@ -1092,7 +1078,12 @@ WantedBy=multi-user.target
 EOF
     fi
 
-sudo systemctl enable "$service_name" && sudo systemctl restart "$service_name"
+    sudo systemctl enable "$service_name" && sudo systemctl restart "$service_name"
+    if [[ $(systemctl is-enabled "$service_name" 2>/dev/null) ]]; then
+        colorEcho ${GREEN} "  ${service_name} installed!"
+    else
+        colorEcho ${RED} "   ${service_name} install failed!"
+    fi
 }
 
 ## Dateutils
@@ -1135,3 +1126,53 @@ function get_zone_time() {
         colorEcho ${BLUE} "${tz}: ${ZONE_TIME}"
     done
 }
+
+
+## ProgressBar
+# bar=''
+# for ((i=0;$i<=100;i++)); do
+#     printf "Progress:[%-100s]%d%%\r" $bar $i
+#     sleep 0.1
+#     bar=#$bar
+# done
+# echo
+function draw_progress_bar() {
+    # https://stackoverflow.com/questions/238073/how-to-add-a-progress-bar-to-a-shell-script
+    # progress bar length in characters
+    [[ -z "$PROGRESS_BAR_WIDTH" ]] && PROGRESS_BAR_WIDTH=50
+
+    # Arguments: current value, max value, unit of measurement (optional)
+    local __value=$1
+    local __max=$2
+    local __unit=${3:-""}  # if unit is not supplied, do not display it
+
+    # Calculate percentage
+    if (( $__max < 1 )); then __max=1; fi  # anti zero division protection
+    local __percentage=$(( 100 - ($__max*100 - $__value*100) / $__max ))
+
+    # Rescale the bar according to the progress bar width
+    local __num_bar=$(( $__percentage * $PROGRESS_BAR_WIDTH / 100 ))
+
+    # Draw progress bar
+    printf "["
+    for b in $(seq 1 $__num_bar); do printf "#"; done
+    for s in $(seq 1 $(( $PROGRESS_BAR_WIDTH - $__num_bar ))); do printf " "; done
+    if [[ -n "$__unit" ]]; then
+        printf "] $__percentage%% ($__value / $__max $__unit)\r"
+    else
+        printf "] $__percentage%% ($__value / $__max)\r"
+    fi
+}
+## Usage:
+# PROGRESS_CNT=100
+# PROGRESS_CUR=1
+# while true; do
+#     PROGRESS_CUR=$(($PROGRESS_CUR+1))
+#     # Draw a progress bar
+#     draw_progress_bar $PROGRESS_CUR $PROGRESS_CNT "files"
+#     # Check if we reached 100%
+#     [[ $PROGRESS_CUR == $PROGRESS_CNT ]] && break
+#     # sleep 0.1  # Wait before redrawing
+# done
+# # Go to the newline at the end of progress
+# printf "\n"

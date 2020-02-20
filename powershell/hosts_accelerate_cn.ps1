@@ -187,15 +187,18 @@ foreach ($TargetHost in $HostsList) {
     if (($null -eq $TargetIP) -or ($TargetIP -eq "")) {
         Write-Host " (Error)" -ForegroundColor Red
     } else {
-        # $IPGeo = curl -sL --connect-timeout 5 --max-time 15 https://ipinfo.io/$TargetIP/country
-        $IPGeoURL = "http://ip-api.com/json/$TargetIP"
-        try {
-            $IPGeoRequest = Invoke-RestMethod -Method Get -URI $IPGeoURL  
-        } catch {
-            $IPGeoRequest = $null
+        if ($SameIPPrior -eq "no") {
+            # $IPGeo = curl -sL --connect-timeout 5 --max-time 15 https://ipinfo.io/$TargetIP/country
+            $IPGeoURL = "http://ip-api.com/json/$TargetIP"
+            try {
+                $IPGeoRequest = Invoke-RestMethod -Method Get -URI $IPGeoURL  
+            } catch {
+                $IPGeoRequest = $null
+            }
+            $IPGeo = $IPGeoRequest.country
+            # $IPGeo = $IPGeoRequest.countryCode
         }
-        $IPGeo = $IPGeoRequest.country
-        # $IPGeo = $IPGeoRequest.countryCode
+
         if (($null -eq $IPGeo) -or ($IPGeo = "")) {
             Write-Host " $TargetIP" -ForegroundColor Yellow
         } else {

@@ -120,7 +120,7 @@ fi
 
 # clash
 # https://github.com/Dreamacro/clash
-if [[ ! -x "$(command -v clash)" ]]; then
+if [[ ! -s "/srv/clash/clash" ]]; then
     CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
 
     CURRENT_VERSION="0.0.0"
@@ -136,8 +136,7 @@ if [[ ! -x "$(command -v clash)" ]]; then
             rm clash-${ostype}-${spruce_type}.gz && \
             chmod +x clash-linux-amd64 && \
             sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true && \
-            cd - && \
-            /srv/clash/clash
+            cd - >/dev/null 2>&1
     fi
     # nohup /srv/clash/clash -d /srv/clash >/dev/null 2>&1 & disown
 fi

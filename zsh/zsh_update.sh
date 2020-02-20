@@ -66,7 +66,7 @@ if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
                 \) -exec rm -rf {} \; && \
             unzip -qo "/tmp/oh-my-zsh-custom.zip" -d "$ZSH" && \
             rm -f "/tmp/oh-my-zsh-custom.zip" && \
-            cd - >/dev/null
+            cd - >/dev/null 2>&1
     fi
 fi
 

@@ -14,11 +14,8 @@ else
     fi
 fi
 
-# Set proxy or mirrors env in china
-set_proxy_mirrors_env
-
-# Setting github & gitlab & curl socks5 proxy
-set_github_gitlab_curl_proxy
+## Setting by pass gfw proxy
+set_by_pass_gfw_proxy
 
 # ostype: darwin, windows, linux, bsd, solaris
 # spruce_type: amd64, 386

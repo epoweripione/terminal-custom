@@ -34,14 +34,14 @@ if [[ ! -x "$(command -v jq)" ]]; then
 fi
 
 
-[[ $# > 0 ]] && TARGET_CONFIG_FILE=$1
+TARGET_CONFIG_FILE=${1:-""}
 if [[ -z "$TARGET_CONFIG_FILE" ]]; then
     mkdir -p "/srv/clash"
     TARGET_CONFIG_FILE="/srv/clash/config.yaml"
 fi
 TARGET_WITH_CUSTOM_PROXY=$(echo "$TARGET_CONFIG_FILE" | sed 's/\./_custom\./')
 
-[[ $# > 1 ]] && COPY_TO_FILE=$2
+COPY_TO_FILE=${2:-""}
 
 
 if ! pgrep -f "subconverter" >/dev/null 2>&1; then
@@ -64,71 +64,6 @@ fi
 
 
 WORKDIR="$(mktemp -d)"
-
-
-# Get v2ray config from subscriptions
-function get_v2ray_config_from_subscription() {
-    local SUBSCRIBE_URL="https://jiang.netlify.com/"
-    local VMESS_FILENAME="${WORKDIR}/v2ray.vmess"
-    local DECODE_FILENAME="${WORKDIR}/v2ray_decode.vmess"
-
-    colorEcho ${BLUE} "Getting v2ray subscriptions..."
-    curl -sSf --connect-timeout 10 --max-time 30 "${SUBSCRIBE_URL}" -o "${VMESS_FILENAME}"
-    if [[ $? != 0  ]]; then
-        colorEcho ${RED} "Can't get the subscriptions from ${SUBSCRIBE_URL}!"
-        return 1
-    fi
-
-    if [[ -s "${VMESS_FILENAME}" ]]; then
-        base64 -d "${VMESS_FILENAME}" > "${DECODE_FILENAME}"
-        sed -i '/^vmess:\/\//!d' "${DECODE_FILENAME}"
-        sed -i 's|^vmess://||g' "${DECODE_FILENAME}"
-    fi
-
-    if [[ ! -s "${DECODE_FILENAME}" ]]; then
-        colorEcho ${RED} "Can't get the subscriptions from ${SUBSCRIBE_URL}!"
-        return 1
-    fi
-
-    colorEcho ${BLUE} "Getting v2ray config from subscriptions..."
-    # Decode subscriptions line by line
-    local READLINE
-    local VMESS_CONFIG
-    local VMESS_PS
-    local VMESS_ADDR
-    local VMESS_PORT
-    local VMESS_USER_ID
-    local VMESS_USER_ALTERID
-    local VMESS_NETWORK
-    local VMESS_TYPE
-    local VMESS_SECURITY
-    local VMESS_TLS_SETTINGS
-    local VMESS_WS_HOST
-    local VMESS_WS_PATH
-    local VMESS_WS_SETTINGS
-    local VMESS_KCP_SETTINGS
-
-    while read -r READLINE; do
-        [[ -z "${READLINE}" ]] && continue
-
-        VMESS_CONFIG=$(echo "${READLINE}" | base64 -di)
-        [[ -z "${VMESS_CONFIG}" ]] && continue
-
-        VMESS_PS=$(echo "${VMESS_CONFIG}" | jq -r '.ps//empty')
-        VMESS_ADDR=$(echo "${VMESS_CONFIG}" | jq -r '.add//empty')
-        VMESS_PORT=$(echo "${VMESS_CONFIG}" | jq -r '.port//empty')
-        [[ -z "${VMESS_ADDR}" || -z "${VMESS_PORT}" ]] && continue
-
-        VMESS_USER_ID=$(echo "${VMESS_CONFIG}" | jq -r '.id//empty')
-        VMESS_USER_ALTERID=$(echo "${VMESS_CONFIG}" | jq -r '.aid//empty')
-        VMESS_NETWORK=$(echo "${VMESS_CONFIG}" | jq -r '.net//empty')
-        VMESS_TYPE=$(echo "${VMESS_CONFIG}" | jq -r '.type//empty')
-        VMESS_SECURITY=$(echo "${VMESS_CONFIG}" | jq -r '.tls//empty')
-        VMESS_WS_HOST=$(echo "${VMESS_CONFIG}" | jq -r '.host//empty')
-        VMESS_WS_PATH=$(echo "${VMESS_CONFIG}" | jq -r '.path//empty')
-    done < "${DECODE_FILENAME}"
-}
-
 
 CLASH_CONFIG="./clash_client_config.yml"
 
@@ -199,9 +134,12 @@ colorEcho ${BLUE} "Setting cfw bypass..."
 CFW_BYPASS=""
 if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
     CFW_BYPASS_URL=$(sed -n "${CFW_BYPASS_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
-    colorEcho ${BLUE} "  Getting cfw bypass rules..."
-    curl -sL --connect-timeout 5 --max-time 15 \
-        -o "${WORKDIR}/cfw_bypass.yml" "${CFW_BYPASS_URL}"
+    if [[ -n "$CFW_BYPASS_URL" ]]; then
+        colorEcho ${BLUE} "  Getting cfw bypass rules..."
+        curl -sL --connect-timeout 5 --max-time 15 \
+            -o "${WORKDIR}/cfw_bypass.yml" "${CFW_BYPASS_URL}"
+    fi
+
     if [[ -s "${WORKDIR}/cfw_bypass.yml" ]]; then
         BYPASS_START_LINE=$(grep -E -n "^cfw\-bypass:" "${WORKDIR}/cfw_bypass.yml" | cut -d: -f1)
         if [[ ${BYPASS_START_LINE} -gt 0 ]]; then
