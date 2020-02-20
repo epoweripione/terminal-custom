@@ -139,8 +139,7 @@ if [[ ! -s "/srv/clash/clash" ]]; then
             mv clash-${ostype}-${spruce_type}.gz /srv/clash && \
             cd /srv/clash && \
             gzip -d clash-${ostype}-${spruce_type}.gz && \
-            rm clash-${ostype}-${spruce_type}.gz && \
-            chmod +x clash-linux-amd64 && \
+            chmod +x clash-${ostype}-${spruce_type} && \
             sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true && \
             cd - >/dev/null 2>&1
     fi
