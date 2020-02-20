@@ -39,10 +39,6 @@ if [[ ! -x "$(command -v jq)" ]]; then
 fi
 
 
-PROXY_PORT=${1:-"55880"}
-PROXY_URL="127.0.0.1:${PROXY_PORT}"
-
-
 # V2Ray Client
 # https://www.v2ray.com/chapter_00/install.html
 # service v2ray start|stop|status|reload|restart|force-reload
@@ -143,12 +139,12 @@ function install_subconverter() {
 
 # Get v2ray config from subscriptions
 function get_v2ray_config_from_subscription() {
-    local exitStatus=1
+    local SUBSCRIBE_URL=${1:-"https://jiang.netlify.com/"}
+    local V2RAY_ADDRESS=${2:-"127.0.0.1:55880"}
 
     local VMESS_FILENAME="/tmp/v2ray.vmess"
     local DECODE_FILENAME="/tmp/v2ray_decode.vmess"
-
-    SUBSCRIBE_URL=${1:-"https://jiang.netlify.com/"}
+    local exitStatus=1
 
     colorEcho ${BLUE} "Getting v2ray subscriptions..."
     curl -sSf -4 --connect-timeout 10 --max-time 30 \
@@ -172,6 +168,7 @@ function get_v2ray_config_from_subscription() {
 
     colorEcho ${BLUE} "Testing v2ray config from subscriptions..."
     # Decode subscriptions line by line
+    local V2RAY_PORT
     local READLINE
     local VMESS_CONFIG
     local VMESS_PS
@@ -188,23 +185,11 @@ function get_v2ray_config_from_subscription() {
     local VMESS_WS_SETTINGS
     local VMESS_KCP_SETTINGS
 
+    V2RAY_PORT=$(echo "$V2RAY_ADDRESS" | cut -d":" -f2)
+
     while read -r READLINE; do
         [[ -z "${READLINE}" ]] && continue
-        # VMESS_CONFIG=$(echo "${READLINE}" | base64 -di | sed -e 's/[{}", ]//g' -e 's/\r//g')
-        # [[ -z "${VMESS_CONFIG}" ]] && continue
 
-        # VMESS_PS=$(echo "${VMESS_CONFIG}" | grep '^ps:' | cut -d':' -f2-)
-        # VMESS_ADDR=$(echo "${VMESS_CONFIG}" | grep '^add:' | cut -d':' -f2)
-        # VMESS_PORT=$(echo "${VMESS_CONFIG}" | grep '^port:' | cut -d':' -f2)
-        # [[ -z "${VMESS_ADDR}" || -z "${VMESS_PORT}" ]] && continue
-
-        # VMESS_USER_ID=$(echo "${VMESS_CONFIG}" | grep '^id:' | cut -d':' -f2)
-        # VMESS_USER_ALTERID=$(echo "${VMESS_CONFIG}" | grep '^aid:' | cut -d':' -f2)
-        # VMESS_NETWORK=$(echo "${VMESS_CONFIG}" | grep '^net:' | cut -d':' -f2)
-        # VMESS_TYPE=$(echo "${VMESS_CONFIG}" | grep '^type:' | cut -d':' -f2)
-        # VMESS_SECURITY=$(echo "${VMESS_CONFIG}" | grep '^tls:' | cut -d':' -f2)
-        # VMESS_WS_HOST=$(echo "${VMESS_CONFIG}" | grep '^host:' | cut -d':' -f2)
-        # VMESS_WS_PATH=$(echo "${VMESS_CONFIG}" | grep '^path:' | cut -d':' -f2)
         VMESS_CONFIG=$(echo "${READLINE}" | base64 -di)
         [[ -z "${VMESS_CONFIG}" ]] && continue
 
@@ -298,7 +283,7 @@ function get_v2ray_config_from_subscription() {
 {
     "inbounds": [{
             "tag": "proxy",
-            "port": ${PROXY_PORT},
+            "port": ${V2RAY_PORT},
             "listen": "0.0.0.0",
             "protocol": "socks",
             "sniffing": {
@@ -357,7 +342,7 @@ EOF
             sudo systemctl restart v2ray && sleep 1
 
             # check the proxy work or not
-            if check_socks5_proxy_up ${PROXY_URL}; then
+            if check_socks5_proxy_up ${V2RAY_ADDRESS}; then
                 exitStatus=0
                 break
             fi
@@ -376,7 +361,8 @@ EOF
 }
 
 function use_clash() {
-    ostype_wsl=$(uname -r)
+    local ostype_wsl=$(uname -r)
+
     if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
         :
     else
@@ -410,7 +396,13 @@ function use_clash() {
 }
 
 function use_v2ray() {
-    ostype_wsl=$(uname -r)
+    local ostype_wsl=$(uname -r)
+    local SubList
+    local SubListFile
+    local SubError
+    local PROXY_URL=${1:-"127.0.0.1:55880"}
+
+
     if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
         :
     else
@@ -431,13 +423,14 @@ function use_v2ray() {
 
     colorEcho ${BLUE} "Checking & loading socks proxy..."
     if check_socks5_proxy_up ${PROXY_URL}; then
-        colorEcho ${BLUE} "Socks proxy address: ${PROXY_URL}"
+        colorEcho ${GREEN} "  Socks proxy address: ${PROXY_URL}"
+        return 0
     else
         if [[ -x "$(command -v v2ray)" ]]; then
             SubError="yes"
             for TargetSub in "${SubList[@]}"; do
-                if get_v2ray_config_from_subscription "$TargetSub"; then
-                    colorEcho ${BLUE} "Socks proxy address: ${PROXY_URL}"
+                if get_v2ray_config_from_subscription "$TargetSub" "$PROXY_URL"; then
+                    colorEcho ${GREEN} "  Socks proxy address: ${PROXY_URL}"
                     SubError="no"
                     break
                 fi
@@ -451,6 +444,8 @@ function use_v2ray() {
             fi
         fi
     fi
+
+    return 1
 }
 
 function set_socks5_proxy() {
@@ -467,22 +462,31 @@ function clear_socks5_proxy() {
 
 
 ## main
-CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
+function main() {
+    local CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
+    local PROXY_ADDRESS="127.0.0.1:7891"
 
-# Set proxy or mirrors env in china
-set_proxy_mirrors_env
+    # Set proxy or mirrors env in china
+    set_proxy_mirrors_env
 
-# clear all proxy first
-clear_proxy
-clear_socks5_proxy
+    # clear all proxy first
+    clear_proxy
+    clear_socks5_proxy
 
-# set global clash socks5 proxy or v2ray socks5 proxy
-if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
-    use_clash && set_global_socks5_proxy "127.0.0.1:7891"
+    # set global clash socks5 proxy or v2ray socks5 proxy
+    if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
+        use_clash && set_global_socks5_proxy "${PROXY_ADDRESS}"
 
-    if [[ -z "$HTTPS_PROXY" ]]; then
-        if use_v2ray; then
-            set_socks5_proxy "127.0.0.1:55880"
+        if [[ -z "$HTTPS_PROXY" ]]; then
+            PROXY_ADDRESS="127.0.0.1:55880"
+            if use_v2ray "${PROXY_ADDRESS}"; then
+                set_socks5_proxy "${PROXY_ADDRESS}"
+            fi
+        else
+            colorEcho ${GREEN} "  Socks proxy address: ${PROXY_ADDRESS}"
         fi
     fi
-fi
+}
+
+
+main
