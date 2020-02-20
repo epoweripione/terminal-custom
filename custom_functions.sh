@@ -984,12 +984,6 @@ function set_curl_proxy() {
 }
 
 
-## Setting by pass gfw proxy
-function set_by_pass_gfw_proxy() {
-    [[ -s "$HOME/cross_gfw_config.sh" ]] && bash "$HOME/cross_gfw_config.sh"
-}
-
-
 function Git_Clone_Update() {
     local REPO=${1:-""}
     local REPODIR=${2:-""}

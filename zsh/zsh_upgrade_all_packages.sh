@@ -15,7 +15,7 @@ else
 fi
 
 ## Setting by pass gfw proxy
-set_by_pass_gfw_proxy
+[[ -s "$HOME/cross_gfw_config.sh" ]] && bash "$HOME/cross_gfw_config.sh"
 
 # ostype: darwin, windows, linux, bsd, solaris
 # spruce_type: amd64, 386

@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# if [[ $UID -ne 0 ]]; then
-#     echo "Please run this script as root user!"
-#     exit 0
-# fi
-
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
@@ -398,7 +393,7 @@ function use_clash() {
                 return 1
             }
 
-        if [[ $(systemctl is-enabled clash 2>/dev/null) ]] || {
+        [[ $(systemctl is-enabled clash 2>/dev/null) ]] || {
                 Install_systemd_Service "clash" "/srv/clash/clash -d /srv/clash"
             }
 
