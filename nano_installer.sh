@@ -24,7 +24,7 @@ colorEcho ${BLUE} "Checking update for nano..."
 if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
     # Remove old version nano
     if pacman -Q nano >/dev/null 2>&1; then
-        sudo pacman --noconfirm -R nano
+        sudo pacman --noconfirm -R nano >/dev/null 2>&1
     fi
 
     # Pre-requisite packages

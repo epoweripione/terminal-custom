@@ -176,7 +176,8 @@ colorEcho ${BLUE} "Oh-my-zsh custom plugins..."
 
 # fast-syntax-highlighting
 if [[ $ostype != "windows" ]]; then
-    Git_Clone_Update "zdharma/fast-syntax-highlighting" "${ZSH_CUSTOM}/plugins/fast-syntax-highlighting"
+    Git_Clone_Update "zdharma/fast-syntax-highlighting" \
+        "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"
 fi
 
 PluginList=(
@@ -190,7 +191,7 @@ PluginList=(
 
 for Target in "${PluginList[@]}"; do
     TargetName=$(echo ${Target} | awk -F"/" '{print $NF}')
-    Git_Clone_Update "$Target" "${ZSH_CUSTOM}/plugins/${TargetName}"
+    Git_Clone_Update "$Target" "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/${TargetName}"
 done
 
 
@@ -207,7 +208,7 @@ ThemeList=(
 
 for Target in "${ThemeList[@]}"; do
     TargetName=$(echo ${Target} | awk -F"/" '{print $NF}')
-    Git_Clone_Update "$Target" "${ZSH_CUSTOM}/themes/${TargetName}"
+    Git_Clone_Update "$Target" "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/${TargetName}"
 done
 
 # agnosterzak
@@ -264,7 +265,7 @@ else
     Plugins="${Plugins} fast-syntax-highlighting"
 fi
 
-Plugins="${Plugins} zsh-history-substring-search"
+Plugins="${Plugins} history-substring-search"
 
 
 PluginList=($(echo ${Plugins}))
