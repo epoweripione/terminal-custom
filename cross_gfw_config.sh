@@ -18,11 +18,6 @@ if [[ -z "$ostype" ]]; then
     get_sysArch
 fi
 
-if check_webservice_up www.google.com; then
-    colorEcho ${BLUE} "You are not blocked by the firewall! Congratulations!"
-    exit 0
-fi
-
 # jq
 if [[ ! -x "$(command -v jq)" ]]; then
     if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then

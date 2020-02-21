@@ -50,7 +50,11 @@ var sendMatchFile = function (filename, checksum, req, res, next) {
 
     checksum = checksum.replace(/(^s*)|(s*$)/g, "");
 
-    if ((checksum.length > 0) && req.query.hasOwnProperty('md5') && (req.query.md5 == checksum)) {
+    if ((checksum.length == 0) || 
+        (  (checksum.length > 0) && 
+            req.query.hasOwnProperty('md5') && 
+            (req.query.md5 == checksum)
+        )) {
         var options = {
             root: path.join(__dirname, 'public'),
             dotfiles: 'deny',
@@ -80,7 +84,11 @@ app.get('/', (req, res) => {
 app.get('/:name', asyncHandler(async(req, res, next) => {
     const fileName = req.params.name;
     const checkFile = path.join(__dirname, 'public', fileName + ".md5");
-    const fileChecksum = await asyncReadFile(checkFile);
+
+    var fileChecksum = "";
+    if (fs.existsSync(checkFile)) {
+        fileChecksum = await asyncReadFile(checkFile);
+    };
 
     sendMatchFile(fileName, fileChecksum, req, res, next);
 }));
