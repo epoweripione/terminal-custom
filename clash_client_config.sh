@@ -56,6 +56,8 @@ if ! pgrep -f "subconverter" >/dev/null 2>&1; then
     exit 1
 fi
 
+colorEcho ${BLUE} "Getting clash rules..."
+
 # Update ACL4SSR
 # https://github.com/ACL4SSR/ACL4SSR
 if [[ -s "/srv/subconverter/subconverter" ]]; then
@@ -74,13 +76,13 @@ PROXY_GROUP_LINE=$(grep -E -n "^# \[PROXY_GROUP\]" "$CLASH_CONFIG" | cut -d: -f1
 RULES_LINE=$(grep -E -n "^# \[RULES\]" "$CLASH_CONFIG" | cut -d: -f1)
 
 # [RULES]
-colorEcho ${BLUE} "Setting rules..."
+colorEcho ${BLUE} "  Setting rules..."
 RULES=""
 # if (grep -E -q "^# \[RULES\]" "$CLASH_CONFIG"); then
 if [[ ${RULES_LINE} -gt 0 ]]; then
     RULES_URL=$(sed -n "${RULES_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
     if [[ -n "$RULES_URL" ]]; then
-        colorEcho ${BLUE} "  Getting subscription rules..."
+        colorEcho ${BLUE} "    Getting subscription rules..."
         curl -sL --connect-timeout 5 --max-time 15 \
             -o "${WORKDIR}/rules.yml" "${RULES_URL}"
     fi
@@ -95,7 +97,7 @@ if [[ ${RULES_LINE} -gt 0 ]]; then
 fi
 
 # [PROXY_GROUP]
-colorEcho ${BLUE} "Setting proxy group..."
+colorEcho ${BLUE} "  Setting proxy group..."
 PROXY_GROUP=""
 if [[ ${RULES_START_LINE} -gt 0 ]]; then
     if [[ -s "${WORKDIR}/rules.yml" ]]; then
@@ -109,7 +111,7 @@ if [[ ${RULES_START_LINE} -gt 0 ]]; then
 fi
 
 # [PROXY]
-colorEcho ${BLUE} "Setting proxy..."
+colorEcho ${BLUE} "  Setting proxy..."
 PROXY=""
 if [[ ${GROUP_START_LINE} -gt 0 ]]; then
     if [[ -s "${WORKDIR}/rules.yml" ]]; then
@@ -125,17 +127,17 @@ fi
 # [PROXY_CUSTOM]
 PROXY_CUSTOM_FILE="/srv/clash/clash_proxy_custom.yml"
 if [[ -s "$PROXY_CUSTOM_FILE" ]]; then
-    colorEcho ${BLUE} "Setting custom proxy..."
+    colorEcho ${BLUE} "  Setting custom proxy..."
     PROXY_CUSTOM=$(cat "$PROXY_CUSTOM_FILE")
 fi
 
 # [CFW_BYPASS]
-colorEcho ${BLUE} "Setting cfw bypass..."
+colorEcho ${BLUE} "  Setting cfw bypass..."
 CFW_BYPASS=""
 if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
     CFW_BYPASS_URL=$(sed -n "${CFW_BYPASS_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
     if [[ -n "$CFW_BYPASS_URL" ]]; then
-        colorEcho ${BLUE} "  Getting cfw bypass rules..."
+        colorEcho ${BLUE} "    Getting cfw bypass rules..."
         curl -sL --connect-timeout 5 --max-time 15 \
             -o "${WORKDIR}/cfw_bypass.yml" "${CFW_BYPASS_URL}"
     fi
@@ -152,12 +154,12 @@ fi
 # custom rules
 RULE_CUSTOM_FILE="/srv/clash/clash_rule_custom.yml"
 if [[ -s "$RULE_CUSTOM_FILE" ]]; then
-    colorEcho ${BLUE} "Setting custom RULE..."
+    colorEcho ${BLUE} "  Setting custom RULE..."
     RULE_CUSTOM=$(cat "$RULE_CUSTOM_FILE")
 fi
 
 # Delete all proxy name from proxy group
-colorEcho ${BLUE} "Optimizing rules..."
+colorEcho ${BLUE} "  Optimizing rules..."
 if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     # proxy list
     PROXY_LIST=$(echo "$PROXY" | grep -E "\-\s{name:.*.," | cut -d, -f1 | cut -d: -f2-)
@@ -201,7 +203,7 @@ fi
 
 
 # Add contents to target config file
-colorEcho ${BLUE} "Output all config to ${TARGET_CONFIG_FILE}..."
+colorEcho ${BLUE} "  Output all config to ${TARGET_CONFIG_FILE}..."
 [[ -f "$TARGET_CONFIG_FILE" ]] && rm -f "$TARGET_CONFIG_FILE"
 
 START_LINE=1
@@ -210,7 +212,7 @@ ADD_CONTENT=$(sed -n "${START_LINE},${CFW_BYPASS_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$CFW_BYPASS" ]]; then
-    colorEcho ${BLUE} "  Output cfw bypass..."
+    colorEcho ${BLUE} "    Output cfw bypass..."
     echo "${CFW_BYPASS}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -219,7 +221,7 @@ ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_CUSTOM_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$PROXY_CUSTOM" ]]; then
-    colorEcho ${BLUE} "  Output custom proxies..."
+    colorEcho ${BLUE} "    Output custom proxies..."
     echo "${PROXY_CUSTOM}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -228,7 +230,7 @@ ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$PROXY" ]]; then
-    colorEcho ${BLUE} "  Output proxies..."
+    colorEcho ${BLUE} "    Output proxies..."
     echo "${PROXY}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -237,7 +239,7 @@ ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_GROUP_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$PROXY_GROUP" ]]; then
-    colorEcho ${BLUE} "  Output proxy group..."
+    colorEcho ${BLUE} "    Output proxy group..."
     echo "${PROXY_GROUP}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -246,12 +248,12 @@ ADD_CONTENT=$(sed -n "${START_LINE},${RULES_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$RULE_CUSTOM" ]]; then
-    colorEcho ${BLUE} "  Output custom rules..."
+    colorEcho ${BLUE} "    Output custom rules..."
     echo "${RULE_CUSTOM}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
 if [[ -n "$RULES" ]]; then
-    colorEcho ${BLUE} "  Output rules..."
+    colorEcho ${BLUE} "    Output rules..."
     echo "${RULES}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -273,23 +275,23 @@ fi
 
 # Copy to file
 if [[ -n "$COPY_TO_FILE" ]]; then
-    colorEcho ${BLUE} "Copy config to ${COPY_TO_FILE}..."
+    colorEcho ${BLUE} "  Copy config to ${COPY_TO_FILE}..."
     cp -f "$TARGET_CONFIG_FILE" "$COPY_TO_FILE"
 
     if [[ ! -s "${COPY_TO_FILE}.md5" ]]; then
-        colorEcho ${BLUE} "Gen md5 for ${COPY_TO_FILE}..."
+        colorEcho ${BLUE} "  Gen md5 for ${COPY_TO_FILE}..."
         (openssl md5 -hex "${COPY_TO_FILE}" | cut -d" " -f2) > "${COPY_TO_FILE}.md5"
     fi
 
     COPY_TO_CUSTOM=$(echo "$COPY_TO_FILE" | sed 's/\./_custom\./')
-    colorEcho ${BLUE} "Copy config with custom proxy to ${COPY_TO_CUSTOM}..."
+    colorEcho ${BLUE} "  Copy config with custom proxy to ${COPY_TO_CUSTOM}..."
     cp -f "$TARGET_WITH_CUSTOM_PROXY" "$COPY_TO_CUSTOM"
 
     if [[ ! -s "${COPY_TO_CUSTOM}.md5" ]]; then
-        colorEcho ${BLUE} "Gen md5 for ${COPY_TO_CUSTOM}..."
+        colorEcho ${BLUE} "  Gen md5 for ${COPY_TO_CUSTOM}..."
         (openssl md5 -hex "${COPY_TO_CUSTOM}" | cut -d" " -f2) > "${COPY_TO_CUSTOM}.md5"
     fi
 fi
 
 
-colorEcho ${BLUE} "Done!"
+colorEcho ${BLUE} "  Done!"

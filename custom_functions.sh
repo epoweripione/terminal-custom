@@ -1002,7 +1002,7 @@ function Git_Clone_Update() {
 
     REPOREMOTE="https://${REPOURL}/${REPO}.git"
     if [[ -d "${REPODIR}/.git" ]]; then
-        colorEcho ${BLUE} "Updating ${REPO}..."
+        colorEcho ${BLUE} "  Updating ${REPO}..."
         cd "$REPODIR" && \
             git pull --rebase --stat origin "$BRANCH" && \
             cd - >/dev/null 2>&1
@@ -1018,7 +1018,7 @@ function Git_Clone_Update() {
         #     git checkout ${remote_branch_name} && \
         #     cd - >/dev/null 2>&1
     else
-        colorEcho ${BLUE} "Cloning ${REPO}..."
+        colorEcho ${BLUE} "  Cloning ${REPO}..."
         git clone -c core.eol=lf -c core.autocrlf=false \
             -c fsck.zeroPaddedFilemode=ignore \
             -c fetch.fsck.zeroPaddedFilemode=ignore \

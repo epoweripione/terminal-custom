@@ -387,7 +387,7 @@ function use_clash() {
         if [[ $(systemctl is-enabled clash 2>/dev/null) ]]; then
             # get clash config
             [[ ! -s "$last_update" ]] && \
-                date -d "1 day ago" +"%F" > "last_update"
+                date -d "1 day ago" +"%F" > "$last_update"
 
             # only update config first time in one day
             if [[ $(date -d $(date +"%F") +"%s") -gt $(date -d $(head -n1 "$last_update") +"%s") ]]; then
