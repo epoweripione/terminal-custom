@@ -862,7 +862,7 @@ function check_socks5_proxy_up() {
 
     curl -sSf -I --connect-timeout 3 --max-time 5 \
         --socks5-hostname "${socks_proxy_url}" \
-        "${webservice_url}" > /dev/null || exitStatus=$?
+        "${webservice_url}" >/dev/null 2>&1 || exitStatus=$?
 
     if [ "$exitStatus" -eq "0" ]; then
         return 0
