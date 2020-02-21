@@ -502,9 +502,6 @@ function main() {
                 set_special_socks5_proxy
             fi
         fi
-    else
-        set_global_proxy # clear global proxy
-        set_special_socks5_proxy
     fi
 }
 
