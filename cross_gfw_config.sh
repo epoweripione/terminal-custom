@@ -101,6 +101,7 @@ function install_clash() {
     REMOTE_VERSION="0.17.1"
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         DOWNLOAD_URL=https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${ostype}-${spruce_type}-v${REMOTE_VERSION}.gz
+        MMDB_URL=https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb
         curl -SL -o clash-${ostype}-${spruce_type}.gz -C- $DOWNLOAD_URL && \
             mkdir -p /srv/clash && \
             mv clash-${ostype}-${spruce_type}.gz /srv/clash && \
@@ -108,6 +109,7 @@ function install_clash() {
             gzip -d clash-${ostype}-${spruce_type}.gz && \
             chmod +x clash-${ostype}-${spruce_type} && \
             sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true && \
+            wget -O "/srv/clash/Country.mmdb" "$MMDB_URL" && \
             cd - >/dev/null 2>&1
     fi
 }
@@ -365,6 +367,8 @@ EOF
 
 function use_clash() {
     local ostype_wsl=$(uname -r)
+    local last_update="/srv/clash/.last_update"
+    local PROXY_URL=${1:-"127.0.0.1:7891"}
 
     if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
         :
@@ -387,14 +391,30 @@ function use_clash() {
 
         if [[ $(systemctl is-enabled clash 2>/dev/null) ]]; then
             # get clash config
-            [[ -s "$HOME/clash_client_config.sh" ]] && \
-                bash "$HOME/clash_client_config.sh"
-            # restart clash and sleep 3s wait for clash ready
-            sudo systemctl restart clash && sleep 3
+            [[ ! -s "$last_update" ]] && \
+                date -d "1 day ago" +"%F" > "last_update"
+
+            # only update config first time in one day
+            if [[ $(date -d $(date +"%F") +"%s") -gt $(date -d $(head -n1 "$last_update") +"%s") ]]; then
+                [[ -s "$HOME/clash_client_config.sh" ]] && \
+                    bash "$HOME/clash_client_config.sh"
+                # restart clash and sleep 3s wait for clash ready
+                sudo systemctl restart clash && sleep 3
+            fi
+
+            if check_socks5_proxy_up ${PROXY_URL}; then
+                return 0
+            else
+                sudo systemctl restart clash && sleep 3
+            fi
         fi
     fi
 
-    return 0
+    if check_socks5_proxy_up ${PROXY_URL}; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 function use_v2ray() {
@@ -423,16 +443,13 @@ function use_v2ray() {
         )
     fi
 
-    colorEcho ${BLUE} "Checking & loading socks proxy..."
     if check_socks5_proxy_up ${PROXY_URL}; then
-        colorEcho ${GREEN} "  Socks proxy address: ${PROXY_URL}"
         return 0
     else
         if [[ -x "$(command -v v2ray)" ]]; then
             SubError="yes"
             for TargetSub in "${SubList[@]}"; do
                 if get_v2ray_config_from_subscription "$TargetSub" "$PROXY_URL"; then
-                    colorEcho ${GREEN} "  Socks proxy address: ${PROXY_URL}"
                     SubError="no"
                     break
                 fi
@@ -452,12 +469,15 @@ function use_v2ray() {
 
 function set_socks5_proxy() {
     local SOCKS5_PROXY=${1:-"127.0.0.1:55880"}
+    local CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
 
     set_git_socks5_proxy "github.com,gitlab.com" "${SOCKS5_PROXY}"
     set_curl_proxy "${SOCKS5_PROXY}" "${CURL_SOCKS5_CONFIG}"
 }
 
 function clear_socks5_proxy() {
+    local CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
+
     set_git_socks5_proxy "github.com,gitlab.com"
     cat /dev/null > "${CURL_SOCKS5_CONFIG}"
 }
@@ -465,28 +485,32 @@ function clear_socks5_proxy() {
 
 ## main
 function main() {
-    local CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
     local PROXY_ADDRESS="127.0.0.1:7891"
 
     # Set proxy or mirrors env in china
     set_proxy_mirrors_env
 
-    # clear all proxy first
-    clear_proxy
-    clear_socks5_proxy
-
     # set global clash socks5 proxy or v2ray socks5 proxy
     if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
-        use_clash && set_global_socks5_proxy "${PROXY_ADDRESS}"
+        colorEcho ${BLUE} "Checking & loading socks proxy..."
+        if use_clash "${PROXY_ADDRESS}"; then
+            clear_socks5_proxy
+            set_global_socks5_proxy "${PROXY_ADDRESS}"
+            colorEcho ${GREEN} "  Global socks5 proxy address: ${PROXY_ADDRESS}"
+        else
+            clear_proxy # clear global proxy
 
-        if [[ -z "$HTTPS_PROXY" ]]; then
             PROXY_ADDRESS="127.0.0.1:55880"
             if use_v2ray "${PROXY_ADDRESS}"; then
                 set_socks5_proxy "${PROXY_ADDRESS}"
+                colorEcho ${GREEN} "  Socks5 proxy address: ${PROXY_ADDRESS}"
+            else
+                clear_socks5_proxy
             fi
-        else
-            colorEcho ${GREEN} "  Socks proxy address: ${PROXY_ADDRESS}"
         fi
+    else
+        clear_proxy # clear global proxy
+        clear_socks5_proxy
     fi
 }
 

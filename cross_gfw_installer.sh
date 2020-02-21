@@ -134,6 +134,7 @@ if [[ ! -s "/srv/clash/clash" ]]; then
     REMOTE_VERSION="0.17.1"
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         DOWNLOAD_URL=https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${ostype}-${spruce_type}-v${REMOTE_VERSION}.gz
+        MMDB_URL=https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb
         curl -SL -o clash-${ostype}-${spruce_type}.gz -C- $DOWNLOAD_URL && \
             mkdir -p /srv/clash && \
             mv clash-${ostype}-${spruce_type}.gz /srv/clash && \
@@ -141,6 +142,7 @@ if [[ ! -s "/srv/clash/clash" ]]; then
             gzip -d clash-${ostype}-${spruce_type}.gz && \
             chmod +x clash-${ostype}-${spruce_type} && \
             sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true && \
+            wget -O "/srv/clash/Country.mmdb" "$MMDB_URL" && \
             cd - >/dev/null 2>&1
     fi
     # nohup /srv/clash/clash -d /srv/clash >/dev/null 2>&1 & disown

@@ -54,6 +54,9 @@ if [[ -s "$HOME/custom_functions.sh" ]]; then
 
     # Set proxy or mirrors env in china
     set_proxy_mirrors_env
+
+    # Setting global socks5 proxy
+    set_global_socks5_proxy
 fi
 
 
