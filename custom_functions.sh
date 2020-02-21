@@ -872,9 +872,23 @@ function check_socks5_proxy_up() {
 }
 
 
+## Setting global git proxy
+function set_git_proxy() {
+    local PROXY_ADDRESS=$1
+
+    if [[ -z "$PROXY_ADDRESS" ]]; then
+        git config --global --unset http.proxy
+        git config --global --unset https.proxy
+    else
+        git config --global http.proxy "socks5://${PROXY_ADDRESS}"
+        git config --global https.proxy "socks5://${PROXY_ADDRESS}"
+    fi
+}
+
+
 ## Setting socks5 proxy for certain git repos
-function set_git_socks5_proxy() {
-    # Usage: set_git_socks5_proxy github.com,gitlab.com 127.0.0.1:55880
+function set_git_special_proxy() {
+    # Usage: set_git_special_proxy github.com,gitlab.com 127.0.0.1:55880
 
     unset GIT_SOCKS5_PROXY_URL
 
@@ -903,30 +917,16 @@ function set_git_socks5_proxy() {
             git config --global --unset http.https://${TargetUrl}.proxy
             git config --global --unset https.https://${TargetUrl}.proxy
         else
-            git config --global http.https://${TargetUrl}.proxy socks5://${GIT_SOCKS5_PROXY_URL}
-            git config --global https.https://${TargetUrl}.proxy socks5://${GIT_SOCKS5_PROXY_URL}
+            git config --global http.https://${TargetUrl}.proxy "socks5://${GIT_SOCKS5_PROXY_URL}"
+            git config --global https.https://${TargetUrl}.proxy "socks5://${GIT_SOCKS5_PROXY_URL}"
         fi
     done
 }
 
 
-## Setting global socks5 proxy
-function set_global_socks5_proxy() {
-    local PROXY_ADDRESS=$1
-
-    [[ -z "$PROXY_ADDRESS" ]] && PROXY_ADDRESS="127.0.0.1:7891"
-
-    if check_socks5_proxy_up ${PROXY_ADDRESS}; then
-        set_proxy "socks5h://${PROXY_ADDRESS}"
-    else
-        clear_proxy
-    fi
-}
-
-
 ## Setting apt proxy
 function set_apt_proxy() {
-    local PROXY_ADDRESS=${1:-"127.0.0.1:7890"}
+    local PROXY_ADDRESS=$1
     local APT_PROXY_CONFIG=${2:-"/etc/apt/apt.conf.d/80proxy"}
 
     [[ ! -x "$(command -v apt)" ]] && return 0
@@ -947,22 +947,22 @@ function set_apt_proxy() {
 
 ## Setting wget proxy
 function set_wget_proxy() {
-    local PROXY_ADDRESS=${1:-"127.0.0.1:7890"}
-    local WGET_PROXY_CONFIG=${2:-"$HOME/.wgetrc"}
+    local PROXY_ADDRESS=$1
+    local WGET_CONFIG=${2:-"$HOME/.wgetrc"}
 
     [[ ! -x "$(command -v wget)" ]] && return 0
 
     if [[ -n "$PROXY_ADDRESS" ]]; then
-        echo "use_proxy = on" >> "$WGET_PROXY_CONFIG"
-        echo "http_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_PROXY_CONFIG"
-        echo "https_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_PROXY_CONFIG"
-        echo "ftp_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_PROXY_CONFIG"
+        echo "use_proxy = on" >> "$WGET_CONFIG"
+        echo "http_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_CONFIG"
+        echo "https_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_CONFIG"
+        echo "ftp_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_CONFIG"
     else
-        if [[ -s "$WGET_PROXY_CONFIG" ]]; then
-            sed -i "/^use_proxy.*/d" "$WGET_PROXY_CONFIG"
-            sed -i "/^http_proxy.*/d" "$WGET_PROXY_CONFIG"
-            sed -i "/^https_proxy.*/d" "$WGET_PROXY_CONFIG"
-            sed -i "/^ftp_proxy.*/d" "$WGET_PROXY_CONFIG"
+        if [[ -s "$WGET_CONFIG" ]]; then
+            sed -i "/^use_proxy.*/d" "$WGET_CONFIG"
+            sed -i "/^http_proxy.*/d" "$WGET_CONFIG"
+            sed -i "/^https_proxy.*/d" "$WGET_CONFIG"
+            sed -i "/^ftp_proxy.*/d" "$WGET_CONFIG"
         fi
     fi
 }
@@ -970,16 +970,42 @@ function set_wget_proxy() {
 
 ## Setting curl proxy
 function set_curl_proxy() {
-    local PROXY_ADDRESS=${1:-"127.0.0.1:7891"}
-    local CURL_SOCKS5_CONFIG=${2:-"$HOME/.curlrc"}
+    local PROXY_ADDRESS=$1
+    local CURL_CONFIG=${2:-"$HOME/.curlrc"}
 
     [[ ! -x "$(command -v curl)" ]] && return 0
 
     if [[ -n "$PROXY_ADDRESS" ]]; then
-        echo "--socks5-hostname \"${PROXY_ADDRESS}\"" >> "${CURL_SOCKS5_CONFIG}"
+        echo "--socks5-hostname \"${PROXY_ADDRESS}\"" >> "${CURL_CONFIG}"
     else
-        [[ -s "$CURL_SOCKS5_CONFIG" ]] && \
-            sed -i "/^--socks5-hostname.*/d" "${CURL_SOCKS5_CONFIG}"
+        [[ -s "$CURL_CONFIG" ]] && \
+            sed -i "/^--socks5-hostname.*/d" "${CURL_CONFIG}"
+    fi
+}
+
+
+## Setting global proxy
+function set_global_proxy() {
+    local SOCKS_ADDRESS=${1:-""}
+    local HTTP_PROXY=${2:-""}
+
+    if [[ -n "$SOCKS_ADDRESS" ]]; then
+        if check_socks5_proxy_up ${SOCKS_ADDRESS}; then
+            set_proxy "socks5h://${SOCKS_ADDRESS}"
+            set_git_proxy "${SOCKS_ADDRESS}"
+            set_curl_proxy "${SOCKS_ADDRESS}"
+            set_wget_proxy "${HTTP_PROXY}"
+        else
+            clear_proxy
+            set_git_proxy
+            set_curl_proxy
+            set_wget_proxy
+        fi
+    else
+        clear_proxy
+        set_git_proxy
+        set_curl_proxy
+        set_wget_proxy
     fi
 }
 

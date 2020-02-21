@@ -56,7 +56,7 @@ if [[ -s "$HOME/custom_functions.sh" ]]; then
     set_proxy_mirrors_env
 
     # Setting global socks5 proxy
-    [[ -z "$GITHUB_NOT_USE_PROXY" ]] && set_global_socks5_proxy
+    [[ -z "$GITHUB_NOT_USE_PROXY" ]] && set_global_proxy "127.0.0.1:7891"
 fi
 
 

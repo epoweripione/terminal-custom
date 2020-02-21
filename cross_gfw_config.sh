@@ -462,25 +462,23 @@ function use_v2ray() {
     return 1
 }
 
-function set_socks5_proxy() {
-    local SOCKS5_PROXY=${1:-"127.0.0.1:55880"}
-    local CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
+function set_special_socks5_proxy() {
+    local SOCKS5_PROXY=${1:-""}
 
-    set_git_socks5_proxy "github.com,gitlab.com" "${SOCKS5_PROXY}"
-    set_curl_proxy "${SOCKS5_PROXY}" "${CURL_SOCKS5_CONFIG}"
-}
-
-function clear_socks5_proxy() {
-    local CURL_SOCKS5_CONFIG="$HOME/.curl_socks5"
-
-    set_git_socks5_proxy "github.com,gitlab.com"
-    cat /dev/null > "${CURL_SOCKS5_CONFIG}"
+    if [[ -n "$SOCKS5_PROXY" ]]; then
+        set_git_special_proxy "github.com,gitlab.com" "${SOCKS5_PROXY}"
+        set_curl_proxy "${SOCKS5_PROXY}" "${CURL_SPECIAL_CONFIG}"
+    else
+        set_git_special_proxy "github.com,gitlab.com"
+        cat /dev/null > "${CURL_SPECIAL_CONFIG}"
+    fi
 }
 
 
 ## main
 function main() {
-    local PROXY_ADDRESS="127.0.0.1:7891"
+    local SOCKS_ADDRESS="127.0.0.1:7891"
+    local HTTP_ADDRESS="127.0.0.1:7890"
 
     # Set proxy or mirrors env in china
     set_proxy_mirrors_env
@@ -488,26 +486,28 @@ function main() {
     # set global clash socks5 proxy or v2ray socks5 proxy
     if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
         colorEcho ${BLUE} "Checking & loading socks proxy..."
-        if use_clash "${PROXY_ADDRESS}"; then
-            clear_socks5_proxy
-            set_global_socks5_proxy "${PROXY_ADDRESS}"
-            colorEcho ${GREEN} "  Global socks5 proxy address: ${PROXY_ADDRESS}"
-        else
-            clear_proxy # clear global proxy
+        if use_clash "${SOCKS_ADDRESS}"; then
+            set_special_socks5_proxy # clear special socks5 proxy
 
-            PROXY_ADDRESS="127.0.0.1:55880"
-            if use_v2ray "${PROXY_ADDRESS}"; then
-                set_socks5_proxy "${PROXY_ADDRESS}"
-                colorEcho ${GREEN} "  Socks5 proxy address: ${PROXY_ADDRESS}"
+            set_global_proxy "${SOCKS_ADDRESS}" "${HTTP_ADDRESS}"
+            colorEcho ${GREEN} "  Global socks5 proxy address: ${SOCKS_ADDRESS}"
+        else
+            set_global_proxy # clear global proxy
+
+            SOCKS_ADDRESS="127.0.0.1:55880"
+            if use_v2ray "${SOCKS_ADDRESS}"; then
+                set_special_socks5_proxy "${SOCKS_ADDRESS}"
+                colorEcho ${GREEN} "  Socks5 proxy address: ${SOCKS_ADDRESS}"
             else
-                clear_socks5_proxy
+                set_special_socks5_proxy
             fi
         fi
     else
-        clear_proxy # clear global proxy
-        clear_socks5_proxy
+        set_global_proxy # clear global proxy
+        set_special_socks5_proxy
     fi
 }
 
 
+CURL_SPECIAL_CONFIG=${CURL_SPECIAL_CONFIG:-"$HOME/.curl_socks5"}
 main

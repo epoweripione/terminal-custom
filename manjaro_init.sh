@@ -23,7 +23,7 @@ if [[ "$GIT_PROXY_CHOICE" == 'y' || "$GIT_PROXY_CHOICE" == 'Y' ]]; then
     [[ -z "$Sock5Address" ]] && Sock5Address=127.0.0.1:55880
     
     # [[ -s "$HOME/cross_gfw_config.sh" ]] && source "$HOME/cross_gfw_config.sh"
-    set_git_socks5_proxy github.com,gitlab.com ${Sock5Address}
+    set_git_special_proxy github.com,gitlab.com ${Sock5Address}
 fi
 
 # curl
