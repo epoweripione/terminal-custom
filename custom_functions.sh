@@ -1069,7 +1069,7 @@ function Git_Clone_Update() {
     local BRANCH=${3:-master}
     local REPOURL=${4:-github.com}
     local REPOREMOTE=""
-    
+
     if [[ -z "$REPO" ]]; then
         colorEcho ${RED} "Error! Repository name can't empty!"
         return 1
@@ -1107,6 +1107,26 @@ function Git_Clone_Update() {
                 return 1
             }
     fi
+}
+
+
+function Install_cron_job() {
+    local cronjob=${1:-""}
+    local cronline
+
+    [[ -z "${cronjob}" ]] && return 0
+
+    (crontab -l 2>/dev/null || true; echo "${cronjob}") | crontab - || {
+        colorEcho ${RED} "  cron job install failed!"
+        return 1
+    }
+
+    cronline=$(crontab -l | wc -l)
+
+    colorEchoN ${FUCHSIA} "  ${cronjob}"
+    colorEcho ${GREEN} " installed!"
+    colorEcho ${YELLOW} "  How to delete this job:"
+    colorEcho ${FUCHSIA} "  (crontab -l 2>/dev/null | sed \"${cronline}d\") | crontab -"
 }
 
 
