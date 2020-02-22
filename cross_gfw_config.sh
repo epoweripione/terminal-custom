@@ -412,6 +412,8 @@ function use_clash() {
                     bash "$HOME/clash_client_config.sh"
                 # restart clash and sleep 3s wait for clash ready
                 sudo systemctl restart clash && sleep 3
+
+                date +"%F" > "$last_update"
             fi
 
             if check_socks5_proxy_up ${PROXY_URL}; then
