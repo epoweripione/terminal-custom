@@ -10,6 +10,9 @@ if [[ ! $(grep "# turn on bbr" /etc/sysctl.conf) ]]; then
 # for high-latency network
 # net.ipv4.tcp_congestion_control = hybla
 
+# disable ipv6
+# net.ipv6.conf.all.disable_ipv6 = 1
+
 # turn on bbr
 net.core.default_qdisc = fq
 net.ipv4.tcp_congestion_control = bbr

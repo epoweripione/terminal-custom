@@ -903,8 +903,8 @@ function set_git_special_proxy() {
             git config --global --unset http.https://${TargetUrl}.proxy
             git config --global --unset https.https://${TargetUrl}.proxy
         else
-            git config --global http.https://${TargetUrl}.proxy "socks5://${GIT_SOCKS5_PROXY_URL}"
-            git config --global https.https://${TargetUrl}.proxy "socks5://${GIT_SOCKS5_PROXY_URL}"
+            git config --global http.https://${TargetUrl}.proxy "socks5://${PROXY_ADDRESS}"
+            git config --global https.https://${TargetUrl}.proxy "socks5://${PROXY_ADDRESS}"
         fi
     done
 }

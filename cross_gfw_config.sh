@@ -70,73 +70,6 @@ function install_v2ray_client() {
     fi
 }
 
-# clash
-# https://github.com/Dreamacro/clash
-function install_clash() {
-    local CURRENT_VERSION
-    local DOWNLOAD_URL
-    local CHECK_URL
-    local REMOTE_VERSION
-
-    if ! pgrep -f "subconverter" >/dev/null 2>&1; then
-        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] && sudo systemctl restart subconverter
-    fi
-
-    if ! pgrep -f "subconverter" >/dev/null 2>&1; then
-        colorEcho ${RED} "Please install and run subconverter first!"
-        return 1
-    fi
-
-    colorEcho ${BLUE} "Installing clash..."
-
-    CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
-
-    CURRENT_VERSION="0.0.0"
-    # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-    REMOTE_VERSION="0.17.1"
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        DOWNLOAD_URL=https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${ostype}-${spruce_type}-v${REMOTE_VERSION}.gz
-        MMDB_URL=https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb
-        curl -SL -o clash-${ostype}-${spruce_type}.gz -C- $DOWNLOAD_URL && \
-            mkdir -p /srv/clash && \
-            mv clash-${ostype}-${spruce_type}.gz /srv/clash && \
-            cd /srv/clash && \
-            gzip -d clash-${ostype}-${spruce_type}.gz && \
-            chmod +x clash-${ostype}-${spruce_type} && \
-            sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true && \
-            wget -O "/srv/clash/Country.mmdb" "$MMDB_URL" && \
-            cd - >/dev/null 2>&1
-    fi
-}
-
-# subconverter
-# https://github.com/tindy2013/subconverter
-function install_subconverter() {
-    local CURRENT_VERSION
-    local DOWNLOAD_URL
-    local CHECK_URL
-    local REMOTE_VERSION
-
-    colorEcho ${BLUE} "Installing subconverter..."
-
-    CHECK_URL="https://api.github.com/repos/tindy2013/subconverter/releases/latest"
-
-    CURRENT_VERSION="0.0.0"
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        DOWNLOAD_URL=https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${ostype}${VDIS}.tar.gz
-        curl -SL -o subconverter.tar.gz -C- $DOWNLOAD_URL && \
-            mkdir -p /srv/subconverter && \
-            tar -zxPf subconverter.tar.gz -C /srv/subconverter && \
-            rm subconverter.tar.gz && \
-            echo ${REMOTE_VERSION} > /srv/subconverter/.version
-    fi
-
-    if [[ -s "/srv/subconverter/subconverter" ]]; then
-        Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"
-    fi
-}
-
 # Get v2ray config from subscriptions
 function get_v2ray_config_from_subscription() {
     local SUBSCRIBE_URL=${1:-"https://jiang.netlify.com/"}
@@ -360,18 +293,102 @@ EOF
     fi
 }
 
+# subconverter
+# https://github.com/tindy2013/subconverter
+function install_subconverter() {
+    local CURRENT_VERSION
+    local DOWNLOAD_URL
+    local CHECK_URL
+    local REMOTE_VERSION
+
+    colorEcho ${BLUE} "Installing subconverter..."
+
+    CHECK_URL="https://api.github.com/repos/tindy2013/subconverter/releases/latest"
+
+    CURRENT_VERSION="0.0.0"
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        DOWNLOAD_URL=https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${ostype}${VDIS}.tar.gz
+        curl -SL -o subconverter.tar.gz -C- $DOWNLOAD_URL && \
+            mkdir -p /srv/subconverter && \
+            tar -zxPf subconverter.tar.gz -C /srv/subconverter && \
+            rm subconverter.tar.gz && \
+            echo ${REMOTE_VERSION} > /srv/subconverter/.version
+    fi
+
+    if [[ -s "/srv/subconverter/subconverter" ]]; then
+        Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"
+    fi
+}
+
+# clash
+# https://github.com/Dreamacro/clash
+function install_clash() {
+    local CURRENT_VERSION
+    local DOWNLOAD_URL
+    local CHECK_URL
+    local REMOTE_VERSION
+
+    if ! pgrep -f "subconverter" >/dev/null 2>&1; then
+        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] && sudo systemctl restart subconverter
+    fi
+
+    if ! pgrep -f "subconverter" >/dev/null 2>&1; then
+        colorEcho ${RED} "Please install and run subconverter first!"
+        return 1
+    fi
+
+    colorEcho ${BLUE} "Installing clash..."
+
+    CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
+
+    CURRENT_VERSION="0.0.0"
+    # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION="0.17.1"
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        DOWNLOAD_URL=https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${ostype}-${spruce_type}-v${REMOTE_VERSION}.gz
+        MMDB_URL=https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb
+        curl -SL -o clash-${ostype}-${spruce_type}.gz -C- $DOWNLOAD_URL && \
+            mkdir -p /srv/clash && \
+            mv clash-${ostype}-${spruce_type}.gz /srv/clash && \
+            cd /srv/clash && \
+            gzip -d clash-${ostype}-${spruce_type}.gz && \
+            chmod +x clash-${ostype}-${spruce_type} && \
+            sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true && \
+            curl -SL -o "/srv/clash/Country.mmdb" "$MMDB_URL" && \
+            cd - >/dev/null 2>&1
+    fi
+}
+
 function use_clash() {
     local ostype_wsl=$(uname -r)
     local last_update="/srv/clash/.last_update"
     local PROXY_URL=${1:-"127.0.0.1:7891"}
+    local SUB_CLASH_URL
 
     if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
         :
     else
+        if [[ ! -s "/srv/subconverter/subconverter" && ! -s "/srv/clash/clash" ]]; then
+            echo "Download URL for subconverter & clash?"
+            echo -n "[Use github by default] "
+            read SUB_CLASH_URL
+            if [[ -n "$SUB_CLASH_URL" ]]; then
+                wget -c -O "/tmp/subconverter_clash.zip" "${SUB_CLASH_URL}" && \
+                    unzip -qo "/tmp/subconverter_clash.zip" -d "/srv" && \
+                    rm -f "/tmp/subconverter_clash.zip"
+            fi
+
+        fi
+
         [[ ! -s "/srv/subconverter/subconverter" ]] && install_subconverter
         [[ -s "/srv/subconverter/subconverter" ]] || {
                 colorEcho ${RED} "Please install and run subconverter first!"
                 return 1
+            }
+
+        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] || {
+                Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"
             }
 
         [[ ! -s "/srv/clash/clash" ]] && install_clash
