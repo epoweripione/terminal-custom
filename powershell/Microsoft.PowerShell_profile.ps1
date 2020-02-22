@@ -1,3 +1,9 @@
+$PS_CUSTOM_FUNCTION = "$HOME\Documents\PowerShell\Scripts\ps_custom_function.ps1"
+if ((Test-Path "$PS_CUSTOM_FUNCTION") -and ((Get-Item "$PS_CUSTOM_FUNCTION").length -gt 0)) {
+    . "$PS_CUSTOM_FUNCTION"
+}
+
+
 Import-Module Find-String
 # Import-Module PSColors
 # Import-Module TabExpansionPlusPlus

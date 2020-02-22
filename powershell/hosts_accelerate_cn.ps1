@@ -26,7 +26,6 @@ if (-Not (check_webservice_up)) {
 # .\UpdateMultipleHostsFiles.ps1 -ServerList @("192.168.1.49","192.168.1.50","192.168.1.51") -Timeout 7
 $Hostfile = "$env:windir\System32\drivers\etc\hosts"
 $Hostbackup = "$env:windir\System32\drivers\etc\hosts.bak"
-Copy-Item $Hostfile -Destination $Hostbackup
 # "192.168.1.1 bob" | Add-Content -PassThru $Hostfile
 # "192.168.1.2 john" | Add-Content -PassThru $Hostfile
 
@@ -47,6 +46,7 @@ if (($null -eq $SOCKS_PROXY_ADDR) -or ($SOCKS_PROXY_ADDR -eq "")) {
 # $p.DownloadFile($DOWNLOAD_URL, $Hostfile)
 if ($?) {
     if ((Test-Path $DOWNLOAD_HOST) -and ((Get-Item $DOWNLOAD_HOST).length -gt 0)) {
+        Copy-Item $Hostfile -Destination $Hostbackup
         Copy-Item $DOWNLOAD_HOST -Destination $Hostfile
     }
     # flush dns

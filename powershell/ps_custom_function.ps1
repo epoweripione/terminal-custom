@@ -5,6 +5,11 @@ $DismObjT = New-Object –TypeName PSObject -Property @{
     "ComputerName" = ""
 }
 
+function isadmin() {
+    # Returns true/false
+    ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+}
+
 # https://gallery.technet.microsoft.com/scriptcenter/Parse-DISM-Get-Features-d25dde0a
 # Must enable PSremoting on remote PC
 # Enable-PSRemoting
@@ -147,4 +152,43 @@ function check_socks5_proxy_up() {
     } else {
         return $false
     }
+}
+
+function DownloadHosts() {
+    param (
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string] $HostsURL
+    )
+
+    if (-Not (isadmin)) {
+        Write-Host "This script needs to be run As Admin!" -ForegroundColor Red
+        return
+    }
+
+    $Hostfile = "$env:windir\System32\drivers\etc\hosts"
+    $Hostbackup = "$env:windir\System32\drivers\etc\hosts.bak"
+    $DOWNLOAD_TO = "$env:windir\System32\drivers\etc\hosts.download"
+    if (Test-Path $DOWNLOAD_TO) {
+        Remove-Item $DOWNLOAD_TO
+    }
+
+    curl -L --connect-timeout 5 -o "$DOWNLOAD_TO" "$HostsURL"
+    if ($?) {
+        if ((Test-Path $DOWNLOAD_TO) -and ((Get-Item $DOWNLOAD_TO).length -gt 0)) {
+            Copy-Item $Hostfile -Destination $Hostbackup
+            Copy-Item $DOWNLOAD_TO -Destination $Hostfile
+        }
+        # flush dns
+        ipconfig -flushdns | Out-Null
+    }
+}
+
+function RestartWSL {
+    if (-Not (isadmin)) {
+        Write-Host "This script needs to be run As Admin!" -ForegroundColor Red
+        return
+    }
+
+    Stop-Service -Name "LxssManager"
+    Start-Service -Name "LxssManager"
 }

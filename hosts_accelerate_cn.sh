@@ -61,16 +61,23 @@ fi
 if [[ ! -s "$HostsFile" ]]; then
     # colorEcho ${RED} "${HostsFile} not exist!"
     # exit 1
-    DOWNLOAD_URL="https://raw.githubusercontent.com/googlehosts/hosts/master/hosts-files/hosts"
-    curl -SL -o "$HostsFile" "$DOWNLOAD_URL"
+    Hosts_URL="https://raw.githubusercontent.com/googlehosts/hosts/master/hosts-files/hosts"
+    curl -SL -o "$HostsFile" "$Hosts_URL"
 fi
 
 # use dig or curl
-[[ $PARAMS_NUM > 1 ]] && CHECK_METHOD="$2"
-[[ -z "$CHECK_METHOD" ]] && CHECK_METHOD="curl"
+CHECK_METHOD=${2:-"curl"}
 
 # don't modify hosts file
-[[ $PARAMS_NUM > 2 ]] && TEST_ONLY="$3"
+TEST_OR_DOWNLOAD_URL=${3:-""}
+
+
+# if param $3 is a link then download from url and exit
+if [[ $(echo "$TEST_OR_DOWNLOAD_URL" | grep -E "^http|^https") ]]; then
+    if download_hosts "$TEST_OR_DOWNLOAD_URL" "$HostsFile"; then
+        exit 0
+    fi
+fi
 
 
 # dig
@@ -141,12 +148,12 @@ else
 fi
 
 # Delete exist host entry
-if [[ -z "$TEST_ONLY" ]]; then
+if [[ -z "$TEST_OR_DOWNLOAD_URL" ]]; then
     colorEcho ${BLUE} "Deleting exist entry in hosts..."
     # if [[ $(grep "^# Github Start" ${HostsFile}) ]]; then
     #     LineBegin=$(cat -n ${HostsFile} | grep '# Github Start' | awk '{print $1}')
     #     LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
-    #     if [[ -n "$LineBegin" && -n "$LineEnd" && -z "$TEST_ONLY" ]]; then
+    #     if [[ -n "$LineBegin" && -n "$LineEnd" ]]; then
     #         DeleteBegin=$((${LineBegin}+1))
     #         DeleteEnd=$((${LineEnd}-1))
     #         sudo sed -i "${DeleteBegin},${DeleteEnd}d" ${HostsFile}
@@ -255,11 +262,11 @@ done
 
 [[ -n "$IP_HOSTS" ]] && echo -e "${IP_HOSTS}"
 
-if [[ -n "$IP_HOSTS" && -z "$TEST_ONLY" ]]; then
+if [[ -n "$IP_HOSTS" && -z "$TEST_OR_DOWNLOAD_URL" ]]; then
     echo -e "${IP_HOSTS}" | sudo tee -a ${HostsFile} >/dev/null
 fi
 
-# if [[ -n "$IP_HOSTS" && -z "$TEST_ONLY" ]]; then
+# if [[ -n "$IP_HOSTS" && -z "$TEST_OR_DOWNLOAD_URL" ]]; then
 #     if [[ ! $(grep "^# Github End" ${HostsFile}) ]]; then
 #         IP_HOSTS="${IP_HOSTS}\n# Github End"
 #     fi
@@ -279,21 +286,7 @@ fi
 if [[ "$ostype" == "windows" ]]; then
     ipconfig -flushdns || true
 else
-    [[ -s "/lib/systemd/system/systemd-resolved.service" ]] && \
-        sudo ln -sf /lib/systemd/system/systemd-resolved.service \
-            /etc/systemd/system/dbus-org.freedesktop.resolve1.service || true
-
-    [[ -x "$(command -v systemd-resolve)" ]] && sudo systemd-resolve --flush-caches
-
-    [[ -s "/etc/init.d/dns-clean" ]] && /etc/init.d/dns-clean start
-
-    if [[ $(systemctl is-enabled systemd-resolved 2>/dev/null) ]]; then
-        sudo systemctl restart systemd-resolved.service
-    fi
-
-    if [[ $(systemctl is-enabled dnsmasq 2>/dev/null) ]]; then
-        sudo systemctl restart dnsmasq.service
-    fi
+    flush_dns_cache
 fi
 
 

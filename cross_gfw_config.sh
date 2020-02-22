@@ -462,18 +462,6 @@ function use_v2ray() {
     return 1
 }
 
-function set_special_socks5_proxy() {
-    local SOCKS5_PROXY=${1:-""}
-
-    if [[ -n "$SOCKS5_PROXY" ]]; then
-        set_git_special_proxy "github.com,gitlab.com" "${SOCKS5_PROXY}"
-        set_curl_proxy "${SOCKS5_PROXY}" "${CURL_SPECIAL_CONFIG}"
-    else
-        set_git_special_proxy "github.com,gitlab.com"
-        cat /dev/null > "${CURL_SPECIAL_CONFIG}"
-    fi
-}
-
 
 ## main
 function main() {
@@ -487,7 +475,7 @@ function main() {
     if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
         colorEcho ${BLUE} "Checking & loading socks proxy..."
         if use_clash "${SOCKS_ADDRESS}"; then
-            set_special_socks5_proxy # clear special socks5 proxy
+            set_special_socks5_proxy "${SOCKS_ADDRESS}"
 
             set_global_proxy "${SOCKS_ADDRESS}" "${HTTP_ADDRESS}"
             colorEcho ${GREEN} "  Global socks5 proxy address: ${SOCKS_ADDRESS}"
@@ -497,9 +485,11 @@ function main() {
             SOCKS_ADDRESS="127.0.0.1:55880"
             if use_v2ray "${SOCKS_ADDRESS}"; then
                 set_special_socks5_proxy "${SOCKS_ADDRESS}"
+                set_git_special_proxy "github.com,gitlab.com" "${SOCKS_ADDRESS}"
                 colorEcho ${GREEN} "  Socks5 proxy address: ${SOCKS_ADDRESS}"
             else
                 set_special_socks5_proxy
+                set_git_special_proxy "github.com,gitlab.com"
             fi
         fi
     fi

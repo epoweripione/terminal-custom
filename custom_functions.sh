@@ -835,7 +835,7 @@ function check_webservice_up() {
             ;;
     esac
 
-    if [ "$exitStatus" -eq "0" ]; then
+    if [[ "$exitStatus" -eq "0" ]]; then
         # echo "$webservice_url is UP with ${http}"
         return 0
     else
@@ -864,7 +864,7 @@ function check_socks5_proxy_up() {
         --socks5-hostname "${socks_proxy_url}" \
         "${webservice_url}" >/dev/null 2>&1 || exitStatus=$?
 
-    if [ "$exitStatus" -eq "0" ]; then
+    if [[ "$exitStatus" -eq "0" ]]; then
         return 0
     else
         return 1
@@ -995,6 +995,8 @@ function set_global_proxy() {
             set_git_proxy "${SOCKS_ADDRESS}"
             set_curl_proxy "${SOCKS_ADDRESS}"
             set_wget_proxy "${HTTP_PROXY}"
+            # also clear git special proxy
+            set_git_special_proxy "github.com,gitlab.com"
         else
             clear_proxy
             set_git_proxy
@@ -1006,6 +1008,69 @@ function set_global_proxy() {
         set_git_proxy
         set_curl_proxy
         set_wget_proxy
+    fi
+}
+
+
+## setting special app socks5 proxy (curl...)
+function set_special_socks5_proxy() {
+    local SOCKS5_PROXY=${1:-""}
+
+    CURL_SPECIAL_CONFIG=${CURL_SPECIAL_CONFIG:-"$HOME/.curl_socks5"}
+
+    if [[ -n "$SOCKS5_PROXY" ]]; then
+        set_curl_proxy "${SOCKS5_PROXY}" "${CURL_SPECIAL_CONFIG}"
+    else
+        cat /dev/null > "${CURL_SPECIAL_CONFIG}"
+    fi
+}
+
+
+## Flush dns cache
+function flush_dns_cache() {
+    [[ -s "/lib/systemd/system/systemd-resolved.service" ]] && \
+        sudo ln -sf /lib/systemd/system/systemd-resolved.service \
+            /etc/systemd/system/dbus-org.freedesktop.resolve1.service || true
+
+    [[ -x "$(command -v systemd-resolve)" ]] && \
+        sudo systemd-resolve --flush-caches >/dev/null 2>&1
+
+    [[ -s "/etc/init.d/dns-clean" ]] && /etc/init.d/dns-clean start
+
+    [[ $(systemctl is-enabled systemd-resolved 2>/dev/null) ]] && \
+        sudo systemctl restart systemd-resolved.service >/dev/null 2>&1
+
+    [[ $(systemctl is-enabled dnsmasq 2>/dev/null) ]] && \
+        sudo systemctl restart dnsmasq.service >/dev/null 2>&1
+}
+
+
+## Download hosts from url
+function download_hosts() {
+    local hostsURL=${1:-""}
+    local hostsFile=${2:-"/etc/hosts"}
+    local exitStatus=0
+
+    [[ -z "$hostsURL" ]] && return 1
+
+    colorEcho ${BLUE} "Downloading hosts from ${hostsURL}..."
+    curl -SL -o "/tmp/hosts" "$hostsURL" || exitStatus=$?
+    if [[ "$exitStatus" -eq "0" ]]; then
+        if [[ "${hostsFile}" == "/etc/hosts" ]]; then
+            [[ ! -s "${hostsFile}.orig" ]] && \
+                sudo cp -f "${hostsFile}" "${hostsFile}.orig"
+
+            sudo cp -f "${hostsFile}" "${hostsFile}.bak" && \
+                sudo mv -f "/tmp/hosts" "${hostsFile}" && \
+                flush_dns_cache
+        else
+            cp -f "${hostsFile}" "${hostsFile}.bak" && \
+                mv -f "/tmp/hosts" "${hostsFile}"
+        fi
+
+        return 0
+    else
+        return 1
     fi
 }
 
