@@ -889,31 +889,17 @@ function set_git_proxy() {
 ## Setting socks5 proxy for certain git repos
 function set_git_special_proxy() {
     # Usage: set_git_special_proxy github.com,gitlab.com 127.0.0.1:55880
-
-    unset GIT_SOCKS5_PROXY_URL
-
-    local git_repo_url
-
-    [[ $# > 0 ]] && git_repo_url=$1
-
-    [[ $# > 1 ]] && GIT_SOCKS5_PROXY_URL=$2
-    # [[ -z "$GIT_SOCKS5_PROXY_URL" ]] && GIT_SOCKS5_PROXY_URL="127.0.0.1:1080"
-
-    if [[ -n "$GIT_SOCKS5_PROXY_URL" ]]; then
-        if ! check_socks5_proxy_up ${GIT_SOCKS5_PROXY_URL}; then
-            unset GIT_SOCKS5_PROXY_URL
-        fi
-    fi
-
+    local GIT_REPO_LIST=$1
+    local PROXY_ADDRESS=${2:-""}
     local Url_List
     local TargetUrl
 
-    Url_List=($(echo ${git_repo_url} | sed 's/,/ /g'))
+    Url_List=($(echo ${GIT_REPO_LIST} | sed 's/,/ /g'))
 
     for TargetUrl in ${Url_List[@]}; do
         [[ -z "$TargetUrl" ]] && continue
 
-        if [[ -z "$GIT_SOCKS5_PROXY_URL" ]]; then
+        if [[ -z "$PROXY_ADDRESS" ]]; then
             git config --global --unset http.https://${TargetUrl}.proxy
             git config --global --unset https.https://${TargetUrl}.proxy
         else
@@ -989,14 +975,16 @@ function set_global_proxy() {
     local SOCKS_ADDRESS=${1:-""}
     local HTTP_PROXY=${2:-""}
 
+    # clear git special proxy
+    set_git_special_proxy "github.com,gitlab.com"
+
     if [[ -n "$SOCKS_ADDRESS" ]]; then
         if check_socks5_proxy_up ${SOCKS_ADDRESS}; then
             set_proxy "socks5h://${SOCKS_ADDRESS}"
-            set_git_proxy "${SOCKS_ADDRESS}"
             set_curl_proxy "${SOCKS_ADDRESS}"
             set_wget_proxy "${HTTP_PROXY}"
-            # also clear git special proxy
-            set_git_special_proxy "github.com,gitlab.com"
+            # set git global proxy
+            set_git_proxy "${SOCKS_ADDRESS}"
         else
             clear_proxy
             set_git_proxy
