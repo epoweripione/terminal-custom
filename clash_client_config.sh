@@ -62,10 +62,10 @@ colorEcho ${BLUE} "Getting clash rules..."
 # https://github.com/ACL4SSR/ACL4SSR
 if [[ -s "/srv/subconverter/subconverter" ]]; then
     if Git_Clone_Update "ACL4SSR/ACL4SSR" "/srv/subconverter/ACL4SSR"; then
-        cp -f "/srv/subconverter/ACL4SSR/Clash/*.list" \
-            "/srv/subconverter/rules/ACL4SSR/Clash" && \
-        cp -f "/srv/subconverter/ACL4SSR/Clash/config/*.ini" \
-            "/srv/subconverter/config"
+        cp -f /srv/subconverter/ACL4SSR/Clash/*.list \
+            /srv/subconverter/rules/ACL4SSR/Clash && \
+        cp -f /srv/subconverter/ACL4SSR/Clash/config/*.ini \
+            /srv/subconverter/config
     fi
 fi
 
