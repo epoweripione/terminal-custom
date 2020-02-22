@@ -976,7 +976,10 @@ function set_global_proxy() {
         if check_socks5_proxy_up ${SOCKS_ADDRESS}; then
             set_proxy "socks5h://${SOCKS_ADDRESS}"
             set_curl_proxy "${SOCKS_ADDRESS}"
-            set_wget_proxy "${HTTP_ADDRESS}"
+            # wget must use http proxy
+            [[ -n "$HTTP_ADDRESS" ]] && \
+                set_wget_proxy "${HTTP_ADDRESS}" || \
+                set_wget_proxy
             # set git global proxy
             set_git_proxy "${SOCKS_ADDRESS}"
         else
