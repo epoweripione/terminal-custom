@@ -275,7 +275,11 @@ if [[ -n "$PROXY_CUSTOM" ]]; then
     CUSTOM_START_LINE=$((${CUSTOM_START_LINE} + 1))
     PROXY_CUSTOM_COUNT=$(echo "$PROXY_CUSTOM" | wc -l)
     CUSTOM_END_LINE=$((${CUSTOM_START_LINE} + ${PROXY_CUSTOM_COUNT}))
-    sed -i "${CUSTOM_START_LINE},${CUSTOM_END_LINE} d" "$TARGET_CONFIG_FILE" 
+    sed -i "${CUSTOM_START_LINE},${CUSTOM_END_LINE} d" "$TARGET_CONFIG_FILE"
+
+    for TargetName in "${CUSTOM_NAME[@]}"; do
+        sed -i "/      - ${TargetName}/d" "$TARGET_CONFIG_FILE"
+    done
 fi
 
 # Copy to file

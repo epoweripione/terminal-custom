@@ -378,7 +378,6 @@ function use_clash() {
                     unzip -qo "/tmp/subconverter_clash.zip" -d "/srv" && \
                     rm -f "/tmp/subconverter_clash.zip"
             fi
-
         fi
 
         [[ ! -s "/srv/subconverter/subconverter" ]] && install_subconverter
