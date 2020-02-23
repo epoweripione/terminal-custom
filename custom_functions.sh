@@ -995,6 +995,7 @@ function set_global_proxy() {
                 set_wget_proxy
             # set git global proxy
             set_git_proxy "${SOCKS_ADDRESS}"
+            colorEcho ${GREEN} "Now using ${SOCKS_ADDRESS} for proxy!"
         else
             clear_proxy
             set_git_proxy
