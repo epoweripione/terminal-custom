@@ -90,6 +90,10 @@ if [[ ${RULES_LINE} -gt 0 ]]; then
         colorEcho ${BLUE} "    Getting subscription rules..."
         curl -sL --connect-timeout 5 --max-time 15 \
             -o "${WORKDIR}/rules.yml" "${RULES_URL}"
+        if [[ $? != 0 ]]; then
+            colorEcho ${RED} "    Can't get rules from ${RULES_URL}!"
+            exit 1
+        fi
     fi
 
     if [[ -s "${WORKDIR}/rules.yml" ]]; then
@@ -145,6 +149,10 @@ if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
         colorEcho ${BLUE} "    Getting cfw bypass rules..."
         curl -sL --connect-timeout 5 --max-time 15 \
             -o "${WORKDIR}/cfw_bypass.yml" "${CFW_BYPASS_URL}"
+        if [[ $? != 0  ]]; then
+            colorEcho ${RED} "    Can't get cfw bypass rules from ${CFW_BYPASS_URL}!"
+            exit 1
+        fi
     fi
 
     if [[ -s "${WORKDIR}/cfw_bypass.yml" ]]; then
@@ -203,16 +211,17 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
 
     # add custom proxy to 1st,2nd group,before 1st proxy list
     if [[ -n "$PROXY_CUSTOM" ]]; then
-        CUSTOM_NAME_LIST=$(echo "$PROXY_CUSTOM" \
-            | sed -r "s/.+name:([^,{}]+).*/\1/i" \
-            | sed -e "s/^\s//" -e "s/\s$//")
         CUSTOM_NAME=()
-        while read -r line; do CUSTOM_NAME+=("$line"); done <<<"$CUSTOM_NAME_LIST"
+        while read -r line; do
+            line_name=$(echo "$line" \
+                | sed -rn "s/.*name:([^,{}]+).*/\1/ip" \
+                | sed -e "s/^\s//" -e "s/\s$//")
+            CUSTOM_NAME+=("$line_name")
+        done <<<"$PROXY_CUSTOM"
 
         # FIRST_PROXY_NAME=$(echo "${PROXY_NAME[0]}" | sed 's/[^a-zA-Z 0-9]/\\&/g')
         FIRST_PROXY_NAME=$(echo "${PROXY_NAME[0]}" \
-            | sed -e 's/^"//' -e 's/"$//' \
-            | sed 's/[\\/:\*\?<>\|\$\(\)\[\^\{\}\+\.\=\!]/\\&/g' \
+            | sed 's/[\\/:\*\?<>\|\$\(\)\[\^\{\}\+\.\=\!\"]/\\&/g' \
             | sed 's/]/\\&/g')
         for TargetName in "${CUSTOM_NAME[@]}"; do
             [[ -z "$TargetName" ]] && continue
@@ -231,8 +240,7 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         [[ -z "$TargetName" ]] && continue
 
         TargetName=$(echo "${TargetName}" \
-            | sed -e 's/^"//' -e 's/"$//' \
-            | sed 's/[\\/:\*\?<>\|\$\(\)\[\^\{\}\+\.\=\!]/\\&/g' \
+            | sed 's/[\\/:\*\?<>\|\$\(\)\[\^\{\}\+\.\=\!\"]/\\&/g' \
             | sed 's/]/\\&/g')
         PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" | sed "/- ${TargetName}$/d")
 

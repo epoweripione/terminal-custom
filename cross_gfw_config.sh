@@ -82,7 +82,7 @@ function get_v2ray_config_from_subscription() {
     colorEcho ${BLUE} "Getting v2ray subscriptions..."
     curl -sSf -4 --connect-timeout 10 --max-time 30 \
         -o "${VMESS_FILENAME}" "${SUBSCRIBE_URL}"
-    if [[ $? != 0  ]]; then
+    if [[ $? != 0 ]]; then
         colorEcho ${RED} "Can't get the subscriptions from ${SUBSCRIBE_URL}!"
         return 1
     fi
