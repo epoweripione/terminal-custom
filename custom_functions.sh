@@ -913,15 +913,28 @@ function set_apt_proxy() {
 
     if [[ -n "$PROXY_ADDRESS" ]]; then
         echo -e "Acquire::http::proxy \"http://${PROXY_ADDRESS}/\";" \
-            | sudo tee "$APT_PROXY_CONFIG" >/dev/null
+            | sudo tee -a "$APT_PROXY_CONFIG" >/dev/null
         echo -e "Acquire::https::proxy \"https://${PROXY_ADDRESS}/\";" \
-            | sudo tee "$APT_PROXY_CONFIG" >/dev/null
+            | sudo tee -a "$APT_PROXY_CONFIG" >/dev/null
         echo -e "Acquire::ftp::proxy \"ftp://${PROXY_ADDRESS}/\";" \
-            | sudo tee "$APT_PROXY_CONFIG" >/dev/null
+            | sudo tee -a "$APT_PROXY_CONFIG" >/dev/null
     else
         [[ -s "$APT_PROXY_CONFIG" ]] && \
             sudo rm -f "$APT_PROXY_CONFIG"
     fi
+}
+
+
+## Setting yum proxy
+function set_yum_proxy() {
+    local PROXY_ADDRESS=${1:-"_none_"}
+    local YUM_PROXY_CONFIG=${2:-"/etc/yum.conf"}
+
+    [[ ! -x "$(command -v yum)" ]] && return 0
+
+    # sudo sed -i "s/[#]*[ ]*proxy.*/proxy=_none_/" "$YUM_PROXY_CONFIG"
+    sudo sed -i "/[#]*[ ]*proxy.*/d" "$YUM_PROXY_CONFIG"
+    echo "proxy=socks5://${PROXY_ADDRESS}" | sudo tee -a "$YUM_PROXY_CONFIG" >/dev/null
 }
 
 

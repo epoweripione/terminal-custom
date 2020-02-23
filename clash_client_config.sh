@@ -167,9 +167,35 @@ fi
 colorEcho ${BLUE} "  Optimizing rules..."
 if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     # proxy list
-    PROXY_LIST=$(echo "$PROXY" | grep -E "\-\s{name:.*.," | cut -d, -f1 | cut -d: -f2-)
+    # Extract word from string using grep/sed/awk
+    # https://askubuntu.com/questions/697120/extract-word-from-string-using-grep-sed-awk
     PROXY_NAME=()
-    while read -r line; do PROXY_NAME+=("$line"); done <<<"$PROXY_LIST"
+    PROXY_TYPE=()
+    while read -r line; do
+        line_name=$(echo "$line" \
+            | sed -rn "s/.*name:([^,{}]+).*/\1/ip" \
+            | sed -e "s/^\s//" -e "s/\s$//")
+        PROXY_NAME+=("$line_name")
+
+        line_type=$(echo "$line" \
+            | sed -rn "s/.*type:([^,{}]+).*/\1/ip" \
+            | sed -e "s/^\s//" -e "s/\s$//")
+        PROXY_NAME+=("$line_type")
+    done <<<"$PROXY"
+
+    ## PROXY_NAME_LIST=$(echo "$PROXY" | grep -E "\-\s{name:.*.," | cut -d, -f1 | cut -d: -f2-)
+    ## PROXY_NAME_LIST=$(echo "$PROXY" | grep -Po -i "name:\s*\K([^,{}]+)")
+    # PROXY_NAME_LIST=$(echo "$PROXY" \
+    #     | sed -r "s/.*name:([^,{}]+).*/\1/i" \
+    #     | sed -e "s/^\s//" -e "s/\s$//")
+    # PROXY_NAME=()
+    # while read -r line; do PROXY_NAME+=("$line"); done <<<"$PROXY_NAME_LIST"
+
+    # PROXY_TYPE_LIST=$(echo "$PROXY" \
+    #     | sed -r "s/.*type:([^,{}]+).*/\1/i" \
+    #     | sed -e "s/^\s//" -e "s/\s$//")
+    # PROXY_TYPE=()
+    # while read -r line; do PROXY_TYPE+=("$line"); done <<<"$PROXY_TYPE_LIST"
 
     # GROUP_CNT=$(echo "$PROXY_GROUP" | grep -E "\-\sname:" | wc -l)
     PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP" | awk "/- name:/{i++}i<=2")
@@ -177,9 +203,11 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
 
     # add custom proxy to 1st,2nd group,before 1st proxy list
     if [[ -n "$PROXY_CUSTOM" ]]; then
-        CUSTOM_LIST=$(echo "$PROXY_CUSTOM" | grep -E "\-\s{name:.*.," | cut -d, -f1 | cut -d: -f2-)
+        CUSTOM_NAME_LIST=$(echo "$PROXY_CUSTOM" \
+            | sed -r "s/.+name:([^,{}]+).*/\1/i" \
+            | sed -e "s/^\s//" -e "s/\s$//")
         CUSTOM_NAME=()
-        while read -r line; do CUSTOM_NAME+=("$line"); done <<<"$CUSTOM_LIST"
+        while read -r line; do CUSTOM_NAME+=("$line"); done <<<"$CUSTOM_NAME_LIST"
 
         # FIRST_PROXY_NAME=$(echo "${PROXY_NAME[0]}" | sed 's/[^a-zA-Z 0-9]/\\&/g')
         FIRST_PROXY_NAME=$(echo "${PROXY_NAME[0]}" \
@@ -187,17 +215,33 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
             | sed 's/[\\/:\*\?<>\|\$\(\)\[\^\{\}\+\.\=\!]/\\&/g' \
             | sed 's/]/\\&/g')
         for TargetName in "${CUSTOM_NAME[@]}"; do
+            [[ -z "$TargetName" ]] && continue
             PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" | sed "/- ${FIRST_PROXY_NAME}$/i\      - ${TargetName}")
         done
     fi
 
+    ## only keep vmess & socks5
+    # PORXY=$(echo $PROXY | grep -E -i "type:\s*vmess|type:\s*socks5")
+
     # delete proxy list after 3th group
+    PROXY_INDEX=-1
     for TargetName in "${PROXY_NAME[@]}"; do
+        PROXY_INDEX=$((${PROXY_INDEX} + 1))
+
+        [[ -z "$TargetName" ]] && continue
+
         TargetName=$(echo "${TargetName}" \
             | sed -e 's/^"//' -e 's/"$//' \
             | sed 's/[\\/:\*\?<>\|\$\(\)\[\^\{\}\+\.\=\!]/\\&/g' \
             | sed 's/]/\\&/g')
         PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" | sed "/- ${TargetName}$/d")
+
+        ## only keep vmess & socks5
+        # if [[ "$PROXY_TYPE[$PROXY_INDEX]" == "vmess" || "$PROXY_TYPE[$PROXY_INDEX]" == "socks5" ]]; then
+        #     :
+        # else
+        #     PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" | sed "/- ${TargetName}$/d")
+        # fi
     done
 
     PROXY_GROUP=$(echo -e "${PROXY_GROUP_MAIN}\n${PROXY_GROUP_REST}")
