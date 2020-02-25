@@ -221,11 +221,12 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
 
         # FIRST_PROXY_NAME=$(echo "${PROXY_NAME[0]}" | sed 's/[^a-zA-Z 0-9]/\\&/g')
         FIRST_PROXY_NAME=$(echo "${PROXY_NAME[0]}" \
-            | sed 's/[\\\/\:\*\?\|\$\[\^\{\}\+\.\=\!\"]/\\&/g' \
+            | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
             | sed 's/]/\\&/g')
         for TargetName in "${CUSTOM_NAME[@]}"; do
             [[ -z "$TargetName" ]] && continue
-            PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" | sed "/- ${FIRST_PROXY_NAME}$/i\      - ${TargetName}")
+            PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" \
+                | sed "/^\s*\-\s*${FIRST_PROXY_NAME}$/i\      - ${TargetName}")
         done
     fi
 
@@ -240,9 +241,10 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         [[ -z "$TargetName" ]] && continue
 
         TargetName=$(echo "${TargetName}" \
-            | sed 's/[\\\/\:\*\?\|\$\[\^\{\}\+\.\=\!\"]/\\&/g' \
+            | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
             | sed 's/]/\\&/g')
-        PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" | sed "/- ${TargetName}$/d")
+        PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" \
+            | sed "/^\s*\-\s*${TargetName}$/d")
 
         ## only keep vmess & socks5
         # if [[ "$PROXY_TYPE[$PROXY_INDEX]" == "vmess" || "$PROXY_TYPE[$PROXY_INDEX]" == "socks5" ]]; then
@@ -255,7 +257,7 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     PROXY_GROUP=$(echo -e "${PROXY_GROUP_MAIN}\n${PROXY_GROUP_REST}")
 
     # add blank line before each group
-    PROXY_GROUP=$(echo "$PROXY_GROUP" | sed "s/  - name:/\n&/" | sed '1d')
+    PROXY_GROUP=$(echo "$PROXY_GROUP" | sed 's/^\s*\-\s*name:/\n&/' | sed '1d')
 fi
 
 
