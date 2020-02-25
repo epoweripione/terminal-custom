@@ -206,8 +206,8 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     # while read -r line; do PROXY_TYPE+=("$line"); done <<<"$PROXY_TYPE_LIST"
 
     # GROUP_CNT=$(echo "$PROXY_GROUP" | grep -E "\-\sname:" | wc -l)
-    PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP" | awk "/- name:/{i++}i<=2")
-    PROXY_GROUP_REST=$(echo "$PROXY_GROUP" | awk "/- name:/{i++}i>2")
+    PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i<=2")
+    PROXY_GROUP_REST=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i>2")
 
     # add custom proxy to 1st,2nd group,before 1st proxy list
     if [[ -n "$PROXY_CUSTOM" ]]; then
@@ -221,7 +221,7 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
 
         # FIRST_PROXY_NAME=$(echo "${PROXY_NAME[0]}" | sed 's/[^a-zA-Z 0-9]/\\&/g')
         FIRST_PROXY_NAME=$(echo "${PROXY_NAME[0]}" \
-            | sed 's/[\\/:\*\?<>\|\$\(\)\[\^\{\}\+\.\=\!\"]/\\&/g' \
+            | sed 's/[\\\/\:\*\?\|\$\[\^\{\}\+\.\=\!\"]/\\&/g' \
             | sed 's/]/\\&/g')
         for TargetName in "${CUSTOM_NAME[@]}"; do
             [[ -z "$TargetName" ]] && continue
@@ -240,7 +240,7 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         [[ -z "$TargetName" ]] && continue
 
         TargetName=$(echo "${TargetName}" \
-            | sed 's/[\\/:\*\?<>\|\$\(\)\[\^\{\}\+\.\=\!\"]/\\&/g' \
+            | sed 's/[\\\/\:\*\?\|\$\[\^\{\}\+\.\=\!\"]/\\&/g' \
             | sed 's/]/\\&/g')
         PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" | sed "/- ${TargetName}$/d")
 

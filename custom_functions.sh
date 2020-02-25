@@ -1192,9 +1192,9 @@ EOF
 
     sudo systemctl enable "$service_name" && sudo systemctl restart "$service_name"
     if [[ $(systemctl is-enabled "$service_name" 2>/dev/null) ]]; then
-        colorEcho ${GREEN} "  ${service_name} installed!"
+        colorEcho ${GREEN} "  systemd service ${service_name} installed!"
     else
-        colorEcho ${RED} "   ${service_name} install failed!"
+        colorEcho ${RED} "   systemd service ${service_name} install failed!"
     fi
 }
 
