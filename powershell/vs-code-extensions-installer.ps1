@@ -74,6 +74,7 @@ $extensions = @(
 	# Debug & Test
 	"formulahendry.code-runner"
 	"humao.rest-client"
+	"hediet.debug-visualizer"
     # Extra tools
 	"shan.code-settings-sync"
 	"mkxml.vscode-filesize"

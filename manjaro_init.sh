@@ -12,29 +12,40 @@ else
     fi
 fi
 
+# Local WAN IP
+if [[ -z "$WAN_NET_IP" ]]; then
+    get_network_wan_ipv4
+    get_network_wan_geo
+fi
+
+if [[ "${WAN_NET_IP_GEO}" =~ 'China' || "${WAN_NET_IP_GEO}" =~ 'CN' ]]; then
+    IP_GEO_IN_CHINA="yes"
+fi
 
 CURRENT_DIR=$(pwd)
 
-# socks5 proxy
-# git
-read -p "Use socks5 proxy for github,gitlab?[y/N]:" GIT_PROXY_CHOICE
-if [[ "$GIT_PROXY_CHOICE" == 'y' || "$GIT_PROXY_CHOICE" == 'Y' ]]; then
-    read -p "Socks5 proxy address?[127.0.0.1:55880]:" Sock5Address
-    [[ -z "$Sock5Address" ]] && Sock5Address=127.0.0.1:55880
-    
-    # [[ -s "$HOME/cross_gfw_config.sh" ]] && source "$HOME/cross_gfw_config.sh"
-    set_git_special_proxy github.com,gitlab.com ${Sock5Address}
-fi
 
-# curl
-read -p "Use socks5 proxy for curl?[y/N]:" CURL_PROXY_CHOICE
-if [[ "$CURL_PROXY_CHOICE" == 'y' || "$CURL_PROXY_CHOICE" == 'Y' ]]; then
-    read -p "Socks5 proxy address?[127.0.0.1:55880]:" Sock5Address
-    [[ -z "$Sock5Address" ]] && Sock5Address=127.0.0.1:55880
-    echo "--socks5-hostname \"${Sock5Address}\"" >> $HOME/.curlrc
-else
-    sed -i "/^--socks5-hostname.*/d" $HOME/.curlrc
-fi
+## socks5 proxy
+## git
+# read -p "Use socks5 proxy for github,gitlab?[y/N]:" GIT_PROXY_CHOICE
+# if [[ "$GIT_PROXY_CHOICE" == 'y' || "$GIT_PROXY_CHOICE" == 'Y' ]]; then
+#     read -p "Socks5 proxy address?[127.0.0.1:55880]:" Sock5Address
+#     [[ -z "$Sock5Address" ]] && Sock5Address=127.0.0.1:55880
+    
+#     # [[ -s "$HOME/cross_gfw_config.sh" ]] && source "$HOME/cross_gfw_config.sh"
+#     set_git_special_proxy github.com,gitlab.com ${Sock5Address}
+# fi
+
+## curl
+# read -p "Use socks5 proxy for curl?[y/N]:" CURL_PROXY_CHOICE
+# if [[ "$CURL_PROXY_CHOICE" == 'y' || "$CURL_PROXY_CHOICE" == 'Y' ]]; then
+#     read -p "Socks5 proxy address?[127.0.0.1:55880]:" Sock5Address
+#     [[ -z "$Sock5Address" ]] && Sock5Address=127.0.0.1:55880
+#     echo "--socks5-hostname \"${Sock5Address}\"" >> $HOME/.curlrc
+# else
+#     sed -i "/^--socks5-hostname.*/d" $HOME/.curlrc
+# fi
+
 
 # # snap
 # read -p "Use socks5 proxy for snap?[y/N]:" SNAP_PROXY_CHOICE
@@ -57,19 +68,21 @@ fi
 
 # pacman
 # Generate custom mirrorlist
-read -p "Generate custom mirrorlist in China?[y/N]:" CHOICE
-if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]
+# read -p "Generate custom mirrorlist in China?[y/N]:" CHOICE
+# if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]; then
+if [[ "$IP_GEO_IN_CHINA" == "yes" ]]; then
     sudo pacman-mirrors -i -c China -m rank
 fi
 
 # Show colorful output on the terminal
 sudo sed -i 's|^#Color|Color|' /etc/pacman.conf
 
-# Arch Linux Chinese Community Repository
-# https://github.com/archlinuxcn/mirrorlist-repo
-read -p "Add Arch Linux Chinese Community Repository?[y/N]:" CHOICE
-# CHOICE=$(echo $CHOICE | sed 's/.*/\U&/')
-if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]
+## Arch Linux Chinese Community Repository
+## https://github.com/archlinuxcn/mirrorlist-repo
+# read -p "Add Arch Linux Chinese Community Repository?[y/N]:" CHOICE
+## CHOICE=$(echo $CHOICE | sed 's/.*/\U&/')
+# if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]
+if [[ "$IP_GEO_IN_CHINA" == "yes" ]]; then
     if [[ ! $(grep "archlinuxcn" /etc/pacman.conf) ]]; then
         echo "[archlinuxcn]" | sudo tee -a /etc/pacman.conf
         # echo "Server = https://repo.archlinuxcn.org/\$arch" | sudo tee -a /etc/pacman.conf
@@ -100,7 +113,7 @@ sudo pacman --noconfirm -S \
 # https://wiki.manjaro.org/index.php?title=VirtualBox
 # virtualbox-guest-utils
 read -p "Install virtualbox-guest-utils?[y/N]:" CHOICE
-if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]
+if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]; then
     sudo pacman --noconfirm -S virtualbox-guest-utils
     linux_ver=linux$(uname -r | cut -d'.' -f1-2 | sed 's/\.//')
     sudo pacman --noconfirm -S ${linux_ver}-virtualbox-guest-modules
@@ -109,7 +122,7 @@ fi
 
 # winbind
 read -p "Enable winbind?[y/N]:" CHOICE
-if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]
+if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]; then
     sudo pacman --noconfirm -S manjaro-settings-samba
     sudo usermod -a -G sambashare $(whoami)
     sudo systemctl enable winbind && sudo systemctl start winbind
@@ -147,8 +160,9 @@ else
         makepkg -si
 fi
 
-# AUR mirror in china
-if ! check_webservice_up www.google.com; then
+## AUR mirror in china
+# if ! check_webservice_up www.google.com; then
+if [[ "$IP_GEO_IN_CHINA" == "yes" ]]; then
     # $HOME/.config/yay/config.json
     # yay -P -g
     [[ -x "$(command -v yay)" ]] && \
@@ -170,16 +184,16 @@ fi
 # Fonts
 sudo pacman --noconfirm -S powerline-fonts ttf-symbola ttf-fira-code ttf-sarasa-gothic
 
-# FuraCode Nerd Font Complete Mono
-read -p "Download URL for FuraCode-Mono?[Use github by default]" NerdFont_URL
+# FiraCode Nerd Font Complete Mono
+read -p "Download URL for FiraCode-Mono?[Use github by default]" NerdFont_URL
 [[ -z "$NerdFont_URL" ]] && \
-    NerdFont_URL="https://github.com/epoweripione/terminal-custom/releases/download/v2.3.2/FuraCode-Mono-2.0.0.zip"
+    NerdFont_URL="https://github.com/epoweripione/terminal-custom/releases/download/v2.3.3/FiraCode-Mono-2.0.0.zip"
 
-mkdir -p "$HOME/patched-fonts/FuraCode-Mono" && \
-    curl -fSL -o "$HOME/patched-fonts/FuraCode-Mono.zip" ${NerdFont_URL} && \
-    unzip -q "$HOME/patched-fonts/FuraCode-Mono.zip" -d "$HOME/patched-fonts/FuraCode-Mono" && \
-    sudo mv -f "$HOME/patched-fonts/FuraCode-Mono/" "/usr/share/fonts/" && \
-    sudo chmod -R 744 "/usr/share/fonts/FuraCode-Mono" && \
+mkdir -p "$HOME/patched-fonts/FiraCode-Mono" && \
+    curl -fSL -o "$HOME/patched-fonts/FiraCode-Mono.zip" ${NerdFont_URL} && \
+    unzip -q "$HOME/patched-fonts/FiraCode-Mono.zip" -d "$HOME/patched-fonts/FiraCode-Mono" && \
+    sudo mv -f "$HOME/patched-fonts/FiraCode-Mono/" "/usr/share/fonts/" && \
+    sudo chmod -R 744 "/usr/share/fonts/FiraCode-Mono" && \
     sudo fc-cache -fv
 
 
@@ -578,14 +592,14 @@ yay -Yc
 # (crontab -l 2>/dev/null || true; echo "0 20 * * * sync && shutdown -h now") | crontab -
 
 
-# Reset curl proxy
-if [[ "$CURL_PROXY_CHOICE" == 'y' || "$CURL_PROXY_CHOICE" == 'Y' ]]; then
-    read -p "Reset curl socks5 proxy?[Y/n]:" CHOICE
-    [[ -z "$CHOICE" ]] && CHOICE=Y
-    if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]
-        sed -i "/^--socks5-hostname.*/d" $HOME/.curlrc
-    fi
-fi
+## Reset curl proxy
+# if [[ "$CURL_PROXY_CHOICE" == 'y' || "$CURL_PROXY_CHOICE" == 'Y' ]]; then
+#     read -p "Reset curl socks5 proxy?[Y/n]:" CHOICE
+#     [[ -z "$CHOICE" ]] && CHOICE=Y
+#     if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]
+#         sed -i "/^--socks5-hostname.*/d" $HOME/.curlrc
+#     fi
+# fi
 
 
 cd ${CURRENT_DIR}

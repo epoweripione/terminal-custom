@@ -5,6 +5,9 @@ YELLOW="33m"   # Warning message
 BLUE="36m"     # Info message
 FUCHSIA="35m"
 
+NO_PROXY_LISTS="localhost,127.0.0.1,localaddress,.localdomain.com"
+NO_PROXY_LISTS="${NO_PROXY_LISTS},.ident.me,ifconfig.co,icanhazip.com,ipinfo.io"
+
 function colorEcho() {
     local COLOR=$1
     echo -e "\033[${COLOR}${@:2}\033[0m"
@@ -476,12 +479,12 @@ function set_proxy() {
     local proxy_url=${1:-"http://127.0.0.1:8080"}
 
     export {http,https,ftp,all}_proxy=${proxy_url}
-    export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
+    export no_proxy="${NO_PROXY_LISTS}"
     # export no_proxy="localhost,127.0.0.0/8,*.local"
 
     # for curl
     export {HTTP,HTTPS,FTP,ALL}_PROXY=${proxy_url}
-    export NO_PROXY="localhost,127.0.0.1,localaddress,.localdomain.com"
+    export NO_PROXY="${NO_PROXY_LISTS}"
 }
 
 function clear_proxy() {
@@ -802,11 +805,10 @@ function set_proxy_mirrors_env() {
 function check_webservice_up() {
     # How to use:
     # if check_webservice_up www.google.com; then echo "ok"; else echo "something wrong"; fi
-    local webservice_url=$1
+    local webservice_url=${1:-"www.google.com"}
 
-    [[ -z "$webservice_url" ]] && webservice_url="www.google.com"
-
-    local http=`curl -sL -w "%{http_code}\\n" "${webservice_url}" \-o /dev/null --connect-timeout 3 --max-time 5`
+    local http=`curl -sL --noproxy "*" --connect-timeout 3 --max-time 5 \
+                -w "%{http_code}\\n" "${webservice_url}" -o /dev/null`
     local exitStatus=0
 
     case "$http" in
@@ -950,6 +952,7 @@ function set_wget_proxy() {
         sed -i "/^http_proxy.*/d" "$WGET_CONFIG"
         sed -i "/^https_proxy.*/d" "$WGET_CONFIG"
         sed -i "/^ftp_proxy.*/d" "$WGET_CONFIG"
+        sed -i "/^no_proxy.*/d" "$WGET_CONFIG"
     fi
 
     if [[ -n "$PROXY_ADDRESS" ]]; then
@@ -957,6 +960,7 @@ function set_wget_proxy() {
         echo "http_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_CONFIG"
         echo "https_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_CONFIG"
         echo "ftp_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_CONFIG"
+        echo "no_proxy = ${NO_PROXY_LISTS}" >> "$WGET_CONFIG"
     fi
 }
 
@@ -969,10 +973,12 @@ function set_curl_proxy() {
     [[ ! -x "$(command -v curl)" ]] && return 0
 
     [[ -s "$CURL_CONFIG" ]] && \
-        sed -i "/^--socks5-hostname.*/d" "${CURL_CONFIG}"
+        sed -i "/^socks5-hostname.*/d" "${CURL_CONFIG}"
+        sed -i "/^noproxy.*/d" "${CURL_CONFIG}"
 
     if [[ -n "$PROXY_ADDRESS" ]]; then
-        echo "--socks5-hostname \"${PROXY_ADDRESS}\"" >> "${CURL_CONFIG}"
+        echo "socks5-hostname = ${PROXY_ADDRESS}" >> "${CURL_CONFIG}"
+        echo "noproxy = ${NO_PROXY_LISTS}" >> "${CURL_CONFIG}"
     fi
 }
 
