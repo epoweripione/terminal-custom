@@ -5,7 +5,7 @@ YELLOW="33m"   # Warning message
 BLUE="36m"     # Info message
 FUCHSIA="35m"
 
-NO_PROXY_LISTS="localhost,127.0.0.1,localaddress,.localdomain.com"
+NO_PROXY_LISTS="localhost,127.0.0.1,.local"
 NO_PROXY_LISTS="${NO_PROXY_LISTS},ip-api.com,ident.me,ifconfig.co,icanhazip.com,ipinfo.io"
 
 function colorEcho() {
@@ -849,8 +849,8 @@ function check_webservice_up() {
 function check_socks5_proxy_up() {
     # How to use:
     # if check_socks5_proxy_up 127.0.0.1:1080 www.google.com; then echo "ok"; else echo "something wrong"; fi
-    local socks_proxy_url={1:-"127.0.0.1:1080"}
-    local webservice_url={2:-"www.google.com"}
+    local socks_proxy_url=${1:-"127.0.0.1:1080"}
+    local webservice_url=${2:-"www.google.com"}
     local exitStatus=0
 
     curl -sSf -I --connect-timeout 3 --max-time 5 \
@@ -953,11 +953,11 @@ function set_wget_proxy() {
     fi
 
     if [[ -n "$PROXY_ADDRESS" ]]; then
-        echo "use_proxy = on" >> "$WGET_CONFIG"
-        echo "http_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_CONFIG"
-        echo "https_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_CONFIG"
-        echo "ftp_proxy = http://${PROXY_ADDRESS}/" >> "$WGET_CONFIG"
-        echo "no_proxy = ${NO_PROXY_LISTS}" >> "$WGET_CONFIG"
+        echo "use_proxy=on" >> "$WGET_CONFIG"
+        echo "http_proxy=http://${PROXY_ADDRESS}/" >> "$WGET_CONFIG"
+        echo "https_proxy=http://${PROXY_ADDRESS}/" >> "$WGET_CONFIG"
+        echo "ftp_proxy=http://${PROXY_ADDRESS}/" >> "$WGET_CONFIG"
+        echo "no_proxy=${NO_PROXY_LISTS}" >> "$WGET_CONFIG"
     fi
 }
 
@@ -975,8 +975,8 @@ function set_curl_proxy() {
     fi
 
     if [[ -n "$PROXY_ADDRESS" ]]; then
-        echo "socks5-hostname = ${PROXY_ADDRESS}" >> "${CURL_CONFIG}"
-        echo "noproxy = ${NO_PROXY_LISTS}" >> "${CURL_CONFIG}"
+        echo "socks5-hostname=${PROXY_ADDRESS}" >> "${CURL_CONFIG}"
+        echo "noproxy=${NO_PROXY_LISTS}" >> "${CURL_CONFIG}"
     fi
 }
 

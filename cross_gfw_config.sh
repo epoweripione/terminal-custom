@@ -496,7 +496,7 @@ function main() {
             set_special_socks5_proxy "${SOCKS_ADDRESS}"
 
             set_global_proxy "${SOCKS_ADDRESS}" "${HTTP_ADDRESS}"
-            colorEcho ${GREEN} "  Global socks5 proxy address: ${SOCKS_ADDRESS}"
+            # colorEcho ${GREEN} "  Global socks5 proxy address: ${SOCKS_ADDRESS}"
         else
             set_global_proxy # clear global proxy
 
