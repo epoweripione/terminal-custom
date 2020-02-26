@@ -6,7 +6,7 @@ BLUE="36m"     # Info message
 FUCHSIA="35m"
 
 NO_PROXY_LISTS="localhost,127.0.0.1,localaddress,.localdomain.com"
-NO_PROXY_LISTS="${NO_PROXY_LISTS},.ident.me,ifconfig.co,icanhazip.com,ipinfo.io"
+NO_PROXY_LISTS="${NO_PROXY_LISTS},ip-api.com,ident.me,ifconfig.co,icanhazip.com,ipinfo.io"
 
 function colorEcho() {
     local COLOR=$1
@@ -653,14 +653,15 @@ function get_network_wan_ipv4() {
     local target_host
 
     remote_host_list=(
-        https://ifconfig.co/
-        https://v4.ident.me/
-        http://icanhazip.com/
-        http://ipinfo.io/ip
+        "http://ip-api.com/line/?fields=query"
+        "https://v4.ident.me/"
+        "http://icanhazip.com/"
+        "http://ipinfo.io/ip"
+        "https://ifconfig.co/"
     )
 
     for target_host in ${remote_host_list[@]}; do
-        WAN_NET_IP=$(curl -s -4 --connect-timeout 5 --max-time 10 ${target_host} \
+        WAN_NET_IP=$(curl -s -4 --connect-timeout 5 --max-time 10 "${target_host}" \
                         | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
                         | head -n1)
         [[ -n "$WAN_NET_IP" ]] && break
@@ -675,13 +676,13 @@ function get_network_wan_ipv6() {
     local target_host
 
     remote_host_list=(
-        https://ifconfig.co/
-        https://v6.ident.me/
-        http://icanhazip.com/
+        "https://v6.ident.me/"
+        "http://icanhazip.com/"
+        "https://ifconfig.co/"
     )
 
     for target_host in ${remote_host_list[@]}; do
-        WAN_NET_IPV6=$(curl -s -6 --connect-timeout 5 --max-time 10 ${target_host} \
+        WAN_NET_IPV6=$(curl -s -6 --connect-timeout 5 --max-time 10 "${target_host}" \
                         | grep -Eo '^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$' \
                         | head -n1)
         [[ -n "$WAN_NET_IPV6" ]] && break
@@ -700,10 +701,12 @@ function get_network_wan_geo() {
 
     if [[ -z "$WAN_NET_IP_GEO" ]]; then
         # Country lookup: China
-        WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 https://ifconfig.co/country`
+        WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 \
+            "http://ip-api.com/line/?fields=country"`
         if [[ -z "$WAN_NET_IP_GEO" ]]; then
             # Country lookup: CN
-            WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 https://ifconfig.co/country-iso`
+            WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 \
+                "http://ip-api.com/line/?fields=countryCode"`
         fi
     fi
 }
@@ -846,15 +849,9 @@ function check_webservice_up() {
 function check_socks5_proxy_up() {
     # How to use:
     # if check_socks5_proxy_up 127.0.0.1:1080 www.google.com; then echo "ok"; else echo "something wrong"; fi
-    local socks_proxy_url
-    local webservice_url
+    local socks_proxy_url={1:-"127.0.0.1:1080"}
+    local webservice_url={2:-"www.google.com"}
     local exitStatus=0
-
-    [[ $# > 0 ]] && socks_proxy_url=$1
-    [[ $# > 1 ]] && webservice_url=$2
-
-    [[ -z "$socks_proxy_url" ]] && socks_proxy_url="127.0.0.1:1080"
-    [[ -z "$webservice_url" ]] && webservice_url="www.google.com"
 
     curl -sSf -I --connect-timeout 3 --max-time 5 \
         --socks5-hostname "${socks_proxy_url}" \
@@ -972,9 +969,10 @@ function set_curl_proxy() {
 
     [[ ! -x "$(command -v curl)" ]] && return 0
 
-    [[ -s "$CURL_CONFIG" ]] && \
+    if [[ -s "$CURL_CONFIG" ]]; then
         sed -i "/^socks5-hostname.*/d" "${CURL_CONFIG}"
         sed -i "/^noproxy.*/d" "${CURL_CONFIG}"
+    fi
 
     if [[ -n "$PROXY_ADDRESS" ]]; then
         echo "socks5-hostname = ${PROXY_ADDRESS}" >> "${CURL_CONFIG}"
