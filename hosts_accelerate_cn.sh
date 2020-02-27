@@ -107,10 +107,11 @@ if [[ "$CHECK_METHOD" == "dig" && -x "$(command -v dig)" ]]; then
     [[ -z "$DIG_DNS_SERVER" ]] && DIG_DNS_SERVER=8.8.8.8
 fi
 
+CURRENT_DIR=$(pwd)
 
 colorEcho ${BLUE} "Reading hosts list..."
 # first char with `-`: Same IP as prior host
-HostListFile="./hosts_accelerate_cn.list"
+HostListFile="${CURRENT_DIR}/hosts_accelerate_cn.list"
 if [[ -s "$HostListFile" ]]; then
     # HostListFileContent=$(cat $HostListFile | tr "\n" " ")
     # HostsList=($(echo ${HostListFileContent}))

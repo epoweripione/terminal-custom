@@ -1106,19 +1106,20 @@ function Git_Clone_Update() {
     if [[ -d "${REPODIR}/.git" ]]; then
         colorEcho ${BLUE} "  Updating ${REPO}..."
         cd "$REPODIR" && \
-            git pull --rebase --stat origin "$BRANCH" && \
-            cd - >/dev/null 2>&1
+            git pull --rebase --stat origin "$BRANCH"
+
         ## master branch
         # cd "$REPODIR" && \
         #     git fetch --depth 1 && \
-        #     git reset --hard origin/master && \
-        #     cd - >/dev/null 2>&1
+        #     git reset --hard origin/master
+
         ## checkout other branch
         # cd "$REPODIR" && \
         #     git remote set-branches --add orgin "'${remote_branch_name}'"
         #     git fetch --depth 1 origin ${remote_branch_name} && \
-        #     git checkout ${remote_branch_name} && \
-        #     cd - >/dev/null 2>&1
+        #     git checkout ${remote_branch_name}
+
+        cd - >/dev/null 2>&1
     else
         colorEcho ${BLUE} "  Cloning ${REPO}..."
         git clone -c core.eol=lf -c core.autocrlf=false \

@@ -56,6 +56,17 @@ if ! pgrep -f "subconverter" >/dev/null 2>&1; then
     exit 1
 fi
 
+
+WORKDIR="$(mktemp -d)"
+
+CURRENT_DIR=$(pwd)
+
+CLASH_CONFIG="${CURRENT_DIR}/clash_client_config.yml"
+if [[ ! -s "$CLASH_CONFIG" ]]; then
+    colorEcho ${BLUE} "    ${CLASH_CONFIG} not exist!"
+    exit 1
+fi
+
 colorEcho ${BLUE} "Getting clash rules..."
 
 # Update ACL4SSR
@@ -68,11 +79,6 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
             /srv/subconverter/config
     fi
 fi
-
-
-WORKDIR="$(mktemp -d)"
-
-CLASH_CONFIG="./clash_client_config.yml"
 
 CFW_BYPASS_LINE=$(grep -E -n "^# \[CFW_BYPASS\]" "$CLASH_CONFIG" | cut -d: -f1)
 PROXY_CUSTOM_LINE=$(grep -E -n "^# \[PROXY_CUSTOM\]" "$CLASH_CONFIG" | cut -d: -f1)
