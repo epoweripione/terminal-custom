@@ -75,6 +75,8 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
     if Git_Clone_Update "ACL4SSR/ACL4SSR" "/srv/subconverter/ACL4SSR"; then
         cp -f /srv/subconverter/ACL4SSR/Clash/*.list \
             /srv/subconverter/rules/ACL4SSR/Clash && \
+        cp -f /srv/subconverter/ACL4SSR/Clash/*.yml \
+            /srv/subconverter/rules/config && \
         cp -f /srv/subconverter/ACL4SSR/Clash/config/*.ini \
             /srv/subconverter/config
     fi
@@ -150,22 +152,26 @@ fi
 colorEcho ${BLUE} "  Setting cfw bypass..."
 CFW_BYPASS=""
 if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
-    CFW_BYPASS_URL=$(sed -n "${CFW_BYPASS_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
-    if [[ -n "$CFW_BYPASS_URL" ]]; then
-        colorEcho ${BLUE} "    Getting cfw bypass rules..."
-        curl -sL --connect-timeout 5 --max-time 15 \
-            -o "${WORKDIR}/cfw_bypass.yml" "${CFW_BYPASS_URL}"
-        if [[ $? != 0  ]]; then
-            colorEcho ${RED} "    Can't get cfw bypass rules from ${CFW_BYPASS_URL}!"
-            exit 1
+    CFW_BYPASS_FILE="/srv/subconverter/config/GeneralClashConfig.yml"
+    if [[ ! -s "${CFW_BYPASS_FILE}" ]]; then
+        CFW_BYPASS_FILE=""
+        CFW_BYPASS_URL=$(sed -n "${CFW_BYPASS_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
+        if [[ -n "$CFW_BYPASS_URL" ]]; then
+            colorEcho ${BLUE} "    Getting cfw bypass rules..."
+            curl -sL --connect-timeout 5 --max-time 15 \
+                -o "${CFW_BYPASS_FILE}" "${CFW_BYPASS_URL}"
+            if [[ $? != 0  ]]; then
+                colorEcho ${RED} "    Can't get cfw bypass rules from ${CFW_BYPASS_URL}!"
+                exit 1
+            fi
         fi
     fi
 
-    if [[ -s "${WORKDIR}/cfw_bypass.yml" ]]; then
-        BYPASS_START_LINE=$(grep -E -n "^cfw\-bypass:" "${WORKDIR}/cfw_bypass.yml" | cut -d: -f1)
+    if [[ -s "${CFW_BYPASS_FILE}" ]]; then
+        BYPASS_START_LINE=$(grep -E -n "^cfw\-bypass:" "${CFW_BYPASS_FILE}" | cut -d: -f1)
         if [[ ${BYPASS_START_LINE} -gt 0 ]]; then
             BYPASS_START_LINE=$((${BYPASS_START_LINE} + 1))
-            CFW_BYPASS=$(sed -n "${BYPASS_START_LINE},$ p" "${WORKDIR}/cfw_bypass.yml")
+            CFW_BYPASS=$(sed -n "${BYPASS_START_LINE},$ p" "${CFW_BYPASS_FILE}")
         fi
     fi
 fi

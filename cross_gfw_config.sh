@@ -79,11 +79,11 @@ function get_v2ray_config_from_subscription() {
     local DECODE_FILENAME="/tmp/v2ray_decode.vmess"
     local exitStatus=1
 
-    colorEcho ${BLUE} "Getting v2ray subscriptions..."
+    colorEcho ${BLUE} "  Getting v2ray subscriptions..."
     curl -sSf -4 --connect-timeout 10 --max-time 30 \
         -o "${VMESS_FILENAME}" "${SUBSCRIBE_URL}"
     if [[ $? != 0 ]]; then
-        colorEcho ${RED} "Can't get the subscriptions from ${SUBSCRIBE_URL}!"
+        colorEcho ${RED} "  Can't get the subscriptions from ${SUBSCRIBE_URL}!"
         return 1
     fi
 
@@ -95,11 +95,11 @@ function get_v2ray_config_from_subscription() {
     fi
 
     if [[ ! -s "${DECODE_FILENAME}" ]]; then
-        colorEcho ${RED} "Can't get the subscriptions from ${SUBSCRIBE_URL}!"
+        colorEcho ${RED} "  Can't get the subscriptions from ${SUBSCRIBE_URL}!"
         return 1
     fi
 
-    colorEcho ${BLUE} "Testing v2ray config from subscriptions..."
+    colorEcho ${BLUE} "  Testing v2ray config from subscriptions..."
     # Decode subscriptions line by line
     local V2RAY_PORT
     local READLINE
@@ -139,7 +139,7 @@ function get_v2ray_config_from_subscription() {
         VMESS_WS_HOST=$(echo "${VMESS_CONFIG}" | jq -r '.host//empty')
         VMESS_WS_PATH=$(echo "${VMESS_CONFIG}" | jq -r '.path//empty')
 
-        colorEcho ${BLUE} "Testing ${VMESS_PS} ${VMESS_ADDR}:${VMESS_PORT}..."
+        colorEcho ${BLUE} "  Testing ${VMESS_PS} ${VMESS_ADDR}:${VMESS_PORT}..."
         if [[ -z "${VMESS_SECURITY}" ]]; then
             VMESS_SECURITY=$(echo "null")
         else
@@ -301,7 +301,7 @@ function install_subconverter() {
     local CHECK_URL
     local REMOTE_VERSION
 
-    colorEcho ${BLUE} "Installing subconverter..."
+    colorEcho ${BLUE} "  Installing subconverter..."
 
     CHECK_URL="https://api.github.com/repos/tindy2013/subconverter/releases/latest"
 
@@ -334,11 +334,11 @@ function install_clash() {
     fi
 
     if ! pgrep -f "subconverter" >/dev/null 2>&1; then
-        colorEcho ${RED} "Please install and run subconverter first!"
+        colorEcho ${RED} "  Please install and run subconverter first!"
         return 1
     fi
 
-    colorEcho ${BLUE} "Installing clash..."
+    colorEcho ${BLUE} "  Installing clash..."
 
     CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
 
@@ -369,6 +369,8 @@ function use_clash() {
     if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
         :
     else
+        colorEcho ${BLUE} "  Checking & loading clash proxy..."
+
         if [[ ! -s "/srv/subconverter/subconverter" && ! -s "/srv/clash/clash" ]]; then
             echo "Download URL for subconverter & clash?"
             echo -n "[Use github by default] "
@@ -382,7 +384,7 @@ function use_clash() {
 
         [[ ! -s "/srv/subconverter/subconverter" ]] && install_subconverter
         [[ -s "/srv/subconverter/subconverter" ]] || {
-                colorEcho ${RED} "Please install and run subconverter first!"
+                colorEcho ${RED} "  Please install and run subconverter first!"
                 return 1
             }
 
@@ -392,7 +394,7 @@ function use_clash() {
 
         [[ ! -s "/srv/clash/clash" ]] && install_clash
         [[ -s "/srv/clash/clash" ]] || {
-                colorEcho ${RED} "Please install and run clash first!"
+                colorEcho ${RED} "  Please install and run clash first!"
                 return 1
             }
 
@@ -418,6 +420,8 @@ function use_clash() {
             if check_socks5_proxy_up ${PROXY_URL}; then
                 return 0
             else
+                [[ -s "$HOME/clash_client_config.sh" ]] && \
+                    bash "$HOME/clash_client_config.sh"
                 sudo systemctl restart clash && sleep 3
             fi
         fi
@@ -437,42 +441,43 @@ function use_v2ray() {
     local SubError
     local PROXY_URL=${1:-"127.0.0.1:55880"}
 
-
     if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
         :
     else
+        colorEcho ${BLUE} "  Checking & loading v2ray proxy..."
+
         [[ ! -x "$(command -v v2ray)" ]] && install_v2ray_client
-    fi
 
-    SubListFile="./cross_gfw_subscription.list"
-    if [[ -s "$SubListFile" ]]; then
-        SubList=()
-        while read -r READLINE || [[ "$READLINE" ]]; do
-            SubList+=("$READLINE")
-        done < "${SubListFile}"
-    else
-        SubList=(
-            "https://jiang.netlify.com/"
-        )
-    fi
+        SubListFile="./cross_gfw_subscription.list"
+        if [[ -s "$SubListFile" ]]; then
+            SubList=()
+            while read -r READLINE || [[ "$READLINE" ]]; do
+                SubList+=("$READLINE")
+            done < "${SubListFile}"
+        else
+            SubList=(
+                "https://jiang.netlify.com/"
+            )
+        fi
 
-    if check_socks5_proxy_up ${PROXY_URL}; then
-        return 0
-    else
-        if [[ -x "$(command -v v2ray)" ]]; then
-            SubError="yes"
-            for TargetSub in "${SubList[@]}"; do
-                if get_v2ray_config_from_subscription "$TargetSub" "$PROXY_URL"; then
-                    SubError="no"
-                    break
+        if check_socks5_proxy_up ${PROXY_URL}; then
+            return 0
+        else
+            if [[ -x "$(command -v v2ray)" ]]; then
+                SubError="yes"
+                for TargetSub in "${SubList[@]}"; do
+                    if get_v2ray_config_from_subscription "$TargetSub" "$PROXY_URL"; then
+                        SubError="no"
+                        break
+                    fi
+                done
+
+                if [[ "$SubError" == "yes" ]]; then
+                    colorEcho ${RED} "  Something wrong when setup proxy ${PROXY_URL}!"
+                    return 1
+                else
+                    return 0
                 fi
-            done
-
-            if [[ "$SubError" == "yes" ]]; then
-                colorEcho ${RED} "Something wrong when setup proxy ${PROXY_URL}!"
-                return 1
-            else
-                return 0
             fi
         fi
     fi

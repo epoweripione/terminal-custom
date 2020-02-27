@@ -845,6 +845,25 @@ function check_webservice_up() {
     # exit $exitStatus
 }
 
+## curl to check webservice timeout
+# https://stackoverflow.com/questions/18215389/how-do-i-measure-request-and-response-times-at-once-using-curl
+#     time_namelookup:  %{time_namelookup}\n
+#        time_connect:  %{time_connect}\n
+#     time_appconnect:  %{time_appconnect}\n
+#    time_pretransfer:  %{time_pretransfer}\n
+#       time_redirect:  %{time_redirect}\n
+#  time_starttransfer:  %{time_starttransfer}\n
+#                     ----------\n
+#          time_total:  %{time_total}\n
+function check_webservice_timeout() {
+    local webservice_url=${1:-"www.google.com"}
+
+    local http_timeout=`curl -sL --connect-timeout 5 --max-time 20 \
+                -w "%{time_connect} + %{time_starttransfer} = %{time_total}\\n" \
+                "${webservice_url}" -o /dev/null`
+    echo "time_connect + time_starttransfer: $http_timeout"
+}
+
 ## test the availability of a socks5 proxy
 function check_socks5_proxy_up() {
     # How to use:
