@@ -1153,6 +1153,28 @@ function Git_Clone_Update() {
 }
 
 
+# https://stackoverflow.com/questions/3497123/run-git-pull-over-all-subdirectories
+function git_update_repo_in_subdir() {
+    local subdir=${1:-""}
+    local finddepth=${2:-""}
+    local BRANCH=${3:-master}
+
+    [[ -z "${subdir}" ]] && exit 0
+
+    if [[ -z "${finddepth}" ]]; then
+        find "${subdir}" -type d -name ".git" \
+            | sed 's/\/.git//' \
+            | xargs -P10 -I{} git --git-dir="{}/.git" --work-tree="{}" \
+                pull --rebase --stat origin "$BRANCH"
+    else
+        find "${subdir}" -maxdepth ${finddepth} -type d -name ".git" \
+            | sed 's/\/.git//' \
+            | xargs -P10 -I{} git --git-dir="{}/.git" --work-tree="{}" \
+                pull --rebase --stat origin "$BRANCH"
+    fi
+}
+
+
 function Install_cron_job() {
     local cronjob=${1:-""}
     local cronline
