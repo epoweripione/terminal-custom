@@ -76,7 +76,7 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
         cp -f /srv/subconverter/ACL4SSR/Clash/*.list \
             /srv/subconverter/rules/ACL4SSR/Clash && \
         cp -f /srv/subconverter/ACL4SSR/Clash/*.yml \
-            /srv/subconverter/rules/config && \
+            /srv/subconverter/config && \
         cp -f /srv/subconverter/ACL4SSR/Clash/config/*.ini \
             /srv/subconverter/config
     fi
