@@ -267,26 +267,26 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     ## only keep vmess & socks5
     # PORXY=$(echo $PROXY | grep -E -i "type:\s*vmess|type:\s*socks5")
 
-    ## delete proxy list after 3th group
-    # PROXY_INDEX=-1
-    # for TargetName in "${PROXY_NAME[@]}"; do
-    #     PROXY_INDEX=$((${PROXY_INDEX} + 1))
+    # delete proxy list after 3th group
+    PROXY_INDEX=-1
+    for TargetName in "${PROXY_NAME[@]}"; do
+        PROXY_INDEX=$((${PROXY_INDEX} + 1))
 
-    #     [[ -z "$TargetName" ]] && continue
+        [[ -z "$TargetName" ]] && continue
 
-    #     TargetName=$(echo "${TargetName}" \
-    #         | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
-    #         | sed 's/]/\\&/g')
-    #     PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" \
-    #         | sed "/^\s*\-\s*${TargetName}$/d")
+        TargetName=$(echo "${TargetName}" \
+            | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
+            | sed 's/]/\\&/g')
+        PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" \
+            | sed "/^\s*\-\s*${TargetName}$/d")
 
-    #     ## only keep vmess & socks5
-    #     # if [[ "$PROXY_TYPE[$PROXY_INDEX]" == "vmess" || "$PROXY_TYPE[$PROXY_INDEX]" == "socks5" ]]; then
-    #     #     :
-    #     # else
-    #     #     PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" | sed "/- ${TargetName}$/d")
-    #     # fi
-    # done
+        ## only keep vmess & socks5
+        # if [[ "$PROXY_TYPE[$PROXY_INDEX]" == "vmess" || "$PROXY_TYPE[$PROXY_INDEX]" == "socks5" ]]; then
+        #     :
+        # else
+        #     PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" | sed "/- ${TargetName}$/d")
+        # fi
+    done
 
     PROXY_GROUP=$(echo -e "${PROXY_GROUP_MAIN}\n${PROXY_GROUP_REST}")
 

@@ -178,4 +178,4 @@ Proxy Group:
 # https://jiang.netlify.com/
 # https://youlianboshi.netlify.com/
 Rule:
-# [RULES]http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F%7Chttps%3A%2F%2Fyoulianboshi.netlify.com%2F&config=config%2FACL4SSR_Online_Full.ini
+# [RULES]http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F%7Chttps%3A%2F%2Fyoulianboshi.netlify.com%2F&config=config%2FACL4SSR_WithGFW.ini
