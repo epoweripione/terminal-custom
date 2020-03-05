@@ -252,6 +252,7 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 [[ -x "$(command -v docker)" ]] && Plugins="${Plugins} docker"
 [[ -x "$(command -v docker-compose)" ]] && Plugins="${Plugins} docker-compose"
 [[ -x "$(command -v docker-machine)" ]] && Plugins="${Plugins} docker-machine"
+[[ -x "$(command -v kubectl)" ]] && Plugins="${Plugins} kubectl"
 [[ -x "$(command -v fab)" ]] && Plugins="${Plugins} fabric"
 [[ -x "$(command -v redis-cli)" ]] && Plugins="${Plugins} redis-cli"
 
@@ -271,7 +272,7 @@ Plugins="${Plugins} history-substring-search"
 PluginList=($(echo ${Plugins}))
 
 Plugins=""
-for TargetPlugin in ${PluginList[@]}; do
+for TargetPlugin in "${PluginList[@]}"; do
     if [[ -n "$TargetPlugin" ]]; then
         if [[ -z "$Plugins" ]]; then
             Plugins="  ${TargetPlugin}"

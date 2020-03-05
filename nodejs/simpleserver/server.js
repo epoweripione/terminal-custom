@@ -4,10 +4,12 @@
 const express = require('express');
 const asyncHandler = require('express-async-handler');
 
-var morgan = require('morgan');
+const morgan = require('morgan');
 
 const path = require('path');
 const fs = require('fs');
+
+const crypto = require('crypto');
 
 const app = express();
 
@@ -83,12 +85,18 @@ app.get('/', (req, res) => {
 
 app.get('/:name', asyncHandler(async(req, res, next) => {
     const fileName = req.params.name;
+    const fileExt = path.extname(fileName);
+
     const checkFile = path.join(__dirname, 'public', fileName + ".md5");
 
     var fileChecksum = "";
-    if (fs.existsSync(checkFile)) {
-        fileChecksum = await asyncReadFile(checkFile);
-    };
+    if (fileExt == '.md5') {
+        fileChecksum = crypto.randomBytes(32).toString('hex');
+    } else {
+        if (fs.existsSync(checkFile)) {
+            fileChecksum = await asyncReadFile(checkFile);
+        };
+    }
 
     sendMatchFile(fileName, fileChecksum, req, res, next);
 }));
@@ -132,25 +140,32 @@ app.get('/static/:name', function (req, res, next) {
     //     res.end();
     // }
     const fileName = req.params.name;
+    const fileExt = path.extname(fileName);
+
     const checkFile = path.join(__dirname, 'public', fileName + ".md5");
     // send file with correct md5
     // openssl md5/sha1/sha256 -hex <filename>
     // (openssl md5 -hex <filename> | cut -d" " -f2) > <filename>.md5
     var fileChecksum = "";
     var lineCounter = 0;
-    try {
-        if (fs.existsSync(checkFile)) {
-            const data = fs.readFileSync(checkFile, 'UTF-8');
-            const lines = data.split(/\r?\n/);
-            lines.forEach((line) => {
-                lineCounter++;
-                if (lineCounter == 1) {
-                    fileChecksum = line;
-                }
-            });
+
+    if (fileExt == '.md5') {
+        fileChecksum = crypto.randomBytes(32).toString('hex');
+    } else {
+        try {
+            if (fs.existsSync(checkFile)) {
+                const data = fs.readFileSync(checkFile, 'UTF-8');
+                const lines = data.split(/\r?\n/);
+                lines.forEach((line) => {
+                    lineCounter++;
+                    if (lineCounter == 1) {
+                        fileChecksum = line;
+                    }
+                });
+            }
+        } catch (err) {
+            next(err);
         }
-    } catch (err) {
-        next(err);
     }
 
     sendMatchFile(fileName, fileChecksum, req, res, next);

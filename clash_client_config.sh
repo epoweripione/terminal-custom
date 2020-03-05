@@ -33,6 +33,9 @@ if [[ ! -x "$(command -v jq)" ]]; then
     exit 1
 fi
 
+WORKDIR="$(mktemp -d)"
+CURRENT_DIR=$(pwd)
+
 
 TARGET_CONFIG_FILE=${1:-""}
 if [[ -z "$TARGET_CONFIG_FILE" ]]; then
@@ -42,6 +45,30 @@ fi
 TARGET_WITH_CUSTOM_PROXY=$(echo "$TARGET_CONFIG_FILE" | sed 's/\./_custom\./')
 
 COPY_TO_FILE=${2:-""}
+
+
+SUB_LIST_FILE=${3:-"${CURRENT_DIR}/clash_client_subscription.list"}
+if [[ -s "$SUB_LIST_FILE" ]]; then
+    SUB_LIST=()
+    # || In case the file has an incomplete (missing newline) last line
+    while read -r READLINE || [[ "$READLINE" ]]; do
+        SUB_LIST+=("$READLINE")
+    done < "${SUB_LIST_FILE}"
+
+    SUB_DOWNLOAD_FILE="${WORKDIR}/clash_sub.yaml"
+    for TargetURL in "${SUB_LIST[@]}"; do
+        [[ -z "$TargetURL" ]] && continue
+        colorEcho ${BLUE} "Downloading clash client connfig from ${TargetURL}..."
+        curl -SL --connect-timeout 10 --max-time 30 \
+            -o "$SUB_DOWNLOAD_FILE" "$TargetURL"
+        if [[ $? -eq 0 ]]; then
+            sed -i "s/^allow-lan:.*/allow-lan: false/" "$SUB_DOWNLOAD_FILE"
+            sed -i "s/^external-controller:.*/# &/" "$SUB_DOWNLOAD_FILE"
+            cp -f "$SUB_DOWNLOAD_FILE" "$TARGET_CONFIG_FILE"
+            exit 0
+        fi
+    done
+fi
 
 
 if ! pgrep -f "subconverter" >/dev/null 2>&1; then
@@ -55,11 +82,6 @@ if ! pgrep -f "subconverter" >/dev/null 2>&1; then
     colorEcho ${RED} "Please install and run subconverter first!"
     exit 1
 fi
-
-
-WORKDIR="$(mktemp -d)"
-
-CURRENT_DIR=$(pwd)
 
 CLASH_CONFIG="${CURRENT_DIR}/clash_client_config.yml"
 if [[ ! -s "$CLASH_CONFIG" ]]; then

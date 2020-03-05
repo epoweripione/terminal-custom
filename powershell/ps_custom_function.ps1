@@ -10,6 +10,26 @@ function isadmin() {
     ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
 }
 
+function CheckDownloadPWSHNewVersion {
+    [Version]$ReleaseVersion = (Invoke-RestMethod 'https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json').ReleaseTag -replace '^v'
+    if ($PSVersionTable.PSEdition -like "Core" -and $ReleaseVersion -gt $PSVersionTable.PSVersion) {
+        $latest = Invoke-RestMethod -Uri "https://api.github.com/repos/PowerShell/PowerShell/releases" | Where-Object { $_.tag_name -eq "v$ReleaseVersion" }
+        $downloadUrl = $latest.assets | Where-Object Name -like "*win-x64.msi" | Select-Object -ExpandProperty 'browser_download_url'
+        Invoke-WebRequest -Uri $downloadUrl -OutFile "$PSScriptRoot\$(Split-Path $downloadUrl -Leaf)"
+    }
+    ## another method
+    # $latest = Invoke-RestMethod 'https://api.github.com/repos/PowerShell/PowerShell/releases/latest'
+    # $downloadUrl = $latest.assets | Where-Object Name -like "*win-x64.msi" | Select-Object -ExpandProperty 'browser_download_url'
+    # $fileName = Split-Path $downloadUrl -Leaf
+    # $webClient = New-Object System.Net.WebClient
+    # try {
+    #     $webClient.DownloadFile($downloadUrl, "$PSScriptRoot\$fileName")
+    # }
+    # finally {
+    #     $webClient.Dispose()
+    # }
+}
+
 # https://gallery.technet.microsoft.com/scriptcenter/Parse-DISM-Get-Features-d25dde0a
 # Must enable PSremoting on remote PC
 # Enable-PSRemoting

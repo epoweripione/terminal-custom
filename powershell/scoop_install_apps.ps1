@@ -47,7 +47,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     ## Bypassing the proxy configured in Internet Options
     # scoop config rm proxy
     $SCOOP_PROXY_ADDR = "127.0.0.1:7890"
-    if (-Not (check_socks5_proxy_up $SCOOP_PROXY_ADDR)) {
+    if (-Not (check_socks5_proxy_up "127.0.0.1:7891")) {
         $SCOOP_PROXY_ADDR = ""
         if($PROMPT_VALUE = Read-Host "Proxy address for scoop?") {
             $SCOOP_PROXY_ADDR = $PROMPT_VALUE
@@ -85,6 +85,8 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     scoop bucket add dorado https://github.com/h404bi/dorado
     # dodorz
     # scoop bucket add dodorz https://github.com/dodorz/scoop-bucket
+    # epower
+    scoop bucket add epower https://github.com/epoweripione/scoop-bucket
 
     if (-Not (scoop info aria2 6>$null)) {
         Write-Host "Installing aria2..." -ForegroundColor Blue
@@ -98,6 +100,9 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     Write-Host "Installing git..." -ForegroundColor Blue
     if (-Not (scoop info git 6>$null)) {scoop install git}
 
+    # git global config
+    & "$PSScriptRoot\git_global_config.ps1"
+
     Write-Host "Updating scoop..." -ForegroundColor Blue
     scoop update
     # scoop update *
@@ -105,7 +110,8 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     $Apps = @(
         "vcredist"
         "googlechrome-dev"
-        "chromium-dev-nosync"
+        # "chromium"
+        # "chromium-dev-nosync"
         "firefox-zh-cn"
         "nodejs-lts"
         "dotnet-sdk"
@@ -119,12 +125,14 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "colortool"
         "windowsterminal"
         "clash-for-windows"
-        "v2rayn"
+        "trojan"
+        # "v2rayn"
         "lxrunoffline"
         "freedownloadmanager"
         "snipaste-beta"
         "ffmpeg"
         "screentogif"
+        "cpu-z"
         "diffinity"
         "everything"
         "filezilla"
@@ -136,9 +144,27 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "sysinternals"
         "utools"
         "xnviewmp"
-        ## dodorz
-        # "explorerplusplus"
-        # "tablacusexplorer"
+        ## epower
+        "chromium-robrich-dev"
+        "ExplorerPlusPlus"
+        # "TablacusExplorer"
+        "HBuilderXFull"
+        "GoldenDictOnline"
+        "NewFileTime"
+        # "WiseCare365"
+        "WiseDataRecovery"
+        "WiseDiskCleaner"
+        "WiseProgramUninstaller"
+        "WiseRegistryCleaner"
+        ## nerd-fonts
+        "FiraCode-NF"
+        "FiraMono-NF"
+        "SarasaGothic-SC"
+        "JetBrainsMono-NF"
+        "CascadiaCode-NF"
+        # "Noto-NF"
+        ## https://github.com/lukesampson/scoop/wiki/Theming-Powershell
+        # "concfg"
     )
 
     $InstalledApps = scoop list 6>&1 | Out-String

@@ -1076,7 +1076,8 @@ function download_hosts() {
     [[ -z "$hostsURL" ]] && return 1
 
     colorEcho ${BLUE} "Downloading hosts from ${hostsURL}..."
-    curl -SL -o "/tmp/hosts" "$hostsURL" || exitStatus=$?
+    curl -SL --connect-timeout 5 --max-time 20 \
+        -o "/tmp/hosts" "$hostsURL" || exitStatus=$?
     if [[ "$exitStatus" -eq "0" ]]; then
         if [[ "${hostsFile}" == "/etc/hosts" ]]; then
             [[ ! -s "${hostsFile}.orig" ]] && \

@@ -116,13 +116,13 @@ cfw-conn-break-strategy:
 # Run child process after CFW started
 # Refer: https://docs.cfw.lbyczf.com/contents/childprocess.html
 # cfw-child-process: []
-cfw-child-process:
-  - command: trojan.exe
-    args:
-      - "-c"
-      - "trojan_55980.json"
-    options:
-      cwd: C:\Tools\trojan
+# cfw-child-process:
+#   - command: trojan.exe
+#     # args:
+#     #   - "-c"
+#     #   - "trojan.json"
+#     options:
+#       cwd: C:\Users\<UserName>\scoop\apps\trojan\current
   # - command: v2rayn.exe
 
 # Will be ignored after profile selection
@@ -178,4 +178,4 @@ Proxy Group:
 # https://jiang.netlify.com/
 # https://youlianboshi.netlify.com/
 Rule:
-# [RULES]http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F%7Chttps%3A%2F%2Fyoulianboshi.netlify.com%2F&config=config%2FACL4SSR_WithChinaIp_WithGFW.ini
+# [RULES]http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F%7Chttps%3A%2F%2Fyoulianboshi.netlify.com%2F&config=config%2FACL4SSR_Online_Full.ini

@@ -62,7 +62,8 @@ if [[ ! -s "$HostsFile" ]]; then
     # colorEcho ${RED} "${HostsFile} not exist!"
     # exit 1
     Hosts_URL="https://raw.githubusercontent.com/googlehosts/hosts/master/hosts-files/hosts"
-    curl -SL -o "$HostsFile" "$Hosts_URL"
+    curl -SL --connect-timeout 5 --max-time 20 \
+        -o "$HostsFile" "$Hosts_URL"
 fi
 
 # use dig or curl
