@@ -118,7 +118,7 @@ if [[ ${RULES_LINE} -gt 0 ]]; then
     RULES_URL=$(sed -n "${RULES_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
     if [[ -n "$RULES_URL" ]]; then
         colorEcho ${BLUE} "    Getting subscription rules..."
-        curl -sL --connect-timeout 5 --max-time 15 \
+        curl -sL --connect-timeout 10 --max-time 30 \
             -o "${WORKDIR}/rules.yml" "${RULES_URL}"
         if [[ $? != 0 ]]; then
             colorEcho ${RED} "    Can't get rules from ${RULES_URL}!"
@@ -180,7 +180,7 @@ if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
         CFW_BYPASS_URL=$(sed -n "${CFW_BYPASS_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
         if [[ -n "$CFW_BYPASS_URL" ]]; then
             colorEcho ${BLUE} "    Getting cfw bypass rules..."
-            curl -sL --connect-timeout 5 --max-time 15 \
+            curl -sL --connect-timeout 10 --max-time 30 \
                 -o "${CFW_BYPASS_FILE}" "${CFW_BYPASS_URL}"
             if [[ $? != 0  ]]; then
                 colorEcho ${RED} "    Can't get cfw bypass rules from ${CFW_BYPASS_URL}!"
@@ -267,26 +267,26 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     ## only keep vmess & socks5
     # PORXY=$(echo $PROXY | grep -E -i "type:\s*vmess|type:\s*socks5")
 
-    # delete proxy list after 3th group
-    PROXY_INDEX=-1
-    for TargetName in "${PROXY_NAME[@]}"; do
-        PROXY_INDEX=$((${PROXY_INDEX} + 1))
+    ## delete proxy list after 3th group
+    # PROXY_INDEX=-1
+    # for TargetName in "${PROXY_NAME[@]}"; do
+    #     PROXY_INDEX=$((${PROXY_INDEX} + 1))
 
-        [[ -z "$TargetName" ]] && continue
+    #     [[ -z "$TargetName" ]] && continue
 
-        TargetName=$(echo "${TargetName}" \
-            | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
-            | sed 's/]/\\&/g')
-        PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" \
-            | sed "/^\s*\-\s*${TargetName}$/d")
+    #     TargetName=$(echo "${TargetName}" \
+    #         | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
+    #         | sed 's/]/\\&/g')
+    #     PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" \
+    #         | sed "/^\s*\-\s*${TargetName}$/d")
 
-        ## only keep vmess & socks5
-        # if [[ "$PROXY_TYPE[$PROXY_INDEX]" == "vmess" || "$PROXY_TYPE[$PROXY_INDEX]" == "socks5" ]]; then
-        #     :
-        # else
-        #     PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" | sed "/- ${TargetName}$/d")
-        # fi
-    done
+    #     ## only keep vmess & socks5
+    #     # if [[ "$PROXY_TYPE[$PROXY_INDEX]" == "vmess" || "$PROXY_TYPE[$PROXY_INDEX]" == "socks5" ]]; then
+    #     #     :
+    #     # else
+    #     #     PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" | sed "/- ${TargetName}$/d")
+    #     # fi
+    # done
 
     PROXY_GROUP=$(echo -e "${PROXY_GROUP_MAIN}\n${PROXY_GROUP_REST}")
 
