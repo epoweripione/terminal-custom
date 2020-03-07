@@ -44,7 +44,7 @@ pkg i -y nano curl wget git unzip unrar htop nmap
 pkg i -y termux-api
 
 # nanorc
-git clone https://github.com/scopatz/nanorc "$HOME/.local/share/nano"
+git clone --depth=1 "https://github.com/scopatz/nanorc" "$HOME/.local/share/nano"
 tee "$HOME/.nanorc" >/dev/null <<-'EOF'
 set titlecolor brightwhite,red
 set statuscolor brightwhite,red
@@ -53,7 +53,7 @@ set numbercolor magenta
 set keycolor brightmagenta
 set functioncolor magenta
 
-include "~/.local/share/nano/*.nanorc"
+include "$HOME/.local/share/nano/*.nanorc"
 EOF
 
 # frp
@@ -66,21 +66,57 @@ curl -SL -o frp.tar.gz -C- $DOWNLOAD_URL && \
     mkdir -p "$HOME/frp" && \
     cp -rf "$HOME/frp_*/*" "$HOME/frp" && \
     rm -rf "$HOME/frp_*/"
-# cd ~/frp/ && nohup ./frpc -c ./frpc.ini  >/dev/null 2>&1 & disown
+# cd $HOME/frp/ && nohup ./frpc -c ./frpc.ini  >/dev/null 2>&1 & disown
 
 # zsh
 sh -c "$(curl -fsSL https://github.com/Cabbagec/termux-ohmyzsh/raw/master/install.sh)"
-# git clone https://github.com/zdharma/fast-syntax-highlighting "$ZSH_CUSTOM/plugins/fast-syntax-highlighting" && \
-#     git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions" && \
-#     sed -i 's/[#]*[ ]*HIST_STAMPS.*/HIST_STAMPS="yyyy-mm-dd"/' "$HOME/.zshrc" && \
-#     sed -i 's/plugins=(git)/plugins=(git history-substring-search fast-syntax-highlighting zsh-autosuggestions)/' "$HOME/.zshrc" && \
-#     sed -i '/zsh-syntax-highlighting.zsh/d' "$HOME/.zshrc"
+
+# zsh custom
+sed -i 's/[#]*[ ]*HIST_STAMPS.*/HIST_STAMPS="yyyy-mm-dd"/' "$HOME/.zshrc"
+
+# zsh plugins
+sed -i '/zsh-syntax-highlighting.zsh/d' "$HOME/.zshrc"
+
+git clone --depth=1 "https://github.com/zsh-users/zsh-history-substring-search" \
+    "$ZSH_CUSTOM/plugins/zsh-history-substring-search"
+git clone --depth=1 "https://github.com/zsh-users/zsh-autosuggestions" \
+    "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+
+Plugins="zsh-autosuggestions zsh-syntax-highlighting history-substring-search"
+
+PluginList=($(echo ${Plugins}))
+
+Plugins=""
+for TargetPlugin in "${PluginList[@]}"; do
+    if [[ -n "$TargetPlugin" ]]; then
+        if [[ -z "$Plugins" ]]; then
+            Plugins="  ${TargetPlugin}"
+        else
+            Plugins="${Plugins}\n  ${TargetPlugin}"
+        fi
+    fi
+done
+
+# replace plugins in .zshrc
+sed -i "s/^plugins=(git)/plugins=(\n  git\n)/" "$HOME/.zshrc"
+
+LineBegin=$(cat -n "$HOME/.zshrc" | grep 'plugins=(' | awk '{print $1}' | tail -n1)
+LineShift=$(tail -n +${LineBegin} "$HOME/.zshrc" | cat -n | grep ')' | awk '{print $1}' | head -n1)
+LineEnd=$((${LineBegin}+${LineShift}-1))
+
+if [[ -n "$LineBegin" && -n "$LineEnd" ]]; then
+    DeleteBegin=$((${LineBegin}+1))
+    DeleteEnd=$((${LineEnd}-1))
+    sed -i "${DeleteBegin},${DeleteEnd}d" "$HOME/.zshrc"
+fi
+
+sed -i "${LineBegin}a\\${Plugins}" "$HOME/.zshrc"
 
 # webui-aria2
 # git clone https://github.com/ziahamza/webui-aria2 "$HOME/webui-aria2" && \
 #     cd "$HOME/webui-aria2" && node node-server.js
 
 # sshd auto start
-# echo "sshd" >> "$HOME/.zshrc"
+echo "sshd" >> "$HOME/.zshrc"
 
 cd "${CURRENT_DIR}"

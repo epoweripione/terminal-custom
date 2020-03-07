@@ -130,8 +130,9 @@ if [[ ! -x "$(command -v neofetch)" ]]; then
 fi
 
 if [[ -x "$(command -v neofetch)" ]]; then
-    mkdir -p ~/.config/neofetch/ && \
-        cp ~/terminal-custom/zsh/neofetch_config.conf ~/.config/neofetch/config.conf
+    mkdir -p $HOME/.config/neofetch/ && \
+        cp $HOME/terminal-custom/zsh/neofetch_config.conf \
+            $HOME/.config/neofetch/config.conf
 fi
 
 
@@ -174,11 +175,11 @@ colorEcho ${BLUE} "Oh-my-zsh custom plugins..."
 # echo "Updating zsh-navigation-tools..."
 # sh -c "$(curl -fsSL https://raw.githubusercontent.com/psprint/zsh-navigation-tools/master/doc/install.sh)"
 
-# fast-syntax-highlighting
-if [[ $ostype != "windows" ]]; then
-    Git_Clone_Update "zdharma/fast-syntax-highlighting" \
-        "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"
-fi
+## fast-syntax-highlighting
+# if [[ $ostype != "windows" ]]; then
+#     Git_Clone_Update "zdharma/fast-syntax-highlighting" \
+#         "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"
+# fi
 
 PluginList=(
     "zsh-users/zsh-syntax-highlighting"
@@ -212,24 +213,39 @@ for Target in "${ThemeList[@]}"; do
 done
 
 # agnosterzak
-[[ -L $ZSH_CUSTOM/themes/agnosterzak.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/agnosterzak.zsh-theme
-ln -s $ZSH_CUSTOM/themes/agnosterzak-ohmyzsh-theme/agnosterzak.zsh-theme $ZSH_CUSTOM/themes/agnosterzak.zsh-theme
+[[ -L "$ZSH_CUSTOM/themes/agnosterzak.zsh-theme" ]] && \
+    rm -f "$ZSH_CUSTOM/themes/agnosterzak.zsh-theme"
+[[ -s "$ZSH_CUSTOM/themes/agnosterzak-ohmyzsh-theme/agnosterzak.zsh-theme" ]] && \
+    ln -s "$ZSH_CUSTOM/themes/agnosterzak-ohmyzsh-theme/agnosterzak.zsh-theme" \
+        "$ZSH_CUSTOM/themes/agnosterzak.zsh-theme"
 
 # spaceship-prompt
-[[ -L $ZSH_CUSTOM/themes/spaceship.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/spaceship.zsh-theme
-ln -s $ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme $ZSH_CUSTOM/themes/spaceship.zsh-theme
+[[ -L "$ZSH_CUSTOM/themes/spaceship.zsh-theme" ]] && \
+    rm -f "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
+[[ -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" ]] && \
+    ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" \
+        "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
 
 # Powerlevel10k
-[[ -L $ZSH_CUSTOM/themes/powerlevel10k.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/powerlevel10k.zsh-theme
-ln -s $ZSH_CUSTOM/themes/powerlevel10k/powerlevel10k.zsh-theme $ZSH_CUSTOM/themes/powerlevel10k.zsh-theme
+[[ -L "$ZSH_CUSTOM/themes/powerlevel10k.zsh-theme" ]] && \
+    rm -f "$ZSH_CUSTOM/themes/powerlevel10k.zsh-theme"
+[[ -s "$ZSH_CUSTOM/themes/powerlevel10k/powerlevel10k.zsh-theme" ]] && \
+    ln -s "$ZSH_CUSTOM/themes/powerlevel10k/powerlevel10k.zsh-theme" \
+        "$ZSH_CUSTOM/themes/powerlevel10k.zsh-theme"
 
 # agkozak
-[[ -L $ZSH_CUSTOM/themes/agkozak.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/agkozak.zsh-theme
-ln -s $ZSH_CUSTOM/themes/agkozak-zsh-prompt/agkozak-zsh-prompt.plugin.zsh $ZSH_CUSTOM/themes/agkozak.zsh-theme
+[[ -L "$ZSH_CUSTOM/themes/agkozak.zsh-theme" ]] && \
+    rm -f "$ZSH_CUSTOM/themes/agkozak.zsh-theme"
+[[ -s "$ZSH_CUSTOM/themes/agkozak-zsh-prompt/agkozak-zsh-prompt.plugin.zsh" ]] && \
+    ln -s "$ZSH_CUSTOM/themes/agkozak-zsh-prompt/agkozak-zsh-prompt.plugin.zsh" \
+        "$ZSH_CUSTOM/themes/agkozak.zsh-theme"
 
 # alien
-[[ -L $ZSH_CUSTOM/themes/alien.zsh-theme ]] && rm -f $ZSH_CUSTOM/themes/alien.zsh-theme
-ln -s $ZSH_CUSTOM/themes/alien/alien.plugin.zsh $ZSH_CUSTOM/themes/alien.zsh-theme
+[[ -L "$ZSH_CUSTOM/themes/alien.zsh-theme" ]] && \
+    rm -f "$ZSH_CUSTOM/themes/alien.zsh-theme"
+[[ -s "$ZSH_CUSTOM/themes/alien/alien.plugin.zsh" ]] && \
+    ln -s "$ZSH_CUSTOM/themes/alien/alien.plugin.zsh" \
+        "$ZSH_CUSTOM/themes/alien.zsh-theme"
 
 
 # Enable plugins
@@ -246,7 +262,7 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 # Plugins="${Plugins} command-time"
 
 [[ -x "$(command -v tmux)" ]] && Plugins="${Plugins} tmux"
-[[ -x "$(command -v fzf)" || -d ~/.fzf ]] && Plugins="${Plugins} fzf"
+[[ -x "$(command -v fzf)" || -d $HOME/.fzf ]] && Plugins="${Plugins} fzf"
 [[ -x "$(command -v autojump)" ]] && Plugins="${Plugins} autojump"
 [[ -x "$(command -v composer)" ]] && Plugins="${Plugins} composer"
 [[ -x "$(command -v docker)" ]] && Plugins="${Plugins} docker"
@@ -260,11 +276,12 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 
 Plugins="${Plugins} zsh-interactive-cd zsh-autosuggestions"
 
-if [[ $ostype == "windows" ]]; then
-    Plugins="${Plugins} zsh-syntax-highlighting"
-else
-    Plugins="${Plugins} fast-syntax-highlighting"
-fi
+Plugins="${Plugins} zsh-syntax-highlighting"
+# if [[ $ostype == "windows" ]]; then
+#     Plugins="${Plugins} zsh-syntax-highlighting"
+# else
+#     Plugins="${Plugins} fast-syntax-highlighting"
+# fi
 
 Plugins="${Plugins} history-substring-search"
 
@@ -283,56 +300,56 @@ for TargetPlugin in "${PluginList[@]}"; do
 done
 
 # replace plugins in .zshrc
-sed -i "s/^plugins=(git)/plugins=(\n  git\n)/" ~/.zshrc
+sed -i "s/^plugins=(git)/plugins=(\n  git\n)/" "$HOME/.zshrc"
 
-LineBegin=$(cat -n ~/.zshrc | grep 'plugins=(' | awk '{print $1}' | tail -n1)
-LineShift=$(tail -n +${LineBegin} ~/.zshrc | cat -n | grep ')' | awk '{print $1}' | head -n1)
+LineBegin=$(cat -n "$HOME/.zshrc" | grep 'plugins=(' | awk '{print $1}' | tail -n1)
+LineShift=$(tail -n +${LineBegin} "$HOME/.zshrc" | cat -n | grep ')' | awk '{print $1}' | head -n1)
 LineEnd=$((${LineBegin}+${LineShift}-1))
 
 if [[ -n "$LineBegin" && -n "$LineEnd" ]]; then
     DeleteBegin=$((${LineBegin}+1))
     DeleteEnd=$((${LineEnd}-1))
-    sed -i "${DeleteBegin},${DeleteEnd}d" ~/.zshrc
+    sed -i "${DeleteBegin},${DeleteEnd}d" "$HOME/.zshrc"
 fi
 
-sed -i "${LineBegin}a\\${Plugins}" ~/.zshrc
+sed -i "${LineBegin}a\\${Plugins}" "$HOME/.zshrc"
 
 
 # nano
 Git_Clone_Update "scopatz/nanorc" "$HOME/.local/share/nano"
 
 colorEcho ${BLUE} "nano settings..."
-if [[ ! $(grep "set titlecolor" ~/.nanorc) ]]; then
-    echo "set titlecolor brightwhite,red" >> ~/.nanorc
+if [[ ! $(grep "set titlecolor" "$HOME/.nanorc") ]]; then
+    echo "set titlecolor brightwhite,red" >> "$HOME/.nanorc"
 fi
 
-if [[ ! $(grep "set statuscolor" ~/.nanorc) ]]; then
-    echo "set statuscolor brightwhite,red" >> ~/.nanorc
+if [[ ! $(grep "set statuscolor" "$HOME/.nanorc") ]]; then
+    echo "set statuscolor brightwhite,red" >> "$HOME/.nanorc"
 fi
 
-if [[ ! $(grep "set selectedcolor" ~/.nanorc) ]]; then
-    echo "set selectedcolor brightwhite,cyan" >> ~/.nanorc
+if [[ ! $(grep "set selectedcolor" "$HOME/.nanorc") ]]; then
+    echo "set selectedcolor brightwhite,cyan" >> "$HOME/.nanorc"
 fi
 
-if [[ ! $(grep "set numbercolor" ~/.nanorc) ]]; then
-    echo "set numbercolor magenta" >> ~/.nanorc
+if [[ ! $(grep "set numbercolor" "$HOME/.nanorc") ]]; then
+    echo "set numbercolor magenta" >> "$HOME/.nanorc"
 fi
 
-if [[ ! $(grep "set keycolor" ~/.nanorc) ]]; then
-    echo "set keycolor brightmagenta" >> ~/.nanorc
+if [[ ! $(grep "set keycolor" "$HOME/.nanorc") ]]; then
+    echo "set keycolor brightmagenta" >> "$HOME/.nanorc"
 fi
 
-if [[ ! $(grep "set functioncolor" ~/.nanorc) ]]; then
-    echo "set functioncolor magenta" >> ~/.nanorc
+if [[ ! $(grep "set functioncolor" "$HOME/.nanorc") ]]; then
+    echo "set functioncolor magenta" >> "$HOME/.nanorc"
 fi
 
-# if [[ ! $(grep "set linenumbers" ~/.nanorc) ]]; then
-#     echo "set linenumbers" >> ~/.nanorc
+# if [[ ! $(grep "set linenumbers" "$HOME/.nanorc") ]]; then
+#     echo "set linenumbers" >> "$HOME/.nanorc"
 # fi
 
-if [[ -d ~/.local/share/nano ]]; then
-    if [[ ! $(grep "\~/.local/share/nano/\*\.nanorc" ~/.nanorc) ]]; then
-        echo "include \"~/.local/share/nano/*.nanorc\"" >> ~/.nanorc
+if [[ -d $HOME/.local/share/nano ]]; then
+    if [[ ! $(grep "\$HOME/.local/share/nano/\*\.nanorc" "$HOME/.nanorc") ]]; then
+        echo "include \"$HOME/.local/share/nano/*.nanorc\"" >> "$HOME/.nanorc"
     fi
 fi
 

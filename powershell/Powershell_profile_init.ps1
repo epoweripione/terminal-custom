@@ -16,7 +16,7 @@ Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
 
 Write-Host "Installing powershell modules..." -ForegroundColor Blue
 # Find-Module, Get-InstalledModule, Update-Module, Uninstall-Module
-if (-Not (Get-Module -ListAvailable -Name "PSReadLine")) {
+if (-Not (Get-Module -Name "PSReadLine")) {
     Install-Module -Name "PSReadLine" -AllowPrerelease -SkipPublisherCheck -Force
 }
 
@@ -28,13 +28,13 @@ $ModuleNames = @(
 )
 
 foreach ($TargetModule in $ModuleNames) {
-    if (-Not (Get-Module -ListAvailable -Name $TargetModule)) {
+    if (-Not (Get-Module -Name $TargetModule)) {
         Install-Module -Name $TargetModule -AllowClobber
     }
 }
 
 foreach ($TargetModule in $ModuleNames) {
-    if (Get-Module -ListAvailable -Name $TargetModule) {
+    if (Get-Module -Name $TargetModule) {
         if (-Not (Get-Module -Name $TargetModule)) {
             Add-Content $PROFILE "Import-Module $TargetModule"
         }
