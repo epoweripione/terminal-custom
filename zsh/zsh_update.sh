@@ -54,19 +54,24 @@ if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
     fi
 
     if [[ -n "$OHMYZSH_CUSTOM_URL" ]]; then
-        # curl -SL -o "/tmp/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
         wget -c -O "/tmp/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
-            cd "$ZSH_CUSTOM" && \
-            find . -maxdepth 2 -regextype posix-extended \
-                ! \( -path "." \
-                    -or -path "./plugins" \
-                    -or -path "./themes" \
-                    -or -path "./plugins/example" \
-                    -or -name "example.*" \
-                \) -exec rm -rf {} \; && \
+            find "${ZSH_CUSTOM:-$HOME/.oh-my-zsh}" -mindepth 2 -maxdepth 2 \
+                ! -name "example*" -exec /bin/rm -rf {} \; && \
             unzip -qo "/tmp/oh-my-zsh-custom.zip" -d "$ZSH" && \
             rm -f "/tmp/oh-my-zsh-custom.zip" && \
             cd - >/dev/null 2>&1
+        # wget -c -O "/tmp/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
+        #     cd "$ZSH_CUSTOM" && \
+        #     find "$ZSH_CUSTOM" -maxdepth 2 -regextype posix-extended \
+        #         ! \( -path "." \
+        #             -or -path "./plugins" \
+        #             -or -path "./themes" \
+        #             -or -path "./plugins/example" \
+        #             -or -name "example.*" \
+        #         \) -exec rm -rf {} \; && \
+        #     unzip -qo "/tmp/oh-my-zsh-custom.zip" -d "$ZSH" && \
+        #     rm -f "/tmp/oh-my-zsh-custom.zip" && \
+        #     cd - >/dev/null 2>&1
     fi
 fi
 
@@ -175,11 +180,11 @@ colorEcho ${BLUE} "Oh-my-zsh custom plugins..."
 # echo "Updating zsh-navigation-tools..."
 # sh -c "$(curl -fsSL https://raw.githubusercontent.com/psprint/zsh-navigation-tools/master/doc/install.sh)"
 
-## fast-syntax-highlighting
-# if [[ $ostype != "windows" ]]; then
-#     Git_Clone_Update "zdharma/fast-syntax-highlighting" \
-#         "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"
-# fi
+# fast-syntax-highlighting
+if [[ $ostype != "windows" ]]; then
+    Git_Clone_Update "zdharma/fast-syntax-highlighting" \
+        "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"
+fi
 
 PluginList=(
     "zsh-users/zsh-syntax-highlighting"
@@ -276,12 +281,12 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 
 Plugins="${Plugins} zsh-interactive-cd zsh-autosuggestions"
 
-Plugins="${Plugins} zsh-syntax-highlighting"
-# if [[ $ostype == "windows" ]]; then
-#     Plugins="${Plugins} zsh-syntax-highlighting"
-# else
-#     Plugins="${Plugins} fast-syntax-highlighting"
-# fi
+# Plugins="${Plugins} zsh-syntax-highlighting"
+if [[ $ostype == "windows" ]]; then
+    Plugins="${Plugins} zsh-syntax-highlighting"
+else
+    Plugins="${Plugins} fast-syntax-highlighting"
+fi
 
 Plugins="${Plugins} history-substring-search"
 
@@ -347,7 +352,7 @@ fi
 #     echo "set linenumbers" >> "$HOME/.nanorc"
 # fi
 
-if [[ -d $HOME/.local/share/nano ]]; then
+if [[ -d "$HOME/.local/share/nano" ]]; then
     if [[ ! $(grep "\$HOME/.local/share/nano/\*\.nanorc" "$HOME/.nanorc") ]]; then
         echo "include \"$HOME/.local/share/nano/*.nanorc\"" >> "$HOME/.nanorc"
     fi

@@ -9,7 +9,7 @@ if (-Not (Get-Command -Name "check_webservice_up" 2>$null)) {
 
 # socks proxy
 if (-Not (check_webservice_up)) {
-    $SOCKS_PROXY_ADDR = "127.0.0.1:55880"
+    $SOCKS_PROXY_ADDR = "127.0.0.1:7891"
     if($PROMPT_VALUE = Read-Host "Scoks proxy address for github download?[$($SOCKS_PROXY_ADDR)]") {
         $SOCKS_PROXY_ADDR = $PROMPT_VALUE
     }

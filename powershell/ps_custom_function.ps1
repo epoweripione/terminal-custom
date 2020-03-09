@@ -154,11 +154,11 @@ function check_webservice_up() {
 }
 
 function check_socks5_proxy_up() {
-    Param
-    (
-        [Parameter(Mandatory=$true, Position=0)]
+    Param (
+        [Parameter(Mandatory = $true, Position = 0)]
         [string] $socks_proxy_url,
-        [Parameter(Mandatory=$false, Position=1)]
+
+        [Parameter(Mandatory = $false, Position = 1)]
         [string] $webservice_url
     )
 
@@ -171,6 +171,83 @@ function check_socks5_proxy_up() {
         return $true
     } else {
         return $false
+    }
+}
+
+function Set-WinHTTP-Proxy {
+    <#
+    .Description
+    This function will set the proxy server using netsh.
+    .Example
+    Setting proxy information
+    Set-WinHTTP-Proxy -proxy "127.0.0.1:7890"
+    Set-WinHTTP-Proxy -proxy "socks=127.0.0.1:7891" -Bypass "localhost"
+    #>
+    Param (
+        [Parameter(Mandatory = $false, Position = 0)]
+        [string] $Proxy,
+
+        [Parameter(Mandatory = $false, Position = 1)]
+        [string] $Bypass
+    )
+
+    # netsh winhttp set proxy proxy-server="socks=127.0.0.1:7891" bypass-list="localhost"
+    if (($null -eq $Proxy) -or ($Proxy -eq "")) {
+        netsh winhttp reset proxy
+    } else {
+        if ($Proxy -eq "ie") {
+            netsh winhttp import proxy source=ie
+        } else {
+            if ($Bypass) {
+                netsh winhttp set proxy proxy-server="$Proxy" bypass-list="$Bypass"
+            } else {
+                netsh winhttp set proxy "$Proxy"
+            }
+        }
+    }
+}
+
+function Set-InternetProxy {
+    <#
+    .Description
+    This function will set the proxy server and (optinal) Automatic configuration script.
+    .Example
+    Setting proxy information
+    Set-InternetProxy -proxy "proxy:7890"
+    .Example
+    Setting proxy information and (optinal) Automatic Configuration Script
+    Set-InternetProxy -proxy "proxy:7890" -acs "http://proxy:7892"
+    #>
+    Param(
+        [Parameter(Mandatory = $True, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+        [String[]] $Proxy,
+
+        [Parameter(Mandatory = $False, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+        [AllowEmptyString()]
+        [String[]] $acs
+    )
+
+    Begin {
+        $regKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+    }
+
+    # Get-ItemProperty -Path $regKey | Select-Object ProxyServer, ProxyEnable
+    # Set-ItemProperty -Path $regKey ProxyEnable -value 1
+    Process {
+        Set-ItemProperty -path $regKey ProxyEnable -value 1
+        Set-ItemProperty -path $regKey ProxyServer -value $proxy
+        if ($acs) {            
+            Set-ItemProperty -path $regKey AutoConfigURL -Value $acs          
+        }
+    } 
+
+    End {
+        Write-Output "Proxy is now enabled, Proxy Server: $proxy"
+        if ($acs) {
+            Write-Output "Automatic Configuration Script: $acs"
+        } else {
+            Write-Output "Automatic Configuration Script: Not Defined"
+        }
     }
 }
 

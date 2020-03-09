@@ -31,6 +31,9 @@ log-level: info
 ## you can put the static web resource (such as clash-dashboard) to a directory, and clash would serve in `${API}/ui`
 ## input is a relative path to the configuration directory or an absolute path
 # external-ui: folder
+# yacd：  https://github.com/haishanh/yacd
+# Razord：http://clash.razord.top/#/proxies
+# external-ui: dashboard
 
 ## Secret for RESTful API (Optional)
 secret: ""
@@ -38,6 +41,7 @@ secret: ""
 # experimental feature
 experimental:
   ignore-resolve-fail: true # ignore dns resolve fail, default value is true
+  # interface-name: en0 # outbound interface name
 
 ## authentication of local SOCKS5/HTTP(S) server
 # authentication:
@@ -113,9 +117,8 @@ cfw-conn-break-strategy:
   profile: true
   mode: false
 
-# Run child process after CFW started
-# Refer: https://docs.cfw.lbyczf.com/contents/childprocess.html
-# cfw-child-process: []
+## Run child process after CFW started
+## Refer: https://docs.cfw.lbyczf.com/contents/childprocess.html
 # cfw-child-process:
 #   - command: trojan.exe
 #     # args:
@@ -123,7 +126,10 @@ cfw-conn-break-strategy:
 #     #   - "trojan.json"
 #     options:
 #       cwd: C:\Users\<UserName>\scoop\apps\trojan\current
-  # - command: v2rayn.exe
+#       # detached: true
+#       # shell: true
+#       # windowsHide: true
+#   - command: v2rayn.exe
 
 # Will be ignored after profile selection
 Proxy:
