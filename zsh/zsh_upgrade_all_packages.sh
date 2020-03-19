@@ -414,7 +414,7 @@ if [[ -s "/srv/trojan/trojan" ]]; then
     CURRENT_VERSION=$(/srv/trojan/trojan --version 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        [[ $(systemctl is-enabled trojan 2>/dev/null) ]] && systemctl stop trojan
+        [[ $(systemctl is-enabled trojan 2>/dev/null) ]] && sudo systemctl stop trojan
 
         DOWNLOAD_URL=https://github.com/trojan-gfw/trojan/releases/download/v${REMOTE_VERSION}/trojan-${REMOTE_VERSION}-${ostype}-${spruce_type}.tar.xz
         curl -SL -o trojan.tar.xz -C- $DOWNLOAD_URL && \
@@ -429,8 +429,7 @@ if [[ -s "/srv/trojan/trojan" ]]; then
         if [[ -s "/etc/trojan/trojan.json" ]]; then
             # nohup /srv/trojan/trojan -c /etc/trojan/trojan.json >/dev/null 2>&1 & disown
             # sudo systemctl enable trojan && sudo systemctl start trojan
-            [[ $(systemctl is-enabled trojan 2>/dev/null) ]] || sudo systemctl enable trojan
-            sudo systemctl restart trojan
+            [[ $(systemctl is-enabled trojan 2>/dev/null) ]] && sudo systemctl restart trojan
         else
             sudo mkdir -p /etc/trojan && \
                 sudo cp -f /srv/trojan/examples/server.json-example /etc/trojan/trojan.json
@@ -441,7 +440,7 @@ fi
 
 if [[ -s "/srv/clash/clash" ]]; then
     colorEcho ${BLUE} "Updating clash..."
-    [[ $(systemctl is-enabled clash 2>/dev/null) ]] && systemctl stop clash
+    [[ $(systemctl is-enabled clash 2>/dev/null) ]] && sudo systemctl stop clash
 
     CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
 
@@ -481,8 +480,7 @@ if [[ -s "/srv/clash/clash" ]]; then
             echo ${REMOTE_VERSION} > "/srv/clash/mmdb.ver"
     fi
 
-    [[ $(systemctl is-enabled clash 2>/dev/null) ]] || sudo systemctl enable clash
-    sudo systemctl restart clash
+    [[ $(systemctl is-enabled clash 2>/dev/null) ]] && sudo systemctl restart clash
 fi
 
 
@@ -498,7 +496,7 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
 
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] && systemctl stop subconverter
+        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] && sudo systemctl stop subconverter
 
         DOWNLOAD_URL=https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${ostype}${VDIS}.tar.gz
         curl -SL -o subconverter.tar.gz -C- $DOWNLOAD_URL && \
@@ -507,8 +505,7 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
             rm subconverter.tar.gz && \
             echo ${REMOTE_VERSION} > /srv/subconverter/.version
 
-        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] || sudo systemctl enable subconverter
-        sudo systemctl restart subconverter
+        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] && sudo systemctl restart subconverter
     fi
 fi
 
