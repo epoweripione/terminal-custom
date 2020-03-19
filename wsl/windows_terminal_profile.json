@@ -25,8 +25,8 @@
     "profiles": {
         "defaults": {
             "fontFace": "FiraCode Nerd Font Mono",
-            "fontSize": 14,
-            "acrylicOpacity": 0.85,
+            "fontSize": 12,
+            "acrylicOpacity": 1.0,
             "useAcrylic": true,
             "cursorShape": "underscore",
             "colorScheme": "One Half Dark"
@@ -115,5 +115,9 @@
     ],
     // Add any keybinding overrides to this array.
     // To unbind a default keybinding, set the command to "unbound"
-    "keybindings": []
+    "keybindings": [
+        {"keys": ["alt+d"], "command": {"action": "splitPane", "split": "auto", "splitMode": "duplicate"}},
+        {"keys": ["alt+h"], "command": {"action": "splitPane", "split": "horizontal", "splitMode": "duplicate"}},
+        {"keys": ["alt+v"], "command": {"action": "splitPane", "split": "vertical", "splitMode": "duplicate"}}
+    ]
 }

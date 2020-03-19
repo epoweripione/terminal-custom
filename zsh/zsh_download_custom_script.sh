@@ -43,9 +43,14 @@ ostype_wsl=$(uname -r)
 
 colorEcho ${BLUE} "Cloning custom shell script repository to $HOME/terminal-custom..."
 if [[ -d ~/terminal-custom ]]; then
-    cd ~/terminal-custom && git pull
+    cd ~/terminal-custom && git pull --rebase --stat origin master
 else
-    git clone https://github.com/epoweripione/terminal-custom.git ~/terminal-custom
+    git clone -c core.eol=lf -c core.autocrlf=false \
+        -c fsck.zeroPaddedFilemode=ignore \
+        -c fetch.fsck.zeroPaddedFilemode=ignore \
+        -c receive.fsck.zeroPaddedFilemode=ignore \
+        --depth=1 --branch master \
+        https://github.com/epoweripione/terminal-custom.git ~/terminal-custom
 fi
 
 
@@ -87,7 +92,6 @@ chmod +x ~/php_debian_installer.sh
 chmod +x ~/pecl_install_php_extensions.sh
 
 chmod +x ~/clash_client_config.sh
-chmod +x ~/clash_global_proxy.sh
 chmod +x ~/cross_gfw_installer.sh
 chmod +x ~/cross_gfw_config.sh
 

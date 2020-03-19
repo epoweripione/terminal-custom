@@ -439,29 +439,50 @@ if [[ -s "/srv/trojan/trojan" ]]; then
 fi
 
 
-# if [[ -s "/srv/clash/clash" ]]; then
-#     colorEcho ${BLUE} "Updating clash..."
-#     CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
+if [[ -s "/srv/clash/clash" ]]; then
+    colorEcho ${BLUE} "Updating clash..."
+    [[ $(systemctl is-enabled clash 2>/dev/null) ]] && systemctl stop clash
 
-#     CURRENT_VERSION=$(/srv/clash/clash -v 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-#     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-#     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-#         [[ $(systemctl is-enabled clash 2>/dev/null) ]] && systemctl stop clash
+    CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
 
-#         DOWNLOAD_URL=https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${ostype}-${spruce_type}-v${REMOTE_VERSION}.gz
-#         curl -SL -o clash-${ostype}-${spruce_type}.gz -C- $DOWNLOAD_URL && \
-#             mkdir -p /srv/clash && \
-#             mv clash-${ostype}-${spruce_type}.gz /srv/clash && \
-#             cd /srv/clash && \
-#             gzip -d clash-${ostype}-${spruce_type}.gz && \
-#             chmod +x clash-${ostype}-${spruce_type} && \
-#             sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true && \
-#             cd - >/dev/null 2>&1
+    CURRENT_VERSION=$(/srv/clash/clash -v 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+    # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    # Pre-release
+    REMOTE_VERSION=$(curl -s -N https://github.com/Dreamacro/clash/releases \
+        | grep -Eo -m1 '\/releases\/tag\/v([0-9]{1,}\.)+[0-9]{1,}' \
+        | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        DOWNLOAD_URL=https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${ostype}-${spruce_type}-v${REMOTE_VERSION}.gz
+        curl -SL -o clash-${ostype}-${spruce_type}.gz -C- $DOWNLOAD_URL && \
+            mkdir -p /srv/clash && \
+            mv clash-${ostype}-${spruce_type}.gz /srv/clash && \
+            cd /srv/clash && \
+            rm -f clash-${ostype}-${spruce_type} && \
+            gzip -d clash-${ostype}-${spruce_type}.gz && \
+            chmod +x clash-${ostype}-${spruce_type} && \
+            sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true && \
+            cd - >/dev/null 2>&1
+    fi
 
-#         [[ $(systemctl is-enabled clash 2>/dev/null) ]] || sudo systemctl enable clash
-#         sudo systemctl restart clash
-#     fi
-# fi
+    # MMDB_URL="https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb"
+    MMDB_URL="https://geolite.clash.dev/Country.mmdb"
+    CHECK_URL="https://geolite.clash.dev/version"
+
+    if [[ -s "/srv/clash/mmdb.ver" ]]; then
+        CURRENT_VERSION=$(head -n1 /srv/clash/mmdb.ver)
+    else
+        CURRENT_VERSION="20000101"
+    fi
+
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        curl -SL -o "/tmp/Country.mmdb" "$MMDB_URL" && \
+            mv -f "/tmp/Country.mmdb" "/srv/clash/Country.mmdb"
+    fi
+
+    [[ $(systemctl is-enabled clash 2>/dev/null) ]] || sudo systemctl enable clash
+    sudo systemctl restart clash
+fi
 
 
 if [[ -s "/srv/subconverter/subconverter" ]]; then

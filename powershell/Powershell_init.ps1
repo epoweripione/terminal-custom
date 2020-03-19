@@ -34,7 +34,7 @@
 
 
 ## simple http server
-# cd ~; python -m http.server 80880
+# cd ~; python -m http.server 8080
 
 
 ## get & set user env

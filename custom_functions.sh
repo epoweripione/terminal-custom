@@ -1000,6 +1000,22 @@ function set_curl_proxy() {
 }
 
 
+## Setting npm http proxy
+function set_npm_proxy() {
+    local PROXY_ADDRESS=$1
+
+    [[ ! -x "$(command -v npm)" ]] && return 0
+
+    if [[ -n "$PROXY_ADDRESS" ]]; then
+        npm config set proxy "http://${PROXY_ADDRESS}"
+        npm config set https-proxy "http://${PROXY_ADDRESS}"
+    else
+        npm config delete proxy
+        npm config delete https-proxy
+    fi
+}
+
+
 ## Setting global proxy
 function set_global_proxy() {
     local SOCKS_ADDRESS=${1:-""}
@@ -1161,6 +1177,8 @@ function git_update_repo_in_subdir() {
     local BRANCH=${3:-master}
 
     [[ -z "${subdir}" ]] && exit 0
+
+    # find . -type d -name ".git" -execdir git pull --rebase --stat origin master \;
 
     if [[ -z "${finddepth}" ]]; then
         find "${subdir}" -type d -name ".git" \

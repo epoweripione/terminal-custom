@@ -344,10 +344,12 @@ function install_clash() {
 
     CURRENT_VERSION="0.0.0"
     # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-    REMOTE_VERSION="0.17.1"
+    # Pre-release
+    REMOTE_VERSION=$(curl -s -N https://github.com/Dreamacro/clash/releases \
+        | grep -Eo -m1 '\/releases\/tag\/v([0-9]{1,}\.)+[0-9]{1,}' \
+        | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         DOWNLOAD_URL=https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${ostype}-${spruce_type}-v${REMOTE_VERSION}.gz
-        MMDB_URL=https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb
         curl -SL -o clash-${ostype}-${spruce_type}.gz -C- $DOWNLOAD_URL && \
             mkdir -p /srv/clash && \
             mv clash-${ostype}-${spruce_type}.gz /srv/clash && \
@@ -355,8 +357,23 @@ function install_clash() {
             gzip -d clash-${ostype}-${spruce_type}.gz && \
             chmod +x clash-${ostype}-${spruce_type} && \
             sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true && \
-            curl -SL -o "/srv/clash/Country.mmdb" "$MMDB_URL" && \
             cd - >/dev/null 2>&1
+    fi
+
+    # MMDB_URL="https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb"
+    MMDB_URL="https://geolite.clash.dev/Country.mmdb"
+    CHECK_URL="https://geolite.clash.dev/version"
+
+    if [[ -s "/srv/clash/mmdb.ver" ]]; then
+        CURRENT_VERSION=$(head -n1 /srv/clash/mmdb.ver)
+    else
+        CURRENT_VERSION="20000101"
+    fi
+
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        curl -SL -o "/tmp/Country.mmdb" "$MMDB_URL" && \
+            mv -f "/tmp/Country.mmdb" "/srv/clash/Country.mmdb"
     fi
 }
 

@@ -1,8 +1,9 @@
 // npm init
-// npm i express --save && npm i express-async-handler --save && npm i morgan --save
+// npm i --save express express-async-handler morgan express-fileupload
 
 const express = require('express');
 const asyncHandler = require('express-async-handler');
+const fileUpload = require('express-fileupload');
 
 const morgan = require('morgan');
 
@@ -13,6 +14,20 @@ const crypto = require('crypto');
 
 const app = express();
 
+// file upload
+// https://github.com/richardgirges/express-fileupload
+// https://attacomsian.com/blog/uploading-files-nodejs-express
+// safeFileNames: /[&\/\\#, +()$~%'":*?<>{}]/g
+app.use(fileUpload({
+    limits: {
+        fileSize: 50 * 1024 * 1024
+    },
+    safeFileNames: true,
+    preserveExtension: true,
+    useTempFiles: true,
+    tempFileDir: '/tmp/'
+}));
+
 // log using morgan
 // https://github.com/expressjs/morgan
 app.use(morgan('combined'));
@@ -21,12 +36,12 @@ var asyncReadFile = function (path) {
     return new Promise(function (resolve, reject) {
         fs.readFile(path, 'utf-8', function (err, data) {
             if (err) {
-                reject(err)
+                reject(err);
             }
-            resolve(data)
+            resolve(data);
         })
     }).catch((err) => {
-        return err
+        return err;
     })
 };
 
@@ -56,7 +71,8 @@ var sendMatchFile = function (filename, checksum, req, res, next) {
         (  (checksum.length > 0) && 
             req.query.hasOwnProperty('md5') && 
             (req.query.md5 == checksum)
-        )) {
+        )
+    ) {
         var options = {
             root: path.join(__dirname, 'public'),
             dotfiles: 'deny',
@@ -171,6 +187,30 @@ app.get('/static/:name', function (req, res, next) {
     sendMatchFile(fileName, fileChecksum, req, res, next);
 });
 
+// Put:
+// curl -T XXX.log -H "filename: XXX.log" https://upload-logs.myserver.com/upload
+// app.put('/upload', function (req, res) {
+// Post:
+// curl -F 'filename=@log.tgz' https://upload-logs.myserver.com/upload
+app.post('/upload', function (req, res) {
+    if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).send('No files were uploaded.');
+    }
+
+    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+    let uploadFile = req.files.filename;
+
+    const uploadPath = path.join(__dirname, 'public', uploadFile.name);
+
+    // Use the mv() method to place the file somewhere on your server
+    uploadFile.mv(uploadPath, function (err) {
+        if (err)
+            return res.status(500).send(err);
+
+        res.send(uploadFile.name + ' uploaded!');
+    });
+});
+
 // route that doesn't exist
 app.use(function (req, res, next) {
     if (!req.route)
@@ -185,9 +225,9 @@ app.use(function (err, req, res, next) {
 });
 
 var server = app.listen(8080, 'localhost', () => {
-    var host = server.address().address
-    var port = server.address().port
-    console.log('Server is running at http://%s:%s', host, port)
+    var host = server.address().address;
+    var port = server.address().port;
+    console.log('Server is running at http://%s:%s', host, port);
 });
 
 // //nginx proxy
