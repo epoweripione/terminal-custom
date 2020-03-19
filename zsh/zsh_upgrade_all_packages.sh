@@ -477,7 +477,8 @@ if [[ -s "/srv/clash/clash" ]]; then
     REMOTE_VERSION=$(wget -qO- $CHECK_URL)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         curl -SL -o "/tmp/Country.mmdb" "$MMDB_URL" && \
-            mv -f "/tmp/Country.mmdb" "/srv/clash/Country.mmdb"
+            mv -f "/tmp/Country.mmdb" "/srv/clash/Country.mmdb" && \
+            echo ${REMOTE_VERSION} > "/srv/clash/mmdb.ver"
     fi
 
     [[ $(systemctl is-enabled clash 2>/dev/null) ]] || sudo systemctl enable clash
