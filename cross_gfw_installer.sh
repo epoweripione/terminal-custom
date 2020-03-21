@@ -101,7 +101,7 @@ if [[ ! -s "/srv/trojan/trojan" ]]; then
     CURRENT_VERSION="0.0.0"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        DOWNLOAD_URL=https://github.com/trojan-gfw/trojan/releases/download/v${REMOTE_VERSION}/trojan-${REMOTE_VERSION}-${ostype}-${spruce_type}.tar.xz
+        DOWNLOAD_URL="https://github.com/trojan-gfw/trojan/releases/download/v${REMOTE_VERSION}/trojan-${REMOTE_VERSION}-${ostype}-${spruce_type}.tar.xz"
         curl -SL -o trojan.tar.xz -C- $DOWNLOAD_URL && \
             tar -JxPf trojan.tar.xz -C /srv/ && \
             rm trojan.tar.xz
@@ -136,7 +136,7 @@ if [[ ! -s "/srv/clash/clash" ]]; then
         | grep -Eo -m1 '\/releases\/tag\/v([0-9]{1,}\.)+[0-9]{1,}' \
         | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        DOWNLOAD_URL=https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${ostype}-${spruce_type}-v${REMOTE_VERSION}.gz
+        DOWNLOAD_URL="https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${ostype}-${spruce_type}-v${REMOTE_VERSION}.gz"
         curl -SL -o clash-${ostype}-${spruce_type}.gz -C- $DOWNLOAD_URL && \
             mkdir -p /srv/clash && \
             mv clash-${ostype}-${spruce_type}.gz /srv/clash && \
@@ -176,10 +176,10 @@ if [[ ! -s "/srv/subconverter/subconverter" ]]; then
     CURRENT_VERSION="0.0.0"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        DOWNLOAD_URL=https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${ostype}${VDIS}.tar.gz
+        DOWNLOAD_URL="https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${ostype}${VDIS}.tar.gz"
         curl -SL -o subconverter.tar.gz -C- $DOWNLOAD_URL && \
             mkdir -p /srv/subconverter && \
-            tar -zxPf subconverter.tar.gz -C /srv/subconverter && \
+            tar -zxPf subconverter.tar.gz -C /srv && \
             rm subconverter.tar.gz && \
             echo ${REMOTE_VERSION} > /srv/subconverter/.version
     fi

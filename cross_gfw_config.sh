@@ -318,7 +318,7 @@ function install_update_subconverter() {
         DOWNLOAD_URL="https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${ostype}${VDIS}.tar.gz"
         curl -SL -o subconverter.tar.gz -C- $DOWNLOAD_URL && \
             mkdir -p /srv/subconverter && \
-            tar -zxPf subconverter.tar.gz -C /srv/subconverter && \
+            tar -zxPf subconverter.tar.gz -C /srv && \
             rm subconverter.tar.gz && \
             echo ${REMOTE_VERSION} > /srv/subconverter/.version
     fi
