@@ -58,8 +58,7 @@ if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
             find "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}" -mindepth 2 -maxdepth 2 \
                 ! -name "example*" -exec /bin/rm -rf {} \; && \
             unzip -qo "/tmp/oh-my-zsh-custom.zip" -d "$ZSH" && \
-            rm -f "/tmp/oh-my-zsh-custom.zip" && \
-            cd - >/dev/null 2>&1
+            rm -f "/tmp/oh-my-zsh-custom.zip"
         # wget -c -O "/tmp/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
         #     cd "$ZSH_CUSTOM" && \
         #     find "$ZSH_CUSTOM" -maxdepth 2 -regextype posix-extended \
@@ -70,8 +69,7 @@ if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
         #             -or -name "example.*" \
         #         \) -exec rm -rf {} \; && \
         #     unzip -qo "/tmp/oh-my-zsh-custom.zip" -d "$ZSH" && \
-        #     rm -f "/tmp/oh-my-zsh-custom.zip" && \
-        #     cd - >/dev/null 2>&1
+        #     rm -f "/tmp/oh-my-zsh-custom.zip"
     fi
 fi
 

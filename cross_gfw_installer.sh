@@ -143,8 +143,7 @@ if [[ ! -s "/srv/clash/clash" ]]; then
             cd /srv/clash && \
             gzip -d clash-${ostype}-${spruce_type}.gz && \
             chmod +x clash-${ostype}-${spruce_type} && \
-            sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true && \
-            cd - >/dev/null 2>&1
+            sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true
     fi
 
     # MMDB_URL="https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb"
