@@ -440,8 +440,6 @@ fi
 
 if [[ -s "/srv/clash/clash" ]]; then
     colorEcho ${BLUE} "Updating clash..."
-    [[ $(systemctl is-enabled clash 2>/dev/null) ]] && sudo systemctl stop clash
-
     CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
 
     CURRENT_VERSION=$(/srv/clash/clash -v 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
@@ -462,6 +460,8 @@ if [[ -s "/srv/clash/clash" ]]; then
             sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true && \
             cd - >/dev/null 2>&1
     fi
+
+    [[ $(systemctl is-enabled clash 2>/dev/null) ]] && sudo systemctl restart clash
 
     # MMDB_URL="https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb"
     MMDB_URL="https://geolite.clash.dev/Country.mmdb"
