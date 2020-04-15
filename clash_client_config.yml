@@ -219,5 +219,6 @@ proxy-groups:
 ## Subscirptions:
 # https://jiang.netlify.com/
 # https://youlianboshi.netlify.com/
+# http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F%7Chttps%3A%2F%2Fyoulianboshi.netlify.com%2F&config=config%2FACL4SSR_WithGFW.ini&new_name=true
 rules:
-# [RULES]http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F%7Chttps%3A%2F%2Fyoulianboshi.netlify.com%2F&config=config%2FACL4SSR_WithGFW.ini&new_name=true
+# [RULES]http://localhost:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F&config=https%3A%2F%2Fraw.githubusercontent.com%2Fepoweripione%2Fterminal-custom%2Fmaster%2Fclash_client_rules.ini&new_name=true

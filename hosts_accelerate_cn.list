@@ -40,7 +40,7 @@ psg-prod-eastus.azureedge.net
 # PowershellGallery end
 
 # VisualStudio Start
-gallerycdn.vsassets.io
+vsassets.io
 download.visualstudio.microsoft.com
 # VisualStudio end
 

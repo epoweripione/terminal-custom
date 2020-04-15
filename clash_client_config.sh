@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Usage:
-# ./clash_client_config.sh /srv/clash/config.yaml /srv/web/www/default/clash_config.yml
-# (crontab -l 2>/dev/null || true; echo "0 8,12,15,20 * * * /root/clash_client_config.sh /srv/clash/config.yaml /srv/web/www/default/clash_config.yml >/dev/null") | crontab -
+# ./clash_client_config.sh /etc/clash/config.yaml /srv/web/www/default/clash_config.yml
+# (crontab -l 2>/dev/null || true; echo "0 8,12,15,20 * * * /root/clash_client_config.sh /etc/clash/config.yaml /srv/web/www/default/clash_config.yml >/dev/null") | crontab -
 
 trap 'rm -r "$WORKDIR"' EXIT
 
@@ -97,6 +97,8 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
     if Git_Clone_Update "ACL4SSR/ACL4SSR" "/srv/subconverter/ACL4SSR"; then
         cp -f /srv/subconverter/ACL4SSR/Clash/*.list \
             /srv/subconverter/rules/ACL4SSR/Clash && \
+        cp -f /srv/subconverter/ACL4SSR/Clash/Ruleset/*.list \
+            /srv/subconverter/rules/ACL4SSR/Clash/Ruleset && \
         cp -f /srv/subconverter/ACL4SSR/Clash/*.yml \
             /srv/subconverter/config && \
         cp -f /srv/subconverter/ACL4SSR/Clash/config/*.ini \
@@ -164,7 +166,7 @@ if [[ ${GROUP_START_LINE} -gt 0 ]]; then
 fi
 
 # [PROXY_CUSTOM]
-PROXY_CUSTOM_FILE="/srv/clash/clash_proxy_custom.yml"
+PROXY_CUSTOM_FILE="/etc/clash/clash_proxy_custom.yml"
 if [[ -s "$PROXY_CUSTOM_FILE" ]]; then
     colorEcho ${BLUE} "  Setting custom proxy..."
     PROXY_CUSTOM=$(cat "$PROXY_CUSTOM_FILE")
@@ -199,7 +201,7 @@ if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
 fi
 
 # custom rules
-RULE_CUSTOM_FILE="/srv/clash/clash_rule_custom.yml"
+RULE_CUSTOM_FILE="/etc/clash/clash_rule_custom.yml"
 if [[ -s "$RULE_CUSTOM_FILE" ]]; then
     colorEcho ${BLUE} "  Setting custom RULE..."
     RULE_CUSTOM=$(cat "$RULE_CUSTOM_FILE")
@@ -373,6 +375,10 @@ fi
 # Copy to file
 if [[ -n "$COPY_TO_FILE" ]]; then
     colorEcho ${BLUE} "  Copy config to ${COPY_TO_FILE}..."
+    if [[ -d "/srv/clash" && "$TARGET_CONFIG_FILE" != "/srv/clash/config.yaml" ]]; then
+        cp -f "$TARGET_CONFIG_FILE" "/srv/clash/config.yaml"
+    fi
+
     cp -f "$TARGET_CONFIG_FILE" "$COPY_TO_FILE"
 
     if [[ ! -s "${COPY_TO_FILE}.md5" ]]; then

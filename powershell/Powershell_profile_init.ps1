@@ -1,5 +1,20 @@
 #Requires -RunAsAdministrator
 
+if (-Not (Get-Command -Name "check_webservice_up" 2>$null)) {
+    $CUSTOM_FUNCTION="$PSScriptRoot\ps_custom_function.ps1"
+    if ((Test-Path "$CUSTOM_FUNCTION") -and ((Get-Item "$CUSTOM_FUNCTION").length -gt 0)) {
+        . "$CUSTOM_FUNCTION"
+    }
+}
+
+$PROXY_ADDR = "127.0.0.1:7890"
+if (-Not (check_socks5_proxy_up "127.0.0.1:7891")) {
+    $PROXY_ADDR = ""
+    if($PROMPT_VALUE = Read-Host "Proxy address for Install-Module?") {
+        $PROXY_ADDR = $PROMPT_VALUE
+    }
+}
+
 # Profile
 if (-Not (Test-Path $PROFILE)) {
     New-Item $PROFILE –Type File –Force | Out-Null
@@ -17,7 +32,14 @@ Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
 Write-Host "Installing powershell modules..." -ForegroundColor Blue
 # Find-Module, Get-InstalledModule, Update-Module, Uninstall-Module
 if (-Not (Get-Module -Name "PSReadLine")) {
-    Install-Module -Name "PSReadLine" -AllowPrerelease -SkipPublisherCheck -Force
+    if (($null -eq $PROXY_ADDR) -or ($PROXY_ADDR -eq "")) {
+        Install-Module -Name "PSReadLine" `
+            -AllowPrerelease -SkipPublisherCheck -Force
+    } else {
+        Install-Module -Name "PSReadLine" `
+            -Proxy http://$PROXY_ADDR `
+            -AllowPrerelease -SkipPublisherCheck -Force
+    }
 }
 
 $ModuleNames = @(
@@ -29,7 +51,14 @@ $ModuleNames = @(
 
 foreach ($TargetModule in $ModuleNames) {
     if (-Not (Get-Module -Name $TargetModule)) {
-        Install-Module -Name $TargetModule -AllowClobber
+        if (($null -eq $PROXY_ADDR) -or ($PROXY_ADDR -eq "")) {
+            Install-Module -Name $TargetModule `
+                -AllowClobber
+        } else {
+            Install-Module -Name $TargetModule `
+                -Proxy http://$PROXY_ADDR `
+                -AllowClobber
+        }
     }
 }
 
