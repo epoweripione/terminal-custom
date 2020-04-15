@@ -361,7 +361,7 @@ fi
 
 # Remove custom proxy from $TARGET_CONFIG_FILE
 if [[ -n "$PROXY_CUSTOM" ]]; then
-    CUSTOM_START_LINE=$(grep -E -n "^Proxies:" "${TARGET_CONFIG_FILE}" | cut -d: -f1)
+    CUSTOM_START_LINE=$(grep -E -n "^proxies:" "${TARGET_CONFIG_FILE}" | cut -d: -f1)
     CUSTOM_START_LINE=$((${CUSTOM_START_LINE} + 1))
     PROXY_CUSTOM_COUNT=$(echo "$PROXY_CUSTOM" | wc -l)
     CUSTOM_END_LINE=$((${CUSTOM_START_LINE} + ${PROXY_CUSTOM_COUNT}))
