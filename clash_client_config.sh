@@ -154,7 +154,7 @@ colorEcho ${BLUE} "  Setting proxy..."
 PROXY=""
 if [[ ${GROUP_START_LINE} -gt 0 ]]; then
     if [[ -s "${WORKDIR}/rules.yml" ]]; then
-        PROXY_START_LINE=$(grep -E -n "^Proxies:" "${WORKDIR}/rules.yml" | cut -d: -f1)
+        PROXY_START_LINE=$(grep -E -n "^proxies:" "${WORKDIR}/rules.yml" | cut -d: -f1)
         if [[ ${GROUP_START_LINE} -gt 0 ]]; then
             PROXY_START_LINE=$((${PROXY_START_LINE} + 1))
             PROXY_END_LINE=$((${GROUP_START_LINE} - 2))

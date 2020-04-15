@@ -132,7 +132,7 @@ cfw-conn-break-strategy:
 #   - command: v2rayn.exe
 
 # Will be ignored after profile selection
-Proxies:
+proxies:
 # [PROXY_CUSTOM]
 
 # [PROXY]
