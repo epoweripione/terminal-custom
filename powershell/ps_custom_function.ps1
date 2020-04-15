@@ -213,10 +213,10 @@ function Set-InternetProxy {
     This function will set the proxy server and (optinal) Automatic configuration script.
     .Example
     Setting proxy information
-    Set-InternetProxy -proxy "proxy:7890"
+    Set-InternetProxy -proxy "127.0.0.1:7890"
     .Example
     Setting proxy information and (optinal) Automatic Configuration Script
-    Set-InternetProxy -proxy "proxy:7890" -acs "http://proxy:7892"
+    Set-InternetProxy -proxy "127.0.0.1:7890" -acs "http://127.0.0.1:7892"
     #>
     Param(
         [Parameter(Mandatory = $True, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
@@ -231,14 +231,19 @@ function Set-InternetProxy {
         $regKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
     }
 
-    # Get-ItemProperty -Path $regKey | Select-Object ProxyServer, ProxyEnable
-    # Set-ItemProperty -Path $regKey ProxyEnable -value 1
+    # Get-ItemProperty -Path $regKey | Select-Object ProxyServer, ProxyEnable, ProxyOverride
     Process {
-        Set-ItemProperty -path $regKey ProxyEnable -value 1
-        Set-ItemProperty -path $regKey ProxyServer -value $proxy
+        Set-ItemProperty -path $regKey -Name ProxyEnable -value 1
+        Set-ItemProperty -path $regKey -Name ProxyServer -value $proxy
+        Set-ItemProperty -Path $regKey -Name ProxyOverride -Value '<local>'
         if ($acs) {            
-            Set-ItemProperty -path $regKey AutoConfigURL -Value $acs          
+            Set-ItemProperty -path $regKey -Name AutoConfigURL -Value $acs          
         }
+
+        [System.Environment]::SetEnvironmentVariable('http_proxy', $proxy, 'User')
+        [System.Environment]::SetEnvironmentVariable('https_proxy', $proxy, 'User')
+        [System.Environment]::SetEnvironmentVariable('HTTP_PROXY', $proxy, 'User')
+        [System.Environment]::SetEnvironmentVariable('HTTPS_PROXY', $proxy, 'User')
     } 
 
     End {
@@ -248,6 +253,28 @@ function Set-InternetProxy {
         } else {
             Write-Output "Automatic Configuration Script: Not Defined"
         }
+    }
+}
+
+function Clear-InternetProxy {
+    Begin {
+        $regKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+    }
+
+    Process {
+        Set-ItemProperty -path $regKey -Name ProxyEnable -value 0
+        Set-ItemProperty -path $regKey -Name ProxyServer -value ''
+        Set-ItemProperty -Path $regKey -Name ProxyOverride -Value ''
+        Set-ItemProperty -path $regKey -Name AutoConfigURL -Value ''
+
+        [System.Environment]::SetEnvironmentVariable('http_proxy', $null, 'User')
+        [System.Environment]::SetEnvironmentVariable('https_proxy', $null, 'User')
+        [System.Environment]::SetEnvironmentVariable('HTTP_PROXY', $null, 'User')
+        [System.Environment]::SetEnvironmentVariable('HTTPS_PROXY', $null, 'User')
+    } 
+
+    End {
+        Write-Output "Proxy is now disabled!"
     }
 }
 

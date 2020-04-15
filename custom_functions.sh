@@ -1016,17 +1016,75 @@ function set_npm_proxy() {
 }
 
 
+## Setting yarn http proxy
+function set_yarn_proxy() {
+    local PROXY_ADDRESS=$1
+
+    [[ ! -x "$(command -v yarn)" ]] && return 0
+
+    if [[ -n "$PROXY_ADDRESS" ]]; then
+        yarn config set proxy "http://${PROXY_ADDRESS}"
+        yarn config set https-proxy "http://${PROXY_ADDRESS}"
+    else
+        yarn config delete proxy
+        yarn config delete https-proxy
+    fi
+}
+
+
+## Setting gradle http proxy
+function set_gradle_proxy() {
+    local PROXY_HOST=$1
+    local PROXY_PORT=$2
+    local GRADLE_CONFIG=${3:-"$HOME/.gradle/gradle.properties"}
+
+    [[ ! -x "$(command -v gradle)" ]] && return 0
+
+    if [[ -s "$GRADLE_CONFIG" ]]; then
+        sed -i "/^systemProp.http.proxyHost.*/d" "${GRADLE_CONFIG}"
+        sed -i "/^systemProp.http.proxyPort.*/d" "${GRADLE_CONFIG}"
+        sed -i "/^systemProp.https.proxyHost.*/d" "${GRADLE_CONFIG}"
+        sed -i "/^systemProp.https.proxyPort.*/d" "${GRADLE_CONFIG}"
+    fi
+
+    if [[ -n "$PROXY_HOST" && -n "$PROXY_PORT" ]]; then
+        echo "systemProp.http.proxyHost=${PROXY_HOST}" >> "${GRADLE_CONFIG}"
+        echo "systemProp.http.proxyPort=${PROXY_PORT}" >> "${GRADLE_CONFIG}"
+        echo "systemProp.https.proxyHost=${PROXY_HOST}" >> "${GRADLE_CONFIG}"
+        echo "systemProp.https.proxyPort=${PROXY_PORT}" >> "${GRADLE_CONFIG}"
+    fi
+}
+
+
+## Setting ruby gem proxy
+function set_gem_proxy() {
+    local PROXY_ADDRESS=$1
+    local GEM_CONFIG=${2:-"$HOME/.gemrc"}
+
+    [[ ! -x "$(command -v gem)" ]] && return 0
+
+    if [[ -s "$GEM_CONFIG" ]]; then
+        sed -i "/^http_proxy.*/d" "$GEM_CONFIG"
+    fi
+
+    if [[ -n "$PROXY_ADDRESS" ]]; then
+        echo "http_proxy: http://${PROXY_ADDRESS}" >> "$GEM_CONFIG"
+    fi
+}
+
+
 ## Setting global proxy
 function set_global_proxy() {
     local SOCKS_ADDRESS=${1:-""}
     local HTTP_ADDRESS=${2:-""}
+    local SOCKS_PROTOCOL=${3:-"socks5h"}
 
     # clear git special proxy
     set_git_special_proxy "github.com,gitlab.com"
 
     if [[ -n "$SOCKS_ADDRESS" ]]; then
         if check_socks5_proxy_up ${SOCKS_ADDRESS}; then
-            set_proxy "socks5h://${SOCKS_ADDRESS}"
+            set_proxy "${SOCKS_PROTOCOL}://${SOCKS_ADDRESS}"
             set_curl_proxy "${SOCKS_ADDRESS}"
             # wget must use http proxy
             [[ -n "$HTTP_ADDRESS" ]] && \

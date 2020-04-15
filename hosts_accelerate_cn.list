@@ -39,6 +39,11 @@ www.powershellgallery.com
 psg-prod-eastus.azureedge.net
 # PowershellGallery end
 
+# VisualStudio Start
+gallerycdn.vsassets.io
+download.visualstudio.microsoft.com
+# VisualStudio end
+
 # SDKMAN Start
 sdkman.io
 api.sdkman.io

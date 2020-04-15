@@ -224,9 +224,9 @@ app.use(function (err, req, res, next) {
     res.status(500).send('Sorry, we cannot find that!');
 });
 
-var server = app.listen(8080, 'localhost', () => {
-    var host = server.address().address;
-    var port = server.address().port;
+const server = app.listen(8080, 'localhost', () => {
+    const host = server.address().address;
+    const port = server.address().port;
     console.log('Server is running at http://%s:%s', host, port);
 });
 

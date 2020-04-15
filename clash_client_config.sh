@@ -127,7 +127,7 @@ if [[ ${RULES_LINE} -gt 0 ]]; then
     fi
 
     if [[ -s "${WORKDIR}/rules.yml" ]]; then
-        RULES_START_LINE=$(grep -E -n "^Rule:" "${WORKDIR}/rules.yml" | cut -d: -f1)
+        RULES_START_LINE=$(grep -E -n "^rules:" "${WORKDIR}/rules.yml" | cut -d: -f1)
         if [[ ${RULES_START_LINE} -gt 0 ]]; then
             RULES_START_LINE=$((${RULES_START_LINE} + 1))
             RULES=$(sed -n "${RULES_START_LINE},$ p" "${WORKDIR}/rules.yml")
@@ -140,7 +140,7 @@ colorEcho ${BLUE} "  Setting proxy group..."
 PROXY_GROUP=""
 if [[ ${RULES_START_LINE} -gt 0 ]]; then
     if [[ -s "${WORKDIR}/rules.yml" ]]; then
-        GROUP_START_LINE=$(grep -E -n "^Proxy Group:" "${WORKDIR}/rules.yml" | cut -d: -f1)
+        GROUP_START_LINE=$(grep -E -n "^proxy-groups:" "${WORKDIR}/rules.yml" | cut -d: -f1)
         if [[ ${GROUP_START_LINE} -gt 0 ]]; then
             GROUP_START_LINE=$((${GROUP_START_LINE} + 1))
             GROUP_END_LINE=$((${RULES_START_LINE} - 2))
@@ -154,7 +154,7 @@ colorEcho ${BLUE} "  Setting proxy..."
 PROXY=""
 if [[ ${GROUP_START_LINE} -gt 0 ]]; then
     if [[ -s "${WORKDIR}/rules.yml" ]]; then
-        PROXY_START_LINE=$(grep -E -n "^Proxy:" "${WORKDIR}/rules.yml" | cut -d: -f1)
+        PROXY_START_LINE=$(grep -E -n "^Proxies:" "${WORKDIR}/rules.yml" | cut -d: -f1)
         if [[ ${GROUP_START_LINE} -gt 0 ]]; then
             PROXY_START_LINE=$((${PROXY_START_LINE} + 1))
             PROXY_END_LINE=$((${GROUP_START_LINE} - 2))
@@ -359,7 +359,7 @@ fi
 
 # Remove custom proxy from $TARGET_CONFIG_FILE
 if [[ -n "$PROXY_CUSTOM" ]]; then
-    CUSTOM_START_LINE=$(grep -E -n "^Proxy:" "${TARGET_CONFIG_FILE}" | cut -d: -f1)
+    CUSTOM_START_LINE=$(grep -E -n "^Proxies:" "${TARGET_CONFIG_FILE}" | cut -d: -f1)
     CUSTOM_START_LINE=$((${CUSTOM_START_LINE} + 1))
     PROXY_CUSTOM_COUNT=$(echo "$PROXY_CUSTOM" | wc -l)
     CUSTOM_END_LINE=$((${CUSTOM_START_LINE} + ${PROXY_CUSTOM_COUNT}))

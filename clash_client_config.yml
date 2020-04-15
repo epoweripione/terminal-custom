@@ -132,12 +132,22 @@ cfw-conn-break-strategy:
 #   - command: v2rayn.exe
 
 # Will be ignored after profile selection
-Proxy:
+Proxies:
 # [PROXY_CUSTOM]
 
 # [PROXY]
 
-Proxy Group:
+proxy-groups:
+  ## relay chains the proxies. proxies shall not contain a proxy-group. No UDP support.
+  ## Traffic: clash <-> http <-> vmess <-> ss1 <-> ss2 <-> Internet
+  # - name: "relay"
+  #   type: relay
+  #   proxies:
+  #     - http
+  #     - vmess
+  #     - ss1
+  #     - ss2
+
   ## url-test select which proxy will be used by benchmarking speed to a URL.
   ## name = url-test, [proxys], url, interval(second)
   # - name: auto
@@ -178,10 +188,36 @@ Proxy Group:
   #     - fallback-auto
   #     - load-balance
 
+  # - name: UseProvider
+  #   type: select
+  #   use:
+  #     - provider1
+  #   proxies:
+  #     - Proxy
+  #     - DIRECT
+
+# proxy-providers:
+#   provider1:
+#     type: http
+#     url: "url"
+#     interval: 3600
+#     path: ./hk.yaml
+#     health-check:
+#       enable: true
+#       interval: 600
+#       url: http://www.gstatic.com/generate_204
+#   test:
+#     type: file
+#     path: /test.yaml
+#     health-check:
+#       enable: true
+#       interval: 36000
+#       url: http://www.gstatic.com/generate_204
+
 # [PROXY_GROUP]
 
 ## Subscirptions:
 # https://jiang.netlify.com/
 # https://youlianboshi.netlify.com/
-Rule:
-# [RULES]http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F%7Chttps%3A%2F%2Fyoulianboshi.netlify.com%2F&config=config%2FACL4SSR_WithGFW.ini
+rules:
+# [RULES]http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F%7Chttps%3A%2F%2Fyoulianboshi.netlify.com%2F&config=config%2FACL4SSR_WithGFW.ini&new_name=true

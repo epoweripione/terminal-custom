@@ -34,7 +34,7 @@ if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
 if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     # scoop config proxy 127.0.0.1:55881
     # scoop config rm proxy
-    Write-Host "Installing scoop apps..." -ForegroundColor Blue
+    Write-Host "Installing apps using scoop..." -ForegroundColor Blue
 
     ## scoop config proxy [username:password@]host:port
     ## Use your Windows credentials with the default proxy configured in Internet Options
@@ -113,6 +113,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "chromium"
         # "chromium-dev-nosync"
         "firefox-zh-cn"
+        "go"
         "nodejs-lts"
         "dotnet-sdk"
         "zulu8"
@@ -122,10 +123,11 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "cacert"
         "dbeaver"
         "vscode"
+        "wireshark"
         "colortool"
         # "windowsterminal"
         "clash-for-windows"
-        "trojan"
+        # "trojan"
         "frp"
         # "v2rayn"
         "lxrunoffline"
@@ -145,6 +147,8 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "sysinternals"
         "utools"
         "xnviewmp"
+        # "draw.io"
+        # "yed"
         ## epower
         "chromium-marmaduke-dev-sync"
         # "chromium-robrich-dev"
@@ -158,6 +162,11 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "WiseDiskCleaner"
         "WiseProgramUninstaller"
         "WiseRegistryCleaner"
+        ## https://github.com/lukesampson/scoop/wiki/Theming-Powershell
+        # "concfg"
+    )
+
+    $sudoApps = @(
         ## nerd-fonts
         "FiraCode-NF"
         "FiraMono-NF"
@@ -165,10 +174,9 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "JetBrainsMono-NF"
         "CascadiaCode-NF"
         # "Noto-NF"
-        ## https://github.com/lukesampson/scoop/wiki/Theming-Powershell
-        # "concfg"
     )
 
+    # Remove failed installed apps
     $InstalledApps = scoop list 6>&1 | Out-String
     $InstalledApps = $InstalledApps -replace "`r`n"," " -replace "    "," " -replace "   "," " -replace "  "," "
     foreach ($TargetApp in $Apps) {
@@ -181,6 +189,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
 
     $InstalledApps = scoop list 6>&1 | Out-String
     $InstalledApps = $InstalledApps -replace "`r`n"," " -replace "    "," " -replace "   "," " -replace "  "," "
+
     foreach ($TargetApp in $Apps) {
         if (-Not ($InstalledApps -match "$TargetApp")) {
             Write-Host "Installing $TargetApp..." -ForegroundColor Blue
@@ -188,8 +197,13 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         }
     }
 
-    # scoop install FiraCode
-    # scoop install SarasaGothic-SC
+    foreach ($TargetApp in $sudoApps) {
+        if (-Not ($InstalledApps -match "$TargetApp")) {
+            Write-Host "Installing $TargetApp..." -ForegroundColor Blue
+            sudo scoop install $TargetApp
+        }
+    }
+
     # scoop install zulu11
     # scoop install openedfilesview
     # scoop install python27
@@ -199,7 +213,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     #     scoop config rm proxy
     # }
 } else {
-    Write-Host "scoop install failed!"
+    Write-Host "Install apps using scoop failed!"
 }
 
 

@@ -26,6 +26,7 @@ if [[ ! $(grep "format=columns" $HOME/.pip/pip.conf) ]]; then
 fi
 
 # pip mirror
+# alias pip="pip --proxy 127.0.0.1:8080"
 # alias pipinstall='pip install -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com'
 PIP_MIRROR_URL=https://mirrors.aliyun.com/pypi/simple/
 PIP_MIRROR_HOST=mirrors.aliyun.com
@@ -90,8 +91,8 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
     DEFALUT_SHELL=$(basename $SHELL)
     conda init ${DEFALUT_SHELL}
 
-    conda create -n py37 python=3.7
-    # conda activate py37
+    conda create -n py38 python=3.8
+    # conda activate py38
     # conda deactivate
 
     conda create -n py27 python=2.7

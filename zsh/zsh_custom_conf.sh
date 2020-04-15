@@ -281,11 +281,12 @@ if [[ -d "$HOME/.gvm" ]]; then
     if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
         GO_VERSION=$(go version | cut -d' ' -f3)
         if version_ge $GO_VERSION 'go1.13'; then
-            go env -w GOPROXY=https://goproxy.cn,direct
+            go env -w GO111MODULE=on
+            go env -w GOPROXY="https://goproxy.io,direct"
         else
-            export GOPROXY=https://goproxy.cn
+            export GO111MODULE=on
+            export GOPROXY="https://goproxy.io"
         fi
-        # go env -w GOPROXY=https://proxy.golang.org,direct
     fi
 fi
 

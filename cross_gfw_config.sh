@@ -12,11 +12,7 @@ else
     fi
 fi
 
-if [[ -z "$ostype" ]]; then
-    get_os_type
-    get_arch
-    get_sysArch
-fi
+[[ -z "$ostype" ]] && get_os_type && get_arch && get_sysArch
 
 # jq
 if [[ ! -x "$(command -v jq)" ]]; then
@@ -302,6 +298,8 @@ function install_update_subconverter() {
     local REMOTE_VERSION
     local IS_UPDATE="no"
 
+    [[ -z "$ostype" ]] && get_os_type && get_arch && get_sysArch
+
     if [[ -s "/srv/subconverter/subconverter" ]]; then
         colorEcho ${BLUE} "  Updating subconverter..."
         CURRENT_VERSION=$(head -n1 /srv/subconverter/.version)
@@ -338,6 +336,8 @@ function install_update_clash() {
     local REMOTE_VERSION
     local IS_UPDATE="no"
 
+    [[ -z "$ostype" ]] && get_os_type && get_arch && get_sysArch
+
     if ! pgrep -f "subconverter" >/dev/null 2>&1; then
         [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] && sudo systemctl restart subconverter
     fi
@@ -369,7 +369,7 @@ function install_update_clash() {
             mkdir -p /srv/clash && \
             mv clash-${ostype}-${spruce_type}.gz /srv/clash && \
             cd /srv/clash && \
-            gzip -d clash-${ostype}-${spruce_type}.gz && \
+            gzip -df clash-${ostype}-${spruce_type}.gz && \
             chmod +x clash-${ostype}-${spruce_type} && \
             sudo ln -sv /srv/clash/clash-${ostype}-${spruce_type} /srv/clash/clash || true
     fi
