@@ -218,12 +218,14 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     while read -r line; do
         line_name=$(echo "$line" \
             | sed -rn "s/.*name:([^,{}]+).*/\1/ip" \
-            | sed -e "s/^\s//" -e "s/\s$//")
+            | sed -e "s/^\s//" -e "s/\s$//" \
+            | sed -e "s/^\"//" -e "s/\"$//")
         PROXY_NAME+=("$line_name")
 
         line_type=$(echo "$line" \
             | sed -rn "s/.*type:([^,{}]+).*/\1/ip" \
-            | sed -e "s/^\s//" -e "s/\s$//")
+            | sed -e "s/^\s//" -e "s/\s$//" \
+            | sed -e "s/^\"//" -e "s/\"$//")
         PROXY_NAME+=("$line_type")
     done <<<"$PROXY"
 
