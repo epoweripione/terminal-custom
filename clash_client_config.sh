@@ -213,9 +213,6 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     # proxy list
     # Extract word from string using grep/sed/awk
     # https://askubuntu.com/questions/697120/extract-word-from-string-using-grep-sed-awk
-    PROXY=$(echo "$PROXY" | sed "s/\"//g")
-    # PROXY_GROUP=$(echo "$PROXY_GROUP" | sed "s/\"//g")
-
     PROXY_NAME=()
     PROXY_TYPE=()
     while read -r line; do
