@@ -282,7 +282,7 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
             | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
             | sed 's/]/\\&/g')
         PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" \
-            | sed "/^\s*\-\s*${TargetName}$/d")
+            | sed -e "/^\s*\-\s*${TargetName}$/d" -e "/^\s*\-\s*\"${TargetName}\"$/d")
 
         ## only keep vmess & socks5
         # if [[ "$PROXY_TYPE[$PROXY_INDEX]" == "vmess" || "$PROXY_TYPE[$PROXY_INDEX]" == "socks5" ]]; then
