@@ -12,6 +12,7 @@ if (-Not (Get-Command -Name "check_webservice_up" 2>$null)) {
 if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
     Write-Host "Installing scoop..." -ForegroundColor Blue
 
+    # https://github.com/lukesampson/scoop/wiki/Quick-Start
     ## If you're behind a proxy you might need to run one or more of these commands first:
     ## If you want to use a proxy that isn't already configured in Internet Options
     # [net.webrequest]::defaultwebproxy = new-object net.webproxy "http://proxy.example.org:8080"
@@ -21,7 +22,8 @@ if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
     # [net.webrequest]::defaultwebproxy.credentials = new-object net.networkcredential 'username', 'password'
 
     Set-ExecutionPolicy RemoteSigned -scope CurrentUser
-    Invoke-WebRequest -useb get.scoop.sh | Invoke-Expression
+    Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+    # Invoke-WebRequest -useb get.scoop.sh | Invoke-Expression
 
     # $env:SCOOP='D:\Applications\Scoop'
     # $env:SCOOP_GLOBAL='D:\Applications\Scoop\globalApps'
@@ -58,6 +60,21 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         scoop config proxy $SCOOP_PROXY_ADDR
     }
 
+    Write-Host "Installing git..." -ForegroundColor Blue
+    if (-Not (scoop info git 6>$null)) {scoop install git}
+
+    # git global config
+    & "$PSScriptRoot\git_global_config.ps1"
+
+    if (-Not (scoop info aria2 6>$null)) {
+        Write-Host "Installing aria2..." -ForegroundColor Blue
+        scoop install aria2
+        scoop config aria2-enabled true
+    }
+
+    Write-Host "Installing sudo..." -ForegroundColor Blue
+    if (-Not (scoop info sudo 6>$null)) {scoop install sudo}
+
     # list all known buckets
     # scoop bucket known
 
@@ -87,21 +104,6 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     # scoop bucket add dodorz https://github.com/dodorz/scoop-bucket
     # epower
     scoop bucket add epower https://github.com/epoweripione/scoop-bucket
-
-    if (-Not (scoop info aria2 6>$null)) {
-        Write-Host "Installing aria2..." -ForegroundColor Blue
-        scoop install aria2
-        scoop config aria2-enabled true
-    }
-
-    Write-Host "Installing sudo..." -ForegroundColor Blue
-    if (-Not (scoop info sudo 6>$null)) {scoop install sudo}
-
-    Write-Host "Installing git..." -ForegroundColor Blue
-    if (-Not (scoop info git 6>$null)) {scoop install git}
-
-    # git global config
-    & "$PSScriptRoot\git_global_config.ps1"
 
     Write-Host "Updating scoop..." -ForegroundColor Blue
     scoop update
@@ -142,6 +144,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "hashcheck"
         "motrix"
         "powertoys"
+        "q-dir"
         "syncbackfree"
         "syncthing"
         "sysinternals"
@@ -167,10 +170,13 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     )
 
     $sudoApps = @(
+        ## epower
+        "FiraCode-Mono-NF"
+        "Sarasa-Gothic-SC"
         ## nerd-fonts
-        "FiraCode-NF"
-        "FiraMono-NF"
-        "SarasaGothic-SC"
+        # "FiraCode-NF"
+        # "FiraMono-NF"
+        # "SarasaGothic-SC"
         "JetBrainsMono-NF"
         "CascadiaCode-NF"
         # "Noto-NF"

@@ -39,9 +39,9 @@ function check_socks5_proxy_up() {
 
 # socks proxy
 if (-Not (check_webservice_up)) {
-    $SOCKS_PROXY_ADDR = Read-Host 'Scoks proxy address for github download?[127.0.0.1:55881] '
+    $SOCKS_PROXY_ADDR = Read-Host 'Scoks proxy address for github download?[127.0.0.1:7891] '
     if (-Not (($null -eq $SOCKS_PROXY_ADDR) -or ($SOCKS_PROXY_ADDR -eq ""))) {
-        $SOCKS_PROXY_ADDR = "127.0.0.1:55881"
+        $SOCKS_PROXY_ADDR = "127.0.0.1:7891"
     }
     if (-Not (check_socks5_proxy_up $SOCKS_PROXY_ADDR)) {
         $SOCKS_PROXY_ADDR = ""

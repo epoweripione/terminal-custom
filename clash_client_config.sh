@@ -59,7 +59,7 @@ if [[ -s "$SUB_LIST_FILE" ]]; then
     for TargetURL in "${SUB_LIST[@]}"; do
         [[ -z "$TargetURL" ]] && continue
         colorEcho ${BLUE} "Downloading clash client connfig from ${TargetURL}..."
-        curl -SL --connect-timeout 10 --max-time 30 \
+        curl -SL --connect-timeout 10 --max-time 60 \
             -o "$SUB_DOWNLOAD_FILE" "$TargetURL"
         if [[ $? -eq 0 ]]; then
             sed -i "s/^allow-lan:.*/allow-lan: false/" "$SUB_DOWNLOAD_FILE"

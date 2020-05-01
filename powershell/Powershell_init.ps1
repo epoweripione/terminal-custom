@@ -7,7 +7,7 @@
 # dotnet tool update --global PowerShell
 ## 2. Run pwsh as Administrator
 ## 3. Download pwsh_script_download.ps1
-## curl -L --socks5-hostname 127.0.0.1:55880 -o ".\pwsh_script_download.ps1" https://git.io/JeQ9d"
+## curl -L --socks5-hostname 127.0.0.1:7891 -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d"
 # curl -L -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d"
 ## 4. Exec pwsh_script_download.ps1
 # .\pwsh_script_download.ps1
@@ -194,7 +194,7 @@ if (-Not (Get-Command -Name "check_webservice_up" 2>$null)) {
 
 
 # Remove built in windows 10 apps
-& "$PSScriptRoot\Remove_built-in_apps.ps1"
+# & "$PSScriptRoot\Remove_built-in_apps.ps1"
 
 # Chromium
 [System.Environment]::SetEnvironmentVariable("GOOGLE_API_KEY", "no")

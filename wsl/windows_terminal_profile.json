@@ -1,26 +1,36 @@
 // To view the default settings, hold "alt" while clicking on the "Settings" button.
 // For documentation on these settings, see: https://aka.ms/terminal-documentation
+// https://devblogs.microsoft.com/commandline/
 // https://github.com/microsoft/terminal/blob/master/doc/user-docs/UsingJsonSettings.md
 // https://github.com/microsoft/terminal/blob/master/doc/cascadia/SettingsSchema.md
 // %UserProfile%\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState
 // command line: wt new-tab -p "Debian"; split-pane -p "PowerShell Core" -H
 {
     "$schema": "https://aka.ms/terminal-profiles-schema",
-    "alwaysShowTabs": true,
     "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+
+    // Launch Settings
     "initialCols": 120,
     "initialRows": 30,
-    "initialPosition": ",",
-    "rowsToScroll": "system",
     "launchMode": "maximized",
-    "requestedTheme": "system",
+    "initialPosition": ",",
+
+    // Selection
+    "copyOnSelect": false,
+    "copyFormatting": true,
+    "wordDelimiters": " /\\()\"'-.,:;<>~!@#$%^&*|+=[]{}~?\u2502",
+
+    // Tab UI
+    "alwaysShowTabs": true,
     "showTabsInTitlebar": true,
     "showTerminalTitleInTitlebar": true,
     "tabWidthMode": "equal",
-    "snapToGridOnResize": false,
-    "copyOnSelect": false,
+
+    // Miscellaneous
     "confirmCloseAllTabs": true,
-    "wordDelimiters": " /\\()\"'-.,:;<>~!@#$%^&*|+=[]{}~?\u2502",
+    "rowsToScroll": "system",
+    "requestedTheme": "system",
+    "snapToGridOnResize": true,
 
     "profiles": {
         "defaults": {
@@ -30,7 +40,8 @@
             "useAcrylic": true,
             "cursorShape": "underscore",
             "colorScheme": "One Half Dark"
-            // Campbell,One Half Dark,One Half Light,Solarized Dark,Solarized Light
+            // Campbell,Campbell Powershell,Vintage,One Half Dark,One Half Light
+            // Solarized Dark,Solarized Light,Tango Dark,Tango Light
             // [enum]::GetValues([System.ConsoleColor]) | Foreach-Object {Write-Host $_ -ForegroundColor $_}
         },
         "list": [

@@ -235,6 +235,11 @@ if [[ -n "$ORACLE_HOME" ]]; then
     fi
 fi
 
+# homebrew
+if [[ -x "$(command -v brew)" ]]; then
+    export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
+fi
+
 # PHP
 if [[ -x "$(command -v php)" ]]; then
     export PHP_INI_DIR=$(php --ini | grep "Scan for additional .ini files in" | cut -d':' -f2 | cut -d' ' -f2)

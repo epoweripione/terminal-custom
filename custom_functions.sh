@@ -788,6 +788,7 @@ function set_proxy_mirrors_env() {
         NPM_INSTALLER_NOT_USE_MIRROR=true
         GITHUB_NOT_USE_PROXY=true
         SDKMAN_NOT_USE_PROXY=true
+        BREW_NOT_USE_PROXY=true
     else
         unset APT_NOT_USE_MIRRORS
         unset CONDA_NOT_USE_MIRROR
@@ -799,6 +800,7 @@ function set_proxy_mirrors_env() {
         unset NPM_INSTALLER_NOT_USE_MIRROR
         unset GITHUB_NOT_USE_PROXY
         unset SDKMAN_NOT_USE_PROXY
+        unset BREW_NOT_USE_PROXY
     fi
 }
 
