@@ -530,7 +530,7 @@ function main() {
     if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
         colorEcho ${BLUE} "Checking & loading socks proxy..."
         use_clash
-        if ! check_set_global_proxy "7891" "7890"; then
+        if ! check_set_global_proxy 7891 7890; then
             SOCKS_ADDRESS="127.0.0.1:55880"
             if use_v2ray "${SOCKS_ADDRESS}"; then
                 set_special_socks5_proxy "${SOCKS_ADDRESS}"

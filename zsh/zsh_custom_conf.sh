@@ -56,7 +56,7 @@ if [[ -s "$HOME/custom_functions.sh" ]]; then
     set_proxy_mirrors_env
 
     # Check & set global proxy
-    check_set_global_proxy "7891" "7890"
+    check_set_global_proxy 7891 7890
 fi
 
 
