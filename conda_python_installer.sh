@@ -25,6 +25,9 @@ if [[ ! $(grep "format=columns" $HOME/.pip/pip.conf) ]]; then
         echo -e "[global]\nformat=columns" >> $HOME/.pip/pip.conf
 fi
 
+# pip upgrade
+# python -m pip install --upgrade pip
+
 # pip mirror
 # alias pip="pip --proxy 127.0.0.1:8080"
 # alias pipinstall='pip install -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com'
@@ -98,4 +101,18 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
     # conda create -n py27 python=2.7
     # conda activate py27
     # conda deactivate
+
+    ## pip updates
+    # pip list  --outdated
+
+    ## https://pypi.org/project/pip-review/
+    pip install pip-review
+    # pip-review --auto
+    # pip-review --local --interactive
+
+    ## Fix:
+    ## Cannot uninstall ‘xxx’.
+    ## It is a distutils installed project and thus we cannot accurately determine 
+    ## which files belong to it which would lead to only a partial uninstall.
+    # pip install -U --ignore-installed xxx
 fi

@@ -264,7 +264,15 @@ if [[ -d "/etc/proxy" && -x "$(command -v proxy)" ]]; then
     CURRENT_VERSION=$(proxy --version 2>&1 | cut -d'_' -f2)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        curl -SL https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh | sudo bash
+        # curl -SL \
+        #     https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh \
+        # | sudo bash
+        DOWNLOAD_URL=https://github.com/snail007/goproxy/releases/download/v${REMOTE_VERSION}/proxy-${ostype}-${spruce_type}.tar.gz
+        curl -SL --config ${CURL_SPECIAL_CONFIG} -o proxy-linux-amd64.tar.gz -C- $DOWNLOAD_URL && \
+            curl -SL \
+                https://raw.githubusercontent.com/snail007/goproxy/master/install.sh \
+            | sudo bash && \
+            rm -f proxy-linux-amd64.tar.gz
     fi
 fi
 

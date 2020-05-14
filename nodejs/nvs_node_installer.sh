@@ -47,10 +47,14 @@ if type 'nvs' 2>/dev/null | grep -q 'function'; then
         colorEcho ${BLUE} "Installing node latest..."
         nvs add latest
 
-        nvs use latest
-        nvs link latest
+        # nvs use latest
+        # nvs link latest
 
-        # nvm use lts
-        # nvm link lts
+        nvs use lts
+        nvs link lts
     fi
+fi
+
+if [[ -x "$(command -v npm)" ]]; then
+    [[ -s "$HOME/npm_config.sh" ]] && source "$HOME/npm_config.sh"
 fi

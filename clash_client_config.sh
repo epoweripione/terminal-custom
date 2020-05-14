@@ -85,6 +85,9 @@ fi
 
 CLASH_CONFIG="${CURRENT_DIR}/clash_client_config.yml"
 if [[ ! -s "$CLASH_CONFIG" ]]; then
+    CLASH_CONFIG="${HOME}/clash_client_config.yml"
+fi
+if [[ ! -s "$CLASH_CONFIG" ]]; then
     colorEcho ${BLUE} "    ${CLASH_CONFIG} not exist!"
     exit 1
 fi

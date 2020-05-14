@@ -465,12 +465,6 @@ function use_clash() {
             fi
         fi
     fi
-
-    if check_socks5_proxy_up ${PROXY_URL}; then
-        return 0
-    else
-        return 1
-    fi
 }
 
 function use_v2ray() {
@@ -527,8 +521,7 @@ function use_v2ray() {
 
 ## main
 function main() {
-    local SOCKS_ADDRESS="127.0.0.1:7891"
-    local HTTP_ADDRESS="127.0.0.1:7890"
+    local SOCKS_ADDRESS
 
     # Set proxy or mirrors env in china
     set_proxy_mirrors_env
@@ -536,14 +529,8 @@ function main() {
     # set global clash socks5 proxy or v2ray socks5 proxy
     if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
         colorEcho ${BLUE} "Checking & loading socks proxy..."
-        if use_clash "${SOCKS_ADDRESS}"; then
-            set_special_socks5_proxy "${SOCKS_ADDRESS}"
-
-            set_global_proxy "${SOCKS_ADDRESS}" "${HTTP_ADDRESS}"
-            # colorEcho ${GREEN} "  Global socks5 proxy address: ${SOCKS_ADDRESS}"
-        else
-            set_global_proxy # clear global proxy
-
+        use_clash
+        if ! check_set_global_proxy "7891" "7890"; then
             SOCKS_ADDRESS="127.0.0.1:55880"
             if use_v2ray "${SOCKS_ADDRESS}"; then
                 set_special_socks5_proxy "${SOCKS_ADDRESS}"

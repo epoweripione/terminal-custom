@@ -55,10 +55,8 @@ if [[ -s "$HOME/custom_functions.sh" ]]; then
     # Set proxy or mirrors env in china
     set_proxy_mirrors_env
 
-    # Setting global socks5 proxy
-    if check_socks5_proxy_up "127.0.0.1:7891"; then
-        set_global_proxy "127.0.0.1:7891" "127.0.0.1:7890"
-    fi
+    # Check & set global proxy
+    check_set_global_proxy "7891" "7890"
 fi
 
 

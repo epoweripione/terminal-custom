@@ -55,14 +55,19 @@ if type 'nvm' 2>/dev/null | grep -q 'function'; then
             nvm install node
         fi
 
-        nvm use node
-        nvm alias default node
-        # nvm use --lts
-        # nvm alias default lts/*
+        # nvm use node
+        # nvm alias default node
+
+        nvm use --lts
+        nvm alias default lts/*
 
         ## Fix node & npm not found
         [ -L "/usr/bin/node" ] && rm -f /usr/bin/node
         [ -L "/usr/bin/npm" ] && rm -f /usr/bin/npm
         ln -s "$(which node)" /usr/bin/node && ln -s "$(which npm)" /usr/bin/npm
     fi
+fi
+
+if [[ -x "$(command -v npm)" ]]; then
+    [[ -s "$HOME/npm_config.sh" ]] && source "$HOME/npm_config.sh"
 fi

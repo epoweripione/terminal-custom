@@ -1084,16 +1084,23 @@ function set_global_proxy() {
     # clear git special proxy
     set_git_special_proxy "github.com,gitlab.com"
 
+    # clear special socks5 proxy(curl...)
+    set_special_socks5_proxy
+
     if [[ -n "$SOCKS_ADDRESS" ]]; then
         if check_socks5_proxy_up ${SOCKS_ADDRESS}; then
             set_proxy "${SOCKS_PROTOCOL}://${SOCKS_ADDRESS}"
             set_curl_proxy "${SOCKS_ADDRESS}"
             # wget must use http proxy
-            [[ -n "$HTTP_ADDRESS" ]] && \
-                set_wget_proxy "${HTTP_ADDRESS}" || \
+            if [[ -n "$HTTP_ADDRESS" ]]; then
+                set_wget_proxy "${HTTP_ADDRESS}"
+            else
                 set_wget_proxy
+            fi
             # set git global proxy
             set_git_proxy "${SOCKS_ADDRESS}"
+            # set special socks5 proxy(curl...)
+            set_special_socks5_proxy "${SOCKS_ADDRESS}"
             colorEcho ${GREEN} " :: Now using ${SOCKS_ADDRESS} for global proxy!"
         else
             clear_proxy
@@ -1106,6 +1113,37 @@ function set_global_proxy() {
         set_git_proxy
         set_curl_proxy
         set_wget_proxy
+    fi
+}
+
+
+## Check & set global proxy
+function check_set_global_proxy() {
+    local SOCKS_PORT=${1:-"1080"}
+    local HTTP_PORT=${2:-"8080"}
+    local PROXY_IP
+    local IP_LIST="127.0.0.1"
+    local PROXY_UP="NO"
+    
+    if [[ "$(uname -r)" =~ "microsoft" ]]; then
+        # wsl2
+        IP_LIST=$(ipconfig.exe | grep "IPv4" | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}')
+    fi
+
+    # Setting global proxy
+    while read -r PROXY_IP; do
+        if check_socks5_proxy_up "${PROXY_IP}:${SOCKS_PORT}"; then
+            set_global_proxy "${PROXY_IP}:${SOCKS_PORT}" "${PROXY_IP}:${HTTP_PORT}"
+            PROXY_UP="YES"
+            break
+        fi
+    done <<<"$WSL2_IP"
+
+    if [[ "$PROXY_UP" == "YES" ]]; then
+        return 0
+    else
+        set_global_proxy # clear global proxy
+        return 1
     fi
 }
 
