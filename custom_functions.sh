@@ -1137,7 +1137,7 @@ function check_set_global_proxy() {
             PROXY_UP="YES"
             break
         fi
-    done <<<"$WSL2_IP"
+    done <<<"$IP_LIST"
 
     if [[ "$PROXY_UP" == "YES" ]]; then
         return 0
