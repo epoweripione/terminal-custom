@@ -117,13 +117,12 @@ PROXY_GROUP_LINE=$(grep -E -n "^# \[PROXY_GROUP\]" "$CLASH_CONFIG" | cut -d: -f1
 RULES_LINE=$(grep -E -n "^# \[RULES\]" "$CLASH_CONFIG" | cut -d: -f1)
 
 # [RULES]
-colorEcho ${BLUE} "  Setting rules..."
+colorEcho ${BLUE} "  Getting subscription rules..."
 RULES=""
 # if (grep -E -q "^# \[RULES\]" "$CLASH_CONFIG"); then
 if [[ ${RULES_LINE} -gt 0 ]]; then
     RULES_URL=$(sed -n "${RULES_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
     if [[ -n "$RULES_URL" ]]; then
-        colorEcho ${BLUE} "    Getting subscription rules..."
         curl -sL --connect-timeout 10 --max-time 30 \
             -o "${WORKDIR}/rules.yml" "${RULES_URL}"
         if [[ $? != 0 ]]; then
@@ -142,7 +141,7 @@ if [[ ${RULES_LINE} -gt 0 ]]; then
 fi
 
 # [PROXY_GROUP]
-colorEcho ${BLUE} "  Setting proxy-groups..."
+colorEcho ${BLUE} "  Getting proxy-groups..."
 PROXY_GROUP=""
 if [[ ${RULES_START_LINE} -gt 0 ]]; then
     if [[ -s "${WORKDIR}/rules.yml" ]]; then
@@ -156,7 +155,7 @@ if [[ ${RULES_START_LINE} -gt 0 ]]; then
 fi
 
 # [PROXY]
-colorEcho ${BLUE} "  Setting proxies..."
+colorEcho ${BLUE} "  Getting proxies..."
 PROXY=""
 if [[ ${GROUP_START_LINE} -gt 0 ]]; then
     if [[ -s "${WORKDIR}/rules.yml" ]]; then
@@ -170,29 +169,26 @@ if [[ ${GROUP_START_LINE} -gt 0 ]]; then
 fi
 
 # [PROXY_CUSTOM]
-colorEcho ${BLUE} "  Setting custom proxies..."
 PROXY_CUSTOM=""
 PROXY_CUSTOM_FILE="/etc/clash/clash_proxy_custom.yml"
 if [[ -s "$PROXY_CUSTOM_FILE" ]]; then
-    colorEcho ${BLUE} "  Setting custom proxies..."
+    colorEcho ${BLUE} "  Getting custom proxies..."
     PROXY_CUSTOM=$(cat "$PROXY_CUSTOM_FILE")
 fi
 
 # [PROXY_MERGE]
-colorEcho ${BLUE} "  Setting merge proxies..."
 PROXY_MERGE=""
 if [[ ${PROXY_MERGE_LINE} -gt 0 ]]; then
     MERGE_URL=$(sed -n "${PROXY_MERGE_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
     if [[ -n "$MERGE_URL" ]]; then
-        colorEcho ${BLUE} "    Getting merge proxies..."
+        colorEcho ${BLUE} "  Getting merge proxies..."
         PROXY_MERGE=$(curl -sL --connect-timeout 10 --max-time 30 "${MERGE_URL}" \
             |  grep "{name:")
     fi
 fi
 
-
 # [CFW_BYPASS]
-colorEcho ${BLUE} "  Setting cfw bypass..."
+colorEcho ${BLUE} "  Getting cfw bypass rules..."
 CFW_BYPASS=""
 if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
     CFW_BYPASS_FILE="/srv/subconverter/config/GeneralClashConfig.yml"
@@ -200,7 +196,6 @@ if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
         CFW_BYPASS_FILE=""
         CFW_BYPASS_URL=$(sed -n "${CFW_BYPASS_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
         if [[ -n "$CFW_BYPASS_URL" ]]; then
-            colorEcho ${BLUE} "    Getting cfw bypass rules..."
             curl -sL --connect-timeout 10 --max-time 30 \
                 -o "${CFW_BYPASS_FILE}" "${CFW_BYPASS_URL}"
             if [[ $? != 0  ]]; then
@@ -222,7 +217,7 @@ fi
 # custom rules
 RULE_CUSTOM_FILE="/etc/clash/clash_rule_custom.yml"
 if [[ -s "$RULE_CUSTOM_FILE" ]]; then
-    colorEcho ${BLUE} "  Setting custom RULE..."
+    colorEcho ${BLUE} "  Getting custom rules..."
     RULE_CUSTOM=$(cat "$RULE_CUSTOM_FILE")
 fi
 
@@ -343,7 +338,7 @@ fi
 
 
 # Add contents to target config file
-colorEcho ${BLUE} "  Output all config to ${TARGET_CONFIG_FILE}..."
+colorEcho ${BLUE} "  Setting all config to ${TARGET_CONFIG_FILE}..."
 [[ -f "$TARGET_CONFIG_FILE" ]] && rm -f "$TARGET_CONFIG_FILE"
 
 START_LINE=1
@@ -352,7 +347,7 @@ ADD_CONTENT=$(sed -n "${START_LINE},${CFW_BYPASS_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$CFW_BYPASS" ]]; then
-    colorEcho ${BLUE} "    Output cfw bypass..."
+    colorEcho ${BLUE} "    Setting cfw bypass..."
     echo "${CFW_BYPASS}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -361,7 +356,7 @@ ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_CUSTOM_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$PROXY_CUSTOM" ]]; then
-    colorEcho ${BLUE} "    Output custom proxies..."
+    colorEcho ${BLUE} "    Setting custom proxies..."
     echo "${PROXY_CUSTOM}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -370,16 +365,25 @@ ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$PROXY" ]]; then
-    colorEcho ${BLUE} "    Output proxies..."
+    colorEcho ${BLUE} "    Setting proxies..."
     echo "${PROXY}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
 START_LINE=$((${PROXY_LINE} + 1))
+ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_MERGE_LINE} p" "$CLASH_CONFIG")
+echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
+
+if [[ -n "$PROXY_MERGE" ]]; then
+    colorEcho ${BLUE} "    Setting merge proxies..."
+    echo "${PROXY_MERGE}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
+fi
+
+START_LINE=$((${PROXY_MERGE_LINE} + 1))
 ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_GROUP_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$PROXY_GROUP" ]]; then
-    colorEcho ${BLUE} "    Output proxy group..."
+    colorEcho ${BLUE} "    Setting proxy groups..."
     echo "${PROXY_GROUP}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -388,12 +392,12 @@ ADD_CONTENT=$(sed -n "${START_LINE},${RULES_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$RULE_CUSTOM" ]]; then
-    colorEcho ${BLUE} "    Output custom rules..."
+    colorEcho ${BLUE} "    Setting custom rules..."
     echo "${RULE_CUSTOM}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
 if [[ -n "$RULES" ]]; then
-    colorEcho ${BLUE} "    Output rules..."
+    colorEcho ${BLUE} "    Setting rules..."
     echo "${RULES}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
