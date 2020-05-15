@@ -98,10 +98,16 @@ if [[ -d "$HOME/.gvm" ]]; then
     fi
 fi
 
+
 ## fix ERROR: Unrecognized Go version
 # cd $HOME/.gvm/archive/go && git pull
+
 
 ## go env: 1.13+
 # go env -w GOBIN=$HOME/bin
 # export GOPROXY=https://proxy.golang.org,direct
 # export GONOPROXY=
+
+
+## fix `gvm uninstall 1.14.2` -> ERROR: Couldn't remove pkgsets
+# gvm use 1.14.2 && go clean -modcache && gvm use 1.14.3 && gvm uninstall 1.14.2

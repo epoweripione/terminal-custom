@@ -112,6 +112,7 @@ fi
 CFW_BYPASS_LINE=$(grep -E -n "^# \[CFW_BYPASS\]" "$CLASH_CONFIG" | cut -d: -f1)
 PROXY_CUSTOM_LINE=$(grep -E -n "^# \[PROXY_CUSTOM\]" "$CLASH_CONFIG" | cut -d: -f1)
 PROXY_LINE=$(grep -E -n "^# \[PROXY\]" "$CLASH_CONFIG" | cut -d: -f1)
+PROXY_MERGE_LINE=$(grep -E -n "^# \[PROXY_MERGE\]" "$CLASH_CONFIG" | cut -d: -f1)
 PROXY_GROUP_LINE=$(grep -E -n "^# \[PROXY_GROUP\]" "$CLASH_CONFIG" | cut -d: -f1)
 RULES_LINE=$(grep -E -n "^# \[RULES\]" "$CLASH_CONFIG" | cut -d: -f1)
 
@@ -141,7 +142,7 @@ if [[ ${RULES_LINE} -gt 0 ]]; then
 fi
 
 # [PROXY_GROUP]
-colorEcho ${BLUE} "  Setting proxy group..."
+colorEcho ${BLUE} "  Setting proxy-groups..."
 PROXY_GROUP=""
 if [[ ${RULES_START_LINE} -gt 0 ]]; then
     if [[ -s "${WORKDIR}/rules.yml" ]]; then
@@ -155,7 +156,7 @@ if [[ ${RULES_START_LINE} -gt 0 ]]; then
 fi
 
 # [PROXY]
-colorEcho ${BLUE} "  Setting proxy..."
+colorEcho ${BLUE} "  Setting proxies..."
 PROXY=""
 if [[ ${GROUP_START_LINE} -gt 0 ]]; then
     if [[ -s "${WORKDIR}/rules.yml" ]]; then
@@ -169,11 +170,26 @@ if [[ ${GROUP_START_LINE} -gt 0 ]]; then
 fi
 
 # [PROXY_CUSTOM]
+colorEcho ${BLUE} "  Setting custom proxies..."
+PROXY_CUSTOM=""
 PROXY_CUSTOM_FILE="/etc/clash/clash_proxy_custom.yml"
 if [[ -s "$PROXY_CUSTOM_FILE" ]]; then
-    colorEcho ${BLUE} "  Setting custom proxy..."
+    colorEcho ${BLUE} "  Setting custom proxies..."
     PROXY_CUSTOM=$(cat "$PROXY_CUSTOM_FILE")
 fi
+
+# [PROXY_MERGE]
+colorEcho ${BLUE} "  Setting merge proxies..."
+PROXY_MERGE=""
+if [[ ${PROXY_MERGE_LINE} -gt 0 ]]; then
+    MERGE_URL=$(sed -n "${PROXY_MERGE_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
+    if [[ -n "$MERGE_URL" ]]; then
+        colorEcho ${BLUE} "    Getting merge proxies..."
+        PROXY_MERGE=$(curl -sL --connect-timeout 10 --max-time 30 "${MERGE_URL}" \
+            |  grep "{name:")
+    fi
+fi
+
 
 # [CFW_BYPASS]
 colorEcho ${BLUE} "  Setting cfw bypass..."
@@ -219,6 +235,7 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     PROXY_NAME=()
     PROXY_TYPE=()
     while read -r line; do
+        [[ -z "${line}" ]] && continue
         line_name=$(echo "$line" \
             | sed -rn "s/.*name:([^,{}]+).*/\1/ip" \
             | sed -e "s/^\s//" -e "s/\s$//" \
@@ -250,17 +267,18 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i<=2")
     PROXY_GROUP_REST=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i>2")
 
-    # add custom proxy to 1st,2nd group,before 1st proxy list
+    # add custom proxies to 1st,2nd group,before 1st proxy list
     if [[ -n "$PROXY_CUSTOM" ]]; then
         CUSTOM_NAME=()
         while read -r line; do
+            [[ -z "${line}" ]] && continue
             line_name=$(echo "$line" \
                 | sed -rn "s/.*name:([^,{}]+).*/\1/ip" \
-                | sed -e "s/^\s//" -e "s/\s$//")
+                | sed -e "s/^\s//" -e "s/\s$//" \
+                | sed -e "s/^\"//" -e "s/\"$//")
             CUSTOM_NAME+=("$line_name")
         done <<<"$PROXY_CUSTOM"
 
-        # FIRST_PROXY_NAME=$(echo "${PROXY_NAME[0]}" | sed 's/[^a-zA-Z 0-9]/\\&/g')
         FIRST_PROXY_NAME=$(echo "${PROXY_NAME[0]}" \
             | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
             | sed 's/]/\\&/g')
@@ -268,6 +286,28 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
             [[ -z "$TargetName" ]] && continue
             PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" \
                 | sed "/^\s*\-\s*${FIRST_PROXY_NAME}$/i\      - ${TargetName}")
+        done
+    fi
+
+    # add merge proxies to 1st,2nd group,after last proxy list
+    if [[ -n "$PROXY_MERGE" ]]; then
+        MERGE_NAME=()
+        while read -r line; do
+            [[ -z "${line}" ]] && continue
+            line_name=$(echo "$line" \
+                | sed -rn "s/.*name:([^,{}]+).*/\1/ip" \
+                | sed -e "s/^\s//" -e "s/\s$//" \
+                | sed -e "s/^\"//" -e "s/\"$//")
+            MERGE_NAME+=("$line_name")
+        done <<<"$PROXY_MERGE"
+
+        LAST_PROXY_NAME=$(echo "${PROXY_NAME[-1]}" \
+            | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
+            | sed 's/]/\\&/g')
+        for TargetName in "${MERGE_NAME[@]}"; do
+            [[ -z "$TargetName" ]] && continue
+            PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" \
+                | sed "/^\s*\-\s*${LAST_PROXY_NAME}$/a\      - ${TargetName}")
         done
     fi
 

@@ -137,6 +137,8 @@ proxies:
 
 # [PROXY]
 
+# [PROXY_MERGE]https://raw.githubusercontent.com/ssrsub/ssr/master/Clash.yml
+
 proxy-groups:
   ## relay chains the proxies. proxies shall not contain a proxy-group. No UDP support.
   ## Traffic: clash <-> http <-> vmess <-> ss1 <-> ss2 <-> Internet
