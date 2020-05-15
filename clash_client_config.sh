@@ -241,7 +241,7 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
             | sed -rn "s/.*type:([^,{}]+).*/\1/ip" \
             | sed -e "s/^\s//" -e "s/\s$//" \
             | sed -e "s/^\"//" -e "s/\"$//")
-        PROXY_NAME+=("$line_type")
+        PROXY_TYPE+=("$line_type")
     done <<<"$PROXY"
 
     ## PROXY_NAME_LIST=$(echo "$PROXY" | grep -E "\-\s{name:.*.," | cut -d, -f1 | cut -d: -f2-)
