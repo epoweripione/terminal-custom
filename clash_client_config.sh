@@ -184,10 +184,14 @@ if [[ ${PROXY_MERGE_LINE} -gt 0 ]]; then
         colorEcho ${BLUE} "  Getting merge proxies..."
         curl -sL --connect-timeout 10 --max-time 30 \
             -o "${WORKDIR}/merge.yml" "${MERGE_URL}"
-        
-        if [[ -s "${WORKDIR}/merge.yml" ]]; then
-            PROXY_MERGE=$(grep "{name:" "${WORKDIR}/merge.yml")
+        if [[ $? != 0 ]]; then
+            colorEcho ${RED} "    Can't get merge proxies from ${MERGE_URL}!"
+            exit 1
         fi
+    fi
+
+    if [[ -s "${WORKDIR}/merge.yml" ]]; then
+        PROXY_MERGE=$(grep "{name:" "${WORKDIR}/merge.yml")
     fi
 fi
 
