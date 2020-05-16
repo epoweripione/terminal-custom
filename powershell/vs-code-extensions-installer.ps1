@@ -81,6 +81,8 @@ $extensions = @(
 	"wayou.vscode-todo-highlight"
 	"wwm.better-align"
 	"tyriar.sort-lines"
+	"hediet.vscode-drawio"
+	# "eighthundreds.vscode-drawio"
 )
 
 $cmd = "code --list-extensions"

@@ -182,8 +182,12 @@ if [[ ${PROXY_MERGE_LINE} -gt 0 ]]; then
     MERGE_URL=$(sed -n "${PROXY_MERGE_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
     if [[ -n "$MERGE_URL" ]]; then
         colorEcho ${BLUE} "  Getting merge proxies..."
-        PROXY_MERGE=$(curl -sL --connect-timeout 10 --max-time 30 "${MERGE_URL}" \
-            |  grep "{name:")
+        curl -sL --connect-timeout 10 --max-time 30 \
+            -o "${WORKDIR}/merge.yml" "${MERGE_URL}"
+        
+        if [[ -s "${WORKDIR}/merge.yml" ]]; then
+            PROXY_MERGE=$(grep "{name:" "${WORKDIR}/merge.yml")
+        fi
     fi
 fi
 
