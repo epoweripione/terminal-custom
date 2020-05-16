@@ -288,7 +288,8 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         for TargetName in "${CUSTOM_NAME[@]}"; do
             [[ -z "$TargetName" ]] && continue
             PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" \
-                | sed "/^\s*\-\s*${FIRST_PROXY_NAME}$/i\      - ${TargetName}")
+                | sed "/^\s*\-\s*${FIRST_PROXY_NAME}$/i\      - ${TargetName}" \
+                | sed "/^\s*\-\s*\"${FIRST_PROXY_NAME}\"$/a\      - ${TargetName}")
         done
     fi
 
@@ -310,7 +311,8 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         for TargetName in "${MERGE_NAME[@]}"; do
             [[ -z "$TargetName" ]] && continue
             PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" \
-                | sed "/^\s*\-\s*${LAST_PROXY_NAME}$/a\      - ${TargetName}")
+                | sed "/^\s*\-\s*${LAST_PROXY_NAME}$/a\      - ${TargetName}" \
+                | sed "/^\s*\-\s*\"${LAST_PROXY_NAME}\"$/a\      - ${TargetName}")
         done
     fi
 
