@@ -375,6 +375,7 @@ function install_update_clash() {
     fi
 
     # geo database
+    colorEcho ${BLUE} "  Updating clash geo database..."
     if [[ -s "/srv/clash/mmdb.ver" ]]; then
         CURRENT_VERSION=$(head -n1 /srv/clash/mmdb.ver)
     else

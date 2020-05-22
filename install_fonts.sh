@@ -121,9 +121,9 @@ colorEcho ${BLUE} "Downloading FiraCode Nerd Font Complete Mono..."
 # https://github.com/tonsky/FiraCode
 ## Patch fonts
 # cd ~/nerd-fonts
-# for font in /e/VSCodeProjects/nerd-fonts/FiraCode/ttf/*.ttf; do fontforge -script font-patcher -out /e/VSCodeProjects/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done
+# for font in /e/VSCodeProjects/nerd-fonts/Fira_Code_v4/ttf/*.ttf; do fontforge -script font-patcher -out /e/VSCodeProjects/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done
 # cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/FiraCode-Mono.zip . -i "Fira Code*.ttf"
-curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v3.1.0/FiraCode-Mono.zip -o ~/patched-fonts/FiraCode-Mono.zip
+curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v4.0.0/FiraCode-Mono.zip -o ~/patched-fonts/FiraCode-Mono.zip
 mkdir -p ~/patched-fonts/FiraCode-Mono && \
 	unzip -q ~/patched-fonts/FiraCode-Mono.zip -d ~/patched-fonts/FiraCode-Mono && \
 	rm -f ~/patched-fonts/FiraCode-Mono.zip
@@ -132,9 +132,9 @@ colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono..."
 # https://github.com/be5invis/Iosevka
 # ## Patch fonts
 # # cd ~/nerd-fonts
-# # for font in /e/VSCodeProjects/nerd-fonts/Iosevka/ttf/*.ttf; do fontforge -script font-patcher -out /e/VSCodeProjects/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done
+# # for font in /e/VSCodeProjects/nerd-fonts/iosevka-term-ss05-3.0.0/ttf/*.ttf; do fontforge -script font-patcher -out /e/VSCodeProjects/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done
 # # cd /e/VSCodeProjects/nerd-fonts/patched && zip -r /e/VSCodeProjects/nerd-fonts/iosevka-term-ss05-Mono.zip . -i "Iosevka Term SS05*.ttf"
-# curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v3.1.0/iosevka-term-ss05-Mono.zip -o ~/patched-fonts/iosevka-term-ss05-Mono.zip
+# curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v4.0.0/iosevka-term-ss05-Mono.zip -o ~/patched-fonts/iosevka-term-ss05-Mono.zip
 # mkdir -p ~/patched-fonts/iosevka-term-ss05-Mono && \
 # 	unzip -q ~/patched-fonts/iosevka-term-ss05-Mono.zip -d ~/patched-fonts/iosevka-term-ss05-Mono && \
 # 	rm -f ~/patched-fonts/iosevka-term-ss05-Mono.zip

@@ -154,7 +154,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "draw.io"
         # "yed"
         ## epower
-        "uToolsWin"
+        # "uToolsWin"
         "chromium-marmaduke-dev-sync"
         # "chromium-robrich-dev"
         "ExplorerPlusPlus"
