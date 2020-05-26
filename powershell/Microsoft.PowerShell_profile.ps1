@@ -11,7 +11,7 @@ Import-Module Find-String
 Import-Module Posh-git
 Import-Module oh-my-posh
 
-Set-Theme Paradox-my
+Set-Theme Powerlevel10k-my
 
 ## Color coding Get-ChildItem
 Import-Module Get-ChildItemColor

@@ -69,7 +69,10 @@ Copy-Item -Path ".\terminal-custom\hosts_accelerate_cn.list" -Destination $PWSH_
 
 $THEME_DIR = "~\Documents\PowerShell\PoshThemes"
 if (-Not (Test-Path $THEME_DIR)) {New-Item -path $THEME_DIR -type Directory | Out-Null}
-Copy-Item -Path ".\terminal-custom\powershell\Paradox-my.psm1" -Destination $THEME_DIR
+Copy-Item -Path ".\terminal-custom\powershell\*.psm1" -Destination $THEME_DIR
+
+$IMAGE_DIR = "~\Pictures"
+Copy-Item -Path ".\terminal-custom\wsl\morning_shine_by_yiyaro.jpg" -Destination $IMAGE_DIR
 
 Remove-Item -Path ".\terminal-custom" -Recurse -Force -Confirm:$false
 # Remove-Item -Path ".\terminal-custom", ".\terminal-custom.zip" -Recurse -Force -Confirm:$false

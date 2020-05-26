@@ -56,6 +56,10 @@ if [[ ! -d "$HOME/miniconda3" ]]; then
     wget -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
         bash ./Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
 
+    rm -f "$HOME/miniconda3"
+fi
+
+if [[ -d "$HOME/miniconda3" ]]; then
     export PATH=$PATH:$HOME/miniconda3/condabin
     source $HOME/miniconda3/bin/activate
 
