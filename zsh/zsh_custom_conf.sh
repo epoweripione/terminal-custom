@@ -484,5 +484,5 @@ if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
     # FAST_HIGHLIGHT[chroma-git]="chroma/-ogit.ch"
 
     # get local weather
-    get_weather
+    get_weather_custom
 fi

@@ -1361,17 +1361,38 @@ EOF
     fi
 }
 
+# https://github.com/chubin/wttr.in
 function get_weather() {
-    local wttr_weather
-    local wttr_format
+    local wttr_city=${1:-""}
+    local wttr_format=${2:-""}
+    local wttr_lang=${3:-"zh-cn"}
+    local wttr_url
 
-    wttr_format="%l:+%c+%C,+%t,+%h,+%w,+%p+%o,+%P"
-    wttr_weather=$(curl -sL --noproxy '*' "https://zh.wttr.in/?format=${wttr_format}")
-    [[ $? -eq 0 ]] && colorEcho ${YELLOW} "${wttr_weather}"
+    if [[ -z "${wttr_format}" ]]; then
+        wttr_url="wttr.in/${wttr_city}"
+    else
+        wttr_url="wttr.in/${wttr_city}?format=${wttr_format}"
+    fi
+
+    curl -sL --noproxy '*' -H "Accept-Language: ${wttr_lang}" --compressed "${wttr_url}"
 }
 
-function get_weather_full() {
-    curl -sL --noproxy '*' "https://zh.wttr.in/"
+function get_weather_custom() {
+    local wttr_city=${1:-""}
+    local wttr_format=${2:-""}
+    local wttr_lang=${3:-"zh-cn"}
+    local wttr_url
+    local wttr_weather
+
+    if [[ -z "${wttr_format}" ]]; then
+        wttr_format="%l:+%c+%C,+%F0%9F%8C%A1%t,+%h,+%F0%9F%8E%8F%w,+%E2%98%94%p+%o,+%P"
+    fi
+
+    wttr_url="wttr.in/${wttr_city}?format=${wttr_format}"
+
+    wttr_weather=$(curl -sL --noproxy '*' -H "Accept-Language: ${wttr_lang}" --compressed \
+        "${wttr_url}")
+    [[ $? -eq 0 ]] && colorEcho ${YELLOW} "${wttr_weather}"
 }
 
 ## Dateutils
