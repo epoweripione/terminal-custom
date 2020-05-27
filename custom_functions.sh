@@ -1366,7 +1366,7 @@ function get_weather() {
     local wttr_format
 
     wttr_format="%l:+%c+%C,%20+%t,%20+%h,%20+%w,%20+%P"
-    wttr_weather=$(curl -sL --noproxy '*' "https://zh.wttr.in/?format=${wtt_format}")
+    wttr_weather=$(curl -sL --noproxy '*' "https://zh.wttr.in/?format=${wttr_format}")
     [[ $? -eq 0 ]] && colorEcho ${YELLOW} "${wttr_weather}"
 
 }
