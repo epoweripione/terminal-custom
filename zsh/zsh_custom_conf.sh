@@ -482,4 +482,7 @@ if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
     # fast-syntax-highlighting: fix Segmentation fault (core dumped) when input char -
     # https://github.com/zdharma/fast-syntax-highlighting/issues/108
     # FAST_HIGHLIGHT[chroma-git]="chroma/-ogit.ch"
+
+    # get local weather
+    get_weather
 fi

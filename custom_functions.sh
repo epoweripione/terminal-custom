@@ -1361,6 +1361,16 @@ EOF
     fi
 }
 
+function get_weather() {
+    local wttr_weather
+    local wttr_format
+
+    wttr_format="%l:+%c+%C,%20+%t,%20+%h,%20+%w,%20+%P"
+    wttr_weather=$(curl -sL --noproxy '*' "https://zh.wttr.in/?format=${wtt_format}")
+    [[ $? -eq 0 ]] && colorEcho ${YELLOW} "${wttr_weather}"
+
+}
+
 ## Dateutils
 # http://www.fresse.org/dateutils/
 # apt install -y dateutils

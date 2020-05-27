@@ -340,6 +340,8 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         # fi
     done
 
+    PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" | sed "/^\s*\-\s*\"\"$/d")
+
     PROXY_GROUP=$(echo -e "${PROXY_GROUP_MAIN}\n${PROXY_GROUP_REST}")
 
     # add blank line before each group

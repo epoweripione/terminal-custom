@@ -236,6 +236,10 @@ if (-Not (Get-Command -Name "check_webservice_up" 2>$null)) {
 # }
 
 
+# Winget
+& "$PSScriptRoot\winget_install_apps.ps1"
+
+
 # Scoop
 & "$PSScriptRoot\scoop_install_apps.ps1"
 
