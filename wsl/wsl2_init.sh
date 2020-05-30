@@ -157,7 +157,15 @@ if [[ ! -d "$HOME/.ssh" ]]; then
 fi
 
 
+# Change default editor to nano
+if [[ -x "$(command -v nano)" ]]; then
+    sudo update-alternatives --install /usr/bin/editor editor $(which nano) 100
+    # sudo update-alternatives --config editor
+fi
+
+
 # Allow members of the group sudo to execute any command without password prompt
+# sudo visudo OR sudo EDITOR=nano visudo
 # sudo sed -i 's/%sudo.*/%sudo   ALL=(ALL:ALL) NOPASSWD:ALL/' /etc/sudoers
 echo "%sudo ALL=NOPASSWD:$(which service)" | sudo tee -a /etc/sudoers >/dev/null
 

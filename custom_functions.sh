@@ -1385,7 +1385,7 @@ function get_weather_custom() {
     local wttr_weather
 
     if [[ -z "${wttr_format}" ]]; then
-        wttr_format="%l:+%c+%C,+%F0%9F%8C%A1%t,+%h,+%F0%9F%8E%8F%w,+%E2%98%94%p+%o,+%P"
+        wttr_format="%l:+%c%C,+%F0%9F%8C%A1%t,+%E2%9B%86%h,+%F0%9F%8E%8F%w,+%E2%98%94%p+%o,+%P"
     fi
 
     wttr_url="wttr.in/${wttr_city}?format=${wttr_format}"
