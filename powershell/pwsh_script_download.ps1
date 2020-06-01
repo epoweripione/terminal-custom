@@ -39,9 +39,9 @@ function check_socks5_proxy_up() {
 
 # socks proxy
 if (-Not (check_webservice_up)) {
-    $SOCKS_PROXY_ADDR = Read-Host 'Scoks proxy address for github download?[127.0.0.1:7891] '
-    if (-Not (($null -eq $SOCKS_PROXY_ADDR) -or ($SOCKS_PROXY_ADDR -eq ""))) {
-        $SOCKS_PROXY_ADDR = "127.0.0.1:7891"
+    $SOCKS_PROXY_ADDR = "127.0.0.1:7891"
+    if($PROMPT_VALUE = Read-Host "Scoks proxy address for github download?[$($SOCKS_PROXY_ADDR)]") {
+        $SOCKS_PROXY_ADDR = $PROMPT_VALUE
     }
     if (-Not (check_socks5_proxy_up $SOCKS_PROXY_ADDR)) {
         $SOCKS_PROXY_ADDR = ""
@@ -75,4 +75,4 @@ $IMAGE_DIR = "~\Pictures"
 Copy-Item -Path ".\terminal-custom\wsl\*.jpg" -Destination $IMAGE_DIR
 
 Remove-Item -Path ".\terminal-custom" -Recurse -Force -Confirm:$false
-# Remove-Item -Path ".\terminal-custom", ".\terminal-custom.zip" -Recurse -Force -Confirm:$false
+Remove-Item -Path ".\terminal-custom.zip" -Force -Confirm:$false

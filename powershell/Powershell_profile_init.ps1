@@ -20,6 +20,14 @@ if (-Not (Test-Path $PROFILE)) {
     New-Item $PROFILE –Type File –Force | Out-Null
 }
 
+@'
+$PS_CUSTOM_FUNCTION = "$HOME\Documents\PowerShell\Scripts\ps_custom_function.ps1"
+if ((Test-Path "$PS_CUSTOM_FUNCTION") -and ((Get-Item "$PS_CUSTOM_FUNCTION").length -gt 0)) {
+    . "$PS_CUSTOM_FUNCTION"
+}
+
+'@ | Tee-Object $PROFILE -Append | Out-Null
+
 # https://docs.microsoft.com/en-us/nuget/install-nuget-client-tools
 # Get-PackageSource
 # Find-PackageProvider -Name "Nuget" -AllVersions
@@ -73,11 +81,11 @@ foreach ($TargetModule in $ModuleNames) {
 # theme
 Write-Host "Setting powershell theme..." -ForegroundColor Blue
 $THEME_DIR = "~\Documents\PowerShell\PoshThemes"
-$THEME_FILE = "$THEME_DIR\Paradox-my.psm1"
+$THEME_FILE = "$THEME_DIR\Powerlevel10k-my.psm1"
 if (-Not (Test-Path $THEME_DIR)) {New-Item -path $THEME_DIR -type Directory | Out-Null}
 # Copy-Item "$env:SystemDrive\cmder\Paradox-my.psm1" -Destination "$THEME_DIR"
 if (-Not (Test-Path $THEME_FILE)) {
-    $DOWNLOAD_URL = "https://raw.githubusercontent.com/epoweripione/terminal-custom/master/powershell/Paradox-my.psm1"
+    $DOWNLOAD_URL = "https://raw.githubusercontent.com/epoweripione/terminal-custom/master/powershell/Powerlevel10k-my.psm1"
     $p = New-Object System.Net.WebClient
     $p.DownloadFile($DOWNLOAD_URL, $THEME_FILE)
 }

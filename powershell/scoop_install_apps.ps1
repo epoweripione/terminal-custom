@@ -7,6 +7,15 @@ if (-Not (Get-Command -Name "check_webservice_up" 2>$null)) {
     }
 }
 
+# proxy
+$SCOOP_PROXY_ADDR = "127.0.0.1:7890"
+if (-Not (check_socks5_proxy_up "127.0.0.1:7891")) {
+    $SCOOP_PROXY_ADDR = ""
+    if($PROMPT_VALUE = Read-Host "Proxy address for scoop?") {
+        $SCOOP_PROXY_ADDR = $PROMPT_VALUE
+    }
+}
+
 # Scoop
 # https://scoop.sh/
 if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
@@ -20,6 +29,10 @@ if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
     # [net.webrequest]::defaultwebproxy.credentials = [net.credentialcache]::defaultcredentials
     ## If you want to use other credentials (replace 'username' and 'password')
     # [net.webrequest]::defaultwebproxy.credentials = new-object net.networkcredential 'username', 'password'
+
+    if (-Not (($null -eq $SCOOP_PROXY_ADDR) -or ($SCOOP_PROXY_ADDR -eq ""))) {
+        [net.webrequest]::defaultwebproxy = new-object net.webproxy "http://$SCOOP_PROXY_ADDR"
+    }
 
     Set-ExecutionPolicy RemoteSigned -scope CurrentUser
     Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
@@ -48,33 +61,34 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     # scoop config proxy username:password@proxy.example.org:8080
     ## Bypassing the proxy configured in Internet Options
     # scoop config rm proxy
-    $SCOOP_PROXY_ADDR = "127.0.0.1:7890"
-    if (-Not (check_socks5_proxy_up "127.0.0.1:7891")) {
-        $SCOOP_PROXY_ADDR = ""
-        if($PROMPT_VALUE = Read-Host "Proxy address for scoop?") {
-            $SCOOP_PROXY_ADDR = $PROMPT_VALUE
-        }
-    }
 
     if (-Not (($null -eq $SCOOP_PROXY_ADDR) -or ($SCOOP_PROXY_ADDR -eq ""))) {
         scoop config proxy $SCOOP_PROXY_ADDR
     }
 
-    Write-Host "Installing git..." -ForegroundColor Blue
-    if (-Not (scoop info git 6>$null)) {scoop install git}
+    if (-Not (Get-Command "git" -ErrorAction SilentlyContinue)) {
+        Write-Host "Installing git..." -ForegroundColor Blue
+        scoop install git
+    }
 
     # git global config
-    & "$PSScriptRoot\git_global_config.ps1"
+    if (Get-Command "git" -ErrorAction SilentlyContinue) {
+        Write-Host "Setting git global config..." -ForegroundColor Blue
+        & "$PSScriptRoot\git_global_config.ps1"
+    }
 
-    if (-Not (scoop info aria2 6>$null)) {
+    if (-Not (Get-Command "aria2" -ErrorAction SilentlyContinue)) {
         Write-Host "Installing aria2..." -ForegroundColor Blue
         scoop install aria2
         scoop config aria2-enabled true
     }
 
-    Write-Host "Installing sudo..." -ForegroundColor Blue
-    if (-Not (scoop info sudo 6>$null)) {scoop install sudo}
+    if (-Not (scoop info sudo 6>$null)) {
+        Write-Host "Installing sudo..." -ForegroundColor Blue
+        scoop install sudo
+    }
 
+    Write-Host "Adding scoop buckets..." -ForegroundColor Blue
     # list all known buckets
     # scoop bucket known
 
@@ -117,7 +131,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "firefox-zh-cn"
         "go"
         "nodejs-lts"
-        "dotnet-sdk"
+        # "dotnet-sdk"
         "zulu8"
         "python"
         "php"
