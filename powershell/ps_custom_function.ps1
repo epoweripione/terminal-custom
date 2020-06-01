@@ -280,13 +280,20 @@ function Clear-InternetProxy {
 
 function DownloadHosts() {
     param (
-        [Parameter(Mandatory = $true, Position = 0)]
-        [string] $HostsURL
+        [Parameter(Mandatory = $false, Position = 0)]
+        [string] $HostsURL,
+
+        [Parameter(Mandatory = $false, Position = 1)]
+        [string] $Proxy
     )
 
     if (-Not (isadmin)) {
         Write-Host "This script needs to be run As Admin!" -ForegroundColor Red
         return
+    }
+
+    if (($null -eq $HostsURL) -or ($HostsURL -eq "")) {
+        $HostsURL = "https://raw.githubusercontent.com/googlehosts/hosts/master/hosts-files/hosts"
     }
 
     $Hostfile = "$env:windir\System32\drivers\etc\hosts"
@@ -296,7 +303,12 @@ function DownloadHosts() {
         Remove-Item $DOWNLOAD_TO
     }
 
-    curl -L --connect-timeout 5 -o "$DOWNLOAD_TO" "$HostsURL"
+    if (($null -eq $Proxy) -or ($Proxy -eq "")) {
+        curl -L --connect-timeout 5 -o "$DOWNLOAD_TO" "$HostsURL"
+    } else {
+        curl -L --connect-timeout 5 --socks5-hostname "$Proxy" -o "$DOWNLOAD_TO" "$HostsURL"
+    }
+
     if ($?) {
         if ((Test-Path $DOWNLOAD_TO) -and ((Get-Item $DOWNLOAD_TO).length -gt 0)) {
             Copy-Item $Hostfile -Destination $Hostbackup
