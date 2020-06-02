@@ -80,7 +80,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     if (-Not (Get-Command "aria2" -ErrorAction SilentlyContinue)) {
         Write-Host "Installing aria2..." -ForegroundColor Blue
         scoop install aria2
-        scoop config aria2-enabled false
+        scoop config aria2-enabled true
     }
 
     if (-Not (scoop info sudo 6>$null)) {
@@ -146,23 +146,23 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "trojan"
         "frp"
         # "v2rayn"
-        "lxrunoffline"
+        # "lxrunoffline"
         "freedownloadmanager"
         "snipaste-beta"
         "ffmpeg"
         "screentogif"
         "cpu-z"
         "diffinity"
-        "everything"
+        # "everything"
         "filezilla"
         "freedownloadmanager"
         "hashcheck"
         "motrix"
-        "powertoys"
+        # "powertoys"
         "q-dir"
         "syncbackfree"
-        "syncthing"
-        "sysinternals"
+        # "syncthing"
+        # "sysinternals"
         # "utools"
         "xnviewmp"
         # "draw.io"
@@ -173,8 +173,8 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "chromium-robrich-dev"
         # "ExplorerPlusPlus"
         # "TablacusExplorer"
-        "HBuilderXFull"
-        "GoldenDictOnline"
+        # "HBuilderXFull"
+        # "GoldenDictOnline"
         "NewFileTime"
         # "WiseCare365"
         "WiseDataRecovery"

@@ -169,6 +169,7 @@ fi
 # sudo visudo OR sudo EDITOR=nano visudo
 # sudo sed -i 's/%sudo.*/%sudo   ALL=(ALL:ALL) NOPASSWD:ALL/' /etc/sudoers
 echo "%sudo ALL=NOPASSWD:$(which service)" | sudo tee -a /etc/sudoers >/dev/null
+echo "%sudo ALL=NOPASSWD:$(which apt-get)" | sudo tee -a /etc/sudoers >/dev/null
 
 
 colorEcho ${GREEN} "WSL init done, please restart WSL!"

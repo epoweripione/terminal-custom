@@ -1,6 +1,5 @@
 # Look & Feel
 ms-ceintl.vscode-language-pack-zh-hans
-anseki.vscode-color
 vscode-icons-team.vscode-icons
 idleberg.icon-fonts
 zhuangtongfa.material-theme
@@ -162,6 +161,7 @@ steoates.autoimport
 wakatime.vscode-wakatime
 # Extra tools
 shan.code-settings-sync
+anseki.vscode-color
 grapecity.gc-excelviewer
 gruntfuggly.todo-tree
 joelday.docthis
