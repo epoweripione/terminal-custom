@@ -101,12 +101,12 @@ if [[ ! -e "/etc/apt/sources.list.d/microsoft-prod.list" ]]; then
     sudo chown root:root /etc/apt/sources.list.d/microsoft-prod.list
 fi
 
-# yarn
-# https://yarnpkg.com/zh-Hans/docs/install
-if [[ ! -e "/etc/apt/sources.list.d/yarn.list" ]]; then
-    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-fi
+## yarn
+## https://yarnpkg.com/zh-Hans/docs/install
+# if [[ ! -e "/etc/apt/sources.list.d/yarn.list" ]]; then
+#     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+#     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+# fi
 
 
 # Update all repositories & Upgrade
