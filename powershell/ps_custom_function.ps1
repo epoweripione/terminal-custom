@@ -304,9 +304,9 @@ function DownloadHosts() {
     }
 
     if (($null -eq $Proxy) -or ($Proxy -eq "")) {
-        curl -L --connect-timeout 5 -o "$DOWNLOAD_TO" "$HostsURL"
+        curl -L --connect-timeout 5 --ssl-no-revoke -o "$DOWNLOAD_TO" "$HostsURL"
     } else {
-        curl -L --connect-timeout 5 --socks5-hostname "$Proxy" -o "$DOWNLOAD_TO" "$HostsURL"
+        curl -L --connect-timeout 5 --ssl-no-revoke --socks5-hostname "$Proxy" -o "$DOWNLOAD_TO" "$HostsURL"
     }
 
     if ($?) {

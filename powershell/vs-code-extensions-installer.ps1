@@ -19,6 +19,7 @@ Param (
 $extensions = @(
     # Look & Feel
 	"ms-ceintl.vscode-language-pack-zh-hans"
+	"zhuangtongfa.material-theme"
 	"anseki.vscode-color"
 	"vscode-icons-team.vscode-icons"
     # Editing

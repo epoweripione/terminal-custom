@@ -91,7 +91,7 @@ if (-Not (Test-Path $THEME_FILE)) {
 }
 
 if (Test-Path $THEME_FILE) {
-    Add-Content $PROFILE "`nSet-Theme Paradox-my"
+    Add-Content $PROFILE "`nSet-Theme Powerlevel10k-my"
 } 
 
 # Custom
@@ -152,7 +152,7 @@ function GitStat {git status}
 function GoBack {Set-Location ..}
 function GetMyIp {curl -sL -4 http://ip-api.com/json/ | ConvertFrom-Json}
 function UpdateScoop {scoop update; scoop update *; scoop cleanup *}
-function EditHosts {notepad $env:windir\System32\drivers\etc\hosts}
+function EditHosts {sudo notepad $env:windir\System32\drivers\etc\hosts}
 function EditHistory {notepad (Get-PSReadlineOption).HistorySavePath}
 
 ## Other alias

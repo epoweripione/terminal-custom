@@ -140,7 +140,6 @@ chmod +x ~/yarn_packages_installer.sh
 # WSL
 if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
     cp -f ~/terminal-custom/wsl/*.sh ~
-    chmod +x ~/wsl_init.sh
     chmod +x ~/wsl2_init.sh
 fi
 

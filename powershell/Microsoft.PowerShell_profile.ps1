@@ -14,7 +14,7 @@ Import-Module oh-my-posh
 Set-Theme Powerlevel10k-my
 
 ## Color coding Get-ChildItem
-Import-Module Get-ChildItemColor
+# Import-Module Get-ChildItemColor
 
 Set-Alias l Get-ChildItemColor -option AllScope
 Set-Alias ls Get-ChildItemColorFormatWide -option AllScope
@@ -45,7 +45,7 @@ function cddash {
     } else {
         $pwd = $args[0];
     }
-    $tmp = Get-Location;
+    $tmp = pwd;
 
     if ($pwd) {
         Set-Location $pwd;
@@ -65,8 +65,10 @@ function GitLogPretty {
 function PrettyLS {colorls --light -A}
 function GitStat {git status}
 function GoBack {Set-Location ..}
-function GetMyIp {curl -sL -4 https://ifconfig.co/}
-function UpdateScoop {scoop update; scoop update *}
+function GetMyIp {curl -sL -4 http://ip-api.com/json/ | ConvertFrom-Json}
+function UpdateScoop {scoop update; scoop update *; scoop cleanup *}
+function EditHosts {sudo notepad $env:windir\System32\drivers\etc\hosts}
+function EditHistory {notepad (Get-PSReadlineOption).HistorySavePath}
 
 ## Other alias
 Set-Alias open Invoke-Item
@@ -76,3 +78,5 @@ Set-Alias gst GitStat
 Set-Alias myip GetMyIp
 Set-Alias pls PrettyLS
 Set-Alias suu UpdateScoop
+Set-Alias hosts EditHosts
+Set-Alias history EditHistory

@@ -11,6 +11,8 @@ function Write-Theme {
     $venvsymbol = $sl.PromptSymbols.VirtualEnvSymbol
     $clocksymbol = $sl.PromptSymbols.ClockSymbol
 
+    $prompt = Set-Newline
+
     ## Left Part
     $prompt = Write-Prompt -Object " $($sl.PromptSymbols.StartSymbol) " -ForegroundColor $sl.Colors.SessionInfoForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
     $prompt += Write-Prompt -Object "$($sl.PromptSymbols.SegmentSubForwardSymbol) " -ForegroundColor $sl.Colors.PromptForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor

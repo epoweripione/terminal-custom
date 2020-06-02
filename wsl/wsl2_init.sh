@@ -63,9 +63,10 @@ fi
 # Use USTC mirror & Install pre-requisite packages
 if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
     colorEcho ${BLUE} "Setting apt mirror..."
-    sudo sed -i 's|ftp.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
-        sudo sed -i 's|deb.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list && \
-        sudo sed -i 's|security.debian.org|mirrors.ustc.edu.cn|g' /etc/apt/sources.list
+    sudo sed -i \
+        -e 's|ftp.debian.org|mirrors.tuna.tsinghua.edu.cn|g' \
+        -e 's|deb.debian.org|mirrors.tuna.tsinghua.edu.cn|g' \
+        -e's|security.debian.org|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list
 fi
 
 colorEcho ${BLUE} "Installing pre-requisite packages..."
@@ -78,7 +79,7 @@ sudo apt update && \
 colorEcho ${BLUE} "Add custom repositories..."
 if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
     # Use https mirror
-    sudo sed -i 's|http://mirrors.ustc.edu.cn|https://mirrors.ustc.edu.cn|g' /etc/apt/sources.list
+    sudo sed -i 's|http://mirrors.tuna.tsinghua.edu.cn|https://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list
 fi
 
 # git lfs
@@ -86,7 +87,7 @@ fi
 if [[ ! -e "/etc/apt/sources.list.d/github_git-lfs.list" ]]; then
     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
     # Configure proxy for APT
-    # echo 'Acquire::http::Proxy::packagecloud-repositories.s3.dualstack.us-west-1.amazonaws.com "http://127.0.0.1:55881/";' > /etc/apt/apt.conf.d/99proxy
+    # echo 'Acquire::http::Proxy::packagecloud-repositories.s3.dualstack.us-west-1.amazonaws.com "http://127.0.0.1:7890/";' > /etc/apt/apt.conf.d/99proxy
 fi
 
 # .NET Core SDK
@@ -144,8 +145,8 @@ sudo chmod u+s /bin/ping
 colorEcho ${BLUE} "Install git lfs..."
 sudo apt install -y git-lfs && git lfs install
 
-colorEcho ${BLUE} "Installing .NET Core SDK..."
-sudo apt install -y dotnet-sdk-3.1
+# colorEcho ${BLUE} "Installing .NET Core SDK..."
+# sudo apt install -y dotnet-sdk-3.1
 
 # colorEcho ${BLUE} "Installing yarn..."
 # sudo apt install -y yarn --no-install-recommends

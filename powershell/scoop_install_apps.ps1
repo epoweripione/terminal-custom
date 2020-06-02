@@ -80,7 +80,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     if (-Not (Get-Command "aria2" -ErrorAction SilentlyContinue)) {
         Write-Host "Installing aria2..." -ForegroundColor Blue
         scoop install aria2
-        scoop config aria2-enabled true
+        scoop config aria2-enabled false
     }
 
     if (-Not (scoop info sudo 6>$null)) {
@@ -138,7 +138,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "composer"
         "cacert"
         "dbeaver"
-        "vscode"
+        # "vscode"
         "wireshark"
         "colortool"
         # "windowsterminal"
@@ -171,7 +171,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "uToolsWin"
         "chromium-marmaduke-dev-sync"
         # "chromium-robrich-dev"
-        "ExplorerPlusPlus"
+        # "ExplorerPlusPlus"
         # "TablacusExplorer"
         "HBuilderXFull"
         "GoldenDictOnline"
