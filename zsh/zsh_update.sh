@@ -188,7 +188,7 @@ PluginList=(
     "zsh-users/zsh-syntax-highlighting"
     "zsh-users/zsh-history-substring-search"
     "zsh-users/zsh-autosuggestions"
-    "popstas/zsh-command-time"
+    # "popstas/zsh-command-time"
     "petervanderdoes/git-flow-completion"
     "changyuheng/zsh-interactive-cd"
 )

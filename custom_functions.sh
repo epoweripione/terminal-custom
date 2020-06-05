@@ -1256,7 +1256,7 @@ function Git_Clone_Update() {
         cd - >/dev/null 2>&1
     else
         colorEcho ${BLUE} "  Cloning ${REPO}..."
-        git clone -c core.eol=lf -c core.autocrlf=false \
+        git clone -c core.autocrlf=false -c core.filemode=false \
             -c fsck.zeroPaddedFilemode=ignore \
             -c fetch.fsck.zeroPaddedFilemode=ignore \
             -c receive.fsck.zeroPaddedFilemode=ignore \

@@ -42,6 +42,7 @@
         "html",
         "vue"
     ],
+
     "typescript.tsdk": "node_modules/typescript/lib",
 
     "gitlens.keymap": "alternate",
