@@ -147,11 +147,19 @@ function GitLogPretty {
     git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --all
 }
 
+function UpdateScoop {
+    scoop update
+    scoop update *
+    scoop config aria2-enabled false
+    scoop update *
+    scoop config aria2-enabled true
+    scoop cleanup *
+}
+
 function PrettyLS {colorls --light -A}
 function GitStat {git status}
 function GoBack {Set-Location ..}
 function GetMyIp {curl -sL -4 http://ip-api.com/json/ | ConvertFrom-Json}
-function UpdateScoop {scoop update; scoop update *; scoop cleanup *}
 function EditHosts {sudo notepad $env:windir\System32\drivers\etc\hosts}
 function EditHistory {notepad (Get-PSReadlineOption).HistorySavePath}
 

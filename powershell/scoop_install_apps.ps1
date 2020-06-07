@@ -1,5 +1,10 @@
 #Requires -RunAsAdministrator
 
+Param (
+	[switch]$UseAria2,
+	[string]$AppsInstallDir = ""
+)
+
 if (-Not (Get-Command -Name "check_webservice_up" 2>$null)) {
     $CUSTOM_FUNCTION="$PSScriptRoot\ps_custom_function.ps1"
     if ((Test-Path "$CUSTOM_FUNCTION") -and ((Get-Item "$CUSTOM_FUNCTION").length -gt 0)) {
@@ -35,20 +40,26 @@ if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
     }
 
     Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+
+    if (-Not (($null -eq $AppsInstallDir) -or ($AppsInstallDir -eq ""))) {
+        $AppsInstallDir = "$AppsInstallDir".trim("\")
+        if (-Not (Test-Path "$AppsInstallDir")) {
+            New-Item -path "$AppsInstallDir" -type Directory | Out-Null
+        }
+
+        $env:SCOOP = "$AppsInstallDir"
+        $env:SCOOP_GLOBAL = "$AppsInstallDir\globalApps"
+        [environment]::setEnvironmentVariable('SCOOP',$env:SCOOP,'User')
+        [environment]::setEnvironmentVariable('SCOOP_GLOBAL',$env:SCOOP_GLOBAL,'Machine')
+    }
+
     Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
     # Invoke-WebRequest -useb get.scoop.sh | Invoke-Expression
-
-    # $env:SCOOP='D:\Applications\Scoop'
-    # $env:SCOOP_GLOBAL='D:\Applications\Scoop\globalApps'
-    # [environment]::setEnvironmentVariable('SCOOP',$env:SCOOP,'User')
-    # [environment]::setEnvironmentVariable('SCOOP_GLOBAL',$env:SCOOP_GLOBAL,'Machine')
-    # Invoke-WebRequest -useb get.scoop.sh | Invoke-Expression
+    
     # scoop install -g <app>
 }
 
 if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
-    # scoop config proxy 127.0.0.1:55881
-    # scoop config rm proxy
     Write-Host "Installing apps using scoop..." -ForegroundColor Blue
 
     ## scoop config proxy [username:password@]host:port
@@ -77,10 +88,15 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         & "$PSScriptRoot\git_global_config.ps1"
     }
 
-    if (-Not (Get-Command "aria2" -ErrorAction SilentlyContinue)) {
+    if (-Not (scoop info aria2 6>$null)) {
         Write-Host "Installing aria2..." -ForegroundColor Blue
         scoop install aria2
+    }
+
+    if ($UseAria2) {
         scoop config aria2-enabled true
+    } else {
+        scoop config aria2-enabled false
     }
 
     if (-Not (scoop info sudo 6>$null)) {
@@ -93,31 +109,50 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     # scoop bucket known
 
     # Scoop buckets by Github score
-    # https://github.com/rasa/scoop-directory/blob/master/by-score.md
+    # https://rasa.github.io/scoop-directory/by-score
+    $Buckets = @(
+        "extras"
+        "versions"
+        "nerd-fonts"
+        "java"
+        "nirsoft"
+        "dorado"
+        # "dodorz"
+        "epower"
+        "nonportable"
+        "jetbrains"
+        # "php"
+        # "games"
+    )
 
-    # main
-    # https://github.com/ScoopInstaller/Main
-    # extras
-    # https://github.com/lukesampson/scoop-extras
-    scoop bucket add extras
-    # nerd-fonts
-    # https://github.com/matthewjberger/scoop-nerd-fonts
-    scoop bucket add nerd-fonts
-    # java
-    # https://github.com/ScoopInstaller/Java
-    scoop bucket add java
-    # nirsoft http://www.nirsoft.net/
-    # https://github.com/kodybrown/scoop-nirsoft
-    scoop bucket add nirsoft
-    # vesion
-    # https://github.com/ScoopInstaller/Versions
-    scoop bucket add versions
-    # other
-    scoop bucket add dorado https://github.com/h404bi/dorado
-    # dodorz
-    # scoop bucket add dodorz https://github.com/dodorz/scoop-bucket
-    # epower
-    scoop bucket add epower https://github.com/epoweripione/scoop-bucket
+    $BucketsURL = @(
+        ""
+        ""
+        ""
+        ""
+        ""
+        "https://github.com/h404bi/dorado"
+        # "https://github.com/dodorz/scoop-bucket"
+        "https://github.com/epoweripione/scoop-bucket"
+        ""
+        ""
+        # ""
+        # ""
+    )
+
+    $AddedBuckets = scoop bucket list 6>&1 | Out-String
+    for ($i = 0; $i -lt $Buckets.Count; $i++) {
+        $TargetBucket = $Buckets[$i]
+        $TargetBucketURL = $BucketsURL[$i]
+        if (-Not ($AddedBuckets -match "$TargetBucket")) {
+            Write-Host "Adding $TargetBucket..." -ForegroundColor Blue
+            if (($null -eq $TargetBucketURL) -or ($TargetBucketURL -eq "")) {
+                scoop bucket add $TargetBucket
+            } else {
+                scoop bucket add $TargetBucket $TargetBucketURL
+            }
+        }
+    }
 
     Write-Host "Updating scoop..." -ForegroundColor Blue
     scoop update
@@ -167,8 +202,11 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "xnviewmp"
         # "draw.io"
         # "yed"
+        # "telegram"
+        ## markdown editor
+        "pandoc"
+        "marktext"
         ## epower
-        # "uToolsWin"
         "chromium-marmaduke-dev-sync"
         # "chromium-robrich-dev"
         # "ExplorerPlusPlus"
@@ -186,6 +224,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     )
 
     $sudoApps = @(
+        "Cascadia-Code"
         ## epower
         "FiraCode-Mono-NF"
         "Sarasa-Gothic-SC"
@@ -234,6 +273,8 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     # if (-Not (($null -eq $SCOOP_PROXY_ADDR) -or ($SCOOP_PROXY_ADDR -eq ""))) {
     #     scoop config rm proxy
     # }
+
+    scoop config aria2-enabled true
 } else {
     Write-Host "Install apps using scoop failed!"
 }
@@ -242,6 +283,18 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
 # https://github.com/lukesampson/scoop/wiki/Custom-PHP-configuration
 if (Get-Command "php" -ErrorAction SilentlyContinue) {
     
+}
+
+
+if (-Not (check_webservice_up)) {
+    if (Get-Command "go" -ErrorAction SilentlyContinue) {
+        go env -w GO111MODULE=on
+        go env -w GOPROXY="https://goproxy.io,direct"
+    }
+
+    if (Get-Command "npm" -ErrorAction SilentlyContinue) {
+        & "$PSScriptRoot\npm_config.ps1"
+    }
 }
 
 

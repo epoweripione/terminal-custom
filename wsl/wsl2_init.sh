@@ -86,8 +86,9 @@ fi
 # https://github.com/git-lfs/git-lfs/wiki/Tutorial
 if [[ ! -e "/etc/apt/sources.list.d/github_git-lfs.list" ]]; then
     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-    # Configure proxy for APT
-    # echo 'Acquire::http::Proxy::packagecloud-repositories.s3.dualstack.us-west-1.amazonaws.com "http://127.0.0.1:7890/";' > /etc/apt/apt.conf.d/99proxy
+
+    # echo 'Acquire::http::Proxy::packagecloud-repositories.s3.dualstack.us-west-1.amazonaws.com "http://127.0.0.1:7890/";' \
+    #     | sudo tee -a /etc/apt/apt.conf.d/99proxy >/dev/null
 fi
 
 # .NET Core SDK
@@ -99,6 +100,9 @@ if [[ ! -e "/etc/apt/sources.list.d/microsoft-prod.list" ]]; then
     sudo mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
     sudo chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg
     sudo chown root:root /etc/apt/sources.list.d/microsoft-prod.list
+
+    # echo 'Acquire::http::Proxy::packages.microsoft.com "http://127.0.0.1:7890/";' \
+    #     | sudo tee -a /etc/apt/apt.conf.d/99proxy >/dev/null
 fi
 
 ## yarn
@@ -168,8 +172,17 @@ fi
 # Allow members of the group sudo to execute any command without password prompt
 # sudo visudo OR sudo EDITOR=nano visudo
 # sudo sed -i 's/%sudo.*/%sudo   ALL=(ALL:ALL) NOPASSWD:ALL/' /etc/sudoers
-echo "%sudo ALL=NOPASSWD:$(which service)" | sudo tee -a /etc/sudoers >/dev/null
-echo "%sudo ALL=NOPASSWD:$(which apt-get)" | sudo tee -a /etc/sudoers >/dev/null
+[[ -x "$(command -v service)" ]] && \
+    echo "%sudo ALL=NOPASSWD:$(which service)" | sudo tee -a /etc/sudoers >/dev/null
+
+[[ -x "$(command -v apt-get)" ]] && \
+    echo "%sudo ALL=NOPASSWD:$(which apt-get)" | sudo tee -a /etc/sudoers >/dev/null
+
+[[ -x "$(command -v pacman)" ]] && \
+    echo "%sudo ALL=NOPASSWD:$(which pacman)" | sudo tee -a /etc/sudoers >/dev/null
+
+[[ -x "$(command -v pacapt)" ]] && \
+    echo "%sudo ALL=NOPASSWD:$(which pacapt)" | sudo tee -a /etc/sudoers >/dev/null
 
 
 colorEcho ${GREEN} "WSL init done, please restart WSL!"

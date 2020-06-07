@@ -1130,10 +1130,19 @@ function check_set_global_proxy() {
         IP_LIST=$(ipconfig.exe | grep "IPv4" | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}')
     fi
 
+    unset GLOBAL_PROXY_IP
+    unset GLOBAL_PROXY_SOCKS_PORT
+    unset GLOBAL_PROXY_HTTP_PORT
+
     # Setting global proxy
     while read -r PROXY_IP; do
         if check_socks5_proxy_up "${PROXY_IP}:${SOCKS_PORT}"; then
+            GLOBAL_PROXY_IP=${PROXY_IP}
+            GLOBAL_PROXY_SOCKS_PORT=${SOCKS_PORT}
+            GLOBAL_PROXY_HTTP_PORT=${HTTP_PORT}
+
             set_global_proxy "${PROXY_IP}:${SOCKS_PORT}" "${PROXY_IP}:${HTTP_PORT}"
+
             PROXY_UP="YES"
             break
         fi

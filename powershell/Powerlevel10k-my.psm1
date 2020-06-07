@@ -52,7 +52,7 @@ function Write-Theme {
     }
     $rightElements.Add([System.Tuple]::Create(" $login@$computer ", $sl.Colors.UserForegroundColor))
     $rightElements.Add([System.Tuple]::Create($sl.PromptSymbols.SegmentSubBackwardSymbol, $sl.Colors.PromptForegroundColor))
-    $rightElements.Add([System.Tuple]::Create(" $(Get-Date -Format H:m) $clocksymbol ", $sl.Colors.TimestampForegroundColor))
+    $rightElements.Add([System.Tuple]::Create(" $(Get-Date -Format H:mm) $clocksymbol ", $sl.Colors.TimestampForegroundColor))
     $lengthList = [Linq.Enumerable]::Select($rightElements, [Func[Tuple[string, ConsoleColor], int]] { $args[0].Item1.Length })
     $total = [Linq.Enumerable]::Sum($lengthList)
     # Transform into total length
