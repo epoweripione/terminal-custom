@@ -203,6 +203,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "draw.io"
         # "yed"
         # "telegram"
+        # "vncviewer"
         ## markdown editor
         "pandoc"
         "marktext"

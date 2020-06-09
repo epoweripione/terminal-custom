@@ -469,18 +469,17 @@ fi
 
 # WSL1 & WSL2
 if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
-    # start services upon WSL launch
-    # libnss-winbind
-    if (( $(ps -ef | grep -v grep | grep winbind | wc -l) == 0 )); then
-        [[ $(systemctl is-enabled winbind 2>/dev/null) ]] && \
-            sudo service winbind start
-        # if systemctl list-unit-files --type=service | grep "winbind.service" | grep "enabled" >/dev/null 2>&1; then
-        #     service winbind start
-        # fi
-    fi
+    ## start services upon WSL launch: libnss-winbind
+    # if (( $(ps -ef | grep -v grep | grep winbind | wc -l) == 0 )); then
+    #     [[ $(systemctl is-enabled winbind 2>/dev/null) ]] && \
+    #         sudo service winbind start
+    #     # if systemctl list-unit-files --type=service | grep "winbind.service" | grep "enabled" >/dev/null 2>&1; then
+    #     #     service winbind start
+    #     # fi
+    # fi
 
-    # fast-syntax-highlighting: fix Segmentation fault (core dumped) when input char -
-    # https://github.com/zdharma/fast-syntax-highlighting/issues/108
+    ## fast-syntax-highlighting: fix Segmentation fault (core dumped) when input char -
+    ## https://github.com/zdharma/fast-syntax-highlighting/issues/108
     # FAST_HIGHLIGHT[chroma-git]="chroma/-ogit.ch"
 
     # get local weather

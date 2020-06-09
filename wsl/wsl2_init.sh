@@ -131,7 +131,7 @@ sudo apt install -y libnss-winbind
 if [[ ! $(grep "wins" /etc/nsswitch.conf) ]]; then
     sudo sed -i 's/dns/wins dns/' /etc/nsswitch.conf
 fi
-sudo service winbind start # /etc/init.d/winbind start
+# sudo service winbind start # /etc/init.d/winbind start
 
 
 # fix ping: socket: Operation not permitted
