@@ -111,6 +111,7 @@ sudo pacman --noconfirm -S \
 
 # Virtualbox
 # https://wiki.manjaro.org/index.php?title=VirtualBox
+# https://forum.manjaro.org/t/howto-virtualbox-installation-usb-shared-folders/55905
 # virtualbox-guest-utils
 read -p "Install virtualbox-guest-utils?[y/N]:" CHOICE
 if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]; then
@@ -187,7 +188,7 @@ sudo pacman --noconfirm -S powerline-fonts ttf-symbola ttf-fira-code ttf-sarasa-
 # FiraCode Nerd Font Complete Mono
 read -p "Download URL for FiraCode-Mono?[Use github by default]" NerdFont_URL
 [[ -z "$NerdFont_URL" ]] && \
-    NerdFont_URL="https://github.com/epoweripione/terminal-custom/releases/download/v2.3.3/FiraCode-Mono-2.0.0.zip"
+    NerdFont_URL="https://github.com/epoweripione/terminal-custom/releases/download/v4.0.0/FiraCode-Mono.zip"
 
 mkdir -p "$HOME/patched-fonts/FiraCode-Mono" && \
     curl -fSL -o "$HOME/patched-fonts/FiraCode-Mono.zip" ${NerdFont_URL} && \

@@ -1284,6 +1284,7 @@ function git_update_repo_in_subdir() {
     local BRANCH=${3:-master}
 
     [[ -z "${subdir}" ]] && exit 0
+    [[ ! -d "${subdir}" ]] && exit 0
 
     # find . -type d -name ".git" -execdir git pull --rebase --stat origin master \;
 
@@ -1326,7 +1327,8 @@ function Install_systemd_Service() {
     # Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"
     local service_name=$1
     local service_exec=$2
-    local work_dir=${3:-""}
+    local service_user=${3:-"nobody"}
+    local service_workdir=${4:-""}
     local filename
     local service_file
 
@@ -1334,9 +1336,9 @@ function Install_systemd_Service() {
     [[ -z "$service_name" ]] && return 1
     [[ -z "$service_exec" ]] && return 1
 
-    if [[ -z "$work_dir" ]]; then
+    if [[ -z "$service_workdir" ]]; then
         filename=$(echo ${service_exec} | cut -d" " -f1)
-        work_dir=$(dirname $(readlink -f "$filename"))
+        service_workdir=$(dirname $(readlink -f "$filename"))
     fi
 
     service_file="/etc/systemd/system/${service_name}.service"
@@ -1349,10 +1351,10 @@ After=network.target network-online.target nss-lookup.target
 [Service]
 Type=simple
 StandardError=journal
-User=nobody
+User=${service_user}
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 ExecStart=${service_exec}
-WorkingDirectory=${work_dir}
+WorkingDirectory=${service_workdir}
 ExecReload=/bin/kill -HUP \$MAINPID
 Restart=on-failure
 RestartSec=5s
@@ -1369,6 +1371,24 @@ EOF
         colorEcho ${RED} "   systemd service ${service_name} install failed!"
     fi
 }
+
+
+function Download_Install_Subconverter_Clash() {
+    local download_url
+
+    echo "Download URL for subconverter & clash?"
+    read download_url
+
+    if [[ -n "$SUB_CLASH_URL" ]]; then
+        wget -c -O "/tmp/subconverter_clash.zip" "${download_url}" && \
+            unzip -qo "/tmp/subconverter_clash.zip" -d "/srv" && \
+            rm -f "/tmp/subconverter_clash.zip" && \
+            Install_systemd_Service "subconverter" "/srv/subconverter/subconverter" && \
+            Install_systemd_Service "clash" "/srv/clash/clash -d /srv/clash" && \
+            colorEcho ${GREEN} "Subconverter & Clash installed!"
+    fi
+}
+
 
 # https://github.com/chubin/wttr.in
 function get_weather() {
@@ -1402,6 +1422,17 @@ function get_weather_custom() {
     wttr_weather=$(curl -sL --noproxy '*' -H "Accept-Language: ${wttr_lang}" --compressed \
         "${wttr_url}")
     [[ $? -eq 0 ]] && colorEcho ${YELLOW} "${wttr_weather}"
+}
+
+# Bash Function To Rename Files Without Typing Full Name Twice
+function mv_rename() {
+    if [ "$#" -ne 1 ] || [ ! -e "$1" ]; then
+        command mv "$@"
+        return
+    fi
+
+    read -ei "$1" newfilename
+    command mv -v -- "$1" "$newfilename"
 }
 
 ## Dateutils

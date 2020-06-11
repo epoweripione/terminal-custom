@@ -19,23 +19,87 @@ if [[ ! -x "$(command -v code)" ]]; then
 fi
 
 
-# How to export installed extensions list
-# code --list-extensions > vscode_extensions.list
+# ExtFile="vscode_extensions.list"
+[[ $PARAMS_NUM > 0 ]] && ExtFile=${1:-"vscode_extensions.list"}
 
-if [[ ! -s "vscode_extensions.list" ]]; then
-    colorEcho ${RED} "vscode_extensions.list is not exist or empty!"
-    exit 0
+
+extensions=(
+    # Look & Feel
+	"ms-ceintl.vscode-language-pack-zh-hans"
+	"zhuangtongfa.material-theme"
+	"vscode-icons-team.vscode-icons"
+    # Editing
+    "aaron-bond.better-comments"
+	"coenraads.bracket-pair-colorizer-2"
+	"esbenp.prettier-vscode"
+	"Hookyqr.beautify"
+	"oderwat.indent-rainbow"
+    ## Core
+	"doggy8088.netcore-extension-pack"
+	"doggy8088.netcore-snippets"
+	## GO
+	"golang.go"
+	"zignd.html-css-class-completion"
+	"sidthesloth.html5-boilerplate"
+    ## Javascript
+	"msjsdiag.debugger-for-chrome"
+    ## kubernete/docker
+	"ms-azuretools.vscode-docker"
+    ## nginx
+	"shanoor.vscode-nginx"
+    ## plsql
+	"xyz.plsql-language"
+	"ms-python.python"
+    ## powershell
+	"ms-vscode.powershell"
+    ## XML/JSON/GraphQL/YAML
+    "eriklynd.json-tools"
+	"mohsen1.prettify-json"
+    "kumar-harsh.graphql-for-vscode"
+	"redhat.vscode-yaml"
+    # Vesion Control
+	"eamodio.gitlens"
+	# Remote
+	"ms-vscode-remote.vscode-remote-extensionpack"
+	"ms-vscode-remote.remote-wsl"
+	# Debug & Test
+	"formulahendry.code-runner"
+	"humao.rest-client"
+	"hediet.debug-visualizer"
+    # Extra tools
+	"shan.code-settings-sync"
+	"anseki.vscode-color"
+	"mkxml.vscode-filesize"
+	"wayou.vscode-todo-highlight"
+	"wwm.better-align"
+	"tyriar.sort-lines"
+	"russell.any-rule"
+	"hediet.vscode-drawio"
+)
+
+# How to export installed extensions list
+# code --list-extensions > "${ExtFile}"
+
+if [[ $PARAMS_NUM > 0 ]]; then
+    if [[ ! -s "${ExtFile}" ]]; then
+        colorEcho ${RED} ${ExtFile}" is not exist or empty!"
+        exit 0
+    fi
+
+    cat "${ExtFile}" | grep -v '^#' | xargs -L1 code --install-extension
+else
+    for Target in "${extensions[@]}"; do
+        code --install-extension $Target
+    done
 fi
 
 # How to install extensions from exprot list
 # windows cmd:
-# for /F "tokens=*" %%A in (vscode_extensions.list) do code --install-extension %%A
+# for /F "tokens=*" %%A in ("${ExtFile}") do code --install-extension %%A
 # bash:
-# <vscode_extensions.list xargs -I % code --install-extension %
+# <"${ExtFile}" xargs -I % code --install-extension %
 # or
-# cat vscode_extensions.list | grep -v '^#' | xargs -L1 code --install-extension
-
-cat vscode_extensions.list | grep -v '^#' | xargs -L1 code --install-extension
+# cat "${ExtFile}" | grep -v '^#' | xargs -L1 code --install-extension
 
 ## https://www.growingwiththeweb.com/2016/06/syncing-vscode-extensions.html
 # EXTENSIONS=(

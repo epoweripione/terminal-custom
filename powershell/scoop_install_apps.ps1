@@ -185,6 +185,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "freedownloadmanager"
         "snipaste-beta"
         "ffmpeg"
+        "vlc"
         "screentogif"
         "cpu-z"
         "diffinity"

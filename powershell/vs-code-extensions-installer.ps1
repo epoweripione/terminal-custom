@@ -30,33 +30,19 @@ $extensions = @(
     ## Core
 	"doggy8088.netcore-extension-pack"
 	"doggy8088.netcore-snippets"
+	## GO
+	"golang.go"
     ## HTML/CSS
-	# "thekalinga.bootstrap4-vscode"
-	# "wcwhitehead.bootstrap-3-snippets"
 	"zignd.html-css-class-completion"
 	"sidthesloth.html5-boilerplate"
     ## Javascript
 	"msjsdiag.debugger-for-chrome"
-	# "xabikos.javascriptsnippets"
-	## Typescript
-	# "ms-vscode.vscode-typescript-tslint-plugin"
-	# "stringham.move-ts"
-	## Angular
-	# "cipchk.ng-alain-extension-pack"
-	## Vue
-	# "dariofuzinato.vue-peek"
-	# "abdelaziz18003.quasar-snippets"
     ## kubernete/docker
-	# "ms-kubernetes-tools.vscode-kubernetes-tools"
 	"ms-azuretools.vscode-docker"
-    ## Markdown
-	# "yzhang.markdown-all-in-one"
     ## nginx
 	"shanoor.vscode-nginx"
     ## plsql
 	"xyz.plsql-language"
-    ## python
-	# "ms-python.anaconda-extension-pack"
 	"ms-python.python"
     ## powershell
 	"ms-vscode.powershell"
@@ -70,7 +56,6 @@ $extensions = @(
 	# Remote
 	"ms-vscode-remote.vscode-remote-extensionpack"
 	"ms-vscode-remote.remote-wsl"
-	# "ms-vsliveshare.vsliveshare"
 	# Debug & Test
 	"formulahendry.code-runner"
 	"humao.rest-client"
@@ -84,7 +69,6 @@ $extensions = @(
 	"tyriar.sort-lines"
 	"russell.any-rule"
 	"hediet.vscode-drawio"
-	# "eighthundreds.vscode-drawio"
 )
 
 $cmd = "code --list-extensions"
