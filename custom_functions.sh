@@ -1374,12 +1374,14 @@ EOF
 
 
 function Download_Install_Subconverter_Clash() {
-    local download_url
+    local download_url=${1:-""}
 
-    echo "Download URL for subconverter & clash?"
-    read download_url
+    if [[ -z "$download_url" ]]; then
+        echo "Download URL for subconverter & clash?"
+        read download_url
+    fi
 
-    if [[ -n "$SUB_CLASH_URL" ]]; then
+    if [[ -n "$download_url" ]]; then
         wget -c -O "/tmp/subconverter_clash.zip" "${download_url}" && \
             unzip -qo "/tmp/subconverter_clash.zip" -d "/srv" && \
             rm -f "/tmp/subconverter_clash.zip" && \

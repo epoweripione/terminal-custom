@@ -30,7 +30,7 @@ $ProvisionedAppPackageNames = @(
     "Microsoft.OneConnect"
     "Microsoft.People"
     "Microsoft.Wallet"
-    "microsoft.windowscommunicationsapps"
+    # "microsoft.windowscommunicationsapps"
     "Microsoft.WindowsMaps"
 )
 # "Microsoft.GetHelp"
@@ -68,47 +68,62 @@ foreach ($ProvisionedAppName in $ProvisionedAppPackageNames) {
 }
 
 # OneDrive
-if (Test-Path "$env:LOCALAPPDATA\Microsoft\OneDrive\OneDrive.exe") {
-    taskkill /f /im OneDrive.exe
-    & "$env:SystemRoot\SysWOW64\OneDriveSetup.exe" /uninstall
+function Remove_OneDrive() {
+    $REMOVE_CONFIRM = "N"
+    if($PROMPT_VALUE = Read-Host "Remove OneDrive?[y/N]") {
+        $REMOVE_CONFIRM = $PROMPT_VALUE
+    }
 
-    # Take Ownsership of OneDriveSetup.exe
-    $ACL = Get-ACL -Path $env:SystemRoot\SysWOW64\OneDriveSetup.exe
-    $Group = New-Object System.Security.Principal.NTAccount("$env:UserName")
-    $ACL.SetOwner($Group)
-    Set-Acl -Path $env:SystemRoot\SysWOW64\OneDriveSetup.exe -AclObject $ACL
+    if (-Not (($REMOVE_CONFIRM -eq "y") -or ($REMOVE_CONFIRM -eq "Y"))) {
+        return $false
+    }
 
-    # Assign Full R/W Permissions to $env:UserName (Administrator)
-    $Acl = Get-Acl "$env:SystemRoot\SysWOW64\OneDriveSetup.exe"
-    $Ar = New-Object  system.security.accesscontrol.filesystemaccessrule("$env:UserName","FullControl","Allow")
-    $Acl.SetAccessRule($Ar)
-    Set-Acl "$env:SystemRoot\SysWOW64\OneDriveSetup.exe" $Acl
+    if (Test-Path "$env:LOCALAPPDATA\Microsoft\OneDrive\OneDrive.exe") {
+        taskkill /f /im OneDrive.exe
+        & "$env:SystemRoot\SysWOW64\OneDriveSetup.exe" /uninstall
 
-    # Take Ownsership of OneDrive.ico
-    $ACL = Get-ACL -Path $env:SystemRoot\SysWOW64\OneDriveSetup.exe
-    $Group = New-Object System.Security.Principal.NTAccount("$env:UserName")
-    $ACL.SetOwner($Group)
-    Set-Acl -Path $env:SystemRoot\SysWOW64\OneDriveSetup.exe -AclObject $ACL
+        # Take Ownsership of OneDriveSetup.exe
+        $ACL = Get-ACL -Path $env:SystemRoot\SysWOW64\OneDriveSetup.exe
+        $Group = New-Object System.Security.Principal.NTAccount("$env:UserName")
+        $ACL.SetOwner($Group)
+        Set-Acl -Path $env:SystemRoot\SysWOW64\OneDriveSetup.exe -AclObject $ACL
 
-    # Assign Full R/W Permissions to $env:UserName (Administrator)
-    $Acl = Get-Acl "$env:SystemRoot\SysWOW64\OneDrive.ico"
-    $Ar = New-Object  system.security.accesscontrol.filesystemaccessrule("$env:UserName","FullControl","Allow")
-    $Acl.SetAccessRule($Ar)
-    Set-Acl "$env:SystemRoot\SysWOW64\OneDrive.ico" $Acl
+        # Assign Full R/W Permissions to $env:UserName (Administrator)
+        $Acl = Get-Acl "$env:SystemRoot\SysWOW64\OneDriveSetup.exe"
+        $Ar = New-Object  system.security.accesscontrol.filesystemaccessrule("$env:UserName","FullControl","Allow")
+        $Acl.SetAccessRule($Ar)
+        Set-Acl "$env:SystemRoot\SysWOW64\OneDriveSetup.exe" $Acl
 
-    REG Delete "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f
-    REG Delete "HKEY_CLASSES_ROOT\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f
+        # Take Ownsership of OneDrive.ico
+        $ACL = Get-ACL -Path $env:SystemRoot\SysWOW64\OneDriveSetup.exe
+        $Group = New-Object System.Security.Principal.NTAccount("$env:UserName")
+        $ACL.SetOwner($Group)
+        Set-Acl -Path $env:SystemRoot\SysWOW64\OneDriveSetup.exe -AclObject $ACL
 
-    Remove-Item -Path "$env:SystemRoot\SysWOW64\OneDriveSetup.exe" -Force -ErrorAction SilentlyContinue
-    Write-Output "OneDriveSetup.exe Removed"
-    Remove-Item -Path "$env:SystemRoot\SysWOW64\OneDrive.ico" -Force -ErrorAction SilentlyContinue
-    Write-Output "OneDrive Icon Removed"
-    Remove-Item -Path "$env:USERPROFILE\OneDrive" -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Output "USERProfile\OneDrive Removed" 
-    Remove-Item -Path "$env:LOCALAPPDATA\Microsoft\OneDrive" -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Output "LocalAppData\Microsoft\OneDrive Removed" 
-    Remove-Item -Path "$env:ProgramData\Microsoft OneDrive" -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Output "ProgramData\Microsoft OneDrive Removed" 
-    Remove-Item -Path "C:\OneDriveTemp" -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Output "C:\OneDriveTemp Removed"
+        # Assign Full R/W Permissions to $env:UserName (Administrator)
+        $Acl = Get-Acl "$env:SystemRoot\SysWOW64\OneDrive.ico"
+        $Ar = New-Object  system.security.accesscontrol.filesystemaccessrule("$env:UserName","FullControl","Allow")
+        $Acl.SetAccessRule($Ar)
+        Set-Acl "$env:SystemRoot\SysWOW64\OneDrive.ico" $Acl
+
+        REG Delete "HKEY_CLASSES_ROOT\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f
+        REG Delete "HKEY_CLASSES_ROOT\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" /f
+
+        Remove-Item -Path "$env:SystemRoot\SysWOW64\OneDriveSetup.exe" -Force -ErrorAction SilentlyContinue
+        Write-Output "OneDriveSetup.exe Removed"
+        Remove-Item -Path "$env:SystemRoot\SysWOW64\OneDrive.ico" -Force -ErrorAction SilentlyContinue
+        Write-Output "OneDrive Icon Removed"
+        Remove-Item -Path "$env:USERPROFILE\OneDrive" -Recurse -Force -ErrorAction SilentlyContinue
+        Write-Output "USERProfile\OneDrive Removed" 
+        Remove-Item -Path "$env:LOCALAPPDATA\Microsoft\OneDrive" -Recurse -Force -ErrorAction SilentlyContinue
+        Write-Output "LocalAppData\Microsoft\OneDrive Removed" 
+        Remove-Item -Path "$env:ProgramData\Microsoft OneDrive" -Recurse -Force -ErrorAction SilentlyContinue
+        Write-Output "ProgramData\Microsoft OneDrive Removed" 
+        Remove-Item -Path "C:\OneDriveTemp" -Recurse -Force -ErrorAction SilentlyContinue
+        Write-Output "C:\OneDriveTemp Removed"
+    }
+
+    return $true
 }
+
+Remove_OneDrive

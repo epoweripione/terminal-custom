@@ -37,7 +37,7 @@
 # cd ~; python -m http.server 8080
 
 
-## get & set user env
+## Get & Set user env
 # $env:UserProfile
 # $env:SystemRoot
 # $env:SystemDrive
@@ -51,6 +51,10 @@
 ## if ($userenv.Contains(";")) { $userenv = $userenv -replace '[;]' }
 # $userenv = $userenv.TrimEnd(';')
 # [System.Environment]::SetEnvironmentVariable("PATH", $userenv + ";C:\Users\Administrator\Ubuntu", "User")
+
+
+## Get file hash
+# Get-FileHash -Path <filename> -Algorithm <MD5,SHA1,SHA256,SHA384,SHA512>
 
 
 ## Manage System Services
