@@ -73,7 +73,7 @@ function UpdateScoop {
 
 function UpdateMyScript {
     Set-Location ~
-    curl -L --socks5-hostname "127.0.0.1:7891" `
+    curl -L --socks5-hostname "127.0.0.1:7890" `
         -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d" && `
     .\pwsh_script_download.ps1
 }

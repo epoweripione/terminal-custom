@@ -14,7 +14,7 @@ if (-Not (Get-Command -Name "check_webservice_up" 2>$null)) {
 
 # proxy
 $SCOOP_PROXY_ADDR = "127.0.0.1:7890"
-if (-Not (check_socks5_proxy_up "127.0.0.1:7891")) {
+if (-Not (check_socks5_proxy_up $SCOOP_PROXY_ADDR)) {
     $SCOOP_PROXY_ADDR = ""
     if($PROMPT_VALUE = Read-Host "Proxy address for scoop?") {
         $SCOOP_PROXY_ADDR = $PROMPT_VALUE
@@ -85,7 +85,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     # git global config
     if (Get-Command "git" -ErrorAction SilentlyContinue) {
         Write-Host "Setting git global config..." -ForegroundColor Blue
-        & "$PSScriptRoot\git_global_config.ps1"
+        & "$PSScriptRoot\git_global_config.ps1" -Proxy "$SCOOP_PROXY_ADDR"
     }
 
     if (-Not (scoop info aria2 6>$null)) {
@@ -186,6 +186,8 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "snipaste-beta"
         "ffmpeg"
         "vlc"
+        "captura"
+        "quicklook"
         "screentogif"
         "cpu-z"
         "diffinity"
@@ -205,6 +207,8 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "yed"
         # "telegram"
         # "vncviewer"
+        # "cdburnerxp"
+        # "wincdemu"
         ## markdown editor
         "pandoc"
         "marktext"

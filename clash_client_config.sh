@@ -46,8 +46,14 @@ TARGET_WITH_CUSTOM_PROXY=$(echo "$TARGET_CONFIG_FILE" | sed 's/\./_custom\./')
 
 COPY_TO_FILE=${2:-""}
 
+CLASH_CONFIG=${3:-"${CURRENT_DIR}/clash_client_config.yml"}
+[[ ! -s "$CLASH_CONFIG" ]] && CLASH_CONFIG="${HOME}/clash_client_config.yml"
+if [[ ! -s "$CLASH_CONFIG" ]]; then
+    colorEcho ${BLUE} "    ${CLASH_CONFIG} not exist!"
+    exit 1
+fi
 
-SUB_LIST_FILE=${3:-"${CURRENT_DIR}/clash_client_subscription.list"}
+SUB_LIST_FILE=${4:-"${CURRENT_DIR}/clash_client_subscription.list"}
 if [[ -s "$SUB_LIST_FILE" ]]; then
     SUB_LIST=()
     # || In case the file has an incomplete (missing newline) last line
@@ -83,14 +89,6 @@ if ! pgrep -f "subconverter" >/dev/null 2>&1; then
     exit 1
 fi
 
-CLASH_CONFIG="${CURRENT_DIR}/clash_client_config.yml"
-if [[ ! -s "$CLASH_CONFIG" ]]; then
-    CLASH_CONFIG="${HOME}/clash_client_config.yml"
-fi
-if [[ ! -s "$CLASH_CONFIG" ]]; then
-    colorEcho ${BLUE} "    ${CLASH_CONFIG} not exist!"
-    exit 1
-fi
 
 colorEcho ${BLUE} "Getting clash rules..."
 

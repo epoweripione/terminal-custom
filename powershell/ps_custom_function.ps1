@@ -181,7 +181,7 @@ function Set-WinHTTP-Proxy {
     .Example
     Setting proxy information
     Set-WinHTTP-Proxy -proxy "127.0.0.1:7890"
-    Set-WinHTTP-Proxy -proxy "socks=127.0.0.1:7891" -Bypass "localhost"
+    Set-WinHTTP-Proxy -proxy "socks=127.0.0.1:7890" -Bypass "localhost"
     #>
     Param (
         [Parameter(Mandatory = $false, Position = 0)]
@@ -191,7 +191,7 @@ function Set-WinHTTP-Proxy {
         [string] $Bypass
     )
 
-    # netsh winhttp set proxy proxy-server="socks=127.0.0.1:7891" bypass-list="localhost"
+    # netsh winhttp set proxy proxy-server="socks=127.0.0.1:7890" bypass-list="localhost"
     if (($null -eq $Proxy) -or ($Proxy -eq "")) {
         netsh winhttp reset proxy
     } else {

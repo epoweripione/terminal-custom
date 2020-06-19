@@ -403,7 +403,9 @@ function install_update_clash() {
 function use_clash() {
     local ostype_wsl=$(uname -r)
     local last_update="/srv/clash/.last_update"
-    local PROXY_URL=${1:-"127.0.0.1:7891"}
+    local PROXY_URL=${1:-"127.0.0.1"}
+    local SOCKS_PORT=${2:-"7891"}
+    local MIXED_PORT=${3:-"7890"}
     local SUB_CLASH_URL
 
     if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
@@ -457,7 +459,11 @@ function use_clash() {
                 date +"%F" > "$last_update"
             fi
 
-            if check_socks5_proxy_up ${PROXY_URL}; then
+            if check_socks5_proxy_up "${PROXY_URL}:${SOCKS_PORT}"; then
+                return 0
+            fi
+
+            if check_socks5_proxy_up "${PROXY_URL}:${MIXED_PORT}"; then
                 return 0
             else
                 [[ -s "$HOME/clash_client_config.sh" ]] && \
@@ -530,7 +536,7 @@ function main() {
     # set global clash socks5 proxy or v2ray socks5 proxy
     if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
         colorEcho ${BLUE} "Checking & loading socks proxy..."
-        use_clash
+        use_clash 127.0.0.1 7891 7890
         if ! check_set_global_proxy 7891 7890; then
             SOCKS_ADDRESS="127.0.0.1:55880"
             if use_v2ray "${SOCKS_ADDRESS}"; then

@@ -1102,6 +1102,8 @@ function set_global_proxy() {
             # set special socks5 proxy(curl...)
             set_special_socks5_proxy "${SOCKS_ADDRESS}"
             colorEcho ${GREEN} " :: Now using ${SOCKS_ADDRESS} for global proxy!"
+
+            return 0
         else
             clear_proxy
             set_git_proxy
@@ -1114,13 +1116,15 @@ function set_global_proxy() {
         set_curl_proxy
         set_wget_proxy
     fi
+
+    return 1
 }
 
 
 ## Check & set global proxy
 function check_set_global_proxy() {
     local SOCKS_PORT=${1:-"1080"}
-    local HTTP_PORT=${2:-"8080"}
+    local HTTP_MIXED_PORT=${2:-"8080"}
     local PROXY_IP
     local IP_LIST="127.0.0.1"
     local PROXY_UP="NO"
@@ -1137,23 +1141,30 @@ function check_set_global_proxy() {
     # Setting global proxy
     while read -r PROXY_IP; do
         if check_socks5_proxy_up "${PROXY_IP}:${SOCKS_PORT}"; then
-            GLOBAL_PROXY_IP=${PROXY_IP}
-            GLOBAL_PROXY_SOCKS_PORT=${SOCKS_PORT}
-            GLOBAL_PROXY_HTTP_PORT=${HTTP_PORT}
-
-            set_global_proxy "${PROXY_IP}:${SOCKS_PORT}" "${PROXY_IP}:${HTTP_PORT}"
-
             PROXY_UP="YES"
-            break
+        else
+            if check_socks5_proxy_up "${PROXY_IP}:${HTTP_MIXED_PORT}"; then
+                SOCKS_PORT=${HTTP_MIXED_PORT}
+                PROXY_UP="YES"
+            fi
         fi
+
+        [[ "$PROXY_UP" == "YES" ]] && break
     done <<<"$IP_LIST"
 
     if [[ "$PROXY_UP" == "YES" ]]; then
-        return 0
+        if set_global_proxy "${PROXY_IP}:${SOCKS_PORT}" "${PROXY_IP}:${HTTP_MIXED_PORT}"; then
+            GLOBAL_PROXY_IP=${PROXY_IP}
+            GLOBAL_PROXY_SOCKS_PORT=${SOCKS_PORT}
+            GLOBAL_PROXY_HTTP_PORT=${HTTP_MIXED_PORT}
+
+            return 0
+        fi
     else
         set_global_proxy # clear global proxy
-        return 1
     fi
+
+    return 1
 }
 
 
