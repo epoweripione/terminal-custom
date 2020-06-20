@@ -58,6 +58,7 @@ fi
 colorEcho ${BLUE} "Copying shell script to $HOME..."
 cp -f ~/terminal-custom/*.sh ~
 cp -f ~/terminal-custom/*.yml ~
+cp -f ~/terminal-custom/*.ini ~
 cp -f ~/terminal-custom/*.list ~
 cp -f ~/terminal-custom/*.c ~
 cp -f ~/terminal-custom/*.py ~

@@ -46,14 +46,16 @@ TARGET_WITH_CUSTOM_PROXY=$(echo "$TARGET_CONFIG_FILE" | sed 's/\./_custom\./')
 
 COPY_TO_FILE=${2:-""}
 
-CLASH_CONFIG=${3:-"${CURRENT_DIR}/clash_client_config.yml"}
+OPTIMIZE_OPTION=${3:-""}
+
+CLASH_CONFIG=${4:-"${CURRENT_DIR}/clash_client_config.yml"}
 [[ ! -s "$CLASH_CONFIG" ]] && CLASH_CONFIG="${HOME}/clash_client_config.yml"
 if [[ ! -s "$CLASH_CONFIG" ]]; then
     colorEcho ${BLUE} "    ${CLASH_CONFIG} not exist!"
     exit 1
 fi
 
-SUB_LIST_FILE=${4:-"${CURRENT_DIR}/clash_client_subscription.list"}
+SUB_LIST_FILE=${5:-"${CURRENT_DIR}/clash_client_subscription.list"}
 if [[ -s "$SUB_LIST_FILE" ]]; then
     SUB_LIST=()
     # || In case the file has an incomplete (missing newline) last line
@@ -104,6 +106,12 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
             /srv/subconverter/config && \
         cp -f /srv/subconverter/ACL4SSR/Clash/config/*.ini \
             /srv/subconverter/config
+
+        CLASH_RULES="${CURRENT_DIR}/clash_client_rules.ini"
+        [[ ! -s "$CLASH_RULES" ]] && CLASH_RULES="${HOME}/clash_client_rules.ini"
+        if [[ -s "$CLASH_RULES" ]]; then
+            cp -f "$CLASH_RULES" "/srv/subconverter/config/clash_client_rules.ini"
+        fi
     fi
 fi
 
@@ -229,7 +237,7 @@ fi
 
 # Delete all proxy name from proxy group
 colorEcho ${BLUE} "  Optimizing rules..."
-if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
+if [[ -n "$OPTIMIZE_OPTION" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     # proxy list
     # Extract word from string using grep/sed/awk
     # https://askubuntu.com/questions/697120/extract-word-from-string-using-grep-sed-awk
@@ -251,8 +259,8 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     done <<<"$PROXY"
 
     # GROUP_CNT=$(echo "$PROXY_GROUP" | grep -E "\-\sname:" | wc -l)
-    PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i<=3")
-    PROXY_GROUP_REST=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i>3")
+    PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i<=2")
+    PROXY_GROUP_REST=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i>2")
 
     # add custom proxies to 1st,2nd group,before 1st proxy list
     if [[ -n "$PROXY_CUSTOM" ]]; then
