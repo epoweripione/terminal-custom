@@ -207,7 +207,7 @@ proxies:
 
 # [PROXY]
 
-# [PROXY_MERGE]https://raw.githubusercontent.com/ssrsub/ssr/master/Clash.yml
+# [PROXY_MERGE]
 
 proxy-groups:
   ## relay chains the proxies. proxies shall not contain a proxy-group. No UDP support.
@@ -289,8 +289,7 @@ proxy-groups:
 # [PROXY_GROUP]
 
 ## Subscirptions:
-# https://jiang.netlify.com/
-# https://youlianboshi.netlify.com/
-# http://127.0.0.1:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F%7Chttps%3A%2F%2Fyoulianboshi.netlify.com%2F&config=config%2FACL4SSR_WithGFW.ini&new_name=true
+# https://www.phlinhng.com/b64-url-editor/
+# https://github.com/almes10/ssr_subscrible_tool
 rules:
-# [RULES]http://localhost:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F&config=https%3A%2F%2Fraw.githubusercontent.com%2Fepoweripione%2Fterminal-custom%2Fmaster%2Fclash_client_rules.ini&new_name=true
+# [RULES]http://localhost:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F%7Chttps%3A%2F%2Fraw.githubusercontent.com%2Fssrsub%2Fssr%2Fmaster%2Fv2ray%7Chttps%3A%2F%2Fraw.githubusercontent.com%2Fssrsub%2Fssr%2Fmaster%2Fss-sub%7Chttps%3A%2F%2Fraw.githubusercontent.com%2Fssrsub%2Fssr%2Fmaster%2Fssrsub&config=config%2Fclash_client_rules.ini&new_name=true

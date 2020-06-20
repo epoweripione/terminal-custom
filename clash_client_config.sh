@@ -125,24 +125,29 @@ RULES_LINE=$(grep -E -n "^# \[RULES\]" "$CLASH_CONFIG" | cut -d: -f1)
 # [RULES]
 colorEcho ${BLUE} "  Getting subscription rules..."
 RULES=""
-# if (grep -E -q "^# \[RULES\]" "$CLASH_CONFIG"); then
-if [[ ${RULES_LINE} -gt 0 ]]; then
-    RULES_URL=$(sed -n "${RULES_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
-    if [[ -n "$RULES_URL" ]]; then
-        curl -sL --connect-timeout 10 --max-time 30 \
-            -o "${WORKDIR}/rules.yml" "${RULES_URL}"
-        if [[ $? != 0 ]]; then
-            colorEcho ${RED} "    Can't get rules from ${RULES_URL}!"
-            exit 1
-        fi
-    fi
 
-    if [[ -s "${WORKDIR}/rules.yml" ]]; then
-        RULES_START_LINE=$(grep -E -n "^rules:" "${WORKDIR}/rules.yml" | cut -d: -f1)
-        if [[ ${RULES_START_LINE} -gt 0 ]]; then
-            RULES_START_LINE=$((${RULES_START_LINE} + 1))
-            RULES=$(sed -n "${RULES_START_LINE},$ p" "${WORKDIR}/rules.yml")
-        fi
+if [[ -s "/etc/clash/clash_subscription_url.txt" ]]; then
+    RULES_URL=$(head -n1 /etc/clash/clash_subscription_url.txt)
+else
+    if [[ ${RULES_LINE} -gt 0 ]]; then
+        RULES_URL=$(sed -n "${RULES_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
+    fi
+fi
+
+if [[ -n "$RULES_URL" ]]; then
+    curl -sL --connect-timeout 10 --max-time 30 \
+        -o "${WORKDIR}/rules.yml" "${RULES_URL}"
+    if [[ $? != 0 ]]; then
+        colorEcho ${RED} "    Can't get rules from ${RULES_URL}!"
+        exit 1
+    fi
+fi
+
+if [[ -s "${WORKDIR}/rules.yml" ]]; then
+    RULES_START_LINE=$(grep -E -n "^rules:" "${WORKDIR}/rules.yml" | cut -d: -f1)
+    if [[ ${RULES_START_LINE} -gt 0 ]]; then
+        RULES_START_LINE=$((${RULES_START_LINE} + 1))
+        RULES=$(sed -n "${RULES_START_LINE},$ p" "${WORKDIR}/rules.yml")
     fi
 fi
 
