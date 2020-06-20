@@ -343,13 +343,13 @@ function Get-Font() {
     #>
     [OutputType([Windows.Media.FontFamily], [string])]
     param(
-    # If set, finds finds with this name
-    [Parameter(Position=0,ValueFromPipelineByPropertyName=$true)]
-    [string]$Name,
-    # If set, will include all details of the font
-    [switch]$IncludeDetail,
-    # If set, will sort the results
-    [Switch]$Sort
+        # If set, finds finds with this name
+        [Parameter(Position=0,ValueFromPipelineByPropertyName=$true)]
+        [string]$Name,
+        # If set, will include all details of the font
+        [switch]$IncludeDetail,
+        # If set, will sort the results
+        [Switch]$Sort
     )
 
     begin {
@@ -390,5 +390,41 @@ function Get-Font() {
                     Select-Object -ExpandProperty Source
             }
         }
+    }
+}
+
+function CheckSetGlobalProxy() {
+    param (
+        [string]$ProxyAddress = "127.0.0.1",
+        [string]$ProxySocksPort = "7890",
+        [string]$ProxyHTTPPort = "7890",
+        [string]$Msg = "Porxy address?"
+    )
+
+    $Proxy = ""
+    if (-Not (check_webservice_up)) {
+        $Proxy = "${ProxyAddress}:${ProxySocksPort}"
+        if (-Not (check_socks5_proxy_up $Proxy)) {
+            if ($PROMPT_VALUE = Read-Host "$Msg[$($Proxy)]") {
+                $Proxy = $PROMPT_VALUE
+                if (-Not (check_socks5_proxy_up $Proxy)) {
+                    $Proxy = ""
+                }
+            } else {
+                $Proxy = ""
+            }
+        }
+    }
+
+    if ($Proxy) {
+        $env:GLOBAL_PROXY_IP = $ProxyAddress
+        $env:GLOBAL_PROXY_SOCKS_PORT = $ProxySocksPort
+        $env:GLOBAL_PROXY_HTTP_PORT = $ProxyHTTPPort
+        return $true
+    } else {
+        $env:GLOBAL_PROXY_IP = ""
+        $env:GLOBAL_PROXY_SOCKS_PORT = ""
+        $env:GLOBAL_PROXY_HTTP_PORT = ""
+        return $false
     }
 }

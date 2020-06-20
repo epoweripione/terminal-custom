@@ -16,7 +16,7 @@ if (-Not (Get-Command -Name "check_webservice_up" 2>$null)) {
 $SCOOP_PROXY_ADDR = "127.0.0.1:7890"
 if (-Not (check_socks5_proxy_up $SCOOP_PROXY_ADDR)) {
     $SCOOP_PROXY_ADDR = ""
-    if($PROMPT_VALUE = Read-Host "Proxy address for scoop?") {
+    if ($PROMPT_VALUE = Read-Host "Proxy address for scoop?") {
         $SCOOP_PROXY_ADDR = $PROMPT_VALUE
     }
 }

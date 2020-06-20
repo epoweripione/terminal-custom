@@ -250,23 +250,9 @@ if [[ -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         PROXY_TYPE+=("$line_type")
     done <<<"$PROXY"
 
-    ## PROXY_NAME_LIST=$(echo "$PROXY" | grep -E "\-\s{name:.*.," | cut -d, -f1 | cut -d: -f2-)
-    ## PROXY_NAME_LIST=$(echo "$PROXY" | grep -Po -i "name:\s*\K([^,{}]+)")
-    # PROXY_NAME_LIST=$(echo "$PROXY" \
-    #     | sed -r "s/.*name:([^,{}]+).*/\1/i" \
-    #     | sed -e "s/^\s//" -e "s/\s$//")
-    # PROXY_NAME=()
-    # while read -r line; do PROXY_NAME+=("$line"); done <<<"$PROXY_NAME_LIST"
-
-    # PROXY_TYPE_LIST=$(echo "$PROXY" \
-    #     | sed -r "s/.*type:([^,{}]+).*/\1/i" \
-    #     | sed -e "s/^\s//" -e "s/\s$//")
-    # PROXY_TYPE=()
-    # while read -r line; do PROXY_TYPE+=("$line"); done <<<"$PROXY_TYPE_LIST"
-
     # GROUP_CNT=$(echo "$PROXY_GROUP" | grep -E "\-\sname:" | wc -l)
-    PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i<=2")
-    PROXY_GROUP_REST=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i>2")
+    PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i<=3")
+    PROXY_GROUP_REST=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i>3")
 
     # add custom proxies to 1st,2nd group,before 1st proxy list
     if [[ -n "$PROXY_CUSTOM" ]]; then
