@@ -365,15 +365,21 @@ if [[ -n "$CFW_BYPASS" ]]; then
 fi
 
 START_LINE=$((${CFW_BYPASS_LINE} + 1))
-ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_CUSTOM_LINE} p" "$CLASH_CONFIG")
-echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
+if [[ ${PROXY_CUSTOM_LINE} -gt 0 ]]; then
+    ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_CUSTOM_LINE} p" "$CLASH_CONFIG")
+    echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
+fi
 
 if [[ -n "$PROXY_CUSTOM" ]]; then
     colorEcho ${BLUE} "    Setting custom proxies..."
     echo "${PROXY_CUSTOM}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
-START_LINE=$((${PROXY_CUSTOM_LINE} + 1))
+if [[ ${PROXY_CUSTOM_LINE} -gt 0 ]]; then
+    START_LINE=$((${PROXY_CUSTOM_LINE} + 1))
+else
+    START_LINE=$((${CFW_BYPASS_LINE} + 1))
+fi
 ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
@@ -383,15 +389,21 @@ if [[ -n "$PROXY" ]]; then
 fi
 
 START_LINE=$((${PROXY_LINE} + 1))
-ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_MERGE_LINE} p" "$CLASH_CONFIG")
-echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
+if [[ ${PROXY_MERGE_LINE} -gt 0 ]]; then
+    ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_MERGE_LINE} p" "$CLASH_CONFIG")
+    echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
+fi
 
 if [[ -n "$PROXY_MERGE" ]]; then
     colorEcho ${BLUE} "    Setting merge proxies..."
     echo "${PROXY_MERGE}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
-START_LINE=$((${PROXY_MERGE_LINE} + 1))
+if [[ ${PROXY_MERGE_LINE} -gt 0 ]]; then
+    START_LINE=$((${PROXY_MERGE_LINE} + 1))
+else
+    START_LINE=$((${PROXY_LINE} + 1))
+fi
 ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_GROUP_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 

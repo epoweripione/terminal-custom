@@ -284,8 +284,5 @@ proxy-groups:
 
 # [PROXY_GROUP]
 
-## Subscirptions:
-# https://www.phlinhng.com/b64-url-editor/
-# https://github.com/almes10/ssr_subscrible_tool
 rules:
 # [RULES]http://localhost:25500/sub?target=clash&url=https%3A%2F%2Fjiang.netlify.com%2F%7Chttps%3A%2F%2Fraw.githubusercontent.com%2Fssrsub%2Fssr%2Fmaster%2Fv2ray%7Chttps%3A%2F%2Fraw.githubusercontent.com%2Fssrsub%2Fssr%2Fmaster%2Fss-sub%7Chttps%3A%2F%2Fraw.githubusercontent.com%2Fssrsub%2Fssr%2Fmaster%2Fssrsub&config=config%2Fclash_client_rules.ini&new_name=true
