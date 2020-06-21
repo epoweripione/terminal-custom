@@ -203,11 +203,7 @@ cfw-bypass:
 
 # Will be ignored after profile selection
 proxies:
-# [PROXY_CUSTOM]
-
 # [PROXY]
-
-# [PROXY_MERGE]
 
 proxy-groups:
   ## relay chains the proxies. proxies shall not contain a proxy-group. No UDP support.

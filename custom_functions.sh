@@ -1088,36 +1088,29 @@ function set_global_proxy() {
     set_special_socks5_proxy
 
     if [[ -n "$SOCKS_ADDRESS" ]]; then
-        if check_socks5_proxy_up ${SOCKS_ADDRESS}; then
-            set_proxy "${SOCKS_PROTOCOL}://${SOCKS_ADDRESS}"
-            set_curl_proxy "${SOCKS_ADDRESS}"
-            # wget must use http proxy
-            if [[ -n "$HTTP_ADDRESS" ]]; then
-                set_wget_proxy "${HTTP_ADDRESS}"
-            else
-                set_wget_proxy
-            fi
-            # set git global proxy
-            set_git_proxy "${SOCKS_ADDRESS}"
-            # set special socks5 proxy(curl...)
-            set_special_socks5_proxy "${SOCKS_ADDRESS}"
-            colorEcho ${GREEN} " :: Now using ${SOCKS_ADDRESS} for global proxy!"
-
-            return 0
+        set_proxy "${SOCKS_PROTOCOL}://${SOCKS_ADDRESS}"
+        set_curl_proxy "${SOCKS_ADDRESS}"
+        # wget must use http proxy
+        if [[ -n "$HTTP_ADDRESS" ]]; then
+            set_wget_proxy "${HTTP_ADDRESS}"
         else
-            clear_proxy
-            set_git_proxy
-            set_curl_proxy
             set_wget_proxy
         fi
+        # set git global proxy
+        set_git_proxy "${SOCKS_ADDRESS}"
+        # set special socks5 proxy(curl...)
+        set_special_socks5_proxy "${SOCKS_ADDRESS}"
+        colorEcho ${GREEN} " :: Now using ${SOCKS_ADDRESS} for global proxy!"
+
+        return 0
     else
         clear_proxy
         set_git_proxy
         set_curl_proxy
         set_wget_proxy
-    fi
 
-    return 1
+        return 1
+    fi
 }
 
 
@@ -1162,9 +1155,9 @@ function check_set_global_proxy() {
         fi
     else
         set_global_proxy # clear global proxy
-    fi
 
-    return 1
+        return 1
+    fi
 }
 
 

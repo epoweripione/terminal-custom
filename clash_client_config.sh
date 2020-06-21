@@ -107,18 +107,22 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
         cp -f /srv/subconverter/ACL4SSR/Clash/config/*.ini \
             /srv/subconverter/config
 
-        CLASH_RULES="${CURRENT_DIR}/clash_client_rules.ini"
-        [[ ! -s "$CLASH_RULES" ]] && CLASH_RULES="${HOME}/clash_client_rules.ini"
-        if [[ -s "$CLASH_RULES" ]]; then
-            cp -f "$CLASH_RULES" "/srv/subconverter/config/clash_client_rules.ini"
+        if [[ ! -L "/srv/subconverter/config/My_Clash_Rules.ini" ]]; then
+            CLASH_RULES="/etc/clash/My_Clash_Rules.ini"
+            [[ ! -s "$CLASH_RULES" ]] && CLASH_RULES="${HOME}/My_Clash_Rules.ini"
+            if [[ -s "$CLASH_RULES" ]]; then
+                ln -s "$CLASH_RULES" "/srv/subconverter/config/My_Clash_Rules.ini"
+            fi
         fi
     fi
 fi
 
 CFW_BYPASS_LINE=$(grep -E -n "^# \[CFW_BYPASS\]" "$CLASH_CONFIG" | cut -d: -f1)
-PROXY_CUSTOM_LINE=$(grep -E -n "^# \[PROXY_CUSTOM\]" "$CLASH_CONFIG" | cut -d: -f1)
+PROXY_CUSTOM_LINE=0
+# PROXY_CUSTOM_LINE=$(grep -E -n "^# \[PROXY_CUSTOM\]" "$CLASH_CONFIG" | cut -d: -f1)
 PROXY_LINE=$(grep -E -n "^# \[PROXY\]" "$CLASH_CONFIG" | cut -d: -f1)
-PROXY_MERGE_LINE=$(grep -E -n "^# \[PROXY_MERGE\]" "$CLASH_CONFIG" | cut -d: -f1)
+PROXY_MERGE_LINE=0
+# PROXY_MERGE_LINE=$(grep -E -n "^# \[PROXY_MERGE\]" "$CLASH_CONFIG" | cut -d: -f1)
 PROXY_GROUP_LINE=$(grep -E -n "^# \[PROXY_GROUP\]" "$CLASH_CONFIG" | cut -d: -f1)
 RULES_LINE=$(grep -E -n "^# \[RULES\]" "$CLASH_CONFIG" | cut -d: -f1)
 
@@ -126,8 +130,8 @@ RULES_LINE=$(grep -E -n "^# \[RULES\]" "$CLASH_CONFIG" | cut -d: -f1)
 colorEcho ${BLUE} "  Getting subscription rules..."
 RULES=""
 
-if [[ -s "/etc/clash/clash_subscription_url.txt" ]]; then
-    RULES_URL=$(head -n1 /etc/clash/clash_subscription_url.txt)
+if [[ -s "/etc/clash/My_Clash_Sub_URL.txt" ]]; then
+    RULES_URL=$(head -n1 /etc/clash/My_Clash_Sub_URL.txt)
 else
     if [[ ${RULES_LINE} -gt 0 ]]; then
         RULES_URL=$(sed -n "${RULES_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)

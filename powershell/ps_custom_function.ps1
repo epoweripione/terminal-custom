@@ -420,11 +420,19 @@ function CheckSetGlobalProxy() {
         $env:GLOBAL_PROXY_IP = $ProxyAddress
         $env:GLOBAL_PROXY_SOCKS_PORT = $ProxySocksPort
         $env:GLOBAL_PROXY_HTTP_PORT = $ProxyHTTPPort
+
+        $env:http_proxy="${ProxyAddress}:${ProxyHTTPPort}"
+        $env:https_proxy="${ProxyAddress}:${ProxyHTTPPort}"
+
         return $true
     } else {
         $env:GLOBAL_PROXY_IP = ""
         $env:GLOBAL_PROXY_SOCKS_PORT = ""
         $env:GLOBAL_PROXY_HTTP_PORT = ""
+
+        $env:http_proxy=""
+        $env:https_proxy=""
+
         return $false
     }
 }
