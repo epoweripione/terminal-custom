@@ -46,16 +46,20 @@ TARGET_WITH_CUSTOM_PROXY=$(echo "$TARGET_CONFIG_FILE" | sed 's/\./_custom\./')
 
 COPY_TO_FILE=${2:-""}
 
-OPTIMIZE_OPTION=${3:-""}
+RULES_INI=${3:-"My_Clash_Rules.ini"}
 
-CLASH_CONFIG=${4:-"${CURRENT_DIR}/clash_client_config.yml"}
+SUB_URL_TXT=${4:-"My_Clash_Sub_URL.txt"}
+
+OPTIMIZE_OPTION=${5:-"no"}
+
+CLASH_CONFIG=${6:-"${CURRENT_DIR}/clash_client_config.yml"}
 [[ ! -s "$CLASH_CONFIG" ]] && CLASH_CONFIG="${HOME}/clash_client_config.yml"
 if [[ ! -s "$CLASH_CONFIG" ]]; then
     colorEcho ${BLUE} "    ${CLASH_CONFIG} not exist!"
     exit 1
 fi
 
-SUB_LIST_FILE=${5:-"${CURRENT_DIR}/clash_client_subscription.list"}
+SUB_LIST_FILE=${7:-"${CURRENT_DIR}/clash_client_subscription.list"}
 if [[ -s "$SUB_LIST_FILE" ]]; then
     SUB_LIST=()
     # || In case the file has an incomplete (missing newline) last line
@@ -107,11 +111,11 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
         cp -f /srv/subconverter/ACL4SSR/Clash/config/*.ini \
             /srv/subconverter/config
 
-        if [[ ! -L "/srv/subconverter/config/My_Clash_Rules.ini" ]]; then
-            CLASH_RULES="/etc/clash/My_Clash_Rules.ini"
-            [[ ! -s "$CLASH_RULES" ]] && CLASH_RULES="${HOME}/My_Clash_Rules.ini"
+        if [[ ! -L "/srv/subconverter/config/${RULES_INI}" ]]; then
+            CLASH_RULES="/etc/clash/${RULES_INI}"
+            [[ ! -s "$CLASH_RULES" ]] && CLASH_RULES="${HOME}/${RULES_INI}"
             if [[ -s "$CLASH_RULES" ]]; then
-                ln -s "$CLASH_RULES" "/srv/subconverter/config/My_Clash_Rules.ini"
+                ln -s "$CLASH_RULES" "/srv/subconverter/config/${RULES_INI}"
             fi
         fi
     fi
@@ -130,8 +134,8 @@ RULES_LINE=$(grep -E -n "^# \[RULES\]" "$CLASH_CONFIG" | cut -d: -f1)
 colorEcho ${BLUE} "  Getting subscription rules..."
 RULES=""
 
-if [[ -s "/etc/clash/My_Clash_Sub_URL.txt" ]]; then
-    RULES_URL=$(head -n1 /etc/clash/My_Clash_Sub_URL.txt)
+if [[ -s "/etc/clash/${SUB_URL_TXT}" ]]; then
+    RULES_URL=$(head -n1 /etc/clash/${SUB_URL_TXT})
 else
     if [[ ${RULES_LINE} -gt 0 ]]; then
         RULES_URL=$(sed -n "${RULES_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
@@ -246,7 +250,7 @@ fi
 
 # Delete all proxy name from proxy group
 colorEcho ${BLUE} "  Optimizing rules..."
-if [[ -n "$OPTIMIZE_OPTION" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
+if [[ "$OPTIMIZE_OPTION" == "yes" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     # proxy list
     # Extract word from string using grep/sed/awk
     # https://askubuntu.com/questions/697120/extract-word-from-string-using-grep-sed-awk
@@ -267,9 +271,9 @@ if [[ -n "$OPTIMIZE_OPTION" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         PROXY_TYPE+=("$line_type")
     done <<<"$PROXY"
 
-    # GROUP_CNT=$(echo "$PROXY_GROUP" | grep -E "\-\sname:" | wc -l)
+    # GROUP_CNT=$(echo "$PROXY_GROUP" | grep -E "^[ ]*\-\sname:" | wc -l)
     PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i<=2")
-    PROXY_GROUP_REST=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i>2")
+    PROXY_GROUP_REMAIN=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i>2")
 
     # add custom proxies to 1st,2nd group,before 1st proxy list
     if [[ -n "$PROXY_CUSTOM" ]]; then
@@ -290,7 +294,7 @@ if [[ -n "$OPTIMIZE_OPTION" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
             [[ -z "$TargetName" ]] && continue
             PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" \
                 | sed "/^\s*\-\s*${FIRST_PROXY_NAME}$/i\      - ${TargetName}" \
-                | sed "/^\s*\-\s*\"${FIRST_PROXY_NAME}\"$/a\      - ${TargetName}")
+                | sed "/^\s*\-\s*\"${FIRST_PROXY_NAME}\"$/i\      - ${TargetName}")
         done
     fi
 
@@ -330,7 +334,7 @@ if [[ -n "$OPTIMIZE_OPTION" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         TargetName=$(echo "${TargetName}" \
             | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
             | sed 's/]/\\&/g')
-        PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" \
+        PROXY_GROUP_REMAIN=$(echo "$PROXY_GROUP_REMAIN" \
             | sed -e "/^\s*\-\s*${TargetName}$/d" -e "/^\s*\-\s*\"${TargetName}\"$/d")
 
         ## only keep vmess & socks5
@@ -341,14 +345,54 @@ if [[ -n "$OPTIMIZE_OPTION" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         # fi
     done
 
-    PROXY_GROUP_REST=$(echo "$PROXY_GROUP_REST" | sed "/^\s*\-\s*\"\"$/d")
-
-    PROXY_GROUP=$(echo -e "${PROXY_GROUP_MAIN}\n${PROXY_GROUP_REST}")
-
+    PROXY_GROUP_REMAIN=$(echo "$PROXY_GROUP_REMAIN" | sed "/^\s*\-\s*\"\"$/d")
+    PROXY_GROUP=$(echo -e "${PROXY_GROUP_MAIN}\n${PROXY_GROUP_REMAIN}")
     # add blank line before each group
     PROXY_GROUP=$(echo "$PROXY_GROUP" | sed 's/^\s*\-\s*name:/\n&/' | sed '1d')
 fi
 
+# Delete empty group
+colorEcho ${BLUE} "  Deleting empty group..."
+if [[ -n "$PROXY_GROUP" ]]; then
+    GROUP_LIST=$(echo "$PROXY_GROUP" | grep -E "^[ ]*\-\sname:" | sed "s/^[ ]*\-\sname:\s//g")
+    GROUP_NAME=()
+    while read -r line; do
+        GROUP_NAME+=("$line")
+    done <<<"$GROUP_LIST"
+
+    # GROUP_CNT=$(echo "$PROXY_GROUP" | grep -E "^[ ]*\-\sname:" | wc -l)
+    PROXY_GROUP_REMAIN=""
+    GROUP_DELETE=()
+    for ((g=0; g < ${#GROUP_NAME[@]}; g++)); do
+        awk_cnt=$((${g} + 1))
+        GROUP_CHECK=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i==${awk_cnt}")
+
+        if [[ "$(echo ${GROUP_NAME[$g]} | grep '直连')" ]]; then
+            PROXIES_CNT=3
+        else
+            PROXIES_CNT=$(echo "$GROUP_CHECK" | grep -E "^[ ]*\-" | wc -l)
+        fi
+        
+        if [[ ${PROXIES_CNT} -gt 2 ]]; then
+            if [[ -n "${PROXY_GROUP_REMAIN}" ]]; then
+                PROXY_GROUP_REMAIN=$(echo -e "${PROXY_GROUP_REMAIN}\n${GROUP_CHECK}")
+            else
+                PROXY_GROUP_REMAIN=$(echo "${GROUP_CHECK}")
+            fi
+        else
+            GROUP_DELETE+=("${GROUP_NAME[$g]}")
+        fi
+    done
+
+    for TargetName in "${GROUP_DELETE[@]}"; do
+        TargetName=$(echo "${TargetName}" \
+            | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
+            | sed 's/]/\\&/g')
+        PROXY_GROUP_REMAIN=$(echo "$PROXY_GROUP_REMAIN" | sed "/^\s*\-\s*${TargetName}$/d")
+    done
+
+    PROXY_GROUP=$(echo "${PROXY_GROUP_REMAIN}")
+fi
 
 # Add contents to target config file
 colorEcho ${BLUE} "  Setting all config to ${TARGET_CONFIG_FILE}..."
