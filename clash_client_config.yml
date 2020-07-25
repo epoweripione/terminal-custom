@@ -1,107 +1,152 @@
-# https://github.com/Dreamacro/clash
+# https://github.com/Dreamacro/clash/wiki/configuration
 # Clash for Windows: https://docs.cfw.lbyczf.com/
 # Manager from web UI(RESTful API): http://clash.razord.top/ or http://yacd.haishan.me/
-# port of HTTP
-port: 7890
 
-# port of SOCKS5
-socks-port: 7891
+# Port of HTTP(S) proxy server on the local end
+# port: 7890
 
-# HTTP and SOCKS5 in one port
-# mixed-port: 7890
+# Port of SOCKS5 proxy server on the local end
+# socks-port: 7891
 
-# redir port for Linux and macOS
+# Transparent proxy server port for Linux and macOS
 redir-port: 7892
 
+# HTTP(S) and SOCKS5 server on the same port
+mixed-port: 7890
+
+# authentication of local SOCKS5/HTTP(S) server
+# authentication:
+#  - "user1:pass1"
+#  - "user2:pass2"
+
+# Set to true to allow connections to local-end server from
+# other LAN IP addresses
 allow-lan: false
 
-# Only applicable when setting allow-lan to true
-# "*": bind all IP addresses
+# This is only applicable when `allow-lan` is `true`
+# '*': bind all IP addresses
 # 192.168.122.11: bind a single IPv4 address
 # "[aaaa::a8aa:ff:fe09:57d8]": bind a single IPv6 address
-# bind-address: "*"
+bind-address: "*"
 
-# ipv6: false # when ipv6 is false, each clash dial with ipv6, but it's not affect the response of the dns server, default is false
+# Clash router working mode
+# rule: rule-based packet routing
+# global: all packets will be forwarded to a single endpoint
+# direct: directly forward the packets to the Internet
+mode: rule
 
-# Rule / Global / Direct (default is Rule)
-mode: Rule
+# When set to false, resolver won't translate hostnames to IPv6 addresses
+ipv6: true
 
 # set log level to stdout (default is info)
 # info / warning / error / debug / silent
 log-level: info
 
-## RESTful API for clash
+# RESTful web API listening address
 # external-controller: 127.0.0.1:9090
 
-## you can put the static web resource (such as clash-dashboard) to a directory, and clash would serve in `${API}/ui`
-## input is a relative path to the configuration directory or an absolute path
+# A relative path to the configuration directory or an absolute path to a
+# directory in which you put some static web resource. Clash core will then
+# serve it at `http://{{external-controller}}/ui`.
 # external-ui: folder
-# yacd：  https://github.com/haishanh/yacd
-# Razord：http://clash.razord.top/#/proxies
-# external-ui: dashboard
 
-## Secret for RESTful API (Optional)
-secret: ""
+# Secret for the RESTful API (optional)
+# Authenticate by spedifying HTTP header `Authorization: Bearer ${secret}`
+# ALWAYS set a secret if RESTful API is listening on 0.0.0.0
+# secret: ""
 
-# experimental feature
-experimental:
-  ignore-resolve-fail: true # ignore dns resolve fail, default value is true
-  # interface-name: en0 # outbound interface name
+# Outbound interface name
+# interface-name: en0
 
-## authentication of local SOCKS5/HTTP(S) server
-# authentication:
-#   - "user1:pass1"
-#   - "user2:pass2"
+# Static hosts for DNS server and connection establishment, only works
+# when `dns.enhanced-mode` is `redir-host`.
+#
+# Wildcard hostnames are supported (e.g. *.clash.dev, *.foo.*.example.com)
+# Non-wildcard domain names has a higher priority than wildcard domain names
+# e.g. foo.example.com > *.example.com > .example.com
+# P.S. +.foo.com equals to .foo.com and foo.com
+hosts:
+  # '*.clash.dev': 127.0.0.1
+  # '.dev': 127.0.0.1
+  # 'alpha.clash.dev': '::1'
 
-## experimental hosts, support wildcard (e.g. *.clash.dev Even *.foo.*.example.com)
-## static domain has a higher priority than wildcard domain (foo.example.com > *.example.com)
-# hosts:
-#   '*.clash.dev': 127.0.0.1
-#   'alpha.clash.dev': '::1'
+# DNS server settings
+# This section is optional. When not present, DNS server will be disabled.
+dns:
+  enable: false
+  listen: 0.0.0.0:53
+  # ipv6: false # when false, response to AAAA questions will be empty
 
-# dns:
-#   enable: true # 是否启用 dns false
-#   ipv6: false
-#   listen: 0.0.0.0:53
-#   enhanced-mode: redir-host # 模式：redir-host 或 fake-ip
-#   fake-ip-range: 198.18.0.1/16 #
-#   fake-ip-filter: # fake ip 白名单列表，如果你不知道这个参数的作用，请勿修改
-#     - '*.lan'
-#     - localhost.ptlogin2.qq.com
-#   nameserver:
-#     - 223.5.5.5 # 阿里 DNS
-#     - 180.76.76.76 # 百度 DNS
-#     - 119.29.29.29 # 腾讯 DNS
-#     - 117.50.11.11 # ONE DNS 拦截版 恶意网站拦截、广告过滤
-#     - 117.50.10.10 # ONE DNS 纯净版 直接返回其真实的响应结果
-#     - 114.114.114.114 # 114 DNS
-#     - https://dns.alidns.com/dns-query # 阿里 DoH DNS
-#     - https://doh.360.cn/dns-query # 360 DoH DNS
-#   fallback: # concurrent request with nameserver, fallback used when GEOIP country isn't CN
-#     - 8.8.8.8 # 谷歌 DNS
-#     - 1.1.1.1 # Cloudflare DNS
-#     - tls://dns.rubyfish.cn:853
-#     - tls://1.0.0.1:853
-#     - tls://dns.google:853
-#     - https://dns.rubyfish.cn/dns-query
-#     - https://cloudflare-dns.com/dns-query
-#     - https://dns.google/dns-query
-#   fallback-filter:
-#     geoip: true # 默认
-#     ipcidr: # 在这个网段内的 IP 地址会被考虑为被污染的 IP
-#       - 240.0.0.0/4
+  # These nameservers are used to resolve the DNS nameserver hostnames below.
+  # Specify IP addresses only
+  default-nameserver:
+    - 114.114.114.114
+    - 8.8.8.8
+
+  enhanced-mode: redir-host # or fake-ip
+  fake-ip-range: 198.18.0.1/16 # Fake IP addresses pool CIDR
+
+  # Hostnames in this list will not be resolved with fake IPs
+  # i.e. questions to these domain names will always be answered with their
+  # real IP addresses
+  # fake-ip-filter:
+  #   - '*.lan'
+  #   - localhost.ptlogin2.qq.com
+
+  # Supports UDP, TCP, DoT, DoH. You can specify the port to connect to.
+  # All DNS questions are sent directly to the nameserver, without proxies
+  # involved. Clash answers the DNS question with the first result gathered.
+  nameserver:
+    - 223.5.5.5 # 阿里 DNS
+    - 180.76.76.76 # 百度 DNS
+    - 119.29.29.29 # 腾讯 DNS
+    - 117.50.11.11 # ONE DNS 拦截版 恶意网站拦截、广告过滤
+    - 117.50.10.10 # ONE DNS 纯净版 直接返回其真实的响应结果
+    - 114.114.114.114 # 114 DNS
+    - https://dns.alidns.com/dns-query # 阿里 DoH DNS
+    - https://doh.360.cn/dns-query # 360 DoH DNS
+
+  # When `fallback` is present, the DNS server will send concurrent requests
+  # to the servers in this section along with servers in `nameservers`.
+  # The answers from fallback servers are used when the GEOIP country
+  # is not `CN`.
+  fallback:
+    - tcp://8.8.8.8 # 谷歌 DNS
+    - tcp://1.1.1.1 # Cloudflare DNS
+    - tls://dns.rubyfish.cn:853
+    - tls://1.0.0.1:853
+    - tls://dns.google:853
+    - https://dns.rubyfish.cn/dns-query
+    - https://cloudflare-dns.com/dns-query
+    - https://dns.google/dns-query
+
+  # If IP addresses resolved with servers in `nameservers` are in the specified
+  # subnets below, they are considered invalid and results from `fallback`
+  # servers are used instead.
+  #
+  # IP address resolved with servers in `nameserver` is used when
+  # `fallback-filter.geoip` is true and when GEOIP of the IP address is `CN`.
+  #
+  # If `fallback-filter.geoip` is false, results from `fallback` nameservers
+  # are always used, and answers from `nameservers` are discarded.
+  #
+  # This is a countermeasure against DNS pollution attacks.
+  fallback-filter:
+    geoip: true
+    ipcidr:
+      # - 240.0.0.0/4
 
 # 1. clash DNS 请求逻辑：
 #   (1) 当访问一个域名时， nameserver 与 fallback 列表内的所有服务器并发请求，得到域名对应的 IP 地址。
 #   (2) clash 将选取 nameserver 列表内，解析最快的结果。
 #   (3) 若解析结果中，IP 地址属于 国外，那么 clash 将选择 fallback 列表内，解析最快的结果。
 #   因此，我在 nameserver 和 fallback 内都放置了无污染、解析速度较快的国内 DNS 服务器，以达到最快的解析速度。
-#   但是 fallback 列表内服务器会用在解析境外网站，为了结果绝对无污染，我仅保留了支持 DoT/DoH 的两个服务器。
+#   但是 fallback 列表内服务器会用在解析境外网站，为了结果绝对无污染，仅保留了支持 DoT/DoH 的两个服务器。
 # 2. clash DNS 配置注意事项：
 #   (1) 如果您为了确保 DNS 解析结果无污染，请仅保留列表内以 tls:// 或 https:// 开头的 DNS 服务器，但是通常对于国内域名没有必要。
 #   (2) 如果您不在乎可能解析到污染的结果，更加追求速度。请将 nameserver 列表的服务器插入至 fallback 列表内，并移除重复项。
 # 3. 关于 DNS over HTTPS (DoH) 和 DNS over TLS (DoT) 的选择：
-#   对于两项技术双方各执一词，而且会无休止的争论，各有利弊。各位请根据具体需求自行选择，但是配置文件内默认启用 DoT，因为目前国内没有封锁或管制。
+#   对于两项技术双方各执一词，而且会无休止的争论，各有利弊。请根据具体需求自行选择，但是配置文件内默认启用 DoT，因为目前国内没有封锁或管制。
 #   DoH: 以 https:// 开头的 DNS 服务器。拥有更好的伪装性，且几乎不可能被运营商或网络管理封锁，但查询效率和安全性可能略低。
 #   DoT: 以 tls:// 开头的 DNS 服务器。拥有更高的安全性和查询效率，但端口有可能被管制或封锁。
 #   若要了解更多关于 DoH/DoT 相关技术，请自行查阅规范文档。
@@ -125,8 +170,6 @@ cfw-latency-url: http://www.gstatic.com/generate_204
 #     - 117.50.11.11 # ONE DNS 拦截版 恶意网站拦截、广告过滤
 #     - 117.50.10.10 # ONE DNS 纯净版 直接返回其真实的响应结果
 #     - 114.114.114.114 # 114DNS
-#   experimental:
-#     interface-name: WLAN
 
 # 自定义配置目录
 # cfw-profiles-path: 'C:\Users\Administrator\.config\clash\profiles'

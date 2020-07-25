@@ -164,6 +164,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "chromium"
         # "chromium-dev-nosync"
         "firefox-zh-cn"
+        "speedyfox"
         "go"
         "nodejs-lts"
         # "dotnet-sdk"
@@ -187,7 +188,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "ffmpeg"
         "vlc"
         "captura"
-        "quicklook"
+        # "quicklook"
         "screentogif"
         "cpu-z"
         "diffinity"
@@ -196,12 +197,13 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "freedownloadmanager"
         "hashcheck"
         "motrix"
-        # "powertoys"
+        "powertoys"
         "q-dir"
         "syncbackfree"
         # "syncthing"
         # "sysinternals"
         # "utools"
+        "ghostscript"
         "xnviewmp"
         # "draw.io"
         # "yed"
@@ -209,6 +211,8 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "vncviewer"
         # "cdburnerxp"
         # "wincdemu"
+        # "ventoy"
+        "treesize-free"
         ## markdown editor
         "pandoc"
         "marktext"
@@ -230,6 +234,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     )
 
     $sudoApps = @(
+        "nmap"
         "Cascadia-Code"
         ## epower
         "FiraCode-Mono-NF"

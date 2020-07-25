@@ -129,7 +129,7 @@ mkdir -p ~/patched-fonts/FiraCode-Mono && \
 colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono..."
 # https://github.com/be5invis/Iosevka
 # ## Patch fonts
-# # cd ~/nerd-fonts && for font in /c/DevWorkSpaces/nerd-fonts/ttf-iosevka-term-ss05-3.1.1/ttf/*.ttf; do fontforge -script font-patcher -out /c/DevWorkSpaces/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done && cd /c/DevWorkSpaces/nerd-fonts/patched && zip -r /c/DevWorkSpaces/nerd-fonts/iosevka-term-ss05-Mono.zip . -i "Iosevka Term SS05*.ttf"
+# # cd ~/nerd-fonts && for font in /c/DevWorkSpaces/nerd-fonts/ttf-iosevka-term-ss05-3.2.2/ttf/*.ttf; do fontforge -script font-patcher -out /c/DevWorkSpaces/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done && cd /c/DevWorkSpaces/nerd-fonts/patched && zip -r /c/DevWorkSpaces/nerd-fonts/iosevka-term-ss05-Mono.zip . -i "Iosevka Term SS05*.ttf"
 # curl -fSL https://github.com/epoweripione/terminal-custom/releases/download/v5.2.0/iosevka-term-ss05-Mono.zip -o ~/patched-fonts/iosevka-term-ss05-Mono.zip
 # mkdir -p ~/patched-fonts/iosevka-term-ss05-Mono && \
 # 	unzip -q ~/patched-fonts/iosevka-term-ss05-Mono.zip -d ~/patched-fonts/iosevka-term-ss05-Mono && \

@@ -156,11 +156,27 @@ function UpdateScoop {
     scoop cleanup *
 }
 
+function  SearchScoopBucket {
+    param (
+        [string]$SearchCond = ""
+    )
+
+    if ($SearchCond) {
+        Get-ChildItem -Path "$env:UserProfile\scoop\buckets" `
+            -Recurse -Include "*$SearchCond*.json" -Depth 2 -Name
+    }
+}
+
 function UpdateMyScript {
     Set-Location ~
-    curl -L --socks5-hostname "127.0.0.1:7890" `
-        -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d" && `
-    .\pwsh_script_download.ps1
+    if (check_socks5_proxy_up $SCOOP_PROXY_ADDR) {
+        curl -L --socks5-hostname "127.0.0.1:7890" `
+            -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d" && `
+        .\pwsh_script_download.ps1
+    } else {
+        curl -L -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d" && `
+        .\pwsh_script_download.ps1
+    }
 }
 
 function PrettyLS {colorls --light -A}
@@ -178,6 +194,7 @@ Set-Alias gst GitStat
 Set-Alias myip GetMyIp
 Set-Alias pls PrettyLS
 Set-Alias suu UpdateScoop
+Set-Alias ssb SearchScoopBucket
 Set-Alias ums UpdateMyScript
 Set-Alias hosts EditHosts
 Set-Alias history EditHistory
