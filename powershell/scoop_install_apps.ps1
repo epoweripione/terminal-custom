@@ -187,6 +187,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "snipaste-beta"
         "ffmpeg"
         "vlc"
+        "potplayer"
         "captura"
         # "quicklook"
         "screentogif"

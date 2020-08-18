@@ -64,10 +64,11 @@ function GitLogPretty {
 
 function UpdateScoop {
     scoop update
-    scoop update *
     scoop config aria2-enabled false
     scoop update *
     scoop config aria2-enabled true
+    scoop update *
+    scoop config aria2-enabled false
     scoop cleanup *
 }
 

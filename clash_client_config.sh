@@ -1,8 +1,33 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Usage:
 # ./clash_client_config.sh /etc/clash/config.yaml /srv/web/www/default/clash_config.yml
 # (crontab -l 2>/dev/null || true; echo "0 8,12,15,20 * * * /root/clash_client_config.sh /etc/clash/config.yaml /srv/web/www/default/clash_config.yml >/dev/null") | crontab -
+
+# while getopts ":t:c:i:u:o:g:l" OPTNAME; do
+#     case $OPTNAME in
+#         t) TARGET_CONFIG_FILE="$OPTARG";;
+#         c) COPY_TO_FILE="$OPTARG";;
+#         i) RULES_INI="$OPTARG";;
+#         u) SUB_URL_TXT="$OPTARG";;
+#         o) OPTIMIZE_OPTION="$OPTARG";;
+#         g) CLASH_CONFIG="$OPTARG";;
+#         l) SUB_LIST_FILE="$OPTARG";;
+#         :)
+#         echo "No argument value for option $OPTARG!"
+#         exit 1
+#         ;;
+#         ?)
+#         echo "Unknown option $OPTARG!"
+#         exit 1
+#         ;;
+#         *)
+#         echo "Unknown error while processing options!"
+#         exit 1
+#         ;;
+#     esac
+#     # echo "-$OPTNAME=$OPTARG index=$OPTIND"
+# done
 
 trap 'rm -r "$WORKDIR"' EXIT
 
@@ -370,10 +395,10 @@ if [[ -n "$PROXY_GROUP" ]]; then
         if [[ "$(echo ${GROUP_NAME[$g]} | grep '直连')" ]]; then
             PROXIES_CNT=3
         else
-            PROXIES_CNT=$(echo "$GROUP_CHECK" | grep -E "^[ ]*\-" | wc -l)
+            PROXIES_CNT=$(echo "$GROUP_CHECK" | grep -E "^[ ]*\-" | grep -v 'DIRECT' | wc -l)
         fi
-        
-        if [[ ${PROXIES_CNT} -gt 2 ]]; then
+
+        if [[ ${PROXIES_CNT} -gt 1 ]]; then
             if [[ -n "${PROXY_GROUP_REMAIN}" ]]; then
                 PROXY_GROUP_REMAIN=$(echo -e "${PROXY_GROUP_REMAIN}\n${GROUP_CHECK}")
             else
