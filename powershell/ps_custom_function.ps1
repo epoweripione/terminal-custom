@@ -436,3 +436,19 @@ function CheckSetGlobalProxy() {
         return $false
     }
 }
+
+function RebuildFontCache {
+    # https://eddiejackson.net/wp/?p=16137
+    # https://www.isunshare.com/windows-10/how-to-delete-font-cache-in-windows-10.html
+    if (-Not (isadmin)) {
+        Write-Host "This script needs to be run As Admin!" -ForegroundColor Red
+        return
+    }
+
+    Stop-Service -Name "FontCache"
+
+    Remove-Item "$env:windir\ServiceProfiles\LocalService\AppData\Local\FontCache" -Recurse -Force -Confirm:$false -ErrorAction Stop
+    Remove-Item "$env:windir\System32\FNTCACHE.DAT" -Force -Confirm:$false -ErrorAction Stop
+
+    Start-Service -Name "FontCache"
+}

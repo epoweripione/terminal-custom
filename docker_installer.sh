@@ -142,13 +142,11 @@ if [[ -z "$DOCKER_INSTALLER_NOT_USE_MIRROR" ]]; then
     tee /etc/docker/daemon.json <<-'EOF'
 {
     "registry-mirrors": [
-        "https://dockerhub.azk8s.cn",
-        "https://mirror.ccs.tencentyun.com",
-        "https://u1z0ttze.mirror.aliyuncs.com",
-        "https://docker.mirrors.ustc.edu.cn",
+        "https://docker.mirrors.sjtug.sjtu.edu.cn",
         "https://reg-mirror.qiniu.com",
         "http://7924d745.m.daocloud.io",
-        "https://registry.docker-cn.com"
+        "http://hub-mirror.c.163.com",
+        "https://mirror.ccs.tencentyun.com"
     ]
 }
 EOF

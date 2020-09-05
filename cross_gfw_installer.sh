@@ -81,14 +81,22 @@ if [[ ! -x "$(command -v v2ray-util)" ]]; then
     # source <(curl -sL https://git.io/fNgqx) --zh
 fi
 
-# # V2Ray Client
-# # https://www.v2ray.com/chapter_00/install.html
+
+## V2Ray Client
+## https://www.v2ray.com/chapter_00/install.html
 # bash <(curl -L -s https://install.direct/go.sh) && \
 #     sudo systemctl enable v2ray && \
 #     sudo systemctl start v2ray && \
 #     sudo ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
 
 # service v2ray start|stop|status|reload|restart|force-reload
+
+
+## https://github.com/v2fly/fhs-install-v2ray
+# curl -O https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh && \
+#     curl -O https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-dat-release.sh && \
+#     bash install-release.sh && \
+#     bash install-dat-release.sh
 
 
 # trojan
