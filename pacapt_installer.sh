@@ -20,6 +20,8 @@ fi
 
 # pacapt - An Arch's pacman-like package manager for some Unices
 # https://github.com/icy/pacapt
+colorEcho ${BLUE} "Checking update for pacapt..."
+
 CHECK_URL="https://api.github.com/repos/icy/pacapt/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 

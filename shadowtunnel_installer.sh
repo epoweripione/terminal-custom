@@ -17,10 +17,7 @@ else
     fi
 fi
 
-if [[ -z "$spruce_type" ]]; then
-    get_os_type
-    get_arch
-fi
+[[ -z "$spruce_type" ]] && get_os_type && get_sysArch
 
 
 # goproxy
@@ -31,17 +28,18 @@ curl -SL https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.
 
 # shadowtunnel
 # https://github.com/snail007/shadowtunnel
+colorEcho ${BLUE} "Checking update for shadowtunnel..."
+
 CHECK_URL="https://api.github.com/repos/snail007/shadowtunnel/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
 
-[[ -z "$REMOTE_VERSION" ]] && exit 0
-
-curl -SL -o shadowtunnel.tar.gz https://github.com/snail007/shadowtunnel/releases/download/$REMOTE_VERSION/shadowtunnel-$ostype-$spruce_type.tar.gz && \
-    tar zxfv shadowtunnel.tar.gz && \
-    rm -f shadowtunnel.tar.gz && \
-    mv shadowtunnel /usr/bin/ && \
-    chmod +x /usr/bin/shadowtunnel
-
+if [[ -n "$REMOTE_VERSION" ]]; then
+    DOWNLOAD_URL="https://github.com/snail007/shadowtunnel/releases/download/$REMOTE_VERSION/shadowtunnel-$ostype-$spruce_type.tar.gz"
+    curl -SL -o "/tmp/shadowtunnel.tar.gz" "$DOWNLOAD_URL" && \
+        tar zxfv "/tmp/shadowtunnel.tar.gz" -C "/usr/local/bin" && \
+        rm -f "/tmp/shadowtunnel.tar.gz" && \
+        chmod +x "/usr/bin/shadowtunnel"
+fi
 
 # How to use
 ## start a http proxy on vps listening on :38080

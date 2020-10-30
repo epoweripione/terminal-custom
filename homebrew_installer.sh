@@ -18,6 +18,8 @@ fi
 set_proxy_mirrors_env
 
 # https://brew.sh/index_zh-cn
+colorEcho ${BLUE} "Installing homebrew..."
+
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 # https://docs.brew.sh/Homebrew-on-Linux

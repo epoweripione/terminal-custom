@@ -21,11 +21,7 @@ CURL_SPECIAL_CONFIG=${CURL_SPECIAL_CONFIG:-"$HOME/.curl_socks5"}
 # ostype: darwin, windows, linux, bsd, solaris
 # spruce_type: amd64, 386
 # VDIS: 64, 32, arm, arm64, mips64le, mips64, mipsle, mips, s390x, ppc64le, ppc64
-if [[ -z "$spruce_type" ]]; then
-    get_os_type
-    get_arch
-    get_sysArch
-fi
+[[ -z "$spruce_type" ]] && get_os_type && get_arch && get_sysArch
 
 # [[ -s "$HOME/pacapt_installer.sh" ]] && source "$HOME/pacapt_installer.sh"
 

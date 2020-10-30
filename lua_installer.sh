@@ -17,6 +17,9 @@ else
     fi
 fi
 
+
+colorEcho ${BLUE} "Checking update for Lua & LuaRocks..."
+
 if [[ -x "$(command -v apt)" ]]; then
     sudo apt -y install build-essential libreadline-dev
 fi

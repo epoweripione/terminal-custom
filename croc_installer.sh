@@ -12,18 +12,15 @@ else
     fi
 fi
 
-if [[ -z "$spruce_type" ]]; then
-    get_os_type
-    get_sysArch
-fi
+[[ -z "$spruce_type" ]] && get_os_type && get_sysArch
 
 
 # croc - Easily and securely send things from one computer to another
 # https://github.com/schollz/croc
+colorEcho ${BLUE} "Checking update for croc..."
+
 CHECK_URL="https://api.github.com/repos/schollz/croc/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-
-[[ -z "$REMOTE_VERSION" ]] && exit 0
 
 REMOTE_FILENAME="croc"
 
@@ -53,7 +50,7 @@ else
 fi
 
 
-if [[ -n "$REMOTE_FILENAME" ]]; then
+if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
     colorEcho ${BLUE} "Installing croc..."
     curl https://getcroc.schollz.com | bash
 fi

@@ -17,10 +17,10 @@ fi
 
 # duf
 # https://github.com/muesli/duf
+colorEcho ${BLUE} "Checking update for duf..."
+
 CHECK_URL="https://api.github.com/repos/muesli/duf/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-
-[[ -z "$REMOTE_VERSION" ]] && exit 0
 
 REMOTE_FILENAME=""
 case "$ostype" in
@@ -82,7 +82,7 @@ else
 fi
 
 
-if [[ -n "$REMOTE_FILENAME" ]]; then
+if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
     colorEcho ${BLUE} "Installing duf..."
     if [[ -s "/usr/local/bin/duf" ]]; then
         sudo rm -f "/usr/local/bin/duf"

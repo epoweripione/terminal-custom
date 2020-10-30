@@ -14,6 +14,8 @@ fi
 
 # pacaptr - Pacman-like syntax wrapper for many package managers
 # https://github.com/rami3l/pacaptr
+colorEcho ${BLUE} "Checking update for pacaptr..."
+
 case $(uname) in
     Darwin)
         OS_TYPE='macos'
