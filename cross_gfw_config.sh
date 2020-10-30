@@ -540,6 +540,7 @@ function main() {
         if ! check_set_global_proxy 7891 7890; then
             echo -n "Clash not working, use v2ray?[y/N] "
             read -t 5 PROXY_BY_V2RAY
+            echo ""
             if [[ "$PROXY_BY_V2RAY" == "y" || "$PROXY_BY_V2RAY" == "Y" ]]; then
                 SOCKS_ADDRESS="127.0.0.1:55880"
                 if use_v2ray "${SOCKS_ADDRESS}"; then

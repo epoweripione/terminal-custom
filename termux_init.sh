@@ -99,13 +99,16 @@ if [[ ! -d "$HOME/frp" ]]; then
     colorEcho ${BLUE} "Installing frp..."
     CHECK_URL="https://api.github.com/repos/fatedier/frp/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-    DOWNLOAD_URL=https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_linux_arm64.tar.gz
-    curl -SL -o frp.tar.gz -C- "$DOWNLOAD_URL" && \
-        tar -zxPf frp.tar.gz -C "$HOME" && \
-        rm frp.tar.gz && \
-        mkdir -p "$HOME/frp" && \
-        cp -rf $HOME/frp_*/* "$HOME/frp" && \
-        rm -rf $HOME/frp_*/
+
+    if [[ -n "$REMOTE_VERSION" ]]; then
+        DOWNLOAD_URL="https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_linux_arm64.tar.gz"
+        curl -SL -o frp.tar.gz -C- "$DOWNLOAD_URL" && \
+            tar -zxPf frp.tar.gz -C "$HOME" && \
+            rm frp.tar.gz && \
+            mkdir -p "$HOME/frp" && \
+            cp -rf $HOME/frp_*/* "$HOME/frp" && \
+            rm -rf $HOME/frp_*/
+    fi
 fi
 # cd $HOME/frp/ && nohup ./frpc -c ./frpc.ini >/dev/null 2>&1 & disown
 

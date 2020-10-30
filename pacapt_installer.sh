@@ -22,6 +22,7 @@ fi
 # https://github.com/icy/pacapt
 CHECK_URL="https://api.github.com/repos/icy/pacapt/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+
 if [[ -x "$(command -v pacapt)" ]]; then
     ECHO_TYPE="Updating"
     CURRENT_VERSION=$(pacapt -V | grep 'version' | cut -d"'" -f2)

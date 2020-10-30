@@ -31,15 +31,6 @@ fi
 ostype=$(uname)
 ostype_wsl=$(uname -r)
 
-# pacapt - An Arch's pacman-like package manager for some Unices
-# https://github.com/icy/pacapt
-# if [[ ! -x "$(command -v pacapt)" ]]; then
-#     colorEcho ${BLUE} "Installing pacapt..."
-#     sudo curl -SL https://github.com/icy/pacapt/raw/ng/pacapt -o /usr/bin/pacapt && \
-#         sudo chmod 755 /usr/bin/pacapt && \
-#         sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
-# fi
-
 
 colorEcho ${BLUE} "Cloning custom shell script repository to $HOME/terminal-custom..."
 if [[ -d ~/terminal-custom ]]; then

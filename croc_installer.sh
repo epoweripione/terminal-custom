@@ -23,6 +23,8 @@ fi
 CHECK_URL="https://api.github.com/repos/schollz/croc/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
+[[ -z "$REMOTE_VERSION" ]] && exit 0
+
 REMOTE_FILENAME="croc"
 
 

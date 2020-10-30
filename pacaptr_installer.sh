@@ -30,6 +30,7 @@ OS_ARCH=$(uname -m)
 if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; then
     CHECK_URL="https://api.github.com/repos/rami3l/pacaptr/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+
     if [[ -x "$(command -v pacaptr)" ]]; then
         ECHO_TYPE="Updating"
         CURRENT_VERSION=$(pacaptr -V | cut -d" " -f2)

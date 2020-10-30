@@ -17,27 +17,6 @@ function colorEcho() {
 }
 
 
-## pacapt - An Arch's pacman-like package manager for some Unices
-## https://github.com/icy/pacapt
-# CHECK_URL="https://api.github.com/repos/icy/pacapt/releases/latest"
-# REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-# if [[ -x "$(command -v pacapt)" ]]; then
-#     ECHO_TYPE="Updating"
-#     CURRENT_VERSION=$(pacapt -V | grep 'version' | cut -d"'" -f2)
-# else
-#     CURRENT_VERSION="0.0.0"
-#     ECHO_TYPE="Installing"
-# fi
-
-# if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-#     colorEcho ${BLUE} "${ECHO_TYPE} pacapt - An Arch's pacman-like package manager for some Unices..."
-#     sudo curl -SL -o /tmp/pacapt https://github.com/icy/pacapt/raw/ng/pacapt && \
-#         sudo mv -f /tmp/pacapt /usr/bin/pacapt && \
-#         sudo chmod 755 /usr/bin/pacapt && \
-#         sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
-# fi
-
-
 # pacaptr - Pacman-like syntax wrapper for many package managers
 # https://github.com/rami3l/pacaptr
 case $(uname) in
@@ -56,6 +35,7 @@ OS_ARCH=$(uname -m)
 if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; then
     CHECK_URL="https://api.github.com/repos/rami3l/pacaptr/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+
     if [[ -x "$(command -v pacaptr)" ]]; then
         ECHO_TYPE="Updating"
         CURRENT_VERSION=$(pacaptr -V | cut -d" " -f2)
@@ -155,16 +135,19 @@ if [[ ! -x "$(command -v zsh)" ]]; then
         REMOTE_VERSION=$(curl -s http://zsh.sourceforge.net/News/ \
                             | grep -Eo -m1 'Release ([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         REMOTE_VERSION=$(echo $REMOTE_VERSION | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
-        DOWNLOAD_URL="https://nchc.dl.sourceforge.net/project/zsh/zsh/${REMOTE_VERSION}/zsh-${REMOTE_VERSION}.tar.xz"
-        sudo curl -SL -o "/tmp/zsh.tar.xz" "$DOWNLOAD_URL" && \
-            sudo tar xJvf "/tmp/zsh.tar.xz" -C "/tmp" && \
-            sudo mv /tmp/zsh-* "/tmp/zsh" && \
-            cd "/tmp/zsh" && \
-            sudo ./configure && \
-            sudo make && \
-            sudo make install && \
-            sudo rm -f "/tmp/zsh.tar.xz" && \
-            sudo rm -rf "/tmp/zsh"
+
+        if [[ -n "$REMOTE_VERSION" ]]; then
+            DOWNLOAD_URL="https://nchc.dl.sourceforge.net/project/zsh/zsh/${REMOTE_VERSION}/zsh-${REMOTE_VERSION}.tar.xz"
+            sudo curl -SL -o "/tmp/zsh.tar.xz" "$DOWNLOAD_URL" && \
+                sudo tar xJvf "/tmp/zsh.tar.xz" -C "/tmp" && \
+                sudo mv /tmp/zsh-* "/tmp/zsh" && \
+                cd "/tmp/zsh" && \
+                sudo ./configure && \
+                sudo make && \
+                sudo make install && \
+                sudo rm -f "/tmp/zsh.tar.xz" && \
+                sudo rm -rf "/tmp/zsh"
+        fi
 
         if [[ ! -x "$(command -v zsh)" ]]; then
             if [[ -s "/usr/local/bin/zsh" ]]; then

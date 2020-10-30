@@ -12,16 +12,15 @@ else
     fi
 fi
 
-if [[ -z "$spruce_type" ]]; then
-    get_os_type
-    get_sysArch
-fi
+[[ -z "$spruce_type" ]] && get_os_type && get_sysArch
 
 
 # duf
 # https://github.com/muesli/duf
 CHECK_URL="https://api.github.com/repos/muesli/duf/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+
+[[ -z "$REMOTE_VERSION" ]] && exit 0
 
 REMOTE_FILENAME=""
 case "$ostype" in

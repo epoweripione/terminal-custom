@@ -34,6 +34,8 @@ curl -SL https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.
 CHECK_URL="https://api.github.com/repos/snail007/shadowtunnel/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
 
+[[ -z "$REMOTE_VERSION" ]] && exit 0
+
 curl -SL -o shadowtunnel.tar.gz https://github.com/snail007/shadowtunnel/releases/download/$REMOTE_VERSION/shadowtunnel-$ostype-$spruce_type.tar.gz && \
     tar zxfv shadowtunnel.tar.gz && \
     rm -f shadowtunnel.tar.gz && \
