@@ -20,6 +20,7 @@ case $(uname) in
         ;;
     Linux)
         OS_TYPE='linux'
+        ;;
     *)
         OS_TYPE=''
         ;;
