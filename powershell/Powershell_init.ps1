@@ -82,7 +82,7 @@
 ## https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/start-service
 # Start-Service -Name "eventlog"
 # Start-Service -DisplayName "*remote*" -WhatIf
-# Get-Service "Wsearch" | Where-Object {$_.status –eq 'Stopped'} |  Start-Service
+# Get-Service "Wsearch" | Where-Object {$_.status –eq 'Stopped'} | Start-Service
 
 ## https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/stop-service
 # Get-Service -Name "iisadmin" | Format-List -Property Name, DependentServices
@@ -90,13 +90,13 @@
 
 
 ## Windows Features: dism /online /Get-Features
-# Get-WindowsOptionalFeature -Online | Select FeatureName,State
+# Get-WindowsOptionalFeature -Online | Select-Object FeatureName,State
 # LIST All IIS FEATURES: 
-# Get-WindowsOptionalFeature -Online | where FeatureName -like 'IIS-*' | Select FeatureName,State
+# Get-WindowsOptionalFeature -Online | Where-Object FeatureName -like 'IIS-*' | Select-Object FeatureName,State
 ## Check for Installed Features:
-# Get-WindowsOptionalFeature -Online | where {$_.state -eq "Enabled"} | ft -Property featurename
+# Get-WindowsOptionalFeature -Online | Where-Object {$_.state -eq "Enabled"} | Format-Table -Property featurename
 ## Check for Features available but Not Installed
-# Get-WindowsOptionalFeature -Online | where {$_.state -eq "Disabled"} | ft -Property featurename
+# Get-WindowsOptionalFeature -Online | Where-Object {$_.state -eq "Disabled"} | Format-Table -Property featurename
 ## Enable a Windows Feature
 # Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServer
 ## Disable a Windows Feature
@@ -129,15 +129,19 @@
 ## https://4sysops.com/archives/administering-group-policy-with-powershell/
 # .  ".\ps_custom_function.ps1"
 ## $DISMFeature = GetDISMOnlineFeatures
-## $DISMFeature | where {$_.feature -like "*iis*"} | Select -ExpandProperty feature
+## $DISMFeature | Where-Object {$_.feature -like "*iis*"} | Select-Object -ExpandProperty feature
 ## Dism /online /Get-FeatureInfo /FeatureName:IIS-WebServer
 ## Dism /online /Enable-Feature /FeatureName:IIS-WebServer /All
 # $DISMCapabilities = GetDISMOnlineCapabilities
-# $DISMCapabilities | where {$_.feature -like "*GroupPolicy*"} | foreach {
+# $DISMCapabilities | Where-Object {$_.feature -like "*GroupPolicy*"} | ForEach-Object {
 #     $DISMFeature = $_.feature
 #     DISM /Online /add-capability /CapabilityName:$DISMFeature
 # }
 
+
+## WindowsCapability
+# Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'
+# Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
 
 ## Scheduled tasks
 ## list scheduled task

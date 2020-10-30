@@ -65,38 +65,49 @@ fi
 #     sh kcptun.sh
 
 
-# Multi-V2Ray
-# https://github.com/Jrohy/multi-v2ray
-# /etc/v2ray_util/util.cfg
-# /etc/v2ray/config.json
-sudo rm -rf /etc/localtime && \
-    TZ="Asia/Shanghai" && \
-    sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ | sudo tee /etc/timezone >/dev/null
+## Multi-V2Ray
+## https://github.com/Jrohy/multi-v2ray
+## /etc/v2ray_util/util.cfg
+## /etc/v2ray/config.json
+# sudo rm -rf /etc/localtime && \
+#     TZ="Asia/Shanghai" && \
+#     sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+#     echo $TZ | sudo tee /etc/timezone >/dev/null
 
-if [[ ! -x "$(command -v v2ray-util)" ]]; then
-    colorEcho ${BLUE} "Installing v2ray-util..."
+# if [[ ! -x "$(command -v v2ray-util)" ]]; then
+#     colorEcho ${BLUE} "Installing v2ray-util..."
 
-    source <(curl -sL https://multi.netlify.com/v2ray.sh) --zh
-    # source <(curl -sL https://git.io/fNgqx) --zh
-fi
-
-
-## V2Ray Client
-## https://www.v2ray.com/chapter_00/install.html
-# bash <(curl -L -s https://install.direct/go.sh) && \
-#     sudo systemctl enable v2ray && \
-#     sudo systemctl start v2ray && \
-#     sudo ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
-
-# service v2ray start|stop|status|reload|restart|force-reload
+#     source <(curl -sL https://multi.netlify.com/v2ray.sh) --zh
+#     # source <(curl -sL https://git.io/fNgqx) --zh
+# fi
 
 
+## https://github.com/v2fly/v2ray-core
 ## https://github.com/v2fly/fhs-install-v2ray
-# curl -O https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh && \
-#     curl -O https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-dat-release.sh && \
-#     bash install-release.sh && \
-#     bash install-dat-release.sh
+## /usr/local/etc/v2ray/config.json
+## /var/log/v2ray/
+## UUID: v2ctl uuid
+if [[ ! -s "/usr/local/bin/v2ray" ]]; then
+    colorEcho ${BLUE} "Installing v2ray-core..."
+
+    CHECK_URL="https://api.github.com/repos/v2fly/v2ray-core/releases/latest"
+
+    CURRENT_VERSION="0.0.0"
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        # https://github.com/v2fly/fhs-install-v2ray/wiki/Migrate-from-the-old-script-to-this
+        if [[ -d "/usr/bin/v2ray/" ]]; then
+            sudo systemctl disable v2ray.service --now
+            sudo rm -rf /usr/bin/v2ray/ /etc/v2ray/
+            sudo rm -f /etc/systemd/system/v2ray.service
+            sudo rm -f /lib/systemd/system/v2ray.service
+            sudo rm -f /etc/init.d/v2ray
+        fi
+
+        bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
+        # bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-dat-release.sh)
+    fi
+fi
 
 
 # trojan

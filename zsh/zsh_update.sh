@@ -32,7 +32,7 @@ fi
 # fi
 
 # # install pre-requisite packages
-# if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+# if [[ -x "$(command -v pacman)" ]]; then
 #     pacman -S curl wget g++ gcc make git zip unzip
 # fi
 
@@ -81,7 +81,7 @@ fi
 
 # tmux
 if [[ ! -x "$(command -v tmux)" ]]; then
-    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+    if [[ -x "$(command -v pacman)" ]]; then
         if pacman -Si tmux >/dev/null 2>&1; then
             colorEcho ${BLUE} "Installing tmux..."
             sudo pacman --noconfirm -S tmux
@@ -112,7 +112,7 @@ fi
 
 # neofetch
 if [[ ! -x "$(command -v neofetch)" ]]; then
-    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+    if [[ -x "$(command -v pacman)" ]]; then
         if pacman -Si neofetch >/dev/null 2>&1; then
             colorEcho ${BLUE} "Installing neofetch..."
             sudo pacman --noconfirm -S neofetch
@@ -141,7 +141,7 @@ fi
 
 # fzf
 if [[ ! -x "$(command -v fzf)" ]]; then
-    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+    if [[ -x "$(command -v pacman)" ]]; then
         if pacman -Si fzf >/dev/null 2>&1; then
             colorEcho ${BLUE} "Installing fzf..."
             sudo pacman --noconfirm -S fzf

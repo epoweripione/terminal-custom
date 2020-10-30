@@ -79,6 +79,3 @@ fi
 # sed -i 's/48080/28080/' /srv/proxy-web/config/config.ini && \
 #     sed -i 's|password = admin|password = Passw0rd|' /srv/proxy-web/config/config.ini
 # nohup /srv/proxy-web/proxy-web >/dev/null 2>&1 & disown
-
-
-cd $HOME

@@ -35,7 +35,7 @@ if [[ ! -x "$(command -v fontforge)" ]]; then
 	# 		sudo apt-get update
 	# fi
 
-	if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+	if [[ -x "$(command -v pacman)" ]]; then
 		sudo pacman --noconfirm -S unzip python-pip fontforge
 	else
 		if check_release_package_manager packageManager yum; then

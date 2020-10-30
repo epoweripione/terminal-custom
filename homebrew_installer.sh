@@ -12,11 +12,19 @@ else
     fi
 fi
 
+[[ -z "$ostype" ]] && get_os_type && get_arch && get_sysArch
+
 # Set proxy or mirrors env in china
 set_proxy_mirrors_env
 
 # https://brew.sh/index_zh-cn
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+# https://docs.brew.sh/Homebrew-on-Linux
+if [[ "$ostype" == "linux" && -s "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+    echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> "$HOME/.zprofile"
+    # eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+fi
 
 ## offical
 # cd "$(brew --repo)"

@@ -73,16 +73,20 @@ chmod +x ~/ssl-cert-info.sh
 chmod +x ~/ssl-check-expire-date.sh
 
 chmod +x ~/bat_installer.sh
+chmod +x ~/croc_installer.sh
 chmod +x ~/conda_python_installer.sh
 chmod +x ~/docker_installer.sh
+chmod +x ~/duf_installer.sh
 chmod +x ~/geoip_installer.sh
 chmod +x ~/gitflow_installer.sh
 chmod +x ~/gvm_go_installer.sh
-chmod +x ~/hexo_installer.sh
+# chmod +x ~/hexo_installer.sh
 chmod +x ~/hosts_accelerate_cn.sh
 chmod +x ~/jabba_jdk_installer.sh
+chmod +x ~/lua_installer.sh
 chmod +x ~/nano_installer.sh
 chmod +x ~/pacapt_installer.sh
+chmod +x ~/pacaptr_installer.sh
 chmod +x ~/proxychains_installer.sh
 chmod +x ~/sdkman_installer.sh
 

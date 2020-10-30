@@ -17,23 +17,85 @@ function colorEcho() {
 }
 
 
-# pacapt - An Arch's pacman-like package manager for some Unices
-# https://github.com/icy/pacapt
-if [[ ! -x "$(command -v pacapt)" ]]; then
-    colorEcho ${BLUE} "Installing pacapt - An Arch's pacman-like package manager for some Unices..."
-    sudo curl -SL -o /tmp/pacapt https://github.com/icy/pacapt/raw/ng/pacapt && \
-        sudo mv -f /tmp/pacapt /usr/bin/pacapt && \
-        sudo chmod 755 /usr/bin/pacapt && \
-        sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
+## pacapt - An Arch's pacman-like package manager for some Unices
+## https://github.com/icy/pacapt
+# CHECK_URL="https://api.github.com/repos/icy/pacapt/releases/latest"
+# REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+# if [[ -x "$(command -v pacapt)" ]]; then
+#     ECHO_TYPE="Updating"
+#     CURRENT_VERSION=$(pacapt -V | grep 'version' | cut -d"'" -f2)
+# else
+#     CURRENT_VERSION="0.0.0"
+#     ECHO_TYPE="Installing"
+# fi
+
+# if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+#     colorEcho ${BLUE} "${ECHO_TYPE} pacapt - An Arch's pacman-like package manager for some Unices..."
+#     sudo curl -SL -o /tmp/pacapt https://github.com/icy/pacapt/raw/ng/pacapt && \
+#         sudo mv -f /tmp/pacapt /usr/bin/pacapt && \
+#         sudo chmod 755 /usr/bin/pacapt && \
+#         sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
+# fi
+
+
+# pacaptr - Pacman-like syntax wrapper for many package managers
+# https://github.com/rami3l/pacaptr
+case $(uname) in
+    Darwin)
+        OS_TYPE='macos'
+        ;;
+    Linux)
+        OS_TYPE='linux'
+    *)
+        OS_TYPE=''
+        ;;
+esac
+
+OS_ARCH=$(uname -m)
+if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; then
+    CHECK_URL="https://api.github.com/repos/rami3l/pacaptr/releases/latest"
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if [[ -x "$(command -v pacaptr)" ]]; then
+        ECHO_TYPE="Updating"
+        CURRENT_VERSION=$(pacaptr -V | cut -d" " -f2)
+        [[ -s "/root/.config/pacaptr/pacaptr.toml" ]] && \
+            sudo sed -i "s/needed.*/needed = true/" "/root/.config/pacaptr/pacaptr.toml"
+    else
+        CURRENT_VERSION="0.0.0"
+        ECHO_TYPE="Installing" 
+        # pacaptr config   
+        mkdir -p "/root/.config/pacaptr/"
+        echo -e "dry_run = false\nneeded = true\nno_confirm = false\nforce_cask = false\nno_cache = false" \
+            | sudo tee "/root/.config/pacaptr/pacaptr.toml" >/dev/null
+    fi
+
+    [[ "$(readlink -f /usr/bin/pacman)" == "/usr/bin/pacapt" ]] && \
+        sudo rm -f "/usr/bin/pacman" && sudo rm -f "/usr/bin/pacapt"
+
+    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        colorEcho ${BLUE} "${ECHO_TYPE} pacaptr - Pacman-like syntax wrapper for many package managers..."
+        DOWNLOAD_URL="https://github.com/rami3l/pacaptr/releases/download/v${REMOTE_VERSION}/pacaptr-${OS_TYPE}-amd64.tar.gz"
+        curl -SL -o "/tmp/pacaptr.tar.gz" -C- "$DOWNLOAD_URL" && \
+            sudo tar -zxPf "/tmp/pacaptr.tar.gz" -C "/usr/local/bin" && \
+            rm -f "/tmp/pacaptr.tar.gz" && \
+            sudo ln -sv "/usr/local/bin/pacaptr" "/usr/bin/pacman" || true
+    fi
 fi
 
+
 # Install ZSH Shell
-if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+if [[ -x "$(command -v pacman)" ]]; then
     colorEcho ${BLUE} "Updating installed packages..."
     sudo pacman --noconfirm -Syu
 
     colorEcho ${BLUE} "Installing pre-requisite packages..."
     sudo pacman --noconfirm -S git curl wget g++ gcc make zip unzip
+
+    ## Install Latest Git ( Git 2.x ) on CentOS 7
+    ## https://computingforgeeks.com/how-to-install-latest-version-of-git-git-2-x-on-centos-7/
+    # sudo yum remove git*
+    # sudo yum -y install https://packages.endpoint.com/rhel/7/os/x86_64/endpoint-repo-1.7-1.x86_64.rpm
+    # sudo yum -y install git
 
     # GeoIP binary and database
     # http://kbeezie.com/geoiplookup-command-line/
@@ -54,6 +116,8 @@ if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
         autojump-zsh
         screen
         jq
+        connect-proxy
+        netcat-openbsd
     )
     for TargetPackage in "${PackagesList[@]}"; do
         if pacman -Si "$TargetPackage" >/dev/null 2>&1; then
@@ -90,16 +154,16 @@ if [[ ! -x "$(command -v zsh)" ]]; then
         REMOTE_VERSION=$(curl -s http://zsh.sourceforge.net/News/ \
                             | grep -Eo -m1 'Release ([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         REMOTE_VERSION=$(echo $REMOTE_VERSION | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
-        DOWNLOAD_URL=https://nchc.dl.sourceforge.net/project/zsh/zsh/${REMOTE_VERSION}/zsh-${REMOTE_VERSION}.tar.xz
-        cd /tmp && \
-            sudo curl -SL -o zsh.tar.xz $DOWNLOAD_URL && \
-            sudo tar xJvf zsh.tar.xz && \
-            sudo mv zsh-* zsh && \
-            cd zsh && \
-            sudo ./configure && sudo make && sudo make install && \
-            cd /tmp && \
-            sudo rm -f /tmp/zsh.tar.xz && \
-            sudo rm -rf /tmp/zsh
+        DOWNLOAD_URL="https://nchc.dl.sourceforge.net/project/zsh/zsh/${REMOTE_VERSION}/zsh-${REMOTE_VERSION}.tar.xz"
+        sudo curl -SL -o "/tmp/zsh.tar.xz" "$DOWNLOAD_URL" && \
+            sudo tar xJvf "/tmp/zsh.tar.xz" -C "/tmp" && \
+            sudo mv /tmp/zsh-* "/tmp/zsh" && \
+            cd "/tmp/zsh" && \
+            sudo ./configure && \
+            sudo make && \
+            sudo make install && \
+            sudo rm -f "/tmp/zsh.tar.xz" && \
+            sudo rm -rf "/tmp/zsh"
 
         if [[ ! -x "$(command -v zsh)" ]]; then
             if [[ -s "/usr/local/bin/zsh" ]]; then

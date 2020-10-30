@@ -42,7 +42,7 @@ if [[ -x "$(command -v proxychains4)" ]]; then
     fi
 else
     colorEcho ${BLUE} "Installing proxychains-ng..."
-    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+    if [[ -x "$(command -v pacman)" ]]; then
         if pacman -Si proxychains-ng  >/dev/null 2>&1; then
             sudo pacman --noconfirm -S proxychains-ng 
         fi

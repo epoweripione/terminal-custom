@@ -155,6 +155,9 @@ function get_arch() {
 		*ppc64*)
             spruce_type="ppc64"
             ;;
+        riscv64)
+            spruce_type="riscv64"
+            ;;
 		*)
             spruce_type=""
 			# cat 1>&2 <<-EOF
@@ -201,6 +204,9 @@ function get_sysArch(){
             ;;
 		*ppc64*)
             VDIS="ppc64"
+            ;;
+        riscv64)
+            VDIS="riscv64"
             ;;
 		*)
             VDIS=""
@@ -934,9 +940,9 @@ function set_apt_proxy() {
     if [[ -n "$PROXY_ADDRESS" ]]; then
         echo -e "Acquire::http::proxy \"http://${PROXY_ADDRESS}/\";" \
             | sudo tee -a "$APT_PROXY_CONFIG" >/dev/null
-        echo -e "Acquire::https::proxy \"https://${PROXY_ADDRESS}/\";" \
+        echo -e "Acquire::https::proxy \"http://${PROXY_ADDRESS}/\";" \
             | sudo tee -a "$APT_PROXY_CONFIG" >/dev/null
-        echo -e "Acquire::ftp::proxy \"ftp://${PROXY_ADDRESS}/\";" \
+        echo -e "Acquire::ftp::proxy \"http://${PROXY_ADDRESS}/\";" \
             | sudo tee -a "$APT_PROXY_CONFIG" >/dev/null
     else
         [[ -s "$APT_PROXY_CONFIG" ]] && \
@@ -1234,24 +1240,27 @@ function reset_hosts() {
 
 
 function Git_Clone_Update() {
-    local REPO=${1:-""}
+    local REPONAME=${1:-""}
     local REPODIR=${2:-""}
-    local BRANCH=${3:-master}
+    local BRANCH=${3:-""}
     local REPOURL=${4:-github.com}
     local REPOREMOTE=""
 
-    if [[ -z "$REPO" ]]; then
+    if [[ -z "$REPONAME" ]]; then
         colorEcho ${RED} "Error! Repository name can't empty!"
         return 1
     fi
 
     if [[ -z "$REPODIR" ]]; then
-        REPODIR=$(echo ${REPO} | awk -F"/" '{print $NF}')
+        REPODIR=$(echo ${REPONAME} | awk -F"/" '{print $NF}')
     fi
 
-    REPOREMOTE="https://${REPOURL}/${REPO}.git"
+    REPOREMOTE="https://${REPOURL}/${REPONAME}.git"
     if [[ -d "${REPODIR}/.git" ]]; then
-        colorEcho ${BLUE} "  Updating ${REPO}..."
+        colorEcho ${BLUE} "  Updating ${REPONAME}..."
+        BRANCH=$(git symbolic-ref --short HEAD)
+        [[ -z "$BRANCH" ]] && BRANCH="master"
+
         cd "$REPODIR" && \
             git pull --rebase --stat origin "$BRANCH"
 
@@ -1268,13 +1277,17 @@ function Git_Clone_Update() {
 
         cd - >/dev/null 2>&1
     else
-        colorEcho ${BLUE} "  Cloning ${REPO}..."
+        colorEcho ${BLUE} "  Cloning ${REPONAME}..."
+        BRANCH=$(git ls-remote --symref "$REPOREMOTE" HEAD \
+                    | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
+        [[ -z "$BRANCH" ]] && BRANCH="master"
+
         git clone -c core.autocrlf=false -c core.filemode=false \
             -c fsck.zeroPaddedFilemode=ignore \
             -c fetch.fsck.zeroPaddedFilemode=ignore \
             -c receive.fsck.zeroPaddedFilemode=ignore \
             --depth=1 --branch "$BRANCH" "$REPOREMOTE" "$REPODIR" || {
-                colorEcho ${RED} "  git clone of ${REPO} failed!"
+                colorEcho ${RED} "  git clone of ${REPONAME} failed!"
                 return 1
             }
     fi
@@ -1283,42 +1296,81 @@ function Git_Clone_Update() {
 
 # https://stackoverflow.com/questions/3497123/run-git-pull-over-all-subdirectories
 function git_update_repo_in_subdir() {
-    local subdir=${1:-""}
-    local finddepth=${2:-""}
-    local BRANCH=${3:-master}
+    local SubDir=${1:-""}
+    local BRANCH=${2:-""}
+    local FindDepth=${3:-""}
+    local FindDir
+    local TargetDir
+    local CurrentDir
+    local DIRLIST=()
 
-    [[ -z "${subdir}" ]] && exit 0
-    [[ ! -d "${subdir}" ]] && exit 0
+    [[ -z "${SubDir}" ]] && exit 0
+    [[ ! -d "${SubDir}" ]] && exit 0
 
     # find . -type d -name ".git" -execdir git pull --rebase --stat origin master \;
 
-    if [[ -z "${finddepth}" ]]; then
-        find "${subdir}" -type d -name ".git" \
-            -execdir git pull --rebase --stat origin "$BRANCH" \;
-    else
-        find "${subdir}" -maxdepth ${finddepth} -type d -name ".git" \
-            -execdir git pull --rebase --stat origin "$BRANCH" \;
-    fi
+    find "${SubDir}" -type d -name ".git" | while read -r FindDir; do
+        FindDir="$(realpath "${FindDir}")"
+        DIRLIST+=("${FindDir%/*}")
+    done
+
+    # while read -r FindDir; do
+    #     FindDir="$(realpath "${FindDir}")"
+    #     DIRLIST+=("${FindDir%/*}")
+    # done <<< "$(find ${subdir} -type d -name .git)"
+
+    CurrentDir=$(pwd)
+    for TargetDir in "${DIRLIST[@]}"; do
+        cd "${TargetDir}"
+        BRANCH=$(git symbolic-ref --short HEAD)
+        [[ -z "$BRANCH" ]] && BRANCH="master"
+        git pull --rebase --stat origin "$BRANCH"
+    done
+    cd "${CurrentDir}"
+
+    # if [[ -z "${FindDepth}" ]]; then
+    #     find "${SubDir}" -type d -name ".git" \
+    #         -execdir git pull --rebase --stat origin "$BRANCH" \;
+    # else
+    #     find "${SubDir}" -maxdepth ${FindDepth} -type d -name ".git" \
+    #         -execdir git pull --rebase --stat origin "$BRANCH" \;
+    # fi
 }
 
 function git_update_repo_in_subdir_parallel() {
-    local subdir=${1:-""}
-    local finddepth=${2:-""}
-    local BRANCH=${3:-master}
+    local SubDir=${1:-""}
+    local BRANCH=${2:-master}
+    local FindDepth=${3:-""}
 
-    [[ -z "${subdir}" ]] && exit 0
-    [[ ! -d "${subdir}" ]] && exit 0
+    [[ -z "${SubDir}" ]] && exit 0
+    [[ ! -d "${SubDir}" ]] && exit 0
 
-    if [[ -z "${finddepth}" ]]; then
-        find "${subdir}" -type d -name ".git" \
+    if [[ -z "${FindDepth}" ]]; then
+        find "${SubDir}" -type d -name ".git" \
             | sed 's/\/.git//' \
             | xargs -P10 -I{} git --git-dir="{}/.git" --work-tree="{}" \
                 pull --rebase --stat origin "$BRANCH"
     else
-        find "${subdir}" -maxdepth ${finddepth} -type d -name ".git" \
+        find "${SubDir}" -maxdepth ${FindDepth} -type d -name ".git" \
             | sed 's/\/.git//' \
             | xargs -P10 -I{} git --git-dir="{}/.git" --work-tree="{}" \
                 pull --rebase --stat origin "$BRANCH"
+    fi
+}
+
+function git_get_remote_default_branch() {
+    local REPOREMOTE=${1:-""}
+
+    if [[ -z "${REPOREMOTE}" && -d ".git" ]]; then
+        REPO_DEFAULT_BRANCH=$(git symbolic-ref --short HEAD)
+    else
+        [[ -z "${REPOREMOTE}" ]] && exit 0
+
+        ## Github: https://api.github.com/repos/docker/compose
+        # REPO_DEFAULT_BRANCH=$(wget -qO- "$REPOREMOTE" | grep 'default_branch' | cut -d\" -f4)
+
+        REPO_DEFAULT_BRANCH=$(git ls-remote --symref "$REPOREMOTE" HEAD \
+                                | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
     fi
 }
 
@@ -1426,7 +1478,9 @@ function get_weather() {
         wttr_url="wttr.in/${wttr_city}?format=${wttr_format}"
     fi
 
-    curl -sL --noproxy '*' -H "Accept-Language: ${wttr_lang}" --compressed "${wttr_url}"
+    curl -sL --connect-timeout 3 --max-time 10 \
+        --noproxy '*' -H "Accept-Language: ${wttr_lang}" --compressed \
+        "${wttr_url}"
 }
 
 function get_weather_custom() {
@@ -1442,7 +1496,8 @@ function get_weather_custom() {
 
     wttr_url="wttr.in/${wttr_city}?format=${wttr_format}"
 
-    wttr_weather=$(curl -sL --noproxy '*' -H "Accept-Language: ${wttr_lang}" --compressed \
+    wttr_weather=$(curl -sL --connect-timeout 3 --max-time 10 \
+        --noproxy '*' -H "Accept-Language: ${wttr_lang}" --compressed \
         "${wttr_url}")
     [[ $? -eq 0 ]] && colorEcho ${YELLOW} "${wttr_weather}"
 }

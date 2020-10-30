@@ -16,7 +16,7 @@ fi
 
 # jq
 if [[ ! -x "$(command -v jq)" ]]; then
-    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+    if [[ -x "$(command -v pacman)" ]]; then
         if pacman -Si jq >/dev/null 2>&1; then
             colorEcho ${BLUE} "Installing jq..."
             sudo pacman --noconfirm -S jq
@@ -36,12 +36,12 @@ fi
 function install_v2ray_client() {
     local CURRENT_VERSION
     local DOWNLOAD_URL
-    local CHECK_URL="https://api.github.com/repos/v2ray/v2ray-core/releases/latest"
+    local CHECK_URL="https://api.github.com/repos/v2fly/v2ray-core/releases/latest"
     local REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
     CURRENT_VERSION="0.0.0"
     if [[ $(systemctl is-enabled v2ray 2>/dev/null) ]]; then
-        CURRENT_VERSION=$(v2ray --version | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+        CURRENT_VERSION=$(v2ray -version | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
     fi
 
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
@@ -51,18 +51,17 @@ function install_v2ray_client() {
             colorEcho ${BLUE} "Updating v2ray-core..."
         fi
 
-        # bash <(curl -L -s https://install.direct/go.sh)
+        # https://github.com/v2fly/fhs-install-v2ray/wiki/Migrate-from-the-old-script-to-this
+        if [[ -d "/usr/bin/v2ray/" ]]; then
+            sudo systemctl disable v2ray.service --now
+            sudo rm -rf /usr/bin/v2ray/ /etc/v2ray/
+            sudo rm -f /etc/systemd/system/v2ray.service
+            sudo rm -f /lib/systemd/system/v2ray.service
+            sudo rm -f /etc/init.d/v2ray
+        fi
 
-        echo "Download URL for v2ray-core?"
-        read -p "[Use github by default] " DOWNLOAD_URL
-        [[ -z "$DOWNLOAD_URL" ]] && \
-            DOWNLOAD_URL=https://github.com/v2ray/v2ray-core/releases/download/v${REMOTE_VERSION}/v2ray-${ostype}-${VDIS}.zip
-
-        # curl -SL -o v2ray-core.zip $DOWNLOAD_URL && \
-        wget -c -O v2ray-core.zip $DOWNLOAD_URL && \
-            curl -sL https://install.direct/go.sh | sudo bash -s -- --local ./v2ray-core.zip && \
-            rm -f ./v2ray-core.zip && \
-            sudo ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
+        bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
+        # bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-dat-release.sh)
     fi
 }
 
@@ -529,6 +528,7 @@ function use_v2ray() {
 ## main
 function main() {
     local SOCKS_ADDRESS
+    local PROXY_BY_V2RAY
 
     # Set proxy or mirrors env in china
     set_proxy_mirrors_env
@@ -538,14 +538,18 @@ function main() {
         colorEcho ${BLUE} "Checking & loading socks proxy..."
         use_clash 127.0.0.1 7891 7890
         if ! check_set_global_proxy 7891 7890; then
-            SOCKS_ADDRESS="127.0.0.1:55880"
-            if use_v2ray "${SOCKS_ADDRESS}"; then
-                set_special_socks5_proxy "${SOCKS_ADDRESS}"
-                set_git_special_proxy "github.com,gitlab.com" "${SOCKS_ADDRESS}"
-                colorEcho ${GREEN} "  Socks5 proxy address: ${SOCKS_ADDRESS}"
-            else
-                set_special_socks5_proxy
-                set_git_special_proxy "github.com,gitlab.com"
+            echo -n "Clash not working, use v2ray?[y/N] "
+            read -t 5 PROXY_BY_V2RAY
+            if [[ "$PROXY_BY_V2RAY" == "y" || "$PROXY_BY_V2RAY" == "Y" ]]; then
+                SOCKS_ADDRESS="127.0.0.1:55880"
+                if use_v2ray "${SOCKS_ADDRESS}"; then
+                    set_special_socks5_proxy "${SOCKS_ADDRESS}"
+                    set_git_special_proxy "github.com,gitlab.com" "${SOCKS_ADDRESS}"
+                    colorEcho ${GREEN} "  Socks5 proxy address: ${SOCKS_ADDRESS}"
+                else
+                    set_special_socks5_proxy
+                    set_git_special_proxy "github.com,gitlab.com"
+                fi
             fi
         fi
     fi

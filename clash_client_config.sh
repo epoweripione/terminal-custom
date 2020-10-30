@@ -45,7 +45,7 @@ fi
 
 # jq
 if [[ ! -x "$(command -v jq)" ]]; then
-    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+    if [[ -x "$(command -v pacman)" ]]; then
         if pacman -Si jq >/dev/null 2>&1; then
             colorEcho ${BLUE} "Installing jq..."
             sudo pacman --noconfirm -S jq
@@ -273,28 +273,29 @@ if [[ -s "$RULE_CUSTOM_FILE" ]]; then
     RULE_CUSTOM=$(cat "$RULE_CUSTOM_FILE")
 fi
 
-# Delete all proxy name from proxy group
-colorEcho ${BLUE} "  Optimizing rules..."
-if [[ "$OPTIMIZE_OPTION" == "yes" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
-    # proxy list
-    # Extract word from string using grep/sed/awk
-    # https://askubuntu.com/questions/697120/extract-word-from-string-using-grep-sed-awk
-    PROXY_NAME=()
-    PROXY_TYPE=()
-    while read -r line; do
-        [[ -z "${line}" ]] && continue
-        line_name=$(echo "$line" \
-            | sed -rn "s/.*name:([^,{}]+).*/\1/ip" \
-            | sed -e "s/^\s//" -e "s/\s$//" \
-            | sed -e "s/^\"//" -e "s/\"$//")
-        PROXY_NAME+=("$line_name")
+# proxy list
+# Extract word from string using grep/sed/awk
+# https://askubuntu.com/questions/697120/extract-word-from-string-using-grep-sed-awk
+PROXY_NAME=()
+PROXY_TYPE=()
+while read -r line; do
+    [[ -z "${line}" ]] && continue
+    line_name=$(echo "$line" \
+        | sed -rn "s/.*name:([^,{}]+).*/\1/ip" \
+        | sed -e "s/^\s//" -e "s/\s$//" \
+        | sed -e "s/^\"//" -e "s/\"$//")
+    PROXY_NAME+=("$line_name")
 
-        line_type=$(echo "$line" \
-            | sed -rn "s/.*type:([^,{}]+).*/\1/ip" \
-            | sed -e "s/^\s//" -e "s/\s$//" \
-            | sed -e "s/^\"//" -e "s/\"$//")
-        PROXY_TYPE+=("$line_type")
-    done <<<"$PROXY"
+    line_type=$(echo "$line" \
+        | sed -rn "s/.*type:([^,{}]+).*/\1/ip" \
+        | sed -e "s/^\s//" -e "s/\s$//" \
+        | sed -e "s/^\"//" -e "s/\"$//")
+    PROXY_TYPE+=("$line_type")
+done <<<"$PROXY"
+
+# Optimize rules
+if [[ "$OPTIMIZE_OPTION" == "yes" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
+    colorEcho ${BLUE} "  Optimizing rules..."
 
     # GROUP_CNT=$(echo "$PROXY_GROUP" | grep -E "^[ ]*\-\sname:" | wc -l)
     PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i<=2")
@@ -346,10 +347,6 @@ if [[ "$OPTIMIZE_OPTION" == "yes" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         done
     fi
 
-    ## only keep vmess & socks5
-    # PORXY=$(echo $PROXY | grep -E -i "type:\s*vmess|type:\s*socks5")
-
-    # delete proxy list after 3th group
     PROXY_INDEX=-1
     for TargetName in "${PROXY_NAME[@]}"; do
         PROXY_INDEX=$((${PROXY_INDEX} + 1))
@@ -359,15 +356,10 @@ if [[ "$OPTIMIZE_OPTION" == "yes" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         TargetName=$(echo "${TargetName}" \
             | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
             | sed 's/]/\\&/g')
+
+        # delete proxy list after 3th group
         PROXY_GROUP_REMAIN=$(echo "$PROXY_GROUP_REMAIN" \
             | sed -e "/^\s*\-\s*${TargetName}$/d" -e "/^\s*\-\s*\"${TargetName}\"$/d")
-
-        ## only keep vmess & socks5
-        # if [[ "$PROXY_TYPE[$PROXY_INDEX]" == "vmess" || "$PROXY_TYPE[$PROXY_INDEX]" == "socks5" ]]; then
-        #     :
-        # else
-        #     PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP_MAIN" | sed "/- ${TargetName}$/d")
-        # fi
     done
 
     PROXY_GROUP_REMAIN=$(echo "$PROXY_GROUP_REMAIN" | sed "/^\s*\-\s*\"\"$/d")
@@ -375,6 +367,24 @@ if [[ "$OPTIMIZE_OPTION" == "yes" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
     # add blank line before each group
     PROXY_GROUP=$(echo "$PROXY_GROUP" | sed 's/^\s*\-\s*name:/\n&/' | sed '1d')
 fi
+
+# Delete Shadowsocks proxies
+colorEcho ${BLUE} "  Deleting Shadowsocks proxies..."
+PROXY_INDEX=-1
+for TargetName in "${PROXY_NAME[@]}"; do
+    PROXY_INDEX=$((${PROXY_INDEX} + 1))
+
+    [[ -z "$TargetName" ]] && continue
+
+    TargetName=$(echo "${TargetName}" \
+        | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
+        | sed 's/]/\\&/g')
+
+    if [[ "${PROXY_TYPE[$PROXY_INDEX]}" == "ss" ]]; then
+        PROXY=$(echo "$PROXY" | sed "/name:\s*${TargetName},/d")
+        PROXY_GROUP=$(echo "$PROXY_GROUP" | sed "/^\s*\-\s*${TargetName}$/d")
+    fi
+done
 
 # Delete empty group
 colorEcho ${BLUE} "  Deleting empty group..."

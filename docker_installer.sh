@@ -32,7 +32,7 @@ if [[ ! -x "$(command -v docker)" ]]; then
     if [[ -z "$DOCKER_INSTALLER_NOT_USE_MIRROR" ]]; then
         # curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
         curl -fsSL https://get.docker.com -o get-docker.sh && \
-            bash get-docker.sh --mirror AzureChinaCloud
+            bash get-docker.sh --mirror Aliyun
     else
         curl -fsSL https://get.docker.com -o get-docker.sh && \
             bash get-docker.sh

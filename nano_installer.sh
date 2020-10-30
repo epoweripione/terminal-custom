@@ -21,7 +21,7 @@ fi
 # https://www.nano-editor.org/dist/latest/faq.html
 # http://mybookworld.wikidot.com/compile-nano-from-source
 colorEcho ${BLUE} "Checking update for nano..."
-if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+if [[ -x "$(command -v pacman)" ]]; then
     # Remove old version nano
     if pacman -Q nano >/dev/null 2>&1; then
         sudo pacman --noconfirm -R nano >/dev/null 2>&1
@@ -43,15 +43,6 @@ if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
             fi
         fi
     done
-# else
-#     if check_release_package_manager packageManager yum; then
-#         sudo yum update -y && sudo yum -y -q install ncurses-devel
-#     elif check_release_package_manager packageManager apt; then
-#         sudo apt-get update && sudo apt-get -y install libncurses-dev libncursesw-dev
-#         sudo apt-get update && sudo apt-get -y install libncurses5-dev libncursesw5-dev
-#     elif check_release_package_manager packageManager pacman; then
-#         sudo pacman -Sy && sudo pacman --noconfirm -S ncurses
-#     fi
 fi
 
 
@@ -81,14 +72,14 @@ DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     colorEcho ${BLUE} "Installing nano from source..."
-    DOWNLOAD_URL=https://www.nano-editor.org/dist/v${DIST_VERSION}/nano-${REMOTE_VERSION}.tar.gz
-    # curl -SL $DOWNLOAD_URL -o nano.tar.gz
-    cd /tmp && \
-        wget -O nano.tar.gz $DOWNLOAD_URL && \
-        sudo tar xzvf nano.tar.gz && \
-        sudo mv nano-* nano && cd nano && \
-        sudo ./configure --prefix=/usr --enable-utf8 && \
-        sudo make && sudo make install && \
-        sudo rm -f /tmp/nano.tar.gz && \
-        sudo rm -rf /tmp/nano
+    DOWNLOAD_URL="https://www.nano-editor.org/dist/v${DIST_VERSION}/nano-${REMOTE_VERSION}.tar.gz"
+    wget -O "/tmp/nano.tar.gz" "$DOWNLOAD_URL" && \
+        tar xzvf "/tmp/nano.tar.gz" -C "/tmp" && \
+        mv /tmp/nano-* "/tmp/nano" && \
+        cd "/tmp/nano" && \
+        ./configure --prefix=/usr --enable-utf8 && \
+        make && \
+        sudo make install && \
+        rm -f "/tmp/nano.tar.gz" && \
+        rm -rf "/tmp/nano"
 fi

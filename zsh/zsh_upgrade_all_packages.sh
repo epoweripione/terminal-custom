@@ -27,33 +27,13 @@ if [[ -z "$spruce_type" ]]; then
     get_sysArch
 fi
 
+# [[ -s "$HOME/pacapt_installer.sh" ]] && source "$HOME/pacapt_installer.sh"
 
-# pacapt - An Arch's pacman-like package manager for some Unices
-# https://github.com/icy/pacapt
-if [[ -x "$(command -v pacapt)" ]]; then
-    CHECK_URL="https://api.github.com/repos/icy/pacapt/releases/latest"
-
-    CURRENT_VERSION=$(pacapt -V | grep 'version' | cut -d"'" -f2)
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        colorEcho ${BLUE} "Updating pacapt - An Arch's pacman-like package manager for some Unices..."
-        sudo curl -SL -o /tmp/pacapt https://github.com/icy/pacapt/raw/ng/pacapt && \
-            sudo mv -f /tmp/pacapt /usr/bin/pacapt && \
-            sudo chmod 755 /usr/bin/pacapt && \
-            sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
-    fi
-else
-    colorEcho ${BLUE} "Installing pacapt - An Arch's pacman-like package manager for some Unices..."
-    sudo curl -SL -o /tmp/pacapt https://github.com/icy/pacapt/raw/ng/pacapt && \
-        sudo mv -f /tmp/pacapt /usr/bin/pacapt && \
-        sudo chmod 755 /usr/bin/pacapt && \
-        sudo ln -sv /usr/bin/pacapt /usr/bin/pacman || true
-fi
+[[ -s "$HOME/pacaptr_installer.sh" ]] && source "$HOME/pacaptr_installer.sh"
 
 
 colorEcho ${BLUE} "Updating system packages..."
-if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+if [[ -x "$(command -v pacman)" ]]; then
     if [[ $UID -ne 0 && "$(command -v yay)" ]]; then
         yay --noconfirm -Syu
     else
@@ -370,23 +350,10 @@ fi
 
 
 if [[ -x "$(command -v v2ray)" ]]; then
-    # if v2ray --version 2>&1 | grep -q 'multi-v2ray'; then
     if [[ -x "$(command -v v2ray-util)" ]]; then
         colorEcho ${BLUE} "Updating multi-v2ray..."
         # https://github.com/Jrohy/multi-v2ray
         v2ray update.sh >/dev/null && v2ray restart
-
-        # CHECK_URL="https://api.github.com/repos/Jrohy/multi-v2ray/releases/latest"
-
-        # CURRENT_VERSION=$(v2ray-util -v | grep 'v2ray_util' | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
-        # # CURRENT_VERSION=$(v2ray-util -v | grep 'v2ray_util' | cut -d' ' -f2)
-        # # # trim color code: \033[32m \033[0m
-        # # CURRENT_VERSION=$(echo $CURRENT_VERSION | sed -e 's/'$(echo "\033")'//g' | awk -F'[' '{print $2}' | awk -F'm' '{print $2}')
-
-        # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-        # if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        #     source <(curl -sL https://git.io/fNgqx) -k
-        # fi
     elif [[ $(systemctl is-enabled v2ray 2>/dev/null) ]]; then
         V2RAYCORE="yes"
     fi
@@ -396,20 +363,23 @@ fi
 
 if [[ -n "$V2RAYCORE" ]]; then
     colorEcho ${BLUE} "Updating v2ray-core..."
-    # https://www.v2ray.com/chapter_00/install.html
+    # https://github.com/v2fly/fhs-install-v2ray
+    CHECK_URL="https://api.github.com/repos/v2fly/v2ray-core/releases/latest"
 
-    CHECK_URL="https://api.github.com/repos/v2ray/v2ray-core/releases/latest"
-
-    CURRENT_VERSION=$(v2ray --version | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-    # CURRENT_VERSION=$(v2ray --version | grep 'V2Ray' | cut -d' ' -f2)
+    CURRENT_VERSION=$(v2ray -version | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        # bash <(curl -L -s https://install.direct/go.sh)
-        DOWNLOAD_URL=https://github.com/v2ray/v2ray-core/releases/download/v${REMOTE_VERSION}/v2ray-${ostype}-${VDIS}.zip
-        curl -SL --config ${CURL_SPECIAL_CONFIG} -o v2ray-core.zip -C- $DOWNLOAD_URL && \
-            curl -sL https://install.direct/go.sh | sudo bash -s -- --local ./v2ray-core.zip && \
-            rm -f ./v2ray-core.zip && \
-            sudo ln -sv /usr/bin/v2ray/v2ray /usr/local/bin/v2ray || true
+        # https://github.com/v2fly/fhs-install-v2ray/wiki/Migrate-from-the-old-script-to-this
+        if [[ -d "/usr/bin/v2ray/" ]]; then
+            sudo systemctl disable v2ray.service --now
+            sudo rm -rf /usr/bin/v2ray/ /etc/v2ray/
+            sudo rm -f /etc/systemd/system/v2ray.service
+            sudo rm -f /lib/systemd/system/v2ray.service
+            sudo rm -f /etc/init.d/v2ray
+        fi
+
+        bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
+        bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-dat-release.sh)
     fi
 fi
 
@@ -451,6 +421,10 @@ fi
 [[ -s "$HOME/nano_installer.sh" ]] && source "$HOME/nano_installer.sh"
 
 [[ -s "$HOME/bat_installer.sh" ]] && source "$HOME/bat_installer.sh"
+
+[[ -s "$HOME/croc_installer.sh" ]] && source "$HOME/croc_installer.sh"
+
+[[ -s "$HOME/duf_installer.sh" ]] && source "$HOME/duf_installer.sh"
 
 
 if [[ -x "$(command -v conda)" ]]; then

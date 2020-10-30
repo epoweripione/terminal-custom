@@ -83,7 +83,7 @@ fi
 
 # dig
 if [[ "$CHECK_METHOD" == "dig" && ! -x "$(command -v dig)" ]]; then
-    if [[ -x "$(command -v pacapt)" || -x "$(command -v pacman)" ]]; then
+    if [[ -x "$(command -v pacman)" ]]; then
         if pacman -Si bind-tools >/dev/null 2>&1; then
             colorEcho ${BLUE} "Installing bind-tools..."
             sudo pacman --noconfirm -S bind-tools

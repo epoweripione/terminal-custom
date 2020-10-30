@@ -30,16 +30,14 @@ colorEcho ${BLUE} "Installing frp..."
 CHECK_URL="https://api.github.com/repos/fatedier/frp/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 if [[ -n "$REMOTE_VERSION" ]]; then
-    DOWNLOAD_URL=https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_${ostype}_${spruce_type}.tar.gz
-    curl -SL -o frp.tar.gz -C- $DOWNLOAD_URL && \
-        tar -zxPf frp.tar.gz -C /srv/ && \
-        rm frp.tar.gz && \
-        mkdir -p /srv/frp && \
-        cp -rf /srv/frp_*/* /srv/frp && \
-        rm -rf /srv/frp_*
+    DOWNLOAD_URL="https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_${ostype}_${spruce_type}.tar.gz"
+    wget -O "/tmp/frp.tar.gz" "$DOWNLOAD_URL" && \
+        tar -zxPf "/tmp/frp.tar.gz" -C "/tmp" && \
+        sudo mkdir -p "/srv/frp" && \
+        sudo cp -rf /tmp/frp_*/* "/srv/frp" && \
+        rm -f "/tmp/frp.tar.gz" && \
+        rm -rf /tmp/frp_*
 fi
 
 
 # sed -i '/^exit 0/i\nohup /srv/frp/frps -c /srv/frp/frps.ini >/dev/null 2>&1 & disown\n' /etc/rc.local
-
-cd $HOME

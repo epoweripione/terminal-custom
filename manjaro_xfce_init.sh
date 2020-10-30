@@ -86,7 +86,7 @@ if [[ "$IP_GEO_IN_CHINA" == "yes" ]]; then
     if [[ ! $(grep "archlinuxcn" /etc/pacman.conf) ]]; then
         echo "[archlinuxcn]" | sudo tee -a /etc/pacman.conf
         # echo "Server = https://repo.archlinuxcn.org/\$arch" | sudo tee -a /etc/pacman.conf
-        echo "Server = Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/\$arch" \
+        echo "Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/\$arch" \
             | sudo tee -a /etc/pacman.conf
     fi
     sudo pacman --noconfirm -Syy && \

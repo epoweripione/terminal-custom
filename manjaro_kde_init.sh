@@ -34,8 +34,28 @@ fi
 # Show colorful output on the terminal
 sudo sed -i 's|^#Color|Color|' /etc/pacman.conf
 
+
+## Arch Linux Chinese Community Repository
+## https://github.com/archlinuxcn/mirrorlist-repo
+# read -p "Add Arch Linux Chinese Community Repository?[y/N]:" CHOICE
+## CHOICE=$(echo $CHOICE | sed 's/.*/\U&/')
+# if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]
+if [[ "$IP_GEO_IN_CHINA" == "yes" ]]; then
+    if [[ ! $(grep "archlinuxcn" /etc/pacman.conf) ]]; then
+        echo "[archlinuxcn]" | sudo tee -a /etc/pacman.conf
+        # echo "Server = https://repo.archlinuxcn.org/\$arch" | sudo tee -a /etc/pacman.conf
+        echo "Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/\$arch" \
+            | sudo tee -a /etc/pacman.conf
+    fi
+    sudo pacman --noconfirm -Syy && \
+        sudo pacman --noconfirm -S archlinuxcn-keyring && \
+        sudo pacman --noconfirm -S archlinuxcn-mirrorlist-git
+fi
+
+
 # Do full system update
-sudo pacman -Syyu
+sudo pacman --noconfirm -Syu
+
 
 # Virtualbox
 # https://forum.manjaro.org/t/howto-virtualbox-installation-usb-shared-folders/55905
@@ -43,15 +63,17 @@ sudo pacman -Syyu
 # Before installation ensure you are using VBoxSVGA graphics
 # run `mhwd` to check that it’s using video-virtualbox
 # mhwd -li && mhwd-kernel -li
-sudo pacman -S virtualbox-guest-utils \
-    linux$(uname -r|cut -d'.' -f1-2|sed 's/\.//')-virtualbox-guest-modules
-# MANJARO GUEST Configuration
-sudo gpasswd -a $USER vboxsf
-sudo systemctl enable --now vboxservice
-# LINUX Shared folders
-# Host Configuration: On the host locate the Settings section in VirtualBox GUI,
-# Make the folders Permanent and Automount
-tee -a "$HOME/vboxmount.sh" >/dev/null <<-'EOF'
+read -p "Install virtualbox-guest-utils?[y/N]:" CHOICE
+if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]; then
+    sudo pacman -S virtualbox-guest-utils \
+        linux$(uname -r|cut -d'.' -f1-2|sed 's/\.//')-virtualbox-guest-modules
+    # MANJARO GUEST Configuration
+    sudo gpasswd -a $USER vboxsf
+    sudo systemctl enable --now vboxservice
+    # LINUX Shared folders
+    # Host Configuration: On the host locate the Settings section in VirtualBox GUI,
+    # Make the folders Permanent and Automount
+    tee -a "$HOME/vboxmount.sh" >/dev/null <<-'EOF'
 #!/bin/sh
 #-----------------------------------------------------------------------------
 # Discover VirtualBox shared folders and mount them if it makes sense
@@ -86,5 +108,30 @@ MY_GID="$(id -g)"
     done
 EOF
 
-chmod +x "$HOME/vboxmount.sh"
-Install_systemd_Service "vboxmount" "$HOME/vboxmount.sh"
+    chmod +x "$HOME/vboxmount.sh"
+    Install_systemd_Service "vboxmount" "$HOME/vboxmount.sh"
+fi
+
+
+## Hyper-V
+## https://medium.com/@iceboundrock/%E5%9C%A8hyper-v%E9%87%8C%E5%AE%89%E8%A3%85manjaro-kde-1bdf810dbc10
+# sudo pacman --noconfirm -S lightdm lightdm-slick-greeter lightdm-settings
+# sudo systemctl enable lightdm.service --force
+## reboot
+# sudo pacman -R sddm-kcm sddm
+
+
+# RDP Server
+# http://www.xrdp.org/
+# https://wiki.archlinux.org/index.php/xrdp
+sudo pacman --noconfirm -S xrdp
+# yay --noconfirm -S xorgxrdp xrdp
+echo 'allowed_users=anybody' | sudo tee -a /etc/X11/Xwrapper.config
+sudo systemctl enable xrdp xrdp-sesman && \
+    sudo systemctl start xrdp xrdp-sesman
+
+## xrdp login failed with xorg
+## https://github.com/neutrinolabs/xrdp/issues/1554
+
+# RDP Client
+sudo pacman --noconfirm -S freerdp remmina
