@@ -1245,6 +1245,7 @@ function Git_Clone_Update() {
     local BRANCH=${3:-""}
     local REPOURL=${4:-github.com}
     local REPOREMOTE=""
+    local CurrentDir
 
     if [[ -z "$REPONAME" ]]; then
         colorEcho ${RED} "Error! Repository name can't empty!"
@@ -1258,24 +1259,23 @@ function Git_Clone_Update() {
     REPOREMOTE="https://${REPOURL}/${REPONAME}.git"
     if [[ -d "${REPODIR}/.git" ]]; then
         colorEcho ${BLUE} "  Updating ${REPONAME}..."
+
+        CurrentDir=$(pwd)
+
+        cd "$REPODIR"
         BRANCH=$(git symbolic-ref --short HEAD)
         [[ -z "$BRANCH" ]] && BRANCH="master"
-
-        cd "$REPODIR" && \
-            git pull --rebase --stat origin "$BRANCH"
+        git pull --rebase --stat origin "$BRANCH"
 
         ## master branch
-        # cd "$REPODIR" && \
-        #     git fetch --depth 1 && \
-        #     git reset --hard origin/master
+        # git fetch --depth 1 && git reset --hard origin/master
 
         ## checkout other branch
-        # cd "$REPODIR" && \
-        #     git remote set-branches --add orgin "'${remote_branch_name}'"
+        # git remote set-branches --add orgin "'${remote_branch_name}'"
         #     git fetch --depth 1 origin ${remote_branch_name} && \
         #     git checkout ${remote_branch_name}
 
-        cd - >/dev/null 2>&1
+        cd "${CurrentDir}"
     else
         colorEcho ${BLUE} "  Cloning ${REPONAME}..."
         BRANCH=$(git ls-remote --symref "$REPOREMOTE" HEAD \
