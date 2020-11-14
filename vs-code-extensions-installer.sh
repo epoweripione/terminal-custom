@@ -75,6 +75,7 @@ extensions=(
 	"tyriar.sort-lines"
 	"russell.any-rule"
 	"hediet.vscode-drawio"
+	"mqycn.huile8"
 )
 
 # How to export installed extensions list

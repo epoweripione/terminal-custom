@@ -199,7 +199,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "freedownloadmanager"
         "hashcheck"
         "motrix"
-        "powertoys"
+        # "powertoys"
         "q-dir"
         "syncbackfree"
         # "syncthing"

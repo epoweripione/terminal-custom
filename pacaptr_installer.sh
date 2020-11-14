@@ -42,7 +42,7 @@ if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; the
         CURRENT_VERSION="0.0.0"
         ECHO_TYPE="Installing" 
         # pacaptr config   
-        mkdir -p "/root/.config/pacaptr/"
+        sudo mkdir -p "/root/.config/pacaptr/"
         echo -e "dry_run = false\nneeded = true\nno_confirm = false\nforce_cask = false\nno_cache = false" \
             | sudo tee "/root/.config/pacaptr/pacaptr.toml" >/dev/null
     fi

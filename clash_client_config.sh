@@ -160,7 +160,7 @@ colorEcho ${BLUE} "  Getting subscription rules..."
 RULES=""
 
 if [[ -s "/etc/clash/${SUB_URL_TXT}" ]]; then
-    RULES_URL=$(head -n1 /etc/clash/${SUB_URL_TXT})
+    RULES_URL=$(head -n1 "/etc/clash/${SUB_URL_TXT}")
 else
     if [[ ${RULES_LINE} -gt 0 ]]; then
         RULES_URL=$(sed -n "${RULES_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
@@ -380,7 +380,7 @@ for TargetName in "${PROXY_NAME[@]}"; do
         | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
         | sed 's/]/\\&/g')
 
-    if [[ "${PROXY_TYPE[$PROXY_INDEX]}" == "ss" ]]; then
+    if [[ "${PROXY_TYPE[$PROXY_INDEX]}" == "ss" || "${PROXY_TYPE[$PROXY_INDEX]}" == "ssr" ]]; then
         PROXY=$(echo "$PROXY" | sed "/name:\s*${TargetName},/d")
         PROXY_GROUP=$(echo "$PROXY_GROUP" | sed "/^\s*\-\s*${TargetName}$/d")
     fi

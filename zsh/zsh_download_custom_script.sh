@@ -68,6 +68,7 @@ chmod +x ~/croc_installer.sh
 chmod +x ~/conda_python_installer.sh
 chmod +x ~/docker_installer.sh
 chmod +x ~/duf_installer.sh
+chmod +x ~/exa_installer.sh
 chmod +x ~/geoip_installer.sh
 chmod +x ~/gitflow_installer.sh
 chmod +x ~/gvm_go_installer.sh

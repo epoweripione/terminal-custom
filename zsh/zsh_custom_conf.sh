@@ -238,6 +238,13 @@ if [[ -x "$(command -v brew)" ]]; then
     export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
 fi
 
+# exa
+if [[ -x "$(command -v exa)" ]]; then
+    alias exal="exa -aghl --icons --git --time-style=long-iso"
+    alias exaa="exa -abghHliS --icons --git --time-style=long-iso"
+    alias exat="exa --tree --icons"
+fi
+
 # PHP
 if [[ -x "$(command -v php)" ]]; then
     export PHP_INI_DIR=$(php --ini | grep "Scan for additional .ini files in" | cut -d':' -f2 | cut -d' ' -f2)

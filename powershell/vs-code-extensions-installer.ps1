@@ -69,6 +69,7 @@ $extensions = @(
 	"tyriar.sort-lines"
 	"russell.any-rule"
 	"hediet.vscode-drawio"
+	"mqycn.huile8"
 )
 
 $cmd = "code --list-extensions"

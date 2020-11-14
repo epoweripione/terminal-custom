@@ -66,12 +66,10 @@ fi
 
 
 # tmux
-if [[ ! -x "$(command -v tmux)" ]]; then
-    if [[ -x "$(command -v pacman)" ]]; then
-        if pacman -Si tmux >/dev/null 2>&1; then
-            colorEcho ${BLUE} "Installing tmux..."
-            sudo pacman --noconfirm -S tmux
-        fi
+if [[ ! -x "$(command -v tmux)" ]] && [[ -x "$(command -v pacman)" ]]; then
+    if pacman -Si tmux >/dev/null 2>&1; then
+        colorEcho ${BLUE} "Installing tmux..."
+        sudo pacman --noconfirm -S tmux
     fi
 fi
 
@@ -82,8 +80,7 @@ if [[ -x "$(command -v tmux)" ]]; then
     if [[ ! -s "$HOME/.tmux.conf.local" ]]; then
         cd $HOME && \
             ln -s -f .tmux/.tmux.conf && \
-            cp .tmux/.tmux.conf.local . && \
-            cd - >/dev/null
+            cp .tmux/.tmux.conf.local .
     fi
     # custom settings for tmux
     if [[ -s "$HOME/.tmux.conf.local" ]]; then
@@ -97,12 +94,10 @@ fi
 
 
 # neofetch
-if [[ ! -x "$(command -v neofetch)" ]]; then
-    if [[ -x "$(command -v pacman)" ]]; then
-        if pacman -Si neofetch >/dev/null 2>&1; then
-            colorEcho ${BLUE} "Installing neofetch..."
-            sudo pacman --noconfirm -S neofetch
-        fi
+if [[ ! -x "$(command -v neofetch)" ]] && [[ -x "$(command -v pacman)" ]]; then
+    if pacman -Si neofetch >/dev/null 2>&1; then
+        colorEcho ${BLUE} "Installing neofetch..."
+        sudo pacman --noconfirm -S neofetch
     fi
 fi
 
@@ -126,24 +121,19 @@ fi
 
 
 # fzf
-if [[ ! -x "$(command -v fzf)" ]]; then
-    if [[ -x "$(command -v pacman)" ]]; then
-        if pacman -Si fzf >/dev/null 2>&1; then
-            colorEcho ${BLUE} "Installing fzf..."
-            sudo pacman --noconfirm -S fzf
-        fi
+if [[ ! -x "$(command -v fzf)" ]] && [[ -x "$(command -v pacman)" ]]; then
+    if pacman -Si fzf >/dev/null 2>&1; then
+        colorEcho ${BLUE} "Installing fzf..."
+        sudo pacman --noconfirm -S fzf
     fi
 fi
 
-if [[ $UID -eq 0 ]]; then
+if [[ ! -x "$(command -v fzf)" ]]; then
     Git_Clone_Update "junegunn/fzf" "$HOME/.fzf"
-
-    if [[ ! -x "$(command -v fzf)" ]]; then
-        colorEcho ${BLUE} "Installing fzf..."
-        $HOME/.fzf/install
-    elif [[ -d "$HOME/.fzf" ]]; then
-        cd "$HOME/.fzf" && ./install --bin && cd - >/dev/null
-    fi
+    $HOME/.fzf/install
+elif [[ -d "$HOME/.fzf" ]]; then
+    Git_Clone_Update "junegunn/fzf" "$HOME/.fzf"
+    $HOME/.fzf/install --bin
 fi
 
 
@@ -153,7 +143,7 @@ fi
 #     colorEcho ${BLUE} "Installing navi..."
 #     cd /opt/navi && sudo make install
 # elif [[ -d "/opt/navi" ]]; then
-#     cd /opt/navi && sudo make update && cd - /dev/null
+#     cd /opt/navi && sudo make update
 # fi
 
 
