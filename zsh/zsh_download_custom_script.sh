@@ -32,14 +32,18 @@ MY_SHELL_SCRIPTS="${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}"
 
 colorEcho ${BLUE} "Cloning custom shell scripts repository to $HOME/terminal-custom..."
 if [[ -d "${MY_SHELL_SCRIPTS}" ]]; then
-    cd "${MY_SHELL_SCRIPTS}" && git pull --rebase --stat origin master
+    cd "${MY_SHELL_SCRIPTS}" && \
+        BRANCH=$(git symbolic-ref --short HEAD) && \
+        git pull --rebase --stat origin "${BRANCH:-master}"
 else
-    git clone -c core.eol=lf -c core.autocrlf=false \
+    REPOREMOTE="https://github.com/epoweripione/terminal-custom.git"
+    BRANCH=$(git ls-remote --symref "$REPOREMOTE" HEAD \
+                | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
+    git clone -c core.autocrlf=false -c core.filemode=false \
         -c fsck.zeroPaddedFilemode=ignore \
         -c fetch.fsck.zeroPaddedFilemode=ignore \
         -c receive.fsck.zeroPaddedFilemode=ignore \
-        --depth=1 --branch master \
-        https://github.com/epoweripione/terminal-custom.git "${MY_SHELL_SCRIPTS}"
+        --depth=1 --branch "${BRANCH:-master}" "$REPOREMOTE" "${MY_SHELL_SCRIPTS}"
 fi
 
 
