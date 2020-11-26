@@ -57,6 +57,18 @@
 # Get-FileHash -Path <filename> -Algorithm <MD5,SHA1,SHA256,SHA384,SHA512>
 
 
+## Get commands
+# Get-Command -ListImported
+# Get-Command -Type Cmdlet | Sort-Object -Property Noun | Format-Table -GroupBy Noun
+# Get-Command -Module Microsoft.PowerShell.Security, Microsoft.PowerShell.Utility
+
+
+## Gets the properties and methods of objects
+# Get-Service | Get-Member
+# $fontList = [Windows.Media.Fonts]::SystemFontFamilies
+# $fontList | Get-Member
+
+
 ## Manage System Services
 ## https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/get-service
 # Get-Service -Name "win*" -Exclude "WinRM"

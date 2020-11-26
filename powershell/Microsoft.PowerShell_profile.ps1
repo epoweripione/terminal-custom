@@ -5,13 +5,15 @@ if ((Test-Path "$PS_CUSTOM_FUNCTION") -and ((Get-Item "$PS_CUSTOM_FUNCTION").len
 
 
 Import-Module Find-String
+Import-Module Posh-git
+
 # Import-Module PSColors
 # Import-Module TabExpansionPlusPlus
 
-Import-Module Posh-git
-Import-Module oh-my-posh
+# Import-Module PoshFunctions
 
-Set-Theme Powerlevel10k-my
+# Import-Module oh-my-posh
+# Set-Theme Powerlevel10k-my
 
 ## Color coding Get-ChildItem
 # Import-Module Get-ChildItemColor
@@ -114,3 +116,8 @@ Set-Alias ssb SearchScoopBucket
 Set-Alias ums UpdateMyScript
 Set-Alias hosts EditHosts
 Set-Alias history EditHistory
+
+## https://starship.rs/
+if (Get-Command "starship" -ErrorAction SilentlyContinue) {
+    Invoke-Expression (&starship init powershell)
+}

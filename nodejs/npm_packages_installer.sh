@@ -1,13 +1,13 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
 else
-    if [[ -s "$HOME/custom_functions.sh" ]]; then
-        source "$HOME/custom_functions.sh"
+    if [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh" ]]; then
+        source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh"
     else
-        echo "$HOME/custom_functions.sh not exist!"
+        echo "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh not exist!"
         exit 0
     fi
 fi

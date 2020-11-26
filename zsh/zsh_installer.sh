@@ -1,9 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## How to use
 ## 1. Install curl first
 ## 2. Install zsh and oh-my-zsh: source <(curl -sL https://git.io/fA8Jb)
 ##                               source <(curl -sL http://t.cn/AigJm9ut)
+
+trap 'rm -r "$WORKDIR"' EXIT
+
+[[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
+[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
 #######color code########
 RED="31m"      # Error message
@@ -56,9 +61,8 @@ if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; the
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "${ECHO_TYPE} pacaptr - Pacman-like syntax wrapper for many package managers..."
         DOWNLOAD_URL="https://github.com/rami3l/pacaptr/releases/download/v${REMOTE_VERSION}/pacaptr-${OS_TYPE}-amd64.tar.gz"
-        curl -SL -o "/tmp/pacaptr.tar.gz" -C- "$DOWNLOAD_URL" && \
-            sudo tar -zxPf "/tmp/pacaptr.tar.gz" -C "/usr/local/bin" && \
-            rm -f "/tmp/pacaptr.tar.gz" && \
+        curl -SL -o "${WORKDIR}/pacaptr.tar.gz" -C- "$DOWNLOAD_URL" && \
+            sudo tar -zxPf "${WORKDIR}/pacaptr.tar.gz" -C "/usr/local/bin" && \
             sudo ln -sv "/usr/local/bin/pacaptr" "/usr/bin/pacman" || true
     fi
 fi
@@ -85,8 +89,14 @@ if [[ -x "$(command -v pacman)" ]]; then
     # jq
     # https://stedolan.github.io/jq/
 
+    ## https://github.com/man-pages-zh/manpages-zh
+    sudo localedef -i zh_CN -c -f UTF-8 -A /usr/share/locale/locale.alias zh_CN.UTF-8
+    # alias man="LC_MESSAGES=zh_CN.UTF-8 man"
+    # alias man="man -Lzh_CN"
+
     # Pre-requisite packages
     PackagesList=(
+        rsync
         geoip
         GeoIP
         geoip-bin
@@ -99,6 +109,10 @@ if [[ -x "$(command -v pacman)" ]]; then
         jq
         connect-proxy
         netcat-openbsd
+        man
+        manpages-zh
+        man-pages-zh_cn
+        man-pages-zh-CN
     )
     for TargetPackage in "${PackagesList[@]}"; do
         if pacman -Si "$TargetPackage" >/dev/null 2>&1; then
@@ -138,15 +152,13 @@ if [[ ! -x "$(command -v zsh)" ]]; then
 
         if [[ -n "$REMOTE_VERSION" ]]; then
             DOWNLOAD_URL="https://nchc.dl.sourceforge.net/project/zsh/zsh/${REMOTE_VERSION}/zsh-${REMOTE_VERSION}.tar.xz"
-            sudo curl -SL -o "/tmp/zsh.tar.xz" "$DOWNLOAD_URL" && \
-                sudo tar xJvf "/tmp/zsh.tar.xz" -C "/tmp" && \
-                sudo mv /tmp/zsh-* "/tmp/zsh" && \
-                cd "/tmp/zsh" && \
+            sudo curl -SL -o "${WORKDIR}/zsh.tar.xz" "$DOWNLOAD_URL" && \
+                sudo tar xJvf "${WORKDIR}/zsh.tar.xz" -C "${WORKDIR}" && \
+                sudo mv ${WORKDIR}/zsh-* "${WORKDIR}/zsh" && \
+                cd "${WORKDIR}/zsh" && \
                 sudo ./configure && \
                 sudo make && \
-                sudo make install && \
-                sudo rm -f "/tmp/zsh.tar.xz" && \
-                sudo rm -rf "/tmp/zsh"
+                sudo make install
         fi
 
         if [[ ! -x "$(command -v zsh)" ]]; then
@@ -174,8 +186,8 @@ if [[ ! -x "$(command -v zsh)" ]]; then
 fi
 
 
-if [[ -x "$(command -v git)" && -s "$HOME/git_global_config.sh" ]]; then
-    source "$HOME/git_global_config.sh"
+if [[ -x "$(command -v git)" && -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/git/git_global_config.sh" ]]; then
+    source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/git/git_global_config.sh"
 fi
 
 
@@ -184,10 +196,10 @@ fi
 
 
 # Launch ZSH in BASH
-ostype_wsl=$(uname -r)
+OS_WSL=$(uname -r)
 
 # WSL1 & WSL2
-if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
+if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
     if [[ ! $(grep "exec zsh" ~/.bashrc) ]]; then
         tee -a ~/.bashrc >/dev/null <<-'EOF'
 
@@ -201,10 +213,12 @@ EOF
 fi
 
 ## Install oh-my-zsh
-if [[ -d ~/.oh-my-zsh ]]; then
+if [[ -d "$HOME/.oh-my-zsh" ]]; then
     colorEcho ${BLUE} "Updating oh-my-zsh..."
-    cd ~/.oh-my-zsh && git pull && cd ~
+    cd "$HOME/.oh-my-zsh" && git pull
 else
     colorEcho ${BLUE} "Installing oh-my-zsh..."
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 fi
+
+cd "${CURRENT_DIR}"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 os_check() {
         if [ -e /etc/redhat-release ]; then

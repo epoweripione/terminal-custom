@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## Shell script to check SSL certificate info like expiration date and subject.
 ## From https://gist.github.com/stevenringo/2fe5000d8091f800aee4bb5ed1e800a6

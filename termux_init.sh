@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## termux: required storage access permission 
 
@@ -43,16 +43,16 @@
 ## init termux
 # source <(curl -sL https://git.io/fNpeJ) && ./termux_init.sh
 
-CURRENT_DIR=$(pwd)
+[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
 else
-    if [[ -s "$HOME/custom_functions.sh" ]]; then
-        source "$HOME/custom_functions.sh"
+    if [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh" ]]; then
+        source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh"
     else
-        echo "$HOME/custom_functions.sh not exist!"
+        echo "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh not exist!"
         exit 0
     fi
 fi

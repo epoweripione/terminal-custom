@@ -1,31 +1,38 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
-CURRENT_DIR=$(pwd)
+trap 'rm -r "$WORKDIR"' EXIT
+
+[[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
+[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
+
+[[ -z "$MY_SHELL_SCRIPTS" ]] && MY_SHELL_SCRIPTS="$HOME/terminal-custom"
 
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
 else
-    if [[ -s "$HOME/custom_functions.sh" ]]; then
-        source "$HOME/custom_functions.sh"
+    if [[ -s "${MY_SHELL_SCRIPTS}/custom_functions.sh" ]]; then
+        source "${MY_SHELL_SCRIPTS}/custom_functions.sh"
     else
-        echo "$HOME/custom_functions.sh not exist!"
+        echo "${MY_SHELL_SCRIPTS}/custom_functions.sh not exist!"
         exit 0
     fi
 fi
 
 ## Setting by pass gfw proxy
-[[ -s "$HOME/cross_gfw_config.sh" ]] && source "$HOME/cross_gfw_config.sh"
+[[ -s "${MY_SHELL_SCRIPTS}/cross/cross_gfw_config.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/cross_gfw_config.sh"
 CURL_SPECIAL_CONFIG=${CURL_SPECIAL_CONFIG:-"$HOME/.curl_socks5"}
 
-# ostype: darwin, windows, linux, bsd, solaris
-# spruce_type: amd64, 386
-# VDIS: 64, 32, arm, arm64, mips64le, mips64, mipsle, mips, s390x, ppc64le, ppc64
-[[ -z "$spruce_type" ]] && get_os_type && get_arch && get_sysArch
+# OS Type: darwin, windows, linux, bsd, solaris
+# Arch(spruce_type): amd64, 386, arm, arm64, mips64le, mips64, mipsle, mips, s390x, ppc64le, ppc64, riscv64
+# VDIS: 64, 32, arm, arm64, mips64le, mips64, mipsle, mips, s390x, ppc64le, ppc64, riscv64
+[[ -z "$OS_INFO_TYPE" ]] && get_os_type
+[[ -z "$OS_INFO_ARCH" ]] && get_arch
+[[ -z "$OS_INFO_VDIS" ]] && get_sysArch
 
-# [[ -s "$HOME/pacapt_installer.sh" ]] && source "$HOME/pacapt_installer.sh"
+# [[ -s "${MY_SHELL_SCRIPTS}/installer/pacapt_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/pacapt_installer.sh"
 
-[[ -s "$HOME/pacaptr_installer.sh" ]] && source "$HOME/pacaptr_installer.sh"
+[[ -s "${MY_SHELL_SCRIPTS}/installer/pacaptr_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/pacaptr_installer.sh"
 
 
 colorEcho ${BLUE} "Updating system packages..."
@@ -58,10 +65,10 @@ if [[ -x "$(command -v docker-compose)" ]]; then
     CURRENT_VERSION=$(docker-compose -v | cut -d',' -f1 | cut -d' ' -f3)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        DOWNLOAD_URL=https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`
-        curl -SL --config ${CURL_SPECIAL_CONFIG} -o /tmp/docker-compose -C- $DOWNLOAD_URL && \
-            sudo mv -f /tmp/docker-compose /usr/local/bin/docker-compose && \
-            sudo chmod +x /usr/local/bin/docker-compose
+        DOWNLOAD_URL="https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
+        curl -SL --config ${CURL_SPECIAL_CONFIG} -o "${WORKDIR}/docker-compose" -C- $DOWNLOAD_URL && \
+            sudo mv -f "${WORKDIR}/docker-compose" "/usr/local/bin/docker-compose" && \
+            sudo chmod +x "/usr/local/bin/docker-compose"
     fi
 fi
 
@@ -79,10 +86,10 @@ if [[ -x "$(command -v ctop)" ]]; then
     CURRENT_VERSION=$(ctop -v | cut -d',' -f1 | cut -d' ' -f3)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        DOWNLOAD_URL=https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}
-        curl -SL --config ${CURL_SPECIAL_CONFIG} -o /tmp/ctop -C- $DOWNLOAD_URL && \
-            sudo mv -f /tmp/ctop /usr/local/bin/ctop && \
-            sudo chmod +x /usr/local/bin/ctop
+        DOWNLOAD_URL="https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}"
+        curl -SL --config ${CURL_SPECIAL_CONFIG} -o "${WORKDIR}/ctop" -C- $DOWNLOAD_URL && \
+            sudo mv -f "${WORKDIR}/ctop" "/usr/local/bin/ctop" && \
+            sudo chmod +x "/usr/local/bin/ctop"
     fi
 fi
 
@@ -243,11 +250,9 @@ if [[ -d "/etc/proxy" && -x "$(command -v proxy)" ]]; then
         # curl -SL \
         #     https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh \
         # | sudo bash
-        DOWNLOAD_URL=https://github.com/snail007/goproxy/releases/download/v${REMOTE_VERSION}/proxy-${ostype}-${spruce_type}.tar.gz
+        DOWNLOAD_URL="https://github.com/snail007/goproxy/releases/download/v${REMOTE_VERSION}/proxy-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.gz"
         curl -SL --config ${CURL_SPECIAL_CONFIG} -o proxy-linux-amd64.tar.gz -C- $DOWNLOAD_URL && \
-            curl -SL \
-                https://raw.githubusercontent.com/snail007/goproxy/master/install.sh \
-            | sudo bash && \
+            curl -SL "https://raw.githubusercontent.com/snail007/goproxy/master/install.sh" | sudo bash && \
             rm -f proxy-linux-amd64.tar.gz
     fi
 fi
@@ -267,45 +272,8 @@ if [[ -x "$(command -v proxy-admin)" ]]; then
     CHECK_URL="https://api.github.com/repos/snail007/proxy_admin_free/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        curl -SL \
-            https://raw.githubusercontent.com/snail007/proxy_admin_free/master/install_auto.sh \
-        | sudo bash
-
-        echo ${REMOTE_VERSION} | sudo tee /etc/gpa/.version >/dev/null
-    fi
-fi
-
-
-if [[ -d "/srv/frp" ]]; then
-    colorEcho ${BLUE} "Updating frp..."
-    # https://github.com/fatedier/frp
-
-    CHECK_URL="https://api.github.com/repos/fatedier/frp/releases/latest"
-
-    CURRENT_VERSION=$(/srv/frp/frps --version 2>&1)
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        if pgrep -f "frps" >/dev/null 2>&1; then
-            pkill -f "frps"
-        fi
-
-        DOWNLOAD_URL=https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_${ostype}_${spruce_type}.tar.gz
-        curl -SL --config ${CURL_SPECIAL_CONFIG} -o frp.tar.gz -C- $DOWNLOAD_URL && \
-            tar -zxPf frp.tar.gz -C /srv/ && \
-            rm frp.tar.gz && \
-            mkdir -p /srv/backup_frp && \
-            cp -f /srv/frp/*.ini /srv/backup_frp && \
-            rm -f /srv/backup_frp/frpc_full.ini && \
-            rm -f /srv/backup_frp/frps_full.ini && \
-            rm -rf /srv/frp && \
-            mkdir -p /srv/frp && \
-            cp -rf /srv/frp_*/* /srv/frp && \
-            cp -f /srv/backup_frp/*.ini /srv/frp && \
-            rm -rf /srv/frp_*
-
-        if [[ -s "/srv/frp/frps.ini" ]]; then
-            nohup /srv/frp/frps -c /srv/frp/frps.ini >/dev/null 2>&1 & disown
-        fi
+        curl -SL "https://raw.githubusercontent.com/snail007/proxy_admin_free/master/install_auto.sh" | sudo bash
+        echo ${REMOTE_VERSION} | sudo tee "/etc/gpa/.version" >/dev/null
     fi
 fi
 
@@ -355,10 +323,9 @@ if [[ -s "/srv/trojan/trojan" ]]; then
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         [[ $(systemctl is-enabled trojan 2>/dev/null) ]] && sudo systemctl stop trojan
 
-        DOWNLOAD_URL=https://github.com/trojan-gfw/trojan/releases/download/v${REMOTE_VERSION}/trojan-${REMOTE_VERSION}-${ostype}-${spruce_type}.tar.xz
-        curl -SL -o trojan.tar.xz -C- $DOWNLOAD_URL && \
-            tar -JxPf trojan.tar.xz -C /srv/ && \
-            rm trojan.tar.xz
+        DOWNLOAD_URL="https://github.com/trojan-gfw/trojan/releases/download/v${REMOTE_VERSION}/trojan-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.xz"
+        curl -SL -o "${WORKDIR}/trojan.tar.xz" -C- $DOWNLOAD_URL && \
+            tar -JxPf "${WORKDIR}/trojan.tar.xz" -C "/srv/"
 
         if [[ ! -s "/etc/systemd/system/trojan.service" ]]; then
             sudo cp -f /srv/trojan/examples/trojan.service-example /etc/systemd/system/trojan.service
@@ -370,24 +337,26 @@ if [[ -s "/srv/trojan/trojan" ]]; then
             # sudo systemctl enable trojan && sudo systemctl start trojan
             [[ $(systemctl is-enabled trojan 2>/dev/null) ]] && sudo systemctl restart trojan
         else
-            sudo mkdir -p /etc/trojan && \
-                sudo cp -f /srv/trojan/examples/server.json-example /etc/trojan/trojan.json
+            sudo mkdir -p "/etc/trojan" && \
+                sudo cp -f "/srv/trojan/examples/server.json-example" "/etc/trojan/trojan.json"
         fi
     fi
 fi
 
 
-# [[ -s "$HOME/proxychains_installer.sh" ]] && source "$HOME/proxychains_installer.sh"
+# [[ -s "${MY_SHELL_SCRIPTS}/installer/proxychains_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/proxychains_installer.sh"
 
-[[ -s "$HOME/nano_installer.sh" ]] && source "$HOME/nano_installer.sh"
+[[ -s "${MY_SHELL_SCRIPTS}/installer/frp_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/frp_installer.sh"
 
-[[ -s "$HOME/bat_installer.sh" ]] && source "$HOME/bat_installer.sh"
+[[ -s "${MY_SHELL_SCRIPTS}/installer/nano_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/nano_installer.sh"
 
-[[ -s "$HOME/croc_installer.sh" ]] && source "$HOME/croc_installer.sh"
+[[ -s "${MY_SHELL_SCRIPTS}/installer/bat_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/bat_installer.sh"
 
-[[ -s "$HOME/duf_installer.sh" ]] && source "$HOME/duf_installer.sh"
+[[ -s "${MY_SHELL_SCRIPTS}/installer/croc_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/croc_installer.sh"
 
-[[ -s "$HOME/exa_installer.sh" ]] && source "$HOME/exa_installer.sh"
+[[ -s "${MY_SHELL_SCRIPTS}/installer/duf_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/duf_installer.sh"
+
+[[ -s "${MY_SHELL_SCRIPTS}/installer/exa_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/exa_installer.sh"
 
 
 if [[ -x "$(command -v conda)" ]]; then
@@ -399,26 +368,26 @@ if [[ -x "$(command -v conda)" ]]; then
 fi
 
 
-if [[ -d "$HOME/.nvm" && -s "$HOME/nvm_node_update.sh" ]]; then
-    source "$HOME/nvm_node_update.sh"
+if [[ -d "$HOME/.nvm" && -s "${MY_SHELL_SCRIPTS}/nodejs/nvm_node_updater.sh" ]]; then
+    source "${MY_SHELL_SCRIPTS}/nodejs/nvm_node_updater.sh"
 fi
 
 
-if [[ -d "$HOME/.nvs" && -s "$HOME/nvs_node_update.sh" ]]; then
-    source "$HOME/nvs_node_update.sh"
+if [[ -d "$HOME/.nvs" && -s "${MY_SHELL_SCRIPTS}/nodejs/nvs_node_updater.sh" ]]; then
+    source "${MY_SHELL_SCRIPTS}/nodejs/nvs_node_updater.sh"
 fi
 
 
 if [[ -n "$ZSH" ]]; then
-    if [[ -s "$HOME/zsh_update.sh" ]]; then
+    if [[ -s "${MY_SHELL_SCRIPTS}/zsh/zsh_update.sh" ]]; then
         colorEcho ${BLUE} "Updating oh-my-zsh & custom stuff..."
-        source "$HOME/zsh_update.sh"
+        source "${MY_SHELL_SCRIPTS}/zsh/zsh_update.sh"
         # -i : Force shell to be interactive
         # Then, if the shell is interactive, 
         # commands are read from /etc/zshrc 
         # and then $ZDOTDIR/.zshrc (this is usually your $HOME/.zshrc)
         # -c : Run a command in this shell
-        # zsh -i -c "$HOME/zsh_update.sh"
+        # zsh -i -c "${MY_SHELL_SCRIPTS}/zsh/zsh_update.sh"
     fi
 fi
 

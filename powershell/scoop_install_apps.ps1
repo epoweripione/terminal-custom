@@ -160,6 +160,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
 
     $Apps = @(
         "vcredist"
+        # "starship"
         "googlechrome-dev"
         # "chromium"
         # "chromium-dev-nosync"

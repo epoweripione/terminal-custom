@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 git config --global core.autocrlf false
 git config --global core.safecrlf true

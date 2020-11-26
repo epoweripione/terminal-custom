@@ -1,6 +1,6 @@
 # Custom theme configuration
 
-ostype=$(uname)
+OS_TYPE=$(uname)
 
 # command time & prompt time
 DISABLE_ZSH_COMMAND_TIME_MSG=true
@@ -15,7 +15,7 @@ AGNOSTERZAK_PROMPT_TIME_THRESHOLD=5
 AGNOSTERZAK_GIT_SHOW_CHANGESET=true
 AGNOSTERZAK_GIT_CHANGESET_HASH_LENGTH=6
 
-if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
+if [[ $OS_TYPE =~ "MSYS_NT" || $OS_TYPE =~ "MINGW" || $OS_TYPE =~ "CYGWIN_NT" ]]; then
     AGNOSTERZAK_GIT_SHOW_STASH=false
     AGNOSTERZAK_GIT_SHOW_TAGS=false
     AGNOSTERZAK_GIT_SHOW_UPSTREAM=false

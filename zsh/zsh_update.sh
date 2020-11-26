@@ -1,4 +1,9 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
+
+trap 'rm -r "$WORKDIR"' EXIT
+
+[[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
+[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
 if [[ -z "$ZSH" ]]; then
     colorEcho ${RED} "Please install ZSH & Oh-my-zsh first!"
@@ -7,20 +12,21 @@ else
     [[ -z "$ZSH_CUSTOM" ]] && ZSH_CUSTOM="$ZSH/custom"
 fi
 
+[[ -z "$MY_SHELL_SCRIPTS" ]] && MY_SHELL_SCRIPTS="$HOME/terminal-custom"
+
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
 else
-    if [[ -s "$HOME/custom_functions.sh" ]]; then
-        source "$HOME/custom_functions.sh"
+    if [[ -s "${MY_SHELL_SCRIPTS}/custom_functions.sh" ]]; then
+        source "${MY_SHELL_SCRIPTS}/custom_functions.sh"
     else
-        echo "$HOME/custom_functions.sh not exist!"
+        echo "${MY_SHELL_SCRIPTS}/custom_functions.sh not exist!"
         exit 0
     fi
 fi
 
-[[ -z "$ostype" ]] && get_os_type
-[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
+[[ -z "$OS_INFO_TYPE" ]] && get_os_type
 
 
 ## oh-my-zsh custom plugins & themes
@@ -40,12 +46,11 @@ if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
     fi
 
     if [[ -n "$OHMYZSH_CUSTOM_URL" ]]; then
-        wget -c -O "/tmp/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
+        wget -c -O "${WORKDIR}/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
             find "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}" -mindepth 2 -maxdepth 2 \
                 ! -name "example*" -exec /bin/rm -rf {} \; && \
-            unzip -qo "/tmp/oh-my-zsh-custom.zip" -d "$ZSH" && \
-            rm -f "/tmp/oh-my-zsh-custom.zip"
-        # wget -c -O "/tmp/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
+            unzip -qo "${WORKDIR}/oh-my-zsh-custom.zip" -d "$ZSH"
+        # wget -c -O "${WORKDIR}/oh-my-zsh-custom.zip" "${OHMYZSH_CUSTOM_URL}" && \
         #     cd "$ZSH_CUSTOM" && \
         #     find "$ZSH_CUSTOM" -maxdepth 2 -regextype posix-extended \
         #         ! \( -path "." \
@@ -54,8 +59,7 @@ if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
         #             -or -path "./plugins/example" \
         #             -or -name "example.*" \
         #         \) -exec rm -rf {} \; && \
-        #     unzip -qo "/tmp/oh-my-zsh-custom.zip" -d "$ZSH" && \
-        #     rm -f "/tmp/oh-my-zsh-custom.zip"
+        #     unzip -qo "${WORKDIR}/oh-my-zsh-custom.zip" -d "$ZSH"
     fi
 fi
 
@@ -104,9 +108,9 @@ fi
 if [[ ! -x "$(command -v neofetch)" ]]; then
     Git_Clone_Update "dylanaraps/neofetch" "$HOME/neofetch"
 
-    if [[ $ostype == "darwin" ]]; then
+    if [[ $OS_INFO_TYPE == "darwin" ]]; then
         cd $HOME/neofetch && sudo make PREFIX=/usr/local install
-    elif [[ $ostype =~ "windows" ]]; then
+    elif [[ $OS_INFO_TYPE =~ "windows" ]]; then
         cd $HOME/neofetch && sudo make -i install
     else
         cd $HOME/neofetch && sudo make install
@@ -155,7 +159,7 @@ colorEcho ${BLUE} "Oh-my-zsh custom plugins..."
 # sh -c "$(curl -fsSL https://raw.githubusercontent.com/psprint/zsh-navigation-tools/master/doc/install.sh)"
 
 # fast-syntax-highlighting
-if [[ $ostype != "windows" ]]; then
+if [[ $OS_INFO_TYPE != "windows" ]]; then
     Git_Clone_Update "zdharma/fast-syntax-highlighting" \
         "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"
 fi
@@ -235,7 +239,7 @@ Plugins="git"
 
 [[ "$(command -v git-flow)" ]] && Plugins="${Plugins} git-flow-completion"
 
-[[ $ostype == "darwin" ]] && Plugins="${Plugins} osx"
+[[ $OS_INFO_TYPE == "darwin" ]] && Plugins="${Plugins} osx"
 
 Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 # Plugins="${Plugins} command-time"
@@ -253,16 +257,15 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 
 [[ "$(command -v fuck)" ]] && Plugins="${Plugins} thefuck"
 
-Plugins="${Plugins} zsh-interactive-cd zsh-autosuggestions"
+Plugins="${Plugins} zsh-interactive-cd zsh-autosuggestions fast-syntax-highlighting history-substring-search"
 
-# Plugins="${Plugins} zsh-syntax-highlighting"
-if [[ $ostype == "windows" ]]; then
-    Plugins="${Plugins} zsh-syntax-highlighting"
-else
-    Plugins="${Plugins} fast-syntax-highlighting"
-fi
+# if [[ $OS_INFO_TYPE == "windows" ]]; then
+#     Plugins="${Plugins} zsh-syntax-highlighting"
+# else
+#     Plugins="${Plugins} fast-syntax-highlighting"
+# fi
 
-Plugins="${Plugins} history-substring-search"
+# Plugins="${Plugins} history-substring-search"
 
 
 PluginList=($(echo ${Plugins}))

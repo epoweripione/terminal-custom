@@ -50,14 +50,15 @@ if (-Not (Get-Module -Name "PSReadLine")) {
     }
 }
 
-$ModuleNames = @(
+$InstallModules = @(
     "Find-String"
     "Posh-git"
     "oh-my-posh"
     "Get-ChildItemColor"
+    "PoshFunctions"
 )
 
-foreach ($TargetModule in $ModuleNames) {
+foreach ($TargetModule in $InstallModules) {
     if (-Not (Get-Module -Name $TargetModule)) {
         if (($null -eq $PROXY_ADDR) -or ($PROXY_ADDR -eq "")) {
             Install-Module -Name $TargetModule `
@@ -70,29 +71,32 @@ foreach ($TargetModule in $ModuleNames) {
     }
 }
 
-foreach ($TargetModule in $ModuleNames) {
-    if (Get-Module -Name $TargetModule) {
-        if (-Not (Get-Module -Name $TargetModule)) {
-            Add-Content $PROFILE "Import-Module $TargetModule"
-        }
+$EnableModules = @(
+    "Find-String"
+    "Posh-git"
+)
+
+foreach ($TargetModule in $EnableModules) {
+    if (-Not (Get-Module -Name $TargetModule)) {
+        Add-Content $PROFILE "Import-Module $TargetModule"
     }
 }
 
-# theme
-Write-Host "Setting powershell theme..." -ForegroundColor Blue
-$THEME_DIR = "~\Documents\PowerShell\PoshThemes"
-$THEME_FILE = "$THEME_DIR\Powerlevel10k-my.psm1"
-if (-Not (Test-Path $THEME_DIR)) {New-Item -path $THEME_DIR -type Directory | Out-Null}
-# Copy-Item "$env:SystemDrive\cmder\Paradox-my.psm1" -Destination "$THEME_DIR"
-if (-Not (Test-Path $THEME_FILE)) {
-    $DOWNLOAD_URL = "https://raw.githubusercontent.com/epoweripione/terminal-custom/master/powershell/Powerlevel10k-my.psm1"
-    $p = New-Object System.Net.WebClient
-    $p.DownloadFile($DOWNLOAD_URL, $THEME_FILE)
-}
+## theme
+# Write-Host "Setting powershell theme..." -ForegroundColor Blue
+# $THEME_DIR = "~\Documents\PowerShell\PoshThemes"
+# $THEME_FILE = "$THEME_DIR\Powerlevel10k-my.psm1"
+# if (-Not (Test-Path $THEME_DIR)) {New-Item -path $THEME_DIR -type Directory | Out-Null}
+# # Copy-Item "$env:SystemDrive\cmder\Paradox-my.psm1" -Destination "$THEME_DIR"
+# if (-Not (Test-Path $THEME_FILE)) {
+#     $DOWNLOAD_URL = "https://raw.githubusercontent.com/epoweripione/terminal-custom/master/powershell/Powerlevel10k-my.psm1"
+#     $p = New-Object System.Net.WebClient
+#     $p.DownloadFile($DOWNLOAD_URL, $THEME_FILE)
+# }
 
-if (Test-Path $THEME_FILE) {
-    Add-Content $PROFILE "`nSet-Theme Powerlevel10k-my"
-} 
+# if (Test-Path $THEME_FILE) {
+#     Add-Content $PROFILE "`nSet-Theme Powerlevel10k-my"
+# }
 
 # Custom
 Write-Host "Other powershell settings..." -ForegroundColor Blue
@@ -199,4 +203,9 @@ Set-Alias ssb SearchScoopBucket
 Set-Alias ums UpdateMyScript
 Set-Alias hosts EditHosts
 Set-Alias history EditHistory
+
+## https://starship.rs/
+if (Get-Command "starship" -ErrorAction SilentlyContinue) {
+    Invoke-Expression (&starship init powershell)
+}
 '@ | Tee-Object $PROFILE -Append | Out-Null

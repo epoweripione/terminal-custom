@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #######color code########
 RED="31m"      # Error message
@@ -22,50 +22,49 @@ fi
 
 # custom configuration
 colorEcho ${BLUE} "custom configuration..."
-if [[ ! $(grep "zsh_custom_conf.sh" ~/.zshrc) ]]; then
-    echo -e "\n# Custom configuration\nsource ~/zsh_custom_conf.sh" >> ~/.zshrc
+if [[ ! $(grep "zsh_custom_conf.sh" $HOME/.zshrc) ]]; then
+    echo -e "\n# Custom configuration\nsource ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/zsh_custom_conf.sh" >> $HOME/.zshrc
 fi
-# tee -a ~/.zshrc >/dev/null <<-'EOF'
+# tee -a $HOME/.zshrc >/dev/null <<-'EOF'
 
 # # Custom configuration
-# source ~/zsh_custom_conf.sh
+# source ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh_custom_conf.sh
 
 # EOF
 
 
 # change the command execution time stamp shown in the history command output
-sed -i 's/[#]*[ ]*HIST_STAMPS.*/HIST_STAMPS="yyyy-mm-dd"/' ~/.zshrc
+sed -i 's/[#]*[ ]*HIST_STAMPS.*/HIST_STAMPS="yyyy-mm-dd"/' $HOME/.zshrc
 
 # disable auto update
-sed -i "s/[#]*[ ]*DISABLE_AUTO_UPDATE.*/DISABLE_AUTO_UPDATE=\"true\"/" ~/.zshrc
+sed -i "s/[#]*[ ]*DISABLE_AUTO_UPDATE.*/DISABLE_AUTO_UPDATE=\"true\"/" $HOME/.zshrc
 
 
 # custom theme
 colorEcho ${BLUE} "custom theme..."
-cp ~/zsh_custom_env.sh ~/.zshenv
+cp "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/zsh_custom_env.sh" $HOME/.zshenv
 
 theme="ys"
 custom_theme="zsh_custom_theme_${theme}"
 
-sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" ~/.zshrc
+sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" $HOME/.zshrc
 
-sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
-if [[ -s ~/${custom_theme}.sh ]]; then
-    sed -i "/^ZSH_THEME=.*/a\source ~/${custom_theme}.sh" ~/.zshrc
+sed -i "/zsh_custom_theme_.*/d" $HOME/.zshrc
+if [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/${custom_theme}.sh" ]]; then
+    sed -i "/^ZSH_THEME=.*/a\source ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/${custom_theme}.sh" $HOME/.zshrc
 fi
 
 # if [[ -n "$desktop" ]]; then
-#   cp ~/zsh_custom_env_xterm.sh ~/.zshenv
-#   sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"powerlevel9k\"/" ~/.zshrc
-#   sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
-#   sed -i "/^ZSH_THEME=.*/a\source ~/zsh_custom_theme_powerlevel9k.sh" ~/.zshrc
-#   # echo -e "\nsource ~/zsh_custom_theme_powerlevel9k.sh" >> ~/.zshrc
+#   cp ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/zsh_custom_env_xterm.sh $HOME/.zshenv
+#   sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"powerlevel9k\"/" $HOME/.zshrc
+#   sed -i "/zsh_custom_theme_.*/d" $HOME/.zshrc
+#   sed -i "/^ZSH_THEME=.*/a\source ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/zsh_custom_theme_powerlevel9k.sh" $HOME/.zshrc
+#   # echo -e "\nsource ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/zsh_custom_theme_powerlevel9k.sh" >> $HOME/.zshrc
 # else
-#   cp ~/zsh_custom_env.sh ~/.zshenv
-#   sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"agnosterzak-my\"/" ~/.zshrc
-#   sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
-#   sed -i "/^ZSH_THEME=.*/a\source ~/zsh_custom_theme_agnosterzak-my.sh" ~/.zshrc
-#   #echo -e "\nsource ~/zsh_custom_theme_agnosterzak-my.sh" >> ~/.zshrc
+#   cp ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/zsh_custom_env.sh $HOME/.zshenv
+#   sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"agnosterzak-my\"/" $HOME/.zshrc
+#   sed -i "/zsh_custom_theme_.*/d" $HOME/.zshrc
+#   sed -i "/^ZSH_THEME=.*/a\source ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/zsh_custom_theme_agnosterzak-my.sh" $HOME/.zshrc
 # fi
 
 

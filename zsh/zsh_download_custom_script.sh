@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## How to use
 ## 1. Install curl first
 ## 2. Install zsh and oh-my-zsh: source <(curl -sL https://git.io/fA8Jb)
 ##                               source <(curl -sL http://t.cn/AigJm9ut)
-## 3. Init: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_upgrade_all_packages.sh && ~/zsh_init.sh
-##          source <(curl -sL http://t.cn/AigJuOCW) && ~/zsh_upgrade_all_packages.sh && ~/zsh_init.sh
-## 4. Update: source <(curl -sL https://git.io/fNpeJ) && ~/zsh_upgrade_all_packages.sh
-##            source <(curl -sL http://t.cn/AigJuOCW) && ~/zsh_upgrade_all_packages.sh
-CURRENT_DIR=$(pwd)
+## 3. Init: source <(curl -sL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh && $HOME/terminal-custom/zsh/zsh_init.sh
+##          source <(curl -sL http://t.cn/AigJuOCW) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh && $HOME/terminal-custom/zsh/zsh_init.sh
+## 4. Update: source <(curl -sL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh
+##            source <(curl -sL http://t.cn/AigJuOCW) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh
+[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
 #######color code########
 RED="31m"      # Error message
@@ -28,136 +28,32 @@ if [[ ! "$(command -v git)" ]]; then
 fi
 
 
-ostype=$(uname)
-ostype_wsl=$(uname -r)
+MY_SHELL_SCRIPTS="${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}"
 
-
-colorEcho ${BLUE} "Cloning custom shell script repository to $HOME/terminal-custom..."
-if [[ -d ~/terminal-custom ]]; then
-    cd ~/terminal-custom && git pull --rebase --stat origin master
+colorEcho ${BLUE} "Cloning custom shell scripts repository to $HOME/terminal-custom..."
+if [[ -d "${MY_SHELL_SCRIPTS}" ]]; then
+    cd "${MY_SHELL_SCRIPTS}" && git pull --rebase --stat origin master
 else
     git clone -c core.eol=lf -c core.autocrlf=false \
         -c fsck.zeroPaddedFilemode=ignore \
         -c fetch.fsck.zeroPaddedFilemode=ignore \
         -c receive.fsck.zeroPaddedFilemode=ignore \
         --depth=1 --branch master \
-        https://github.com/epoweripione/terminal-custom.git ~/terminal-custom
+        https://github.com/epoweripione/terminal-custom.git "${MY_SHELL_SCRIPTS}"
 fi
 
 
-# copy shell script to HOME
-colorEcho ${BLUE} "Copying shell script to $HOME..."
-cp -f ~/terminal-custom/*.sh ~
-cp -f ~/terminal-custom/*.yml ~
-cp -f ~/terminal-custom/*.ini ~
-cp -f ~/terminal-custom/*.list ~
-cp -f ~/terminal-custom/*.c ~
-cp -f ~/terminal-custom/*.py ~
-
-chmod +x ~/hosts_update.sh
-chmod +x ~/generate_random_string.sh
-chmod +x ~/install_fonts.sh
-chmod +x ~/terminal_256colors.sh
-chmod +x ~/terminal_colors.sh
-
-chmod +x ~/ssl-cert-info.sh
-chmod +x ~/ssl-check-expire-date.sh
-
-chmod +x ~/bat_installer.sh
-chmod +x ~/croc_installer.sh
-chmod +x ~/conda_python_installer.sh
-chmod +x ~/docker_installer.sh
-chmod +x ~/duf_installer.sh
-chmod +x ~/exa_installer.sh
-chmod +x ~/geoip_installer.sh
-chmod +x ~/gitflow_installer.sh
-chmod +x ~/gvm_go_installer.sh
-# chmod +x ~/hexo_installer.sh
-chmod +x ~/hosts_accelerate_cn.sh
-chmod +x ~/jabba_jdk_installer.sh
-chmod +x ~/lua_installer.sh
-chmod +x ~/nano_installer.sh
-chmod +x ~/pacapt_installer.sh
-chmod +x ~/pacaptr_installer.sh
-chmod +x ~/proxychains_installer.sh
-chmod +x ~/sdkman_installer.sh
-
-chmod +x ~/speedtest.sh
-chmod +x ~/analyze_sys_performance.sh
-
-chmod +x ~/php_debian_installer.sh
-chmod +x ~/pecl_install_php_extensions.sh
-
-chmod +x ~/clash_client_config.sh
-chmod +x ~/cross_gfw_installer.sh
-chmod +x ~/cross_gfw_config.sh
-
-chmod +x ~/dnsmasq_installer.sh
-
-chmod +x ~/ip2location_installer.sh
-chmod +x ~/ip2location_distance.sh
-
-chmod +x ~/frp_installer.sh
-chmod +x ~/goproxy_installer.sh
-chmod +x ~/shadowtunnel_installer.sh
-
-chmod +x ~/cockpit_installer.sh
-chmod +x ~/vnstat_installer.sh
-chmod +x ~/webmin_installer.sh
-
-chmod +x ~/batch_download.sh
-chmod +x ~/manjaro_init.sh
-chmod +x ~/termux_init.sh
-
-chmod +x ~/vs-code-extensions-installer.sh
-
-cp -f ~/terminal-custom/zsh/*.sh ~
-chmod +x ~/zsh_change_theme.sh
-chmod +x ~/zsh_clean_history.sh
-chmod +x ~/zsh_compinit.sh
-chmod +x ~/zsh_download_custom_script.sh
-chmod +x ~/zsh_init.sh
-chmod +x ~/zsh_installer.sh
-chmod +x ~/zsh_update.sh
-chmod +x ~/zsh_upgrade_all_packages.sh
-
-cp -f ~/terminal-custom/git/*.sh ~
-chmod +x ~/git_global_config.sh
-
-cp -f ~/terminal-custom/nodejs/*.sh ~
-chmod +x ~/nvm_node_installer.sh
-chmod +x ~/nvm_node_update.sh
-chmod +x ~/nvs_node_installer.sh
-chmod +x ~/nvs_node_update.sh
-chmod +x ~/npm_config.sh
-chmod +x ~/npm_packages_installer.sh
-chmod +x ~/yarn_packages_installer.sh
-
-
-# WSL
-if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
-    cp -f ~/terminal-custom/wsl/*.sh ~
-    chmod +x ~/wsl2_init.sh
-fi
-
-
-# MSYS2
-if [[ "$ostype" =~ "MSYS_NT" || "$ostype" =~ "MINGW" || "$ostype" =~ "CYGWIN_NT" ]]; then
-    cp -f ~/terminal-custom/msys2/*.sh ~
-    chmod +x ~/chromium_download.sh
-    chmod +x ~/msys2_clean_cache.sh
-    chmod +x ~/msys2_git_for_windows.sh
-    chmod +x ~/msys2_pacman_mirrors.sh
-fi
+# make *.sh executable
+find "${MY_SHELL_SCRIPTS}" -type f -iname "*.sh" -exec chmod +x {} \;
 
 
 colorEcho ${BLUE} "copy zsh custom plugins & theme to $ZSH/custom..."
-if [[ -d $ZSH/custom ]]; then
+if [[ -d "$ZSH/custom" ]]; then
     # zsh custom plugins
-    [ -d ~/terminal-custom/zsh/plugins ] && cp -f ~/terminal-custom/zsh/plugins/* $ZSH/custom/plugins
+    [ -d "$HOME/terminal-custom/zsh/plugins" ] && cp -f $HOME/terminal-custom/zsh/plugins/* "$ZSH/custom/plugins"
 
     # zsh custom themes
-    [ -d ~/terminal-custom/zsh/themes ] && cp -f ~/terminal-custom/zsh/themes/*.zsh-theme $ZSH/custom/themes
+    [ -d "$HOME/terminal-custom/zsh/themes" ] && cp -f $HOME/terminal-custom/zsh/themes/*.zsh-theme "$ZSH/custom/themes"
 fi
 
 

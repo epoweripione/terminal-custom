@@ -1,6 +1,6 @@
 # Custom theme configuration
 
-ostype=$(uname)
+OS_TYPE=$(uname)
 
 # powerlevel9k theme settings
 # fonts https://github.com/bhilburn/powerlevel9k/wiki/Install-Instructions#step-2-install-a-powerline-font
@@ -52,7 +52,7 @@ POWERLEVEL9K_CHANGESET_HASH_LENGTH=6
 POWERLEVEL9K_VCS_SHOW_SUBMODULE_DIRTY=true
 POWERLEVEL9K_VCS_HIDE_TAGS=false
 
-if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
+if [[ $OS_TYPE =~ "MSYS_NT" || $OS_TYPE =~ "MINGW" || $OS_TYPE =~ "CYGWIN_NT" ]]; then
   ZLE_RPROMPT_INDENT=6
   POWERLEVEL9K_VCS_GIT_HOOKS=(vcs-detect-changes git-untracked git-remotebranch)
 else

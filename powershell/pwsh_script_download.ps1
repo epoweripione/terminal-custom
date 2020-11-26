@@ -70,7 +70,13 @@ if ($?) {
     if (-Not (Test-Path $PWSH_DIR)) {New-Item -path $PWSH_DIR -type Directory | Out-Null}
     # Copy-Item -Path ".\terminal-custom\powershell\*" -Destination $PWSH_DIR -Recurse -Force -Confirm:$false
     Copy-Item -Path ".\terminal-custom\powershell\*.ps1" -Destination $PWSH_DIR
-    Copy-Item -Path ".\terminal-custom\hosts_accelerate_cn.list" -Destination $PWSH_DIR
+    Copy-Item -Path ".\terminal-custom\cross\hosts_accelerate_cn.list" -Destination $PWSH_DIR
+
+    $CONFIG_DIR = "~\.config"
+    if (-Not (Test-Path $CONFIG_DIR)) {
+        New-Item -path $CONFIG_DIR -type Directory | Out-Null
+    }
+    Copy-Item -Path ".\terminal-custom\powershell\starship.toml" -Destination $CONFIG_DIR
 
     $THEME_DIR = "~\Documents\PowerShell\PoshThemes"
     if (-Not (Test-Path $THEME_DIR)) {New-Item -path $THEME_DIR -type Directory | Out-Null}

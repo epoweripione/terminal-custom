@@ -21,6 +21,8 @@ function colorEchoN() {
 # get os type: darwin, windows, linux, bsd, solaris
 function get_os_type() {
     local osname=$(uname)
+    local ostype
+
     case "$osname" in
         Darwin)
             ostype="darwin"
@@ -38,16 +40,22 @@ function get_os_type() {
             ostype=$(echo "$osname" | sed 's/.*/\L&/')
             ;;
     esac
+
+    OS_INFO_TYPE=$ostype
 }
 
 # Determine which desktop environment is installed from the shell
 # OSDesktopENV=$(ps -e | grep -E -i "gnome|kde|mate|cinnamon|lxde|xfce|jwm")
 function get_os_desktop() {
+    local osdesktop
+
     if [[ -n "$XDG_CURRENT_DESKTOP" ]]; then
-        OSDesktopENV=$(echo "$XDG_DATA_DIRS" | sed 's/.*\(gnome\|kde\|mate\|cinnamon\|lxde\|xfce\|jwm\).*/\1/')
+        osdesktop=$(echo "$XDG_DATA_DIRS" | sed 's/.*\(gnome\|kde\|mate\|cinnamon\|lxde\|xfce\|jwm\).*/\1/')
     else
-        OSDesktopENV=$XDG_CURRENT_DESKTOP
+        osdesktop=$XDG_CURRENT_DESKTOP
     fi
+
+    OS_INFO_DESKTOP=$osdesktop
 }
 
 function check_release_package_manager() {
@@ -121,6 +129,8 @@ function check_release_package_manager() {
 
 function get_arch() {
 	local architecture=$(uname -m)
+    local spruce_type
+
 	case "$architecture" in
 		amd64 | x86_64)
 			spruce_type='amd64'
@@ -167,11 +177,15 @@ function get_arch() {
 			# exit 1
             ;;
 	esac
+
+    OS_INFO_ARCH=$spruce_type
 }
 
 function get_sysArch(){
-    ARCH=$(uname -m)
-    case "$ARCH" in
+	local architecture=$(uname -m)
+    local VDIS
+
+    case "$architecture" in
         amd64 | x86_64)
             VDIS="64"
             ;;
@@ -212,10 +226,13 @@ function get_sysArch(){
             VDIS=""
             ;;
     esac
-    return 0
+
+    OS_INFO_VDIS=$VDIS
 }
 
 function get_os() {
+    local OS
+
     case $(uname) in
         Darwin)
             OS='macOS'
@@ -247,9 +264,13 @@ function get_os() {
     if [[ "$os_wsl" =~ "Microsoft" ]]; then
         OS='Windows'
     fi
+
+    OS_INFO_RELEASE_TYPE=$OS
 }
 
 function get_os_release() {
+    local OS_RELEASE
+
     case $(uname) in
         Darwin)
             OS_RELEASE='macos'
@@ -293,6 +314,8 @@ function get_os_release() {
     if [[ "$os_wsl" =~ "Microsoft" ]]; then
         OS_RELEASE='windows'
     fi
+
+    OS_INFO_RELEASE=$OS_RELEASE
 }
 
 function check_os_package_manager() {
@@ -354,6 +377,8 @@ function get_os_package_manager() {
 }
 
 function get_os_icon() {
+    local OS_ICON
+
     case $(uname) in
         Darwin)
             OS_ICON=$'\uF179'
@@ -445,6 +470,8 @@ function get_os_icon() {
     if [[ "$os_wsl" =~ "Microsoft" ]]; then
         OS_ICON=$'\uF17A'
     fi
+
+    OS_INFO_ICON=$OS_ICON
 }
 
 # version compare functions
@@ -653,7 +680,7 @@ function get_network_wan_ipv4() {
     # nodejs:
     # https://github.com/alsotang/externalip
     # https://github.com/sindresorhus/public-ip
-    unset WAN_NET_IP
+    unset NETWORK_WAN_NET_IP
 
     local remote_host_list
     local target_host
@@ -667,16 +694,16 @@ function get_network_wan_ipv4() {
     )
 
     for target_host in ${remote_host_list[@]}; do
-        WAN_NET_IP=$(curl -s -4 --connect-timeout 5 --max-time 10 "${target_host}" \
+        NETWORK_WAN_NET_IP=$(curl -s -4 --connect-timeout 5 --max-time 10 "${target_host}" \
                         | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
                         | head -n1)
-        [[ -n "$WAN_NET_IP" ]] && break
+        [[ -n "$NETWORK_WAN_NET_IP" ]] && break
     done
-    # WAN_NET_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
+    # NETWORK_WAN_NET_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
 }
 
 function get_network_wan_ipv6() {
-    unset WAN_NET_IPV6
+    unset NETWORK_WAN_NET_IPV6
 
     local remote_host_list
     local target_host
@@ -688,30 +715,30 @@ function get_network_wan_ipv6() {
     )
 
     for target_host in ${remote_host_list[@]}; do
-        WAN_NET_IPV6=$(curl -s -6 --connect-timeout 5 --max-time 10 "${target_host}" \
+        NETWORK_WAN_NET_IPV6=$(curl -s -6 --connect-timeout 5 --max-time 10 "${target_host}" \
                         | grep -Eo '^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$' \
                         | head -n1)
-        [[ -n "$WAN_NET_IPV6" ]] && break
+        [[ -n "$NETWORK_WAN_NET_IPV6" ]] && break
     done
 }
 
 function get_network_wan_geo() {
-    unset WAN_NET_IP_GEO
+    unset NETWORK_WAN_NET_IP_GEO
 
     if [[ -x "$(command -v geoiplookup)" ]]; then
         get_network_wan_ipv4
-        if [[ -n "$WAN_NET_IP" ]]; then
-            WAN_NET_IP_GEO=`geoiplookup ${WAN_NET_IP} | head -n1 | cut -d':' -f2-`
+        if [[ -n "$NETWORK_WAN_NET_IP" ]]; then
+            NETWORK_WAN_NET_IP_GEO=`geoiplookup ${NETWORK_WAN_NET_IP} | head -n1 | cut -d':' -f2-`
         fi
     fi
 
-    if [[ -z "$WAN_NET_IP_GEO" ]]; then
+    if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
         # Country lookup: China
-        WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 \
+        NETWORK_WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 \
             "http://ip-api.com/line/?fields=country"`
-        if [[ -z "$WAN_NET_IP_GEO" ]]; then
+        if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
             # Country lookup: CN
-            WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 \
+            NETWORK_WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 \
                 "http://ip-api.com/line/?fields=countryCode"`
         fi
     fi
@@ -727,8 +754,8 @@ function myip_lan_wan() {
 
     [[ -n "$NETWORK_LOCAL_IPV4_DEFAULT" ]] && echo -e "Local IP: ${NETWORK_LOCAL_IPV4_DEFAULT}"
     [[ -n "$NETWORK_LOCAL_IPV6_DEFAULT" ]] && echo -e "Local IPV6: ${NETWORK_LOCAL_IPV6_DEFAULT}"
-    [[ -n "$WAN_NET_IP" ]] && echo -e "Public IP: ${WAN_NET_IP}"
-    [[ -n "$WAN_NET_IPV6" ]] && echo -e "Public IPV6: ${WAN_NET_IPV6}"
+    [[ -n "$NETWORK_WAN_NET_IP" ]] && echo -e "Public IP: ${NETWORK_WAN_NET_IP}"
+    [[ -n "$NETWORK_WAN_NET_IPV6" ]] && echo -e "Public IPV6: ${NETWORK_WAN_NET_IPV6}"
 }
 
 function myip_lan() {
@@ -743,16 +770,16 @@ function myip_wan() {
     get_network_wan_ipv4
     get_network_wan_ipv6
 
-    [[ -n "$WAN_NET_IP" ]] && echo -e "Public IP: ${WAN_NET_IP}"
-    [[ -n "$WAN_NET_IPV6" ]] && echo -e "Public IPV6: ${WAN_NET_IPV6}"
+    [[ -n "$NETWORK_WAN_NET_IP" ]] && echo -e "Public IP: ${NETWORK_WAN_NET_IP}"
+    [[ -n "$NETWORK_WAN_NET_IPV6" ]] && echo -e "Public IPV6: ${NETWORK_WAN_NET_IPV6}"
 }
 
 function myip_wan_geo() {
     get_network_wan_ipv4
     get_network_wan_geo
 
-    if [[ -n "$WAN_NET_IP_GEO" ]]; then
-        echo -e "Public IP: ${WAN_NET_IP}\n${WAN_NET_IP_GEO}"
+    if [[ -n "$NETWORK_WAN_NET_IP_GEO" ]]; then
+        echo -e "Public IP: ${NETWORK_WAN_NET_IP}\n${NETWORK_WAN_NET_IP_GEO}"
     else
         echo "Can't get GEO by WAN IP!"
     fi
@@ -761,11 +788,11 @@ function myip_wan_geo() {
 
 ## Set proxy or mirrors env in china
 function set_proxy_mirrors_env() {
-    # if [[ -z "$WAN_NET_IP_GEO" ]]; then
+    # if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
     #     get_network_wan_geo
     # fi
 
-    # if [[ "${WAN_NET_IP_GEO}" =~ 'China' || "${WAN_NET_IP_GEO}" =~ 'CN' ]]; then
+    # if [[ "${NETWORK_WAN_NET_IP_GEO}" =~ 'China' || "${NETWORK_WAN_NET_IP_GEO}" =~ 'CN' ]]; then
     #     unset APT_NOT_USE_MIRRORS
     #     unset CONDA_NOT_USE_MIRROR
     #     unset DOCKER_INSTALLER_NOT_USE_MIRROR

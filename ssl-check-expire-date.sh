@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # usage: ./ssl-check-expire-date.sh ssl-check-expire-date.txt
 # txt: each line is a host name

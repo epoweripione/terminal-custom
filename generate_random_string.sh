@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # bash generate random alphanumeric string
 # ref: https://gist.github.com/earthgecko/3089509
 

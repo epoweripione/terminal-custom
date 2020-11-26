@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #######color code########
 # https://misc.flogisoft.com/bash/tip_colors_and_formatting

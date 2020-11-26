@@ -46,6 +46,9 @@ $extensions = @(
 	"ms-python.python"
     ## powershell
 	"ms-vscode.powershell"
+	## rust
+	"rust-lang.rust"
+	"bungcip.better-toml"
     ## XML/JSON/GraphQL/YAML
     "eriklynd.json-tools"
 	"mohsen1.prettify-json"

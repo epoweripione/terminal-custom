@@ -1,17 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Load custom functions
-if [[ -s "$HOME/custom_functions.sh" ]]; then
-    source "$HOME/custom_functions.sh"
+if [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh" ]]; then
+    source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh"
 else
-    echo "$HOME/custom_functions.sh not exist!"
+    echo "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh not exist!"
     exit 0
 fi
 
-if [[ -z "$spruce_type" ]]; then
-    get_os_type
-    get_arch
-fi
+[[ -z "$OS_INFO_TYPE" ]] && get_os_type
+[[ -z "$OS_INFO_ARCH" ]] && get_arch
 
 
 if [[ ! "$(command -v curl)" ]]; then
@@ -35,10 +33,10 @@ if [[ ! "$(command -v curl)" ]]; then
 fi
 
 
-if [[ $ostype == "windows" ]]; then
+if [[ "$OS_INFO_TYPE" == "windows" ]]; then
     read -p "Use proxy?[y/N]:" USE_PROXY
 
-    if [[ $spruce_type == "amd64" ]]; then
+    if [[ "$OS_INFO_ARCH" == "amd64" ]]; then
         ver="win64"
         url1="https://storage.googleapis.com/chromium-browser-snapshots/Win_x64"
         url2="https://storage.googleapis.com/chromium-browser-snapshots/win_rel"
@@ -65,7 +63,7 @@ if [[ $ostype == "windows" ]]; then
     fi
 
     if [[ -d "/d/Downloads" ]]; then
-        echo "Downloading Chromium Dev $ostype-$spruce_type-r$chromium_ver"
+        echo "Downloading Chromium Dev ${OS_INFO_TYPE}-${OS_INFO_ARCH}-r$chromium_ver"
         if [[ "$USE_PROXY" == 'y' || "$USE_PROXY" == 'Y' ]]; then
             wget -e "http_proxy=http://127.0.0.1:55881" -e "https_proxy=http://127.0.0.1:55881" \
                 -O "/d/Downloads/chrome-$ver-$chromium_ver.zip" \

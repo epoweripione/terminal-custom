@@ -1,16 +1,16 @@
 # https://github.com/romkatv/powerlevel10k
 
 function set_zle_rprompt_indent() {
-  local ostype=$(uname)
-  local os_wsl=$(uname -r)
+  local OS_TYPE=$(uname)
+  local OS_WSL=$(uname -r)
 
   # MSYS, MINGW, CYGWIN
-  if [[ $ostype =~ "MSYS_NT" || $ostype =~ "MINGW" || $ostype =~ "CYGWIN_NT" ]]; then
+  if [[ $OS_TYPE =~ "MSYS_NT" || $OS_TYPE =~ "MINGW" || $OS_TYPE =~ "CYGWIN_NT" ]]; then
     ZLE_RPROMPT_INDENT=6
   fi
 
   # WSL
-  # [[ "$os_wsl" =~ "Microsoft" ]] && ZLE_RPROMPT_INDENT=6
+  # [[ "$OS_WSL" =~ "Microsoft" ]] && ZLE_RPROMPT_INDENT=6
 }
 
 set_zle_rprompt_indent

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #######color code########
 # https://misc.flogisoft.com/bash/tip_colors_and_formatting
@@ -27,46 +27,46 @@ changeTheme() {
 
     # https://github.com/romkatv/powerlevel10k
     [[ "$theme" == "powerlevel10k" ]] && theme_name="powerlevel10k/powerlevel10k"
-    [[ "$theme" != "powerlevel10k" ]] && sed -i "/\.p10k\.zsh/d" ~/.zshrc
+    [[ "$theme" != "powerlevel10k" ]] && sed -i "/\.p10k\.zsh/d" $HOME/.zshrc
 
     # https://github.com/sindresorhus/pure
     if [[ "$theme" == "pure" ]]; then
         theme_name=""
-        sed $'$a \\\n' ~/.zshrc
-        sed -i '$a source ~/zsh_custom_pure_prompt.sh' ~/.zshrc
+        sed $'$a \\\n' $HOME/.zshrc
+        sed -i '$a source ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/zsh_custom_pure_prompt.sh' $HOME/.zshrc
     else
-        sed -i "/^source ~\/zsh_custom_pure_prompt\.sh/d" ~/.zshrc
+        sed -i "/zsh_custom_pure_prompt\.sh/d" $HOME/.zshrc
     fi
 
     # change theme
-    sed -i "s|^ZSH_THEME=.*|ZSH_THEME=\"${theme_name}\"|" ~/.zshrc
+    sed -i "s|^ZSH_THEME=.*|ZSH_THEME=\"${theme_name}\"|" $HOME/.zshrc
 
     # custom theme configuration
-    sed -i "/^source ~\/zsh_custom_theme_.*/d" ~/.zshrc
-    if [[ -s ~/${custom_theme}.sh ]]; then
-        sed -i "/^ZSH_THEME=.*/a\source ~/${custom_theme}.sh" ~/.zshrc
+    sed -i "/zsh_custom_theme_.*/d" $HOME/.zshrc
+    if [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/${custom_theme}.sh" ]]; then
+        sed -i "/^ZSH_THEME=.*/a\source ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/${custom_theme}.sh" $HOME/.zshrc
     fi
 
     # .zshenv
-    [[ -s ~/.zshenv ]] && rm -f ~/.zshenv
+    [[ -s $HOME/.zshenv ]] && rm -f $HOME/.zshenv
 
     if [[ "$theme" == "powerlevel9k" && $(tput colors) -ne 256 ]]; then
-        cp ~/zsh_custom_env_xterm.sh ~/.zshenv
-        # sed -i '/^  command-time.*/d' ~/.zshrc
+        cp ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/zsh_custom_env_xterm.sh $HOME/.zshenv
+        # sed -i '/^  command-time.*/d' $HOME/.zshrc
     else
-        cp ~/zsh_custom_env.sh ~/.zshenv
-        # # if grep -q "command-time" ~/.zshrc; then
-        # if [[ $(grep "command-time" ~/.zshrc) ]]; then
+        cp ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/zsh_custom_env.sh $HOME/.zshenv
+        # # if grep -q "command-time" $HOME/.zshrc; then
+        # if [[ $(grep "command-time" $HOME/.zshrc) ]]; then
         #     :
         # else
-        #     sed -i '/^  git/a\  command-time' ~/.zshrc
+        #     sed -i '/^  git/a\  command-time' $HOME/.zshrc
         # fi
     fi
 
     if [[ "$theme" == "powerlevel10k" && $(tput colors) -ne 256 ]]; then
-        cp ~/zsh_custom_env_xterm.sh ~/.zshenv
+        cp ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/zsh_custom_env_xterm.sh $HOME/.zshenv
     else
-        cp ~/zsh_custom_env.sh ~/.zshenv
+        cp ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/zsh_custom_env.sh $HOME/.zshenv
     fi
 
     colorEcho ${GREEN} "ZSH theme has change to ${theme}，please exit and restart ZSH Shell!"
@@ -87,7 +87,7 @@ PARAMS_NUM=$#
 while [[ $# > 0 ]]; do
     theme="$1"
     changeTheme ${theme}
-    # sed -i "s/[#]*[ ]*ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" ~/.zshrc
+    # sed -i "s/[#]*[ ]*ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" $HOME/.zshrc
     shift # past argument or value
 done
 

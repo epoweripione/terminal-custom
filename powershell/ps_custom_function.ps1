@@ -1,4 +1,8 @@
 # New PSObject Template
+if (-not ('Windows.Media.Fonts' -as [Type])) {
+    Add-Type -AssemblyName 'PresentationCore'
+}
+
 $DismObjT = New-Object –TypeName PSObject -Property @{
     "Feature" = ""
     "State" = ""
@@ -297,8 +301,14 @@ function DownloadHosts() {
     }
 
     $Hostfile = "$env:windir\System32\drivers\etc\hosts"
+    $HostOriginal = "$env:windir\System32\drivers\etc\hosts.original"
     $Hostbackup = "$env:windir\System32\drivers\etc\hosts.bak"
     $DOWNLOAD_TO = "$env:windir\System32\drivers\etc\hosts.download"
+
+    if (-Not (Test-Path $HostOriginal)) {
+        Copy-Item $Hostfile -Destination $HostOriginal
+    }
+
     if (Test-Path $DOWNLOAD_TO) {
         Remove-Item $DOWNLOAD_TO
     }
@@ -330,18 +340,18 @@ function RestartWSL {
 }
 
 # https://www.powershellgallery.com/packages/RoughDraft/0.1/Content/Get-Font.ps1
-function Get-Font() {
+function GetFonts() {
     <#
     .Synopsis
         Gets the fonts available
     .Description
         Gets the fonts available on the current installation
     .Example
-        Get-Font
+        GetFonts
     .Example
-        Get-Font -IncludeDetail
+        GetFonts -IncludeDetail
     #>
-    [OutputType([Windows.Media.FontFamily], [string])]
+    # [OutputType([Windows.Media.FontFamily], [string])]
     param(
         # If set, finds finds with this name
         [Parameter(Position=0,ValueFromPipelineByPropertyName=$true)]

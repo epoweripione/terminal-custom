@@ -1,7 +1,9 @@
 # Custom ZSH configuration
 
-ostype=$(uname)
-ostype_wsl=$(uname -r)
+export MY_SHELL_SCRIPTS="${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}"
+
+OS_TYPE=$(uname)
+OS_WSL=$(uname -r)
 
 # custom PS2
 # export PS2="> "
@@ -15,7 +17,7 @@ fi
 
 
 # compinit
-[[ ! -s "$HOME/.zcompdump" ]] && source "$HOME/zsh_compinit.sh"
+source "${MY_SHELL_SCRIPTS}/zsh/zsh_compinit.sh"
 
 
 # disable hosts auto completion
@@ -41,7 +43,7 @@ setopt localoptions rmstarsilent
 
 
 # complete hard drives in MSYS2
-if [[ "$ostype" =~ "MSYS_NT" || "$ostype" =~ "MINGW" || "$ostype" =~ "CYGWIN_NT" ]]; then
+if [[ "$OS_TYPE" =~ "MSYS_NT" || "$OS_TYPE" =~ "MINGW" || "$OS_TYPE" =~ "CYGWIN_NT" ]]; then
     drives=$(mount | sed -rn 's#^[A-Z]: on /([a-z]).*#\1#p' | tr '\n' ' ')
     zstyle ':completion:*' fake-files /: "/:$drives"
     unset drives
@@ -49,8 +51,8 @@ fi
 
 
 # Load custom functions
-if [[ -s "$HOME/custom_functions.sh" ]]; then
-    source "$HOME/custom_functions.sh"
+if [[ -s "${MY_SHELL_SCRIPTS}/custom_functions.sh" ]]; then
+    source "${MY_SHELL_SCRIPTS}/custom_functions.sh"
 
     # Set proxy or mirrors env in china
     set_proxy_mirrors_env
@@ -129,7 +131,7 @@ fi
 
 
 # macOS
-if [[ "$ostype" == "Darwin" ]]; then
+if [[ "$OS_TYPE" == "Darwin" ]]; then
     if [[ -x "$(command -v greadlink)" ]]; then
         alias readlink=greadlink
     fi
@@ -137,7 +139,7 @@ fi
 
 
 # Extend variable in MSYS2 to use node,npm,php,composer... with winpty
-if [[ "$ostype" =~ "MSYS_NT" || "$ostype" =~ "MINGW" || "$ostype" =~ "CYGWIN_NT" ]]; then
+if [[ "$OS_TYPE" =~ "MSYS_NT" || "$OS_TYPE" =~ "MINGW" || "$OS_TYPE" =~ "CYGWIN_NT" ]]; then
     export PATH=$PATH:/c/nodejs:/c/Users/$USERNAME/AppData/Roaming/npm:/c/php/php7:/c/php/composer/vendor/bin
 
     # dotnet
@@ -233,9 +235,19 @@ if [[ -n "$ORACLE_HOME" ]]; then
     fi
 fi
 
+# starship
+if [[ -x "$(command -v starship)" ]]; then
+    get_os_icon && export OS_INFO_ICON=$OS_INFO_ICON
+    if [[ ! -s "$HOME/.config/starship.toml" ]]; then
+        cp -f "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/themes/starship.toml" "$HOME/.config"
+    fi
+fi
+
 # homebrew
 if [[ -x "$(command -v brew)" ]]; then
-    export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
+    if [[ -z "$BREW_NOT_USE_PROXY" ]]; then
+        export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
+    fi
 fi
 
 # exa
@@ -451,7 +463,7 @@ else
 fi
 
 # WSL1
-if [[ "$ostype_wsl" =~ "Microsoft" ]]; then
+if [[ "$OS_WSL" =~ "Microsoft" ]]; then
     # Docker
     if [[ -d "/c/Program Files/Docker Toolbox" ]]; then
         # export PATH="$PATH:/c/Program\ Files/Docker\ Toolbox"
@@ -475,7 +487,7 @@ if [[ "$ostype_wsl" =~ "Microsoft" ]]; then
 fi
 
 # WSL1 & WSL2
-if [[ "$ostype_wsl" =~ "Microsoft" || "$ostype_wsl" =~ "microsoft" ]]; then
+if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
     ## start services upon WSL launch: libnss-winbind
     # if (( $(ps -ef | grep -v grep | grep winbind | wc -l) == 0 )); then
     #     [[ $(systemctl is-enabled winbind 2>/dev/null) ]] && \
