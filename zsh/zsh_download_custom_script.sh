@@ -46,6 +46,8 @@ fi
 # make *.sh executable
 find "${MY_SHELL_SCRIPTS}" -type f -iname "*.sh" -exec chmod +x {} \;
 
+# fix zsh_custom_conf.sh location in .zshrc
+sed -i "s|^source ~/zsh_custom_conf.sh|source ~/terminal-custom/zsh/zsh_custom_conf.sh|" $HOME/.zshrc
 
 colorEcho ${BLUE} "copy zsh custom plugins & theme to $ZSH/custom..."
 if [[ -d "$ZSH/custom" ]]; then

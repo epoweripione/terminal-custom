@@ -1,6 +1,7 @@
 # https://starship.rs/config/
 # Use custom format
 format = """
+[░▒▓](fg:#5a6374)\
 $env_var\
 ${custom.osicon}\
 $username\
@@ -320,7 +321,7 @@ disabled = false
 variable = "OS_INFO_ICON"
 default = ""
 style = "bold fg:bright-white bg:#5a6374"
-format = "[$env_value ]($style)"
+format = "[ $env_value ]($style)"
 disabled = false
 
 [custom.osicon]

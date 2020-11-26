@@ -7,7 +7,7 @@ rm -f $HOME/cross_*.*
 rm -f $HOME/git_*.sh
 rm -f $HOME/hosts_*.*
 rm -f $HOME/install_*.*
-rm -f $HOME/ip2location_*.*
+rm -f $HOME/ip2location*.*
 rm -f $HOME/manjaro_*.sh
 rm -f $HOME/msys2_*.sh
 rm -f $HOME/nvm_node_*.sh
@@ -23,6 +23,7 @@ rm -f $HOME/yarn_packages_*.sh
 rm -f $HOME/zsh_*.sh
 rm -f $HOME/analyze_sys_performance.sh
 rm -f $HOME/batch_download.sh
+rm -f $HOME/custom_functions.sh
 rm -f $HOME/generate_random_string.sh
 rm -f $HOME/linux_optimize.sh
 rm -f $HOME/npm_config.sh

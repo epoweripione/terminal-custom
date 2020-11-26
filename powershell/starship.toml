@@ -1,6 +1,7 @@
 # https://starship.rs/config/
 # Use custom format
 format = """
+[░▒▓](fg:#5a6374)\
 $env_var\
 $username\
 $hostname\
@@ -309,7 +310,7 @@ disabled = false
 [env_var]
 variable = "USERNAME"
 style = "bold fg:bright-cyan bg:#5a6374"
-format = "[ ](bold fg:bright-white bg:#5a6374)[$env_value]($style)"
+format = "[  ](bold fg:bright-white bg:#5a6374)[$env_value]($style)"
 disabled = false
 
 [custom.docker]
@@ -326,7 +327,7 @@ disabled = true
 command = "echo $env:USERNAME"
 when = "echo true"
 shell = ["pwsh.exe", "-NoProfile", "-Command", "-"]
-symbol = " "
+symbol = "  "
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[$symbol$output]($style)"
 disabled = true
