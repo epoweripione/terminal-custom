@@ -17,8 +17,6 @@ fi
 # Set proxy or mirrors env in china
 set_proxy_mirrors_env
 
-
-colorEcho ${BLUE} "Checking update for gvm & go..."
 ## Install gvm
 ## https://github.com/moovweb/gvm
 ## Please turn on proxy in china (replace the IP and Port to fit your proxy server)
@@ -36,7 +34,7 @@ colorEcho ${BLUE} "Checking update for gvm & go..."
 ## Install Mercurial from http://pkgs.repoforge.org/mercurial/
 ## FreeBSD Requirements
 # sudo pkg_add -r bash git mercurial
-
+INSTALL_NAME="gvm & go"
 IS_INSTALL="yes"
 IS_UPDATE="no"
 CURRENT_VERSION="go0.0.0"
@@ -45,6 +43,10 @@ if [[ -d "$HOME/.gvm" ]]; then
     IS_UPDATE="yes"
 else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
+fi
+
+if [[ "${IS_INSTALL}" == "yes" ]] then
+    colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
 fi
 
 # new install

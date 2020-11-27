@@ -23,8 +23,7 @@ fi
 # /usr/local/etc/xray/config.json
 # /var/log/xray/
 # UUID: xray uuid
-colorEcho ${BLUE} "Checking update for xray..."
-
+INSTALL_NAME="xray"
 IS_INSTALL="yes"
 IS_UPDATE="no"
 CURRENT_VERSION="0.0.0"
@@ -37,6 +36,8 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]] then
+    colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
+
     CHECK_URL="https://api.github.com/repos/XTLS/Xray-core/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
@@ -45,7 +46,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]] then
-    colorEcho ${BLUE} "Installing xray ${REMOTE_VERSION}..."
+    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
 
     bash <(curl -L https://raw.githubusercontent.com/XTLS/Xray-install/main/install-release.sh)
 

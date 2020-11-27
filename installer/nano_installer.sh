@@ -20,29 +20,31 @@ fi
 
 # https://www.nano-editor.org/dist/latest/faq.html
 # http://mybookworld.wikidot.com/compile-nano-from-source
-colorEcho ${BLUE} "Checking update for nano..."
+colorEcho ${BLUE} "Checking latest version for nano..."
 if [[ -x "$(command -v pacman)" ]]; then
     # Remove old version nano
     if pacman -Q nano >/dev/null 2>&1; then
         sudo pacman --noconfirm -R nano >/dev/null 2>&1
     fi
 
-    # Pre-requisite packages
-    PackagesList=(
-        ncurses
-        ncurses-devel
-        libncurses-dev
-        libncursesw-dev
-        libncurses5-dev
-        libncursesw5-dev
-    )
-    for TargetPackage in "${PackagesList[@]}"; do
-        if pacman -Si "$TargetPackage" >/dev/null 2>&1; then
-            if ! pacman -Q "$TargetPackage" >/dev/null 2>&1; then
-                sudo pacman --noconfirm -S "$TargetPackage"
+    if [[ ! -x "$(command -v nano)" ]]; then
+        # Pre-requisite packages
+        PackagesList=(
+            ncurses
+            ncurses-devel
+            libncurses-dev
+            libncursesw-dev
+            libncurses5-dev
+            libncursesw5-dev
+        )
+        for TargetPackage in "${PackagesList[@]}"; do
+            if pacman -Si "$TargetPackage" >/dev/null 2>&1; then
+                if ! pacman -Q "$TargetPackage" >/dev/null 2>&1; then
+                    sudo pacman --noconfirm -S "$TargetPackage"
+                fi
             fi
-        fi
-    done
+        done
+    fi
 fi
 
 
@@ -69,7 +71,7 @@ REMOTE_VERSION=$(curl -s -N https://www.nano-editor.org/download.php \
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    colorEcho ${BLUE} "Installing nano ${REMOTE_VERSION} from source..."
+    colorEcho ${BLUE} "  Installing nano ${REMOTE_VERSION} from source..."
     DOWNLOAD_URL="https://www.nano-editor.org/dist/v${DIST_VERSION}/nano-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/nano.tar.gz" "$DOWNLOAD_URL" && \
         tar xzvf "${WORKDIR}/nano.tar.gz" -C "${WORKDIR}" && \

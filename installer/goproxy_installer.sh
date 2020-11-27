@@ -22,7 +22,7 @@ fi
 
 # goproxy
 # https://github.com/snail007/goproxy
-colorEcho ${BLUE} "Checking update for goproxy..."
+INSTALL_NAME="goproxy"
 
 IS_INSTALL="yes"
 CURRENT_VERSION="0.0.0"
@@ -34,6 +34,8 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]] then
+    colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
+
     CHECK_URL="https://api.github.com/repos/snail007/goproxy/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
@@ -42,7 +44,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]] then
-    colorEcho ${BLUE} "Installing goproxy ${REMOTE_VERSION}..."
+    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
     # curl -SL \
     #     https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh \
     # | sudo bash

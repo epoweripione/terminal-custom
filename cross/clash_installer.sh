@@ -19,8 +19,7 @@ fi
 
 # clash
 # https://github.com/Dreamacro/clash
-colorEcho ${BLUE} "Checking update for clash..."
-
+INSTALL_NAME="clash"
 IS_INSTALL="yes"
 IS_UPDATE="no"
 CURRENT_VERSION="0.0.0"
@@ -33,6 +32,8 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]] then
+    colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
+
     # CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
     # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
@@ -46,7 +47,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]] then
-    colorEcho ${BLUE} "Installing clash ${REMOTE_VERSION}..."
+    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
 
     [[ -z "$OS_INFO_TYPE" ]] && get_os_type
     [[ -z "$OS_INFO_ARCH" ]] && get_arch

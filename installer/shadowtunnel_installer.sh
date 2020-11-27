@@ -23,18 +23,18 @@ fi
 
 # goproxy
 # https://github.com/snail007/goproxy
-colorEcho ${BLUE} "Installing goproxy..."
-curl -SL https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh | bash
+[[ -s "${MY_SHELL_SCRIPTS}/installer/goproxy_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/goproxy_installer.sh"
 
 
 # shadowtunnel
 # https://github.com/snail007/shadowtunnel
-colorEcho ${BLUE} "Checking update for shadowtunnel..."
+colorEcho ${BLUE} "Checking latest version for shadowtunnel..."
 
 CHECK_URL="https://api.github.com/repos/snail007/shadowtunnel/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
 
 if [[ -n "$REMOTE_VERSION" ]]; then
+    colorEcho ${BLUE} "  Installing shadowtunnel ${REMOTE_VERSION}..."
     DOWNLOAD_URL="https://github.com/snail007/shadowtunnel/releases/download/$REMOTE_VERSION/shadowtunnel-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.gz"
     curl -SL -o "${WORKDIR}/shadowtunnel.tar.gz" "$DOWNLOAD_URL" && \
         sudo tar zxfv "${WORKDIR}/shadowtunnel.tar.gz" -C "/usr/local/bin" && \

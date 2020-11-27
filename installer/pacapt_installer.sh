@@ -20,7 +20,7 @@ fi
 
 # pacapt - An Arch's pacman-like package manager for some Unices
 # https://github.com/icy/pacapt
-colorEcho ${BLUE} "Checking update for pacapt..."
+colorEcho ${BLUE} "Checking latest version for pacapt..."
 
 CHECK_URL="https://api.github.com/repos/icy/pacapt/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
@@ -34,7 +34,7 @@ else
 fi
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    colorEcho ${BLUE} "${ECHO_TYPE} pacapt ${REMOTE_VERSION}..."
+    colorEcho ${BLUE} "  ${ECHO_TYPE} pacapt ${REMOTE_VERSION}..."
     sudo curl -SL -o "${WORKDIR}/pacapt" https://github.com/icy/pacapt/raw/ng/pacapt && \
         sudo mv -f "${WORKDIR}/pacapt" "/usr/bin/pacapt" && \
         sudo chmod 755 "/usr/bin/pacapt" && \

@@ -17,17 +17,14 @@ else
     fi
 fi
 
-
 [[ -z "$OS_INFO_TYPE" ]] && get_os_type
 [[ -z "$OS_INFO_ARCH" ]] && get_arch
 
-
 # frp
 # https://github.com/fatedier/frp
-colorEcho ${BLUE} "Checking update for frp..."
-
-CHECK_URL="https://api.github.com/repos/fatedier/frp/releases/latest"
-REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+INSTALL_NAME="frp"
+IS_INSTALL="yes"
+CURRENT_VERSION="0.0.0"
 
 if [[ -d "/srv/frp" ]]; then
     CURRENT_VERSION=$(/srv/frp/frps --version 2>&1)
@@ -37,11 +34,21 @@ if [[ -d "/srv/frp" ]]; then
         sudo rm -f "/srv/backup_frp/frpc_full.ini" && \
         sudo rm -f "/srv/backup_frp/frps_full.ini"
 else
-    CURRENT_VERSION="0.0.0"
+    [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi
 
-if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    colorEcho ${BLUE} "Installing frp ${REMOTE_VERSION}..."
+if [[ "${IS_INSTALL}" == "yes" ]] then
+    colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
+
+    CHECK_URL="https://api.github.com/repos/fatedier/frp/releases/latest"
+    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    if version_le $REMOTE_VERSION $CURRENT_VERSION; then
+        IS_INSTALL="no"
+    fi
+fi
+
+if [[ "${IS_INSTALL}" == "yes" ]] then
+    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
 
     if pgrep -f "frps" >/dev/null 2>&1; then
         sudo pkill -f "frps"

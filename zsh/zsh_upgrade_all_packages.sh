@@ -58,13 +58,14 @@ fi
 
 
 if [[ -x "$(command -v docker-compose)" ]]; then
-    colorEcho ${BLUE} "Updating docker-compose..."
+    colorEcho ${BLUE} "Checking latest version for docker-compose..."
 
     CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
 
     CURRENT_VERSION=$(docker-compose -v | cut -d',' -f1 | cut -d' ' -f3)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        colorEcho ${BLUE} "  Installing docker-compose ${REMOTE_VERSION}..."
         DOWNLOAD_URL="https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
         curl -SL --config ${CURL_SPECIAL_CONFIG} -o "${WORKDIR}/docker-compose" -C- $DOWNLOAD_URL && \
             sudo mv -f "${WORKDIR}/docker-compose" "/usr/local/bin/docker-compose" && \
@@ -74,7 +75,7 @@ fi
 
 
 if [[ -x "$(command -v ctop)" ]]; then
-    colorEcho ${BLUE} "Updating ctop..."
+    colorEcho ${BLUE} "Checking latest version for ctop..."
     if uname -m | grep -Eqi "amd64|x86_64"; then
         DOWNLOAD_FILE_SUFFIX='linux-amd64'
     else
@@ -86,6 +87,7 @@ if [[ -x "$(command -v ctop)" ]]; then
     CURRENT_VERSION=$(ctop -v | cut -d',' -f1 | cut -d' ' -f3)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        colorEcho ${BLUE} "  Installing ctop ${REMOTE_VERSION}..."
         DOWNLOAD_URL="https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}"
         curl -SL --config ${CURL_SPECIAL_CONFIG} -o "${WORKDIR}/ctop" -C- $DOWNLOAD_URL && \
             sudo mv -f "${WORKDIR}/ctop" "/usr/local/bin/ctop" && \
@@ -101,13 +103,14 @@ fi
 
 
 if [[ -x "$(command -v micro)" ]]; then
-    colorEcho ${BLUE} "Updating Micro editor..."
+    colorEcho ${BLUE} "Checking latest version for Micro editor..."
 
     CHECK_URL="https://api.github.com/repos/zyedidia/micro/releases/latest"
 
     CURRENT_VERSION=$(micro -version | grep Version | cut -d',' -f2)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        colorEcho ${BLUE} "  Installing micro ${REMOTE_VERSION}..."
         cd /usr/local/bin && curl https://getmic.ro | sudo bash && cd $HOME
     fi
 fi
@@ -133,7 +136,7 @@ fi
 
 
 if [[ -d "$HOME/.jabba" ]]; then
-    colorEcho ${BLUE} "Updating jabba..."
+    colorEcho ${BLUE} "Checking latest version for jabba..."
     if type 'jabba' 2>/dev/null | grep -q 'function'; then
         :
     else
@@ -145,6 +148,7 @@ if [[ -d "$HOME/.jabba" ]]; then
     CURRENT_VERSION=$(jabba --version | cut -d' ' -f2)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
+        colorEcho ${BLUE} "  Installing jabba ${REMOTE_VERSION}..."
         curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
             . ~/.jabba/jabba.sh && \
             sed -i "/jabba.sh/d" ~/.zshrc && \
@@ -174,8 +178,6 @@ fi
 
 # [[ -s "${MY_SHELL_SCRIPTS}/installer/proxychains_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/proxychains_installer.sh"
 
-[[ -s "${MY_SHELL_SCRIPTS}/installer/frp_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/frp_installer.sh"
-
 [[ -s "${MY_SHELL_SCRIPTS}/installer/nano_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/nano_installer.sh"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/bat_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/bat_installer.sh"
@@ -191,6 +193,8 @@ fi
 IS_UPDATE_ONLY="yes"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/gvm_go_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/gvm_go_installer.sh"
+
+[[ -s "${MY_SHELL_SCRIPTS}/installer/frp_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/frp_installer.sh"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/goproxy_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/goproxy_installer.sh"
 

@@ -19,7 +19,7 @@ fi
 
 # pacaptr - Pacman-like syntax wrapper for many package managers
 # https://github.com/rami3l/pacaptr
-colorEcho ${BLUE} "Checking update for pacaptr..."
+colorEcho ${BLUE} "Checking latest version for pacaptr..."
 
 case $(uname) in
     Darwin)
@@ -56,7 +56,7 @@ if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; the
         sudo rm -f "/usr/bin/pacman" && sudo rm -f "/usr/bin/pacapt"
 
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        colorEcho ${BLUE} "${ECHO_TYPE} pacaptr ${REMOTE_VERSION}..."
+        colorEcho ${BLUE} "  ${ECHO_TYPE} pacaptr ${REMOTE_VERSION}..."
         DOWNLOAD_URL="https://github.com/rami3l/pacaptr/releases/download/v${REMOTE_VERSION}/pacaptr-${OS_TYPE}-amd64.tar.gz"
         curl -SL -o "${WORKDIR}/pacaptr.tar.gz" -C- "$DOWNLOAD_URL" && \
             sudo tar -zxPf "${WORKDIR}/pacaptr.tar.gz" -C "/usr/local/bin" && \

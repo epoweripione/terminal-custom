@@ -19,8 +19,7 @@ fi
 
 # subconverter
 # https://github.com/tindy2013/subconverter
-colorEcho ${BLUE} "Checking update for subconverter..."
-
+INSTALL_NAME="subconverter"
 IS_INSTALL="yes"
 IS_UPDATE="no"
 CURRENT_VERSION="0.0.0"
@@ -33,6 +32,8 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]] then
+    colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
+
     CHECK_URL="https://api.github.com/repos/tindy2013/subconverter/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
@@ -41,7 +42,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]] then
-    colorEcho ${BLUE} "Installing subconverter ${REMOTE_VERSION}..."
+    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
 
     [[ -z "$OS_INFO_TYPE" ]] && get_os_type
     [[ -z "$OS_INFO_VDIS" ]] && get_sysArch

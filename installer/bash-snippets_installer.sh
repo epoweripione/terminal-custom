@@ -21,7 +21,7 @@ INSTALL_TOOL=${1:-"all"}
 
 # Bash-Snippets
 # https://github.com/alexanderepstein/Bash-Snippets
-colorEcho ${BLUE} "Checking update for Bash-Snippets..."
+colorEcho ${BLUE} "Installing Bash-Snippets..."
 Git_Clone_Update "alexanderepstein/Bash-Snippets" "$HOME/Bash-Snippets"
 
 [[ -n "${INSTALL_TOOL}" ]] && \

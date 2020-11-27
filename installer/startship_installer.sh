@@ -19,7 +19,7 @@ fi
 
 # ☄🌌️ The minimal, blazing-fast, and infinitely customizable prompt for any shell!
 # https://github.com/starship/starship
-colorEcho ${BLUE} "Checking update for starship..."
+colorEcho ${BLUE} "Checking latest version for starship..."
 
 CHECK_URL="https://api.github.com/repos/starship/starship/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
@@ -33,7 +33,7 @@ else
 fi
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    colorEcho ${BLUE} "${ECHO_TYPE} starship ${REMOTE_VERSION}..."
+    colorEcho ${BLUE} "  ${ECHO_TYPE} starship ${REMOTE_VERSION}..."
     # curl -fsSL https://starship.rs/install.sh | bash
     curl -SL -o "${WORKDIR}/starship_install.sh" "https://starship.rs/install.sh" && \
         bash "${WORKDIR}/starship_install.sh" --force

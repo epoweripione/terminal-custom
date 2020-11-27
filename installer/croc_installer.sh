@@ -15,7 +15,9 @@ fi
 
 # croc - Easily and securely send things from one computer to another
 # https://github.com/schollz/croc
-colorEcho ${BLUE} "Checking update for croc..."
+INSTALL_NAME="croc"
+
+colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
 
 CHECK_URL="https://api.github.com/repos/schollz/croc/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
@@ -49,6 +51,6 @@ fi
 
 
 if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
-    colorEcho ${BLUE} "Installing croc ${REMOTE_VERSION}..."
+    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
     curl https://getcroc.schollz.com | bash
 fi
