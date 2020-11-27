@@ -36,9 +36,9 @@ PHP_INI_DIR=$(php --ini | grep "Scan for additional .ini files in" | cut -d':' -
 ## pecl install imagick memcached mongodb oauth xdebug
 ## use proxy: curl -v --socks5-hostname 127.0.0.1:55880
 apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recommends && \
-    mkdir -p ${WORKDIR}/pecl_downloads && \
+    mkdir -p "${WORKDIR}/pecl_downloads" && \
+    cd "${WORKDIR}/pecl_downloads" && \
     : && \
-    cd ${WORKDIR}/pecl_downloads && \
     curl -SL http://pecl.php.net/get/imagick -o imagick.tgz && \
     curl -SL http://pecl.php.net/get/memcached -o memcached.tgz && \
     curl -SL http://pecl.php.net/get/mongodb -o mongodb.tgz && \
@@ -62,9 +62,9 @@ apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recomm
 
 ## psr、swoole
 apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
-    mkdir -p ${WORKDIR}/pecl_downloads && \
+    mkdir -p "${WORKDIR}/pecl_downloads" && \
+    cd "${WORKDIR}/pecl_downloads" && \
     : && \
-    cd ${WORKDIR}/pecl_downloads && \
     curl -SL http://pecl.php.net/get/psr -o psr.tgz && \
     curl -SL http://pecl.php.net/get/swoole -o swoole.tgz && \
     : && \
@@ -76,9 +76,9 @@ apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
 
 ## swoole swoole_postgresql
 ## https://github.com/swoole/ext-postgresql
-# mkdir -p ${WORKDIR}/pecl_downloads && \
+# mkdir -p "${WORKDIR}/pecl_downloads" && \
+#     cd "${WORKDIR}" && \
 #     : && \
-#     cd ${WORKDIR} && \
 #     curl -o ./pecl_downloads/ext-postgresql.tar.gz https://github.com/swoole/ext-postgresql/archive/master.tar.gz -L && \
 #     tar zxvf ./pecl_downloads/ext-postgresql.tar.gz && \
 #     mv ext-postgresql* ext-postgresql && cd ext-postgresql && \
@@ -90,9 +90,9 @@ apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
 ## Phalcon
 ## https://github.com/phalcon/cphalcon
 apt install -y php${PHP_VERSION}-dev libpcre3-dev gcc make re2c --no-install-recommends && \
-    mkdir -p ${WORKDIR}/pecl_downloads && \
+    mkdir -p "${WORKDIR}/pecl_downloads" && \
+    cd "${WORKDIR}" && \
     : && \
-    cd ${WORKDIR} && \
     curl -o ./pecl_downloads/cphalcon.tar.gz https://github.com/phalcon/cphalcon/archive/master.tar.gz -L && \
     tar zxvf ./pecl_downloads/cphalcon.tar.gz && \
     mv cphalcon* cphalcon && cd cphalcon/build && \
@@ -105,7 +105,7 @@ PDFlib_REMOTE_VER="9.2.0"
 PDFlib_CURRENT_VER=$(php --ri pdflib | grep "Binary-Version" | cut -d'>' -f2 | cut -d' ' -f2)
 PDFlib_BIN_VER=$(echo "${PHP_VERSION}0" | cut -c 1,3-)
 if [[ "$PDFlib_CURRENT_VER" != "$PDFlib_REMOTE_VER" ]]; then
-    cd ${WORKDIR} && \
+    cd "${WORKDIR}" && \
         curl -o pdflib.tar.gz https://www.pdflib.com/binaries/PDFlib/920/PDFlib-9.2.0-Linux-x86_64-php.tar.gz -L && \
         tar -xvf pdflib.tar.gz && \
         mv PDFlib-* pdflib
@@ -252,14 +252,12 @@ fi
 if ls /etc/ld.so.conf.d/oracle-instantclient* >/dev/null 2>&1; then
     if [[ ! -s "$PHP_INI_DIR/90-oci8.ini" ]]; then
         apt install -y build-essential libaio1 --no-install-recommends && \
-            mkdir -p ${WORKDIR}/pecl_downloads && \
+            mkdir -p "${WORKDIR}/pecl_downloads" && \
+            cd "${WORKDIR}/pecl_downloads" && \
             : && \
-            cd ${WORKDIR}/pecl_downloads && \
             curl -SL http://pecl.php.net/get/oci8 -o oci8.tgz && \
             printf "instantclient,$ORACLE_HOME\n" | pecl install --force oci8.tgz && \
-            echo 'extension=oci8.so' > $PHP_INI_DIR/90-oci8.ini && \
-            : && \
-            rm -rf ${WORKDIR}/pecl_downloads
+            echo 'extension=oci8.so' > $PHP_INI_DIR/90-oci8.ini
     fi
 fi
 

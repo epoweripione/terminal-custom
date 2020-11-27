@@ -12,11 +12,13 @@ else
     fi
 fi
 
+[[ -z "$OS_INFO_TYPE" ]] && get_os_type
+
 # Set proxy or mirrors env in china
 set_proxy_mirrors_env
 
 
-colorEcho ${BLUE} "Installing gvm & go..."
+colorEcho ${BLUE} "Checking update for gvm & go..."
 ## Install gvm
 ## https://github.com/moovweb/gvm
 ## Please turn on proxy in china (replace the IP and Port to fit your proxy server)
@@ -34,38 +36,91 @@ colorEcho ${BLUE} "Installing gvm & go..."
 ## Install Mercurial from http://pkgs.repoforge.org/mercurial/
 ## FreeBSD Requirements
 # sudo pkg_add -r bash git mercurial
-if [[ ! -d "$HOME/.gvm" ]]; then
-    sudo apt install -y bison && \
-        bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-fi
+
+IS_INSTALL="yes"
+IS_UPDATE="no"
+CURRENT_VERSION="go0.0.0"
 
 if [[ -d "$HOME/.gvm" ]]; then
-    [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+    IS_UPDATE="yes"
+else
+    [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
+fi
 
-    ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
-    if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-        proxychains4 gvm install go1.4 -B
-    else
-        gvm install go1.4 -B
+# new install
+if [[ "${IS_INSTALL}" == "yes" && "${IS_UPDATE}" == "no" ]] then
+    if [[ -x "$(command -v pacman)" ]]; then
+        PackagesList=(
+            bash
+            curl
+            git
+            mercurial
+            make
+            binutils
+            bison
+            gcc
+            build-essential
+            glibc-devel
+        )
+        for TargetPackage in "${PackagesList[@]}"; do
+            if pacman -Si "$TargetPackage" >/dev/null 2>&1; then
+                if ! pacman -Q "$TargetPackage" >/dev/null 2>&1; then
+                    sudo pacman --noconfirm -S "$TargetPackage"
+                fi
+            fi
+        done
     fi
 
+    if [[ "$OS_INFO_TYPE" == "darwin" && -x "$(command -v brew)" ]]; then
+        xcode-select --install
+        brew update
+        brew install mercurial
+    fi
+
+    bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+fi
+
+
+if [[ "${IS_INSTALL}" == "yes" && -z "$GVM_INSTALLER_NOT_USE_PROXY" ]]; then
+    if [[ ! -x "$(command -v proxychains4)" ]]; then
+        [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/proxychains_installer.sh" ]] && \
+            source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/proxychains_installer.sh"
+    fi
+fi
+
+
+if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
+    if type 'gvm' 2>/dev/null | grep -q 'function'; then
+        :
+    else
+        [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+    fi
+
+    ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
+    if [[ ! "$(gvm list | grep 'go1.4')" ]]; then
+        if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+            proxychains4 gvm install go1.4 -B
+        else
+            gvm install go1.4 -B
+        fi
+    fi
+
+    CURRENT_VERSION=$(gvm list | grep '=>' | cut -d' ' -f2)
     if [[ "$(gvm list | grep 'go1.4')" ]]; then
         # Set GOROOT_BOOTSTRAP to compile Go 1.5+
         gvm use go1.4
-        export GOROOT_BOOTSTRAP=$GOROOT
+        GOROOT_BOOTSTRAP=$GOROOT
 
-        ## Install latest go version
-        if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-            REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ \
-                            | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-            # REMOTE_VERSION=${REMOTE_VERSION%.}
-            [[ -n "$REMOTE_VERSION" ]] && proxychains4 gvm install $REMOTE_VERSION
-        else
-            # REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -m 1 -o 'go\([0-9]\)\+\.\([0-9]\)\+\.*\([0-9]\)*')
-            REMOTE_VERSION=$(curl -s https://golang.org/dl/ \
-                            | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-            # REMOTE_VERSION=${REMOTE_VERSION%.}
-            [[ -n "$REMOTE_VERSION" ]] && gvm install $REMOTE_VERSION
+        # Install latest go version
+        REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+        # REMOTE_VERSION=${REMOTE_VERSION%.}
+
+        if [[ -n "$REMOTE_VERSION" ]] && [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
+            if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+                proxychains4 gvm install $REMOTE_VERSION
+            else
+                gvm install $REMOTE_VERSION
+            fi
         fi
 
         # Set default go version
@@ -73,6 +128,31 @@ if [[ -d "$HOME/.gvm" ]]; then
             if [[ "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
                 gvm use $REMOTE_VERSION --default
             fi
+        elif [[ -n "$CURRENT_VERSION" ]]; then
+            gvm use $CURRENT_VERSION --default
+        fi
+    fi
+fi
+
+
+# go env
+if [[ -d "$HOME/.gvm" ]]; then
+    if type 'gvm' 2>/dev/null | grep -q 'function'; then
+        :
+    else
+        [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+    fi
+
+    if [[ "$(gvm list | grep 'go1.4')" ]]; then
+        CURRENT_VERSION=$(gvm list | grep '=>' | cut -d' ' -f2)
+
+        # Set GOROOT_BOOTSTRAP to compile Go 1.5+
+        gvm use go1.4 >/dev/null 2>&1
+        export GOROOT_BOOTSTRAP=$GOROOT
+
+        # Set default go version
+        if [[ -n "$CURRENT_VERSION" ]]; then
+            gvm use $CURRENT_VERSION --default >/dev/null 2>&1
         fi
     fi
 
@@ -87,14 +167,14 @@ if [[ -d "$HOME/.gvm" ]]; then
         if version_ge $GO_VERSION 'go1.13'; then
             go env -w GO111MODULE=on
             go env -w GOPROXY="https://goproxy.io,direct"
+            # go env -w GOPROXY="https://goproxy.cn,direct"
+            # go env -w GOPROXY="https://proxy.golang.org,direct"
             ## https://goproxy.io/zh/docs/goproxyio-private.html
             # go env -w GOPRIVATE="*.corp.example.com"
         else
             export GO111MODULE=on
             export GOPROXY="https://goproxy.io"
         fi
-        # go env -w GOPROXY="https://goproxy.cn,direct"
-        # go env -w GOPROXY="https://proxy.golang.org,direct"
     fi
 fi
 

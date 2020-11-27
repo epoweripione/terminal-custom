@@ -572,7 +572,6 @@ function get_network_local_ip_list() {
     get_network_interface_list
     [[ -z "$NETWORK_INTERFACE_LIST" ]] && return 0
 
-
     local net_interface_list
     local net_interface
     local net_ip
@@ -1150,8 +1149,10 @@ function set_global_proxy() {
 ## Check & set global proxy
 function check_set_global_proxy() {
     local SOCKS_PORT=${1:-"1080"}
-    local HTTP_MIXED_PORT=${2:-"8080"}
+    local MIXED_PORT=${2:-"8080"}
     local PROXY_IP
+    local PROXY_SOCKS=""
+    local PROXY_HTTP=""
     local IP_LIST="127.0.0.1"
     local PROXY_UP="NO"
     
@@ -1166,11 +1167,12 @@ function check_set_global_proxy() {
 
     # Setting global proxy
     while read -r PROXY_IP; do
-        if check_socks5_proxy_up "${PROXY_IP}:${SOCKS_PORT}"; then
+        if check_socks5_proxy_up "${PROXY_IP}:${MIXED_PORT}"; then
+            SOCKS_PORT=${MIXED_PORT}
             PROXY_UP="YES"
         else
-            if check_socks5_proxy_up "${PROXY_IP}:${HTTP_MIXED_PORT}"; then
-                SOCKS_PORT=${HTTP_MIXED_PORT}
+            if check_socks5_proxy_up "${PROXY_IP}:${SOCKS_PORT}"; then
+                MIXED_PORT=""
                 PROXY_UP="YES"
             fi
         fi
@@ -1179,10 +1181,13 @@ function check_set_global_proxy() {
     done <<<"$IP_LIST"
 
     if [[ "$PROXY_UP" == "YES" ]]; then
-        if set_global_proxy "${PROXY_IP}:${SOCKS_PORT}" "${PROXY_IP}:${HTTP_MIXED_PORT}"; then
+        [[ -n "${SOCKS_PORT}" ]] && PROXY_SOCKS="${PROXY_IP}:${SOCKS_PORT}"
+        [[ -n "${MIXED_PORT}" ]] && PROXY_HTTP="${PROXY_IP}:${MIXED_PORT}"
+
+        if set_global_proxy "${PROXY_SOCKS}" "${PROXY_HTTP}"; then
             GLOBAL_PROXY_IP=${PROXY_IP}
             GLOBAL_PROXY_SOCKS_PORT=${SOCKS_PORT}
-            GLOBAL_PROXY_HTTP_PORT=${HTTP_MIXED_PORT}
+            GLOBAL_PROXY_HTTP_PORT=${MIXED_PORT}
 
             return 0
         fi

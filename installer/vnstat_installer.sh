@@ -32,7 +32,7 @@ else
 fi
 
 
-cd ${WORKDIR} && \
+cd "${WORKDIR}" && \
     curl -SL -o vnstat.tar.gz https://humdi.net/vnstat/vnstat-latest.tar.gz && \
     sudo tar xvzf vnstat.tar.gz && \
     sudo mv vnstat-* vnstat && cd vnstat/ && \

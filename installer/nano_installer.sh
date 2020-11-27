@@ -47,7 +47,7 @@ fi
 
 
 # ncurses
-# cd ${WORKDIR} && \
+# cd "${WORKDIR}" && \
 #     curl -SL http://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz -o ncurses.tar.gz && \
 #     sudo tar zxvf ncurses.tar.gz && \
 #     sudo mv ncurses-* ncurses && cd ncurses && \
@@ -69,7 +69,7 @@ REMOTE_VERSION=$(curl -s -N https://www.nano-editor.org/download.php \
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    colorEcho ${BLUE} "Installing nano from source..."
+    colorEcho ${BLUE} "Installing nano ${REMOTE_VERSION} from source..."
     DOWNLOAD_URL="https://www.nano-editor.org/dist/v${DIST_VERSION}/nano-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/nano.tar.gz" "$DOWNLOAD_URL" && \
         tar xzvf "${WORKDIR}/nano.tar.gz" -C "${WORKDIR}" && \

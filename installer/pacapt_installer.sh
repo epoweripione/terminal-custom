@@ -34,7 +34,7 @@ else
 fi
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    colorEcho ${BLUE} "${ECHO_TYPE} pacapt - An Arch's pacman-like package manager for some Unices..."
+    colorEcho ${BLUE} "${ECHO_TYPE} pacapt ${REMOTE_VERSION}..."
     sudo curl -SL -o "${WORKDIR}/pacapt" https://github.com/icy/pacapt/raw/ng/pacapt && \
         sudo mv -f "${WORKDIR}/pacapt" "/usr/bin/pacapt" && \
         sudo chmod 755 "/usr/bin/pacapt" && \

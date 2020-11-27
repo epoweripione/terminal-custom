@@ -33,7 +33,7 @@ else
 fi
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    colorEcho ${BLUE} "${ECHO_TYPE} starship - The minimal, blazing-fast, and infinitely customizable prompt for any shell..."
+    colorEcho ${BLUE} "${ECHO_TYPE} starship ${REMOTE_VERSION}..."
     # curl -fsSL https://starship.rs/install.sh | bash
     curl -SL -o "${WORKDIR}/starship_install.sh" "https://starship.rs/install.sh" && \
         bash "${WORKDIR}/starship_install.sh" --force

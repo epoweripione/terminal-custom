@@ -108,9 +108,9 @@ fi
 if [[ ! -x "$(command -v neofetch)" ]]; then
     Git_Clone_Update "dylanaraps/neofetch" "$HOME/neofetch"
 
-    if [[ $OS_INFO_TYPE == "darwin" ]]; then
+    if [[ "$OS_INFO_TYPE" == "darwin" ]]; then
         cd $HOME/neofetch && sudo make PREFIX=/usr/local install
-    elif [[ $OS_INFO_TYPE =~ "windows" ]]; then
+    elif [[ "$OS_INFO_TYPE" == "windows" ]]; then
         cd $HOME/neofetch && sudo make -i install
     else
         cd $HOME/neofetch && sudo make install
@@ -158,16 +158,17 @@ colorEcho ${BLUE} "Oh-my-zsh custom plugins..."
 # echo "Updating zsh-navigation-tools..."
 # sh -c "$(curl -fsSL https://raw.githubusercontent.com/psprint/zsh-navigation-tools/master/doc/install.sh)"
 
-# fast-syntax-highlighting
-if [[ $OS_INFO_TYPE != "windows" ]]; then
-    Git_Clone_Update "zdharma/fast-syntax-highlighting" \
-        "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"
-fi
+## fast-syntax-highlighting
+# if [[ "$OS_INFO_TYPE" != "windows" ]]; then
+#     Git_Clone_Update "zdharma/fast-syntax-highlighting" \
+#         "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"
+# fi
 
 PluginList=(
     "zsh-users/zsh-syntax-highlighting"
     "zsh-users/zsh-history-substring-search"
     "zsh-users/zsh-autosuggestions"
+    "zdharma/fast-syntax-highlighting"
     # "popstas/zsh-command-time"
     "petervanderdoes/git-flow-completion"
     "changyuheng/zsh-interactive-cd"
@@ -239,7 +240,7 @@ Plugins="git"
 
 [[ "$(command -v git-flow)" ]] && Plugins="${Plugins} git-flow-completion"
 
-[[ $OS_INFO_TYPE == "darwin" ]] && Plugins="${Plugins} osx"
+[[ "$OS_INFO_TYPE" == "darwin" ]] && Plugins="${Plugins} osx"
 
 Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 # Plugins="${Plugins} command-time"
@@ -259,7 +260,7 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 
 Plugins="${Plugins} zsh-interactive-cd zsh-autosuggestions fast-syntax-highlighting history-substring-search"
 
-# if [[ $OS_INFO_TYPE == "windows" ]]; then
+# if [[ "$OS_INFO_TYPE" == "windows" ]]; then
 #     Plugins="${Plugins} zsh-syntax-highlighting"
 # else
 #     Plugins="${Plugins} fast-syntax-highlighting"

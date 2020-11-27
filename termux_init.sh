@@ -38,7 +38,7 @@
 # echo "deb https://mirrors.tuna.tsinghua.edu.cn/termux stable main" >> "$PREFIX/etc/apt/sources.list"
 
 ## install packages
-# pkg up -y && pkg i -y nano curl wget git unzip unrar htop nmap screenfetch
+# pkg up -y && pkg i -y nano curl wget git unzip unrar htop nmap screenfetch starship
 
 ## init termux
 # source <(curl -sL https://git.io/fNpeJ) && ./termux_init.sh

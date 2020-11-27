@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-# if [[ $UID -ne 0 ]]; then
-#     echo "Please run this script as root user!"
-#     exit 0
-# fi
+trap 'rm -r "$WORKDIR"' EXIT
+
+[[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
+[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
@@ -28,38 +28,43 @@ fi
 if [[ -x "$(command -v proxychains4)" ]]; then
     if [[ -d "$HOME/proxychains-ng" ]]; then
         colorEcho ${BLUE} "Updating proxychains-ng..."
-        cd $HOME/proxychains-ng && git pull
+
+        Git_Clone_Update "rofl0r/proxychains-ng" "$HOME/proxychains-ng"
+
         # only recompile if update
         # git_latest_update=$(git log -1 --format="%at" | xargs -I{} date -d @{} +'%Y-%m-%d %H:%M:%S')
         git_latest_update=$(git log -1 --format="%at" | xargs -I{} date -d @{})
         proxychains4_date=$(date -d "$(stat --printf='%y\n' $(which proxychains4))")
         # if [[ $(date -d "$git_latest_update") > $(date --date='7 day ago') ]]; then
         if [[ $(date -d "$git_latest_update") > $(date -d "$proxychains4_date") ]]; then
-            sudo ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
+            cd "$HOME/proxychains-ng" && \
+                sudo ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
                 sudo make && sudo make install
         fi
-        cd $HOME
     fi
 else
     colorEcho ${BLUE} "Installing proxychains-ng..."
     if [[ -x "$(command -v pacman)" ]]; then
-        if pacman -Si proxychains-ng  >/dev/null 2>&1; then
-            sudo pacman --noconfirm -S proxychains-ng 
+        if pacman -Si proxychains4 >/dev/null 2>&1; then
+            sudo pacman --noconfirm -S proxychains4
         fi
     fi
 
-    if [[ $UID -eq 0 && ! -x "$(command -v proxychains4)" ]]; then
-        cd $HOME && \
-            git clone https://github.com/rofl0r/proxychains-ng && \
-            cd proxychains-ng && \
-            sudo ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
-            sudo make && sudo make install && sudo make install-config
+    if [[ ! -x "$(command -v proxychains4)" ]]; then
+        Git_Clone_Update "rofl0r/proxychains-ng" "$HOME/proxychains-ng"
+
+        if [[ -d "$HOME/proxychains-ng" ]]; then
+            cd "$HOME/proxychains-ng" && \
+                sudo ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
+                sudo make && sudo make install && sudo make install-config
+        fi
     fi
 
     if [[ -s "/etc/proxychains/proxychains.conf" ]]; then
         sudo cp /etc/proxychains/proxychains.conf /etc/proxychains/proxychains.conf.bak && \
             sudo sed -i 's/socks4/# socks4/g' /etc/proxychains/proxychains.conf && \
-            echo 'socks5 127.0.0.1 55880' | sudo tee -a /etc/proxychains/proxychains.conf >/dev/null
+            echo 'socks5 127.0.0.1 7890' | sudo tee -a /etc/proxychains/proxychains.conf >/dev/null
     fi
-    cd $HOME
 fi
+
+cd "${CURRENT_DIR}"

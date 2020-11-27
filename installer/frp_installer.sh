@@ -46,7 +46,7 @@ else
 fi
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    colorEcho ${BLUE} "Installing frp..."
+    colorEcho ${BLUE} "Installing frp ${REMOTE_VERSION}..."
 
     if pgrep -f "frps" >/dev/null 2>&1; then
         pkill -f "frps"

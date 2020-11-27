@@ -49,6 +49,6 @@ fi
 
 
 if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
-    colorEcho ${BLUE} "Installing croc..."
+    colorEcho ${BLUE} "Installing croc ${REMOTE_VERSION}..."
     curl https://getcroc.schollz.com | bash
 fi

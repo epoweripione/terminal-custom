@@ -89,7 +89,7 @@ fi
 
 
 if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
-    colorEcho ${BLUE} "Installing duf..."
+    colorEcho ${BLUE} "Installing duf ${REMOTE_VERSION}..."
     if [[ -s "/usr/local/bin/duf" ]]; then
         sudo rm -f "/usr/local/bin/duf"
     fi

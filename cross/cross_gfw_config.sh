@@ -5,14 +5,16 @@ trap 'rm -r "$WORKDIR"' EXIT
 [[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
+[[ -z "$MY_SHELL_SCRIPTS" ]] && MY_SHELL_SCRIPTS="$HOME/terminal-custom"
+
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
 else
-    if [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh" ]]; then
-        source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh"
+    if [[ -s "${MY_SHELL_SCRIPTS}/custom_functions.sh" ]]; then
+        source "${MY_SHELL_SCRIPTS}/custom_functions.sh"
     else
-        echo "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh not exist!"
+        echo "${MY_SHELL_SCRIPTS}/custom_functions.sh not exist!"
         exit 0
     fi
 fi
@@ -41,35 +43,7 @@ fi
 # https://www.v2ray.com/chapter_00/install.html
 # service v2ray start|stop|status|reload|restart|force-reload
 function install_v2ray_client() {
-    local CURRENT_VERSION
-    local DOWNLOAD_URL
-    local CHECK_URL="https://api.github.com/repos/v2fly/v2ray-core/releases/latest"
-    local REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-
-    CURRENT_VERSION="0.0.0"
-    if [[ $(systemctl is-enabled v2ray 2>/dev/null) ]]; then
-        CURRENT_VERSION=$(v2ray -version | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-    fi
-
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        if [[ "$CURRENT_VERSION" == "0.0.0" ]]; then
-            colorEcho ${BLUE} "Installing v2ray-core..."
-        else
-            colorEcho ${BLUE} "Updating v2ray-core..."
-        fi
-
-        # https://github.com/v2fly/fhs-install-v2ray/wiki/Migrate-from-the-old-script-to-this
-        if [[ -d "/usr/bin/v2ray/" ]]; then
-            sudo systemctl disable v2ray.service --now
-            sudo rm -rf /usr/bin/v2ray/ /etc/v2ray/
-            sudo rm -f /etc/systemd/system/v2ray.service
-            sudo rm -f /lib/systemd/system/v2ray.service
-            sudo rm -f /etc/init.d/v2ray
-        fi
-
-        bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
-        # bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-dat-release.sh)
-    fi
+    [[ -s "${MY_SHELL_SCRIPTS}/cross/v2ray_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/v2ray_installer.sh"
 }
 
 # Get v2ray config from subscriptions
@@ -298,114 +272,13 @@ EOF
 # subconverter
 # https://github.com/tindy2013/subconverter
 function install_update_subconverter() {
-    local CURRENT_VERSION
-    local DOWNLOAD_URL
-    local CHECK_URL
-    local REMOTE_VERSION
-    local IS_UPDATE="no"
-
-    [[ -z "$OS_INFO_TYPE" ]] && get_os_type
-    [[ -z "$OS_INFO_VDIS" ]] && get_sysArch
-
-    if [[ -s "/srv/subconverter/subconverter" ]]; then
-        colorEcho ${BLUE} "  Updating subconverter..."
-        CURRENT_VERSION=$(head -n1 /srv/subconverter/.version)
-    else
-        colorEcho ${BLUE} "  Installing subconverter..."
-        CURRENT_VERSION="0.0.0"
-    fi
-
-    CHECK_URL="https://api.github.com/repos/tindy2013/subconverter/releases/latest"
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        IS_UPDATE="yes"
-        DOWNLOAD_URL="https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${OS_INFO_TYPE}${OS_INFO_VDIS}.tar.gz"
-        curl -SL -o subconverter.tar.gz -C- $DOWNLOAD_URL && \
-            mkdir -p /srv/subconverter && \
-            tar -zxPf subconverter.tar.gz -C /srv && \
-            rm subconverter.tar.gz && \
-            echo ${REMOTE_VERSION} > /srv/subconverter/.version
-    fi
-
-    if [[ "$IS_UPDATE" == "yes" ]]; then
-        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] && \
-            sudo systemctl restart subconverter
-    fi
+    [[ -s "${MY_SHELL_SCRIPTS}/cross/subconverter_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/subconverter_installer.sh"
 }
 
 # clash
 # https://github.com/Dreamacro/clash
 function install_update_clash() {
-    local CURRENT_VERSION
-    local DOWNLOAD_URL
-    local CHECK_URL
-    local REMOTE_VERSION
-    local IS_UPDATE="no"
-
-    [[ -z "$OS_INFO_TYPE" ]] && get_os_type
-    [[ -z "$OS_INFO_ARCH" ]] && get_arch
-
-    if ! pgrep -f "subconverter" >/dev/null 2>&1; then
-        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] && sudo systemctl restart subconverter
-    fi
-
-    if ! pgrep -f "subconverter" >/dev/null 2>&1; then
-        colorEcho ${RED} "  Please install and run subconverter first!"
-        return 1
-    fi
-
-    if [[ -s "/srv/clash/clash" ]]; then
-        colorEcho ${BLUE} "  Updating clash..."
-        CURRENT_VERSION=$(/srv/clash/clash -v 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-    else
-        colorEcho ${BLUE} "  Installing clash..."
-        CURRENT_VERSION="0.0.0"
-    fi
-
-    # CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
-    # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-    # Pre-release
-    REMOTE_VERSION=$(curl -s -N https://github.com/Dreamacro/clash/releases \
-        | grep -Eo -m1 '\/releases\/tag\/v([0-9]{1,}\.)+[0-9]{1,}' \
-        | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        IS_UPDATE="yes"
-        DOWNLOAD_URL="https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}-v${REMOTE_VERSION}.gz"
-        curl -SL -o clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz -C- $DOWNLOAD_URL && \
-            mkdir -p /srv/clash && \
-            mv clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz /srv/clash && \
-            cd /srv/clash && \
-            gzip -df clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz && \
-            chmod +x clash-${OS_INFO_TYPE}-${OS_INFO_ARCH} && \
-            sudo ln -sv /srv/clash/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH} /srv/clash/clash || true
-    fi
-
-    # geo database
-    colorEcho ${BLUE} "  Updating clash geo database..."
-    if [[ -s "/srv/clash/mmdb.ver" ]]; then
-        CURRENT_VERSION=$(head -n1 /srv/clash/mmdb.ver)
-    else
-        CURRENT_VERSION="20000101"
-    fi
-
-    CHECK_URL="https://geolite.clash.dev/version"
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL)
-
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        IS_UPDATE="yes"
-        # MMDB_URL="https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb"
-        MMDB_URL="https://geolite.clash.dev/Country.mmdb"
-        curl -SL -o "${WORKDIR}/Country.mmdb" "$MMDB_URL" && \
-            mv -f "${WORKDIR}/Country.mmdb" "/srv/clash/Country.mmdb" && \
-            echo ${REMOTE_VERSION} > "/srv/clash/mmdb.ver"
-    fi
-
-    if [[ "$IS_UPDATE" == "yes" ]]; then
-        [[ $(systemctl is-enabled clash 2>/dev/null) ]] && \
-            sudo systemctl restart clash && sleep 3
-    fi
+    [[ -s "${MY_SHELL_SCRIPTS}/cross/clash_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/clash_installer.sh"
 }
 
 function use_clash() {
@@ -422,17 +295,10 @@ function use_clash() {
         colorEcho ${BLUE} "  Checking & loading clash proxy..."
 
         if [[ ! -s "/srv/subconverter/subconverter" && ! -s "/srv/clash/clash" ]]; then
-            echo "Download URL for subconverter & clash?"
-            echo -n "[Use github by default] "
-            read SUB_CLASH_URL
-            if [[ -n "$SUB_CLASH_URL" ]]; then
-                wget -c -O "${WORKDIR}/subconverter_clash.zip" "${SUB_CLASH_URL}" && \
-                    unzip -qo "${WORKDIR}/subconverter_clash.zip" -d "/srv" && \
-                    rm -f "${WORKDIR}/subconverter_clash.zip"
-            fi
+            Download_Install_Subconverter_Clash
         fi
 
-        install_update_subconverter
+        [[ -s "/srv/subconverter/subconverter" ]] || install_update_subconverter
         [[ -s "/srv/subconverter/subconverter" ]] || {
                 colorEcho ${RED} "  Please install and run subconverter first!"
                 return 1
@@ -442,7 +308,7 @@ function use_clash() {
                 Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"
             }
 
-        install_update_clash
+        [[ -s "/srv/clash/clash" ]] || install_update_clash
         [[ -s "/srv/clash/clash" ]] || {
                 colorEcho ${RED} "  Please install and run clash first!"
                 return 1
@@ -457,25 +323,25 @@ function use_clash() {
             [[ ! -s "$last_update" ]] && \
                 date -d "1 day ago" +"%F" > "$last_update"
 
-            # only update config first time in one day
+            # only update config one time per day
             if [[ $(date -d $(date +"%F") +"%s") -gt $(date -d $(head -n1 "$last_update") +"%s") ]]; then
-                [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_config.sh" ]] && \
-                    bash "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_config.sh"
+                [[ -s "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh" ]] && \
+                    bash "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh"
                 # restart clash and sleep 3s wait for clash ready
                 sudo systemctl restart clash && sleep 3
 
                 date +"%F" > "$last_update"
             fi
 
-            if check_socks5_proxy_up "${PROXY_URL}:${SOCKS_PORT}"; then
+            if check_socks5_proxy_up "${PROXY_URL}:${MIXED_PORT}"; then
                 return 0
             fi
 
-            if check_socks5_proxy_up "${PROXY_URL}:${MIXED_PORT}"; then
+            if check_socks5_proxy_up "${PROXY_URL}:${SOCKS_PORT}"; then
                 return 0
             else
-                [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_config.sh" ]] && \
-                    bash "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_config.sh"
+                [[ -s "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh" ]] && \
+                    bash "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh"
                 sudo systemctl restart clash && sleep 3
             fi
         fi
@@ -496,7 +362,7 @@ function use_v2ray() {
 
         [[ ! -x "$(command -v v2ray)" ]] && install_v2ray_client
 
-        SubListFile="${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/cross_gfw_subscription.list"
+        SubListFile="${MY_SHELL_SCRIPTS}/cross/cross_gfw_subscription.list"
         if [[ -s "$SubListFile" ]]; then
             SubList=()
             while read -r READLINE || [[ "$READLINE" ]]; do

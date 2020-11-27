@@ -94,75 +94,6 @@ if [[ -x "$(command -v ctop)" ]]; then
 fi
 
 
-if [[ -d "$HOME/.gvm" ]]; then
-    colorEcho ${BLUE} "Updating gvm & go..."
-    if type 'gvm' 2>/dev/null | grep -q 'function'; then
-        :
-    else
-        [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
-    fi
-
-    ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
-    if [[ ! "$(gvm list | grep 'go1.4')" ]]; then
-        if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-            proxychains4 gvm install go1.4 -B
-        else
-            gvm install go1.4 -B
-        fi
-    fi
-
-    CURRENT_VERSION=$(gvm list | grep '=>' | cut -d' ' -f2)
-    if [[ "$(gvm list | grep 'go1.4')" ]]; then
-        # Set GOROOT_BOOTSTRAP to compile Go 1.5+
-        gvm use go1.4
-        GOROOT_BOOTSTRAP=$GOROOT
-
-        # Install latest go version
-        if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-            REMOTE_VERSION=$(proxychains4 curl -s https://golang.org/dl/ \
-                            | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-        else
-            REMOTE_VERSION=$(curl -s https://golang.org/dl/ \
-                            | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-        fi
-        # REMOTE_VERSION=${REMOTE_VERSION%.}
-
-        if [[ -n "$REMOTE_VERSION" ]] && [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
-            if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-                proxychains4 gvm install $REMOTE_VERSION
-            else
-                gvm install $REMOTE_VERSION
-            fi
-        fi
-
-        # Set default go version
-        if [[ -n "$REMOTE_VERSION" ]]; then
-            if [[ "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
-                gvm use $REMOTE_VERSION --default
-            fi
-        elif [[ -n "$CURRENT_VERSION" ]]; then
-            gvm use $CURRENT_VERSION --default
-        fi
-
-        # GOBIN
-        if [[ -z "$GOBIN" && -n "$GOROOT" ]]; then
-            export GOBIN=$GOROOT/bin
-        fi
-
-        # Go module proxy for china
-        if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
-            GO_VERSION=$(go version | cut -d' ' -f3)
-            if version_ge $GO_VERSION 'go1.13'; then
-                go env -w GOPROXY=https://goproxy.cn,direct
-            else
-                export GOPROXY=https://goproxy.cn
-            fi
-            # go env -w GOPROXY=https://proxy.golang.org,direct
-        fi
-    fi
-fi
-
-
 if [[ -x "$(command -v php)" && -x "$(command -v composer)" ]]; then
     colorEcho ${BLUE} "Updating composer & composer global packages..."
     composer selfupdate && composer g update
@@ -238,111 +169,8 @@ if [[ -d "$HOME/.sdkman" ]]; then
 fi
 
 
-if [[ -d "/etc/proxy" && -x "$(command -v proxy)" ]]; then
-    colorEcho ${BLUE} "Updating goproxy..."
-    # https://github.com/snail007/goproxy
-
-    CHECK_URL="https://api.github.com/repos/snail007/goproxy/releases/latest"
-
-    CURRENT_VERSION=$(proxy --version 2>&1 | cut -d'_' -f2)
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        # curl -SL \
-        #     https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh \
-        # | sudo bash
-        DOWNLOAD_URL="https://github.com/snail007/goproxy/releases/download/v${REMOTE_VERSION}/proxy-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.gz"
-        curl -SL --config ${CURL_SPECIAL_CONFIG} -o proxy-linux-amd64.tar.gz -C- $DOWNLOAD_URL && \
-            curl -SL "https://raw.githubusercontent.com/snail007/goproxy/master/install.sh" | sudo bash && \
-            rm -f proxy-linux-amd64.tar.gz
-    fi
-fi
-
-
-if [[ -x "$(command -v proxy-admin)" ]]; then
-    # https://github.com/snail007/proxy_admin_free
-    colorEcho ${BLUE} "Updating ProxyAdmin..."
-
-    if [[ -s "/etc/gpa/.version" ]]; then
-        # CURRENT_VERSION=$(cat /etc/gpa/.version 2>&1)
-        CURRENT_VERSION=$(head -n1 /etc/gpa/.version)
-    else
-        CURRENT_VERSION="v0.0"
-    fi
-
-    CHECK_URL="https://api.github.com/repos/snail007/proxy_admin_free/releases/latest"
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        curl -SL "https://raw.githubusercontent.com/snail007/proxy_admin_free/master/install_auto.sh" | sudo bash
-        echo ${REMOTE_VERSION} | sudo tee "/etc/gpa/.version" >/dev/null
-    fi
-fi
-
-
-if [[ -x "$(command -v v2ray)" ]]; then
-    if [[ -x "$(command -v v2ray-util)" ]]; then
-        colorEcho ${BLUE} "Updating multi-v2ray..."
-        # https://github.com/Jrohy/multi-v2ray
-        v2ray update.sh >/dev/null && v2ray restart
-    elif [[ $(systemctl is-enabled v2ray 2>/dev/null) ]]; then
-        V2RAYCORE="yes"
-    fi
-elif [[ $(systemctl is-enabled v2ray 2>/dev/null) ]]; then
-    V2RAYCORE="yes"
-fi
-
-if [[ -n "$V2RAYCORE" ]]; then
-    colorEcho ${BLUE} "Updating v2ray-core..."
-    # https://github.com/v2fly/fhs-install-v2ray
-    CHECK_URL="https://api.github.com/repos/v2fly/v2ray-core/releases/latest"
-
-    CURRENT_VERSION=$(v2ray -version | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        # https://github.com/v2fly/fhs-install-v2ray/wiki/Migrate-from-the-old-script-to-this
-        if [[ -d "/usr/bin/v2ray/" ]]; then
-            sudo systemctl disable v2ray.service --now
-            sudo rm -rf /usr/bin/v2ray/ /etc/v2ray/
-            sudo rm -f /etc/systemd/system/v2ray.service
-            sudo rm -f /lib/systemd/system/v2ray.service
-            sudo rm -f /etc/init.d/v2ray
-        fi
-
-        bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
-        bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-dat-release.sh)
-    fi
-fi
-
-
-if [[ -s "/srv/trojan/trojan" ]]; then
-    colorEcho ${BLUE} "Updating trojan..."
-
-    CHECK_URL="https://api.github.com/repos/trojan-gfw/trojan/releases/latest"
-
-    CURRENT_VERSION=$(/srv/trojan/trojan --version 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        [[ $(systemctl is-enabled trojan 2>/dev/null) ]] && sudo systemctl stop trojan
-
-        DOWNLOAD_URL="https://github.com/trojan-gfw/trojan/releases/download/v${REMOTE_VERSION}/trojan-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.xz"
-        curl -SL -o "${WORKDIR}/trojan.tar.xz" -C- $DOWNLOAD_URL && \
-            tar -JxPf "${WORKDIR}/trojan.tar.xz" -C "/srv/"
-
-        if [[ ! -s "/etc/systemd/system/trojan.service" ]]; then
-            sudo cp -f /srv/trojan/examples/trojan.service-example /etc/systemd/system/trojan.service
-            sudo sed -i "s|ExecStart=.*|ExecStart=/srv/trojan/trojan -c /etc/trojan/trojan.json|" /etc/systemd/system/trojan.service
-        fi
-
-        if [[ -s "/etc/trojan/trojan.json" ]]; then
-            # nohup /srv/trojan/trojan -c /etc/trojan/trojan.json >/dev/null 2>&1 & disown
-            # sudo systemctl enable trojan && sudo systemctl start trojan
-            [[ $(systemctl is-enabled trojan 2>/dev/null) ]] && sudo systemctl restart trojan
-        else
-            sudo mkdir -p "/etc/trojan" && \
-                sudo cp -f "/srv/trojan/examples/server.json-example" "/etc/trojan/trojan.json"
-        fi
-    fi
-fi
-
+# Install & Update
+[[ -s "${MY_SHELL_SCRIPTS}/installer/starship_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/starship_installer.sh"
 
 # [[ -s "${MY_SHELL_SCRIPTS}/installer/proxychains_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/proxychains_installer.sh"
 
@@ -357,6 +185,26 @@ fi
 [[ -s "${MY_SHELL_SCRIPTS}/installer/duf_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/duf_installer.sh"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/exa_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/exa_installer.sh"
+
+
+# Update only(manual install)
+IS_UPDATE_ONLY="yes"
+
+[[ -s "${MY_SHELL_SCRIPTS}/installer/gvm_go_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/gvm_go_installer.sh"
+
+[[ -s "${MY_SHELL_SCRIPTS}/installer/goproxy_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/goproxy_installer.sh"
+
+[[ -s "${MY_SHELL_SCRIPTS}/cross/xray_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/xray_installer.sh"
+
+[[ -s "${MY_SHELL_SCRIPTS}/cross/v2ray_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/v2ray_installer.sh"
+
+[[ -s "${MY_SHELL_SCRIPTS}/cross/trojan_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/trojan_installer.sh"
+
+[[ -s "${MY_SHELL_SCRIPTS}/cross/clash_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/clash_installer.sh"
+
+[[ -s "${MY_SHELL_SCRIPTS}/cross/subconverter_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/subconverter_installer.sh"
+
+unset IS_UPDATE_ONLY
 
 
 if [[ -x "$(command -v conda)" ]]; then

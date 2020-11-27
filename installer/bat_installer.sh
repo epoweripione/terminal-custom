@@ -82,7 +82,7 @@ fi
 
 
 if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
-    colorEcho ${BLUE} "Installing bat..."
+    colorEcho ${BLUE} "Installing bat ${REMOTE_VERSION}..."
     if [[ -s "/usr/bin/bat" ]]; then
         sudo rm -f "/usr/bin/bat"
     fi
