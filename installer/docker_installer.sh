@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-trap 'rm -r "$WORKDIR"' EXIT
-
-[[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
-[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
-
 if [[ $UID -ne 0 ]]; then
     echo "Please run this script as root user!"
     exit 0
 fi
+
+trap 'rm -r "$WORKDIR"' EXIT
+
+[[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
+[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
@@ -146,10 +146,8 @@ if [[ -z "$DOCKER_INSTALLER_NOT_USE_MIRROR" ]]; then
 {
     "registry-mirrors": [
         "https://docker.mirrors.sjtug.sjtu.edu.cn",
-        "https://reg-mirror.qiniu.com",
-        "http://7924d745.m.daocloud.io",
-        "http://hub-mirror.c.163.com",
-        "https://mirror.ccs.tencentyun.com"
+        "https://mirror.baidubce.com",
+        "https://hub-mirror.c.163.com"
     ]
 }
 EOF

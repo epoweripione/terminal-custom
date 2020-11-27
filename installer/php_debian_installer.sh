@@ -37,7 +37,7 @@ apt install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libicu-dev \
 
 
 ## PHP
-PHP_VERSION=7.3
+PHP_VERSION=${1:-7.4}
 
 if [[ -x "$(command -v php)" ]]; then
     PHP_VERSION_OLD=$(php --version | head -n 1 | cut -d " " -f 2 | cut -c 1-3)

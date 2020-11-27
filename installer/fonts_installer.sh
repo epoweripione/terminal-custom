@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [[ "$OS_INFO_TYPE" != "windows" && $UID -ne 0 ]]; then
+    echo "Please run this script as root user!"
+    exit 0
+fi
+
 trap 'rm -r "$WORKDIR"' EXIT
 
 [[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
@@ -19,11 +24,6 @@ fi
 
 # Get OS type
 get_os_type
-
-if [[ "$OS_INFO_TYPE" != "windows" && $UID -ne 0 ]]; then
-    echo "Please run this script as root user!"
-    exit 0
-fi
 
 ## Visual Studio Code Settings
 # "editor.fontFamily": "'FiraCode Nerd Font Mono', 'Fira Code Retina', 'Sarasa Term SC', '更纱黑体 SC'"

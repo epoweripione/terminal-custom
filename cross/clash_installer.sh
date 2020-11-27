@@ -53,12 +53,12 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
 
     DOWNLOAD_URL="https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}-v${REMOTE_VERSION}.gz"
 
-    curl -SL -o "${WORKDIR}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" -C- $DOWNLOAD_URL && \
-        mkdir -p "/srv/clash" && \
-        mv "${WORKDIR}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" "/srv/clash" && \
+    curl -SL -o "${WORKDIR}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" -C- "$DOWNLOAD_URL" && \
+        sudo mkdir -p "/srv/clash" && \
+        sudo mv "${WORKDIR}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" "/srv/clash" && \
         cd "/srv/clash" && \
-        gzip -d "clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" && \
-        chmod +x "clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}" && \
+        sudo gzip -d "clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" && \
+        sudo chmod +x "clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}" && \
         sudo ln -sv "/srv/clash/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}" "/srv/clash/clash" || true
 
     # geo database
@@ -76,8 +76,8 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
         # MMDB_URL="https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb"
         MMDB_URL="https://geolite.clash.dev/Country.mmdb"
         curl -SL -o "${WORKDIR}/Country.mmdb" "$MMDB_URL" && \
-            mv -f "${WORKDIR}/Country.mmdb" "/srv/clash/Country.mmdb" && \
-            echo ${REMOTE_VERSION} > "/srv/clash/mmdb.ver"
+            sudo mv -f "${WORKDIR}/Country.mmdb" "/srv/clash/Country.mmdb" && \
+            echo ${REMOTE_VERSION} | sudo tee "/srv/clash/mmdb.ver" >/dev/null
     fi
 
     [[ $(systemctl is-enabled clash 2>/dev/null) ]] || {

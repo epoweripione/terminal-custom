@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-# if [[ $UID -ne 0 ]]; then
-#     echo "Please run this script as root user!"
-#     exit 0
-# fi
-
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
@@ -21,8 +16,8 @@ fi
 ## git-flow (AVH Edition)
 # https://github.com/petervanderdoes/gitflow-avh
 colorEcho ${BLUE} "Installing git-flow (AVH Edition)..."
-DOWNLOAD_URL=https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh
-wget --no-check-certificate -q $DOWNLOAD_URL && \
+DOWNLOAD_URL="https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh"
+wget --no-check-certificate -q "$DOWNLOAD_URL" && \
     sudo bash gitflow-installer.sh install develop && \
     sudo rm gitflow-installer.sh
 

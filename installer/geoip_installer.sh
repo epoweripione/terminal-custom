@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-# if [[ $UID -ne 0 ]]; then
-#     echo "Please run this script as root user!"
-#     exit 0
-# fi
-
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :

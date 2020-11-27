@@ -48,9 +48,9 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
 
     DOWNLOAD_URL="https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${OS_INFO_TYPE}${OS_INFO_VDIS}.tar.gz"
 
-    curl -SL -o "${WORKDIR}/subconverter.tar.gz" -C- $DOWNLOAD_URL && \
-        tar -zxPf "${WORKDIR}/subconverter.tar.gz" -C "/srv" && \
-        echo ${REMOTE_VERSION} > "/srv/subconverter/.version"
+    curl -SL -o "${WORKDIR}/subconverter.tar.gz" -C- "$DOWNLOAD_URL" && \
+        sudo tar -zxPf "${WORKDIR}/subconverter.tar.gz" -C "/srv" && \
+        echo ${REMOTE_VERSION} | sudo tee "/srv/subconverter/.version" >/dev/null
 
     [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] || {
         Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"

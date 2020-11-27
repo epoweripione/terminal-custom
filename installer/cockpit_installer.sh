@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-if [[ $UID -ne 0 ]]; then
-    echo "Please run this script as root user!"
-    exit 0
-fi
-
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
@@ -27,21 +22,21 @@ fi
 # Setting up the primary Cockpit server
 colorEcho ${BLUE} "Installing Cockpit..."
 if check_release_package_manager release centos; then
-    yum install -y -q cockpit cockpit-docker
-    # yum install -y -q cockpit-doc cockpit-machines
+    sudo yum install -y -q cockpit cockpit-docker
+    # sudo yum install -y -q cockpit-doc cockpit-machines
     
-    systemctl enable --now cockpit.socket
+    sudo systemctl enable --now cockpit.socket
 
-    firewall-cmd --permanent --zone=public --add-service=cockpit
-    firewall-cmd --reload
+    sudo firewall-cmd --permanent --zone=public --add-service=cockpit
+    sudo firewall-cmd --reload
 elif check_release_package_manager release debian; then
     # echo 'deb http://deb.debian.org/debian stretch-backports main' > \
     #     /etc/apt/sources.list.d/stretch-backports.list
-    apt update && apt -y install cockpit cockpit-docker
+    sudo apt update && sudo apt -y install cockpit cockpit-docker
     # apt -y install cockpit-doc cockpit-machines
 elif check_release_package_manager packageManager pacman; then
-    pacman -Sy && pacman -S cockpit cockpit-docker
-    # pacman -S cockpit-doc cockpit-machines
+    sudo pacman -Sy && sudo pacman -S cockpit cockpit-docker
+    # sudo pacman -S cockpit-doc cockpit-machines
 fi
 
 # If you already have Cockpit on your server, 
@@ -56,7 +51,7 @@ fi
 # AllowUnencrypted=true
 # UrlRoot=/server/
 # EOF
-tee /etc/cockpit/cockpit.conf <<-'EOF'
+sudo tee /etc/cockpit/cockpit.conf <<-'EOF'
 [WebService]
 AllowUnencrypted=true
 EOF
