@@ -39,12 +39,22 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         bash "${WORKDIR}/starship_install.sh" --force
 fi
 
+## config
+# mkdir -p ~/.config && touch ~/.config/starship.toml
+if [[ ! -s "$HOME/.config/starship.toml" ]]; then
+    mkdir -p "$HOME/.config"
+    cp -f "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/themes/starship.toml" "$HOME/.config"
+fi
 
-## bash
-# echo 'eval "$(starship init bash)"' >> ~/.bashrc
+# bash
+if [[ ! $(grep "starship init bash" "$HOME/.bashrc") ]]; then
+    echo 'eval "$(starship init bash)"' >> "$HOME/.bashrc"
+fi
 
-## zsh
-# echo 'eval "$(starship init zsh)"' >> ~/.zshrc
+# zsh
+if [[ ! $(grep "starship init zsh" "$HOME/.zshrc") ]]; then
+    echo 'eval "$(starship init zsh)"' >> "$HOME/.zshrc"
+fi
 
 ## powershell
 # @'
@@ -53,7 +63,3 @@ fi
 #     Invoke-Expression (&starship init powershell)
 # }
 # '@ | Tee-Object $PROFILE -Append | Out-Null
-
-
-## config
-# mkdir -p ~/.config && touch ~/.config/starship.toml

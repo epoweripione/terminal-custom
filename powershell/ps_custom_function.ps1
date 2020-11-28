@@ -369,7 +369,7 @@ function GetFonts() {
     process {
         #region Filter Font List
         if ($Name.Trim()) {
-            
+
             $currentFontList = foreach ($f in $fontList) {
                 if ($f.Source -like "$name*") {
                     $f

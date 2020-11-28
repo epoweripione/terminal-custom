@@ -55,7 +55,7 @@ if (-Not (Get-Command "scoop" -ErrorAction SilentlyContinue)) {
 
     Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
     # Invoke-WebRequest -useb get.scoop.sh | Invoke-Expression
-    
+
     # scoop install -g <app>
 }
 
@@ -297,7 +297,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
 
 # https://github.com/lukesampson/scoop/wiki/Custom-PHP-configuration
 if (Get-Command "php" -ErrorAction SilentlyContinue) {
-    
+
 }
 
 

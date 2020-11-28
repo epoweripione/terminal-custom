@@ -1155,10 +1155,10 @@ function check_set_global_proxy() {
     local PROXY_HTTP=""
     local IP_LIST="127.0.0.1"
     local PROXY_UP="NO"
-    
+
     if [[ "$(uname -r)" =~ "microsoft" ]]; then
         # wsl2
-        IP_LIST=$(ipconfig.exe | grep "IPv4" | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}')
+        IP_LIST=$(ipconfig.exe | grep "IPv4" | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' | grep -Ev "^0\.|^127\.|^172\.")
     fi
 
     unset GLOBAL_PROXY_IP

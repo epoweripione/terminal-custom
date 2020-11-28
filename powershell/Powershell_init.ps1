@@ -57,10 +57,40 @@
 # Get-FileHash -Path <filename> -Algorithm <MD5,SHA1,SHA256,SHA384,SHA512>
 
 
-## Get commands
+## Gets all commands
 # Get-Command -ListImported
 # Get-Command -Type Cmdlet | Sort-Object -Property Noun | Format-Table -GroupBy Noun
 # Get-Command -Module Microsoft.PowerShell.Security, Microsoft.PowerShell.Utility
+
+
+## Gets the basic network adapter properties
+# Get-NetAdapter -Name * -Physical | Where-Object Status -eq 'up'
+# Get-NetAdapter -Name "Ethernet" | Format-List -Property *
+
+
+## Gets a connection profile
+# Get-NetConnectionProfile -IPv4Connectivity "Internet" | Select-Object -Property Name,InterfaceIndex,InterfaceAlias
+# Get-NetConnectionProfile -IPv4Connectivity "Internet" | Select-Object -ExpandProperty InterfaceIndex
+
+
+## Get adapter ipv4 adderss which connect to Internet
+# Get-NetIPAddress -AddressFamily IPv4 | `
+#     Where-Object { $_.InterfaceIndex -eq `
+#         (Get-NetConnectionProfile -IPv4Connectivity "Internet" | Select-Object -ExpandProperty InterfaceIndex) `
+#     } | Select-Object -ExpandProperty IPv4Address
+
+
+## Gets the CIM instances of a class from a CIM server
+# wmic nic where PhysicalAdapter=True get Index,MACAddress,NetConnectionStatus,PhysicalAdapter,InterfaceIndex,Name
+# Get-CimClass -ClassName *disk*
+# Get-CimClass -ClassName Win32* -PropertyName Handle
+# Get-CimClass -ClassName *Network*
+# Get-CimInstance -ClassName CIM_NetworkAdapter
+# Get-CimInstance -ClassName Win32_NetworkAdapter -Filter "PhysicalAdapter=True"
+# Get-CimInstance -ClassName Win32_NetworkAdapterConfiguration | Select-Object -Property Index,Description,MACAddress,IPAddress
+# Get-CimInstance -ClassName Win32_Process
+# Get-CimInstance -ClassName Win32_Process -Filter "Name like 'P%'"
+# Get-CimInstance -Query "SELECT * from Win32_Process WHERE name LIKE 'P%'"
 
 
 ## Gets the properties and methods of objects

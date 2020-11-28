@@ -384,7 +384,7 @@ function Get-FormArrayItems {
     #-----------------------------------------------------------------------
     $Form.Font = New-Object System.Drawing.Font($FONTFACENAME, 10) 
     $form.Controls.AddRange(@($TitleLabel, $Panel, $OKButton, $CancelButton))
-    
+
     #-----------------------------------------------------------------------
     # Assign the Accept and Cancel options in the form to the corresponding buttons
     #-----------------------------------------------------------------------
@@ -514,7 +514,7 @@ function Get-FormStringInput {
     # Activate the form
     #-----------------------------------------------------------------------
     $form.Add_Shown( { $form.Activate() })    
-    
+
     #-----------------------------------------------------------------------
     # Get the results from the button click
     #-----------------------------------------------------------------------
@@ -648,7 +648,7 @@ function Get-FormItemProperties {
     # Activate the form
     #-----------------------------------------------------------------------
     $form.Add_Shown( { $form.Activate() })    
-    
+
     #-----------------------------------------------------------------------
     # Get the results from the button click
     #-----------------------------------------------------------------------

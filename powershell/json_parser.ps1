@@ -7,7 +7,7 @@ function JSONParser() {
         # Path
         [Parameter(Mandatory = $true)] 
         [string]$Path,
-    
+
         # Type
         [Parameter(Mandatory = $true)]
         [ValidateSet('Array', 'Dictionary')]
@@ -30,7 +30,7 @@ function JSONParser() {
         }
         return "";
     }
-    
+
     function GetProperty($line, $propertySearchTag) {
         if ($line.Contains($propertySearchTag)) {
             $value = $line.Substring($line.IndexOf($propertySearchTag) + $propertySearchTag.Length);
@@ -38,7 +38,7 @@ function JSONParser() {
         }
         return "";
     }
-    
+
     function GetArrayObject($array, $index) {
         $line = (GetLine $index);
         if ($null -eq $line) {
@@ -81,7 +81,7 @@ function JSONParser() {
         $index = $ret[1];
         return ($array, $index);
     }
-    
+
     function GetDictObject($dict, $index, $defaultKey) {
         $line = (GetLine $index);
         if ($null -eq $line) {
@@ -135,7 +135,7 @@ function JSONParser() {
         $index = $ret[1];
         return ($dict, $index);
     }
-    
+
     function GetLine($index, $escapeChars=@()) {
         if ($index -lt $linesCount) {
             $line = $content[$index];
@@ -151,7 +151,7 @@ function JSONParser() {
             return $null;
         }
     }
-    
+
     function ParseContent() {
         if ($FirstObjectType -eq "Array") {
             $result = @();

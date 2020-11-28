@@ -24,7 +24,7 @@ colorEcho ${BLUE} "Installing Cockpit..."
 if check_release_package_manager release centos; then
     sudo yum install -y -q cockpit cockpit-docker
     # sudo yum install -y -q cockpit-doc cockpit-machines
-    
+
     sudo systemctl enable --now cockpit.socket
 
     sudo firewall-cmd --permanent --zone=public --add-service=cockpit

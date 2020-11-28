@@ -139,7 +139,7 @@ if [[ -s "$HOME/.zshrc" ]]; then
 
     git clone --depth=1 "https://github.com/zsh-users/zsh-history-substring-search" \
         "$ZSH_CUSTOM/plugins/zsh-history-substring-search"
-    
+
     git clone --depth=1 "https://github.com/zsh-users/zsh-autosuggestions" \
         "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
 

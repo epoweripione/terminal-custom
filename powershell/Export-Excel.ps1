@@ -58,7 +58,7 @@ function Export-Excel {
         $Excel = $Null
         $Workbook = $Null
         $Sheet = $Null
-        
+
         # Use a temporary file in the system temp directory to write the
         # results to. If it already exists, delete it.
         $ScratchName  = "Export-Excel.html"
@@ -139,7 +139,7 @@ function Export-Excel {
 
         $Workbook = $Excel.Workbooks.Open($ScratchPath)
         $Sheet = $Workbook.Worksheets.Item(1)
-        
+
         # Turn off cell wrapping
         if ($NoWrap) {
             $Sheet.UsedRange.WrapText = $False

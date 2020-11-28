@@ -97,12 +97,12 @@ foreach ($App in $ScoopApps) {
 
     if ($UseJSONParser) {
         $AppJSON = JSONParser -Path $JSONFile -FirstObjectType Dictionary 6>$null
-    
+
         $AppVersion = ""
         if ($AppJSON.ContainsKey("version")) {
             $AppURL = $AppJSON.version
         }
-    
+
         $AppURL = ""
         if ($AppJSON.ContainsKey("architecture")) {
             if ([Environment]::Is64BitOperatingSystem) {
