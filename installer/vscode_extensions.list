@@ -163,6 +163,7 @@ bukas.gbktoutf8
 steoates.autoimport
 wakatime.vscode-wakatime
 # Extra tools
+ms-toolsai.jupyter
 shan.code-settings-sync
 anseki.vscode-color
 grapecity.gc-excelviewer
@@ -183,3 +184,5 @@ hediet.vscode-drawio
 parthr2031.colorful-comments
 mechatroner.rainbow-csv
 mqycn.huile8
+wscats.search
+idleberg.innosetup

@@ -85,16 +85,16 @@ alias grep="grep --color=auto"
 
 # pip aliases
 if [[ -x "$(command -v pip)" ]]; then
-    alias pipupdateall='pip list -o | grep -E -v '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f 1 | xargs -n1 pip install -U'
+    alias pipupdateall='pip list -o | grep -Ev '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f1 | xargs -n1 pip install -U'
 fi
 
 # if [[ -x "$(command -v pip3)" ]]; then
-#     alias pip3updateall='pip3 list -o | grep -E -v '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f 1 | xargs -n1 pip3 install -U'
+#     alias pip3updateall='pip3 list -o | grep -Ev '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f1 | xargs -n1 pip3 install -U'
 # fi
 
 # docker aliases
 if [[ -x "$(command -v docker)" ]]; then
-    alias dockerpullall='docker images | grep -v REPOSITORY | awk '"'"'{print $1,$2}'"'"' OFS='"'"':'"'"' | xargs -L1 docker pull'
+    alias dockerpullall='docker images | grep -Ev "REPOSITORY|<none>" | awk '"'"'{print $1,$2}'"'"' OFS='"'"':'"'"' | xargs -L1 docker pull'
     alias dockerps='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}"'
     alias dockerpsall='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}\t{{.Ports}}\t{{.Networks}}\t{{.Command}}\t{{.Size}}"'
 fi

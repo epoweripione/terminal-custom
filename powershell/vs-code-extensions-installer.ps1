@@ -63,7 +63,8 @@ $extensions = @(
 	"formulahendry.code-runner"
 	"humao.rest-client"
 	"hediet.debug-visualizer"
-    # Extra tools
+	# Extra tools
+	"ms-toolsai.jupyter"
 	"shan.code-settings-sync"
 	"anseki.vscode-color"
 	"mkxml.vscode-filesize"
@@ -73,6 +74,8 @@ $extensions = @(
 	"russell.any-rule"
 	"hediet.vscode-drawio"
 	"mqycn.huile8"
+	"wscats.search"
+	"idleberg.innosetup"
 )
 
 $cmd = "code --list-extensions"

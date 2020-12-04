@@ -70,6 +70,7 @@ extensions=(
 	"humao.rest-client"
 	"hediet.debug-visualizer"
     # Extra tools
+	"ms-toolsai.jupyter"
 	"shan.code-settings-sync"
 	"anseki.vscode-color"
 	"mkxml.vscode-filesize"
@@ -79,6 +80,8 @@ extensions=(
 	"russell.any-rule"
 	"hediet.vscode-drawio"
 	"mqycn.huile8"
+	"wscats.search"
+	"idleberg.innosetup"
 )
 
 # How to export installed extensions list

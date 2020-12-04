@@ -97,6 +97,18 @@ function UpdateMyScript {
     }
 }
 
+function DockerPullAllImages{
+    docker images --format "{{.Repository}}:{{.Tag}}" | Where-Object {$_ -NotMatch "<none>"} | %{docker pull $_}
+}
+
+function DockerList{
+    docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}"
+}
+
+function DockerListAll{
+    docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}\t{{.Ports}}\t{{.Networks}}\t{{.Command}}\t{{.Size}}"
+}
+
 function PrettyLS {colorls --light -A}
 function GitStat {git status}
 function GoBack {Set-Location ..}
@@ -116,6 +128,10 @@ Set-Alias ssb SearchScoopBucket
 Set-Alias ums UpdateMyScript
 Set-Alias hosts EditHosts
 Set-Alias history EditHistory
+
+Set-Alias dockerpullall DockerPullAllImages
+Set-Alias dockerps DockerList
+Set-Alias dockerpsall DockerListAll
 
 ## https://starship.rs/
 if (Get-Command "starship" -ErrorAction SilentlyContinue) {

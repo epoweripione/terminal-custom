@@ -10,9 +10,11 @@ if [[ $# != 1 ]]; then
 fi
 
 filename="$1"
+[[ ! -s "${filename}" ]] && echo "${filename} not exist!" && exit 1
+
 while read -r line; do
     if [[ -n "$line" ]]; then
         echo -n "$line: "
-        ./ssl-cert-info.sh --host $line --end
+        "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/ssl-cert-info.sh" --host $line --end
     fi
 done < "$filename"
