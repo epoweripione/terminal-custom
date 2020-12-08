@@ -56,13 +56,15 @@ fi
 #     sudo ./configure --prefix=/opt/ncurses && \
 #     sudo make && sudo make install
 
+INSTALL_NAME="nano"
+IS_INSTALL="yes"
+IS_UPDATE="no"
+CURRENT_VERSION="0.0"
 
 # compile & install nano
 if [[ -x "$(command -v nano)" ]]; then
-    # CURRENT_VERSION=$(nano -V | grep -m 1 -o 'version \([0-9]\)\+\.\([0-9]\)\+' | cut -d' ' -f2)
+    IS_UPDATE="yes"
     CURRENT_VERSION=$(nano -V | grep -Eo -m1 '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-else
-    CURRENT_VERSION=0.0
 fi
 
 REMOTE_VERSION=$(curl -s -N https://www.nano-editor.org/download.php \
@@ -71,7 +73,7 @@ REMOTE_VERSION=$(curl -s -N https://www.nano-editor.org/download.php \
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    colorEcho ${BLUE} "  Installing nano ${REMOTE_VERSION} from source..."
+    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION} from source..."
     DOWNLOAD_URL="https://www.nano-editor.org/dist/v${DIST_VERSION}/nano-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/nano.tar.gz" "$DOWNLOAD_URL" && \
         tar xzvf "${WORKDIR}/nano.tar.gz" -C "${WORKDIR}" && \
@@ -80,6 +82,12 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         ./configure --prefix=/usr --enable-utf8 && \
         make && \
         sudo make install
+fi
+
+# Change default editor to nano
+if [[ "${IS_UPDATE}" == "no" && -x "$(command -v nano)" ]]; then
+    sudo update-alternatives --install /usr/bin/editor editor $(which nano) 100
+    # sudo update-alternatives --config editor
 fi
 
 cd "${CURRENT_DIR}"

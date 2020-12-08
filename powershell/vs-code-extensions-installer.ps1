@@ -76,6 +76,7 @@ $extensions = @(
 	"mqycn.huile8"
 	"wscats.search"
 	"idleberg.innosetup"
+	"gera2ld.markmap-vscode"
 )
 
 $cmd = "code --list-extensions"

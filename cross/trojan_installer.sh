@@ -23,6 +23,7 @@ INSTALL_NAME="trojan"
 IS_INSTALL="yes"
 IS_UPDATE="no"
 CURRENT_VERSION="0.0.0"
+CHOICE="N"
 
 if [[ -s "/srv/trojan/trojan" ]]; then
     IS_UPDATE="yes"
@@ -54,8 +55,11 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
         sudo tar -JxPf "${WORKDIR}/trojan.tar.xz" -C "/srv/"
 
     if [[ ! -s "/etc/systemd/system/trojan.service" ]]; then
-        sudo cp -f /srv/trojan/examples/trojan.service-example /etc/systemd/system/trojan.service
-        sudo sed -i "s|ExecStart=.*|ExecStart=/srv/trojan/trojan -c /etc/trojan/trojan.json|" /etc/systemd/system/trojan.service
+        [[ "${IS_UPDATE}" == "no" ]] && read -p "Install trojan systemd service?[y/N]:" CHOICE
+        if [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]]; then
+            sudo cp -f /srv/trojan/examples/trojan.service-example /etc/systemd/system/trojan.service
+            sudo sed -i "s|ExecStart=.*|ExecStart=/srv/trojan/trojan -c /etc/trojan/trojan.json|" /etc/systemd/system/trojan.service
+        fi
     fi
 
     if [[ ! -s "/etc/trojan/trojan.json" ]]; then

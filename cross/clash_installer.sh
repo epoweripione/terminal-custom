@@ -23,6 +23,7 @@ INSTALL_NAME="clash"
 IS_INSTALL="yes"
 IS_UPDATE="no"
 CURRENT_VERSION="0.0.0"
+CHOICE="N"
 
 if [[ -s "/srv/clash/clash" ]]; then
     IS_UPDATE="yes"
@@ -58,7 +59,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
         sudo mkdir -p "/srv/clash" && \
         sudo mv "${WORKDIR}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" "/srv/clash" && \
         cd "/srv/clash" && \
-        sudo gzip -d "clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" && \
+        sudo gzip -d -f "clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" && \
         sudo chmod +x "clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}" && \
         sudo ln -sv "/srv/clash/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}" "/srv/clash/clash" || true
 
@@ -82,7 +83,8 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
     fi
 
     [[ $(systemctl is-enabled clash 2>/dev/null) ]] || {
-        Install_systemd_Service "clash" "/srv/clash/clash -d /srv/clash"
+        [[ "${IS_UPDATE}" == "no" ]] && read -p "Install clash systemd service?[y/N]:" CHOICE
+        [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]] && Install_systemd_Service "clash" "/srv/clash/clash -d /srv/clash"
     }
 
     if [[ "${IS_UPDATE}" == "yes" ]] then

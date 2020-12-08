@@ -181,7 +181,7 @@ function get_arch() {
     OS_INFO_ARCH=$spruce_type
 }
 
-function get_sysArch(){
+function get_sysArch() {
 	local architecture=$(uname -m)
     local VDIS
 
@@ -1549,13 +1549,14 @@ function mv_rename() {
 # http://www.fresse.org/dateutils/
 # apt install -y dateutils
 # dateutils.dadd 2018-05-22 +120d
+# Usage: date_diff 20201208 20180522
 function date_diff() {
-    # date_diff 20180522 20180918
     if [[ $# -eq 2 ]]; then
         echo $(( ($(date -d "$1" +%s) - $(date -d "$2" +%s) )/(60*60*24) ))
     fi
 }
 
+#  Usage: get_zone_time Asia/Shanghai America/Los_Angeles America/New_York
 function get_zone_time() {
     local TZONES="$@"
     local CURRENT_UTC_TIME

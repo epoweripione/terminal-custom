@@ -82,6 +82,7 @@ extensions=(
 	"mqycn.huile8"
 	"wscats.search"
 	"idleberg.innosetup"
+	"gera2ld.markmap-vscode"
 )
 
 # How to export installed extensions list

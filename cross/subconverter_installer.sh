@@ -23,6 +23,7 @@ INSTALL_NAME="subconverter"
 IS_INSTALL="yes"
 IS_UPDATE="no"
 CURRENT_VERSION="0.0.0"
+CHOICE="N"
 
 if [[ -s "/srv/subconverter/subconverter" ]]; then
     IS_UPDATE="yes"
@@ -54,7 +55,8 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
         echo ${REMOTE_VERSION} | sudo tee "/srv/subconverter/.version" >/dev/null
 
     [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] || {
-        Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"
+        [[ "${IS_UPDATE}" == "no" ]] && read -p "Install clash subconverter service?[y/N]:" CHOICE
+        [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]] && Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"
     }
 
     if [[ "${IS_UPDATE}" == "yes" ]] then
