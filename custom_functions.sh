@@ -1150,10 +1150,10 @@ function set_global_proxy() {
         # wget must use http proxy
         if [[ -n "$HTTP_ADDRESS" ]]; then
             set_wget_proxy "${HTTP_ADDRESS}"
+            colorEcho ${GREEN} " :: Now using ${HTTP_ADDRESS} for wget proxy!"
         else
             set_wget_proxy
         fi
-        colorEcho ${GREEN} " :: Now using ${HTTP_ADDRESS} for wget proxy!"
 
         return 0
     else
