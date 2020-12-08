@@ -785,7 +785,7 @@ function myip_wan_geo() {
 }
 
 
-## Set proxy or mirrors env in china
+## Use proxy or mirror when some sites were blocked or low speed
 function set_proxy_mirrors_env() {
     # if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
     #     get_network_wan_geo

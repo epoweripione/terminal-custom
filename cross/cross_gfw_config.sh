@@ -405,7 +405,7 @@ function main() {
     local SOCKS_ADDRESS
     local PROXY_BY_V2RAY
 
-    # Set proxy or mirrors env in china
+    # Use proxy or mirror when some sites were blocked or low speed
     set_proxy_mirrors_env
 
     # set global clash socks5 proxy or v2ray socks5 proxy

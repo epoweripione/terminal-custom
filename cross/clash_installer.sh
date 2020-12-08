@@ -17,6 +17,9 @@ else
     fi
 fi
 
+# Use proxy or mirror when some sites were blocked or low speed
+set_proxy_mirrors_env
+
 # clash
 # https://github.com/Dreamacro/clash
 INSTALL_NAME="clash"
@@ -83,8 +86,12 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
     fi
 
     [[ $(systemctl is-enabled clash 2>/dev/null) ]] || {
-        [[ "${IS_UPDATE}" == "no" ]] && read -p "Install clash systemd service?[y/N]:" CHOICE
-        [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]] && Install_systemd_Service "clash" "/srv/clash/clash -d /srv/clash"
+        if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
+            Install_systemd_Service "clash" "/srv/clash/clash -d /srv/clash"
+        else
+            [[ "${IS_UPDATE}" == "no" ]] && read -p "Install clash systemd service?[y/N]:" CHOICE
+            [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]] && Install_systemd_Service "clash" "/srv/clash/clash -d /srv/clash"
+        fi
     }
 
     if [[ "${IS_UPDATE}" == "yes" ]] then

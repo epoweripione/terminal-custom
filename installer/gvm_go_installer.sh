@@ -14,7 +14,7 @@ fi
 
 [[ -z "$OS_INFO_TYPE" ]] && get_os_type
 
-# Set proxy or mirrors env in china
+# Use proxy or mirror when some sites were blocked or low speed
 set_proxy_mirrors_env
 
 ## Install gvm

@@ -12,7 +12,7 @@ else
     fi
 fi
 
-# Set proxy or mirrors env in china
+# Use proxy or mirror when some sites were blocked or low speed
 set_proxy_mirrors_env
 
 # https://brew.sh/index_zh-cn

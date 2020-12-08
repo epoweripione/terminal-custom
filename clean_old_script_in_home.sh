@@ -2,7 +2,7 @@
 
 rm -f $HOME/*installer.sh
 rm -f $HOME/chromium*.sh
-rm -f $HOME/clash_*.*
+rm -f $HOME/clash_*.sh
 rm -f $HOME/cross_*.*
 rm -f $HOME/git_*.sh
 rm -f $HOME/hosts_*.*

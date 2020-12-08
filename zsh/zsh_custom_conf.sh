@@ -54,11 +54,11 @@ fi
 if [[ -s "${MY_SHELL_SCRIPTS}/custom_functions.sh" ]]; then
     source "${MY_SHELL_SCRIPTS}/custom_functions.sh"
 
-    # Set proxy or mirrors env in china
+    # Use proxy or mirror when some sites were blocked or low speed
     set_proxy_mirrors_env
 
     # Check & set global proxy
-    check_set_global_proxy 7891 7890
+    [[ -z "$GITHUB_NOT_USE_PROXY" ]] && check_set_global_proxy 7891 7890
 fi
 
 
