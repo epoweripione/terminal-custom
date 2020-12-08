@@ -917,6 +917,25 @@ function check_socks5_proxy_up() {
     fi
 }
 
+## test the availability of a http proxy
+function check_http_proxy_up() {
+    # How to use:
+    # if check_http_proxy_up 127.0.0.1:1080 www.google.com; then echo "ok"; else echo "something wrong"; fi
+    local socks_proxy_url=${1:-"127.0.0.1:1080"}
+    local webservice_url=${2:-"www.google.com"}
+    local exitStatus=0
+
+    curl -sSf -I --connect-timeout 3 --max-time 5 \
+        --proxy "${socks_proxy_url}" \
+        "${webservice_url}" >/dev/null 2>&1 || exitStatus=$?
+
+    if [[ "$exitStatus" -eq "0" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 
 ## Setting global git proxy
 function set_git_proxy() {
@@ -1122,17 +1141,19 @@ function set_global_proxy() {
     if [[ -n "$SOCKS_ADDRESS" ]]; then
         set_proxy "${SOCKS_PROTOCOL}://${SOCKS_ADDRESS}"
         set_curl_proxy "${SOCKS_ADDRESS}"
+        # set git global proxy
+        set_git_proxy "${SOCKS_ADDRESS}"
+        # set special socks5 proxy(curl...)
+        set_special_socks5_proxy "${SOCKS_ADDRESS}"
+        colorEcho ${GREEN} " :: Now using ${SOCKS_PROTOCOL}://${SOCKS_ADDRESS} for global proxy!"
+
         # wget must use http proxy
         if [[ -n "$HTTP_ADDRESS" ]]; then
             set_wget_proxy "${HTTP_ADDRESS}"
         else
             set_wget_proxy
         fi
-        # set git global proxy
-        set_git_proxy "${SOCKS_ADDRESS}"
-        # set special socks5 proxy(curl...)
-        set_special_socks5_proxy "${SOCKS_ADDRESS}"
-        colorEcho ${GREEN} " :: Now using ${SOCKS_ADDRESS} for global proxy!"
+        colorEcho ${GREEN} " :: Now using ${HTTP_ADDRESS} for wget proxy!"
 
         return 0
     else
@@ -1172,7 +1193,9 @@ function check_set_global_proxy() {
             PROXY_UP="YES"
         else
             if check_socks5_proxy_up "${PROXY_IP}:${SOCKS_PORT}"; then
-                MIXED_PORT=""
+                if ! check_http_proxy_up "${PROXY_IP}:${MIXED_PORT}"; then
+                    MIXED_PORT=""
+                fi
                 PROXY_UP="YES"
             fi
         fi
