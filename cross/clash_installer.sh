@@ -20,6 +20,21 @@ fi
 # Use proxy or mirror when some sites were blocked or low speed
 set_proxy_mirrors_env
 
+# jq
+if [[ ! -x "$(command -v jq)" ]]; then
+    if [[ -x "$(command -v pacman)" ]]; then
+        if pacman -Si jq >/dev/null 2>&1; then
+            colorEcho ${BLUE} "Installing jq..."
+            sudo pacman --noconfirm -S jq
+        fi
+    fi
+fi
+
+if [[ ! -x "$(command -v jq)" ]]; then
+    colorEcho ${RED} "jq is not installed!"
+    exit 1
+fi
+
 # clash
 # https://github.com/Dreamacro/clash
 INSTALL_NAME="clash"
@@ -73,13 +88,28 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
         CURRENT_VERSION="20000101"
     fi
 
-    CHECK_URL="https://geolite.clash.dev/version"
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL)
+    ## MaxMind GeoLite
+    ## https://geolite.clash.dev/
+    # CHECK_URL="https://geolite.clash.dev/version"
+    # MMDB_URL="https://geolite.clash.dev/Country.mmdb"
+    # REMOTE_VERSION=$(wget -qO- $CHECK_URL)
+
+    ## All Country
+    ## https://github.com/alecthw/mmdb_china_ip_list
+    # CHECK_URL="https://api.github.com/repos/alecthw/mmdb_china_ip_list"
+    # MMDB_URL="https://raw.githubusercontent.com/alecthw/mmdb_china_ip_list/release/Country.mmdb"
+
+    # Only CN
+    # https://github.com/Hackl0us/GeoIP-CN
+    CHECK_URL="https://api.github.com/repos/Hackl0us/GeoIP-CN"
+    MMDB_URL="https://github.com/Hackl0us/GeoIP2-CN/raw/release/Country.mmdb"
+
+    # REPO_PUSH_AT=$(wget -qO- $CHECK_URL | grep 'pushed_at' | head -n1 | cut -d\" -f4)
+    REPO_PUSH_AT=$(wget -qO- $CHECK_URL | jq -r '.pushed_at//empty')
+    REMOTE_VERSION=$(date -d $REPO_PUSH_AT +"%Y%m%d")
 
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "  Installing clash geo database ${REMOTE_VERSION}..."
-        # MMDB_URL="https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb"
-        MMDB_URL="https://geolite.clash.dev/Country.mmdb"
         curl -SL -o "${WORKDIR}/Country.mmdb" "$MMDB_URL" && \
             sudo mv -f "${WORKDIR}/Country.mmdb" "/srv/clash/Country.mmdb" && \
             echo ${REMOTE_VERSION} | sudo tee "/srv/clash/mmdb.ver" >/dev/null

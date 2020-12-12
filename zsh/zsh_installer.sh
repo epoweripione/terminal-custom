@@ -78,7 +78,7 @@ if [[ -x "$(command -v pacman)" ]]; then
 
     ## Install Latest Git ( Git 2.x ) on CentOS 7
     ## https://computingforgeeks.com/how-to-install-latest-version-of-git-git-2-x-on-centos-7/
-    # sudo yum remove git*
+    # sudo yum -y remove git
     # sudo yum -y install https://packages.endpoint.com/rhel/7/os/x86_64/endpoint-repo-1.7-1.x86_64.rpm
     # sudo yum -y install git
 
@@ -131,7 +131,7 @@ if [[ -x "$(command -v pacman)" ]]; then
         git clone https://github.com/tmux/tmux && \
             cd tmux && \
             sudo sh autogen.sh && \
-            sudo ./configure && sudo make
+            sudo ./configure && sudo make >/dev/null
     fi
 fi
 
@@ -157,8 +157,8 @@ if [[ ! -x "$(command -v zsh)" ]]; then
                 sudo mv ${WORKDIR}/zsh-* "${WORKDIR}/zsh" && \
                 cd "${WORKDIR}/zsh" && \
                 sudo ./configure && \
-                sudo make && \
-                sudo make install
+                sudo make >/dev/null && \
+                sudo make install >/dev/null
         fi
 
         if [[ ! -x "$(command -v zsh)" ]]; then

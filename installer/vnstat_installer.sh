@@ -37,8 +37,8 @@ cd "${WORKDIR}" && \
     sudo tar xvzf vnstat.tar.gz && \
     sudo mv vnstat-* vnstat && cd vnstat/ && \
     sudo ./configure --prefix=/usr --sysconfdir=/etc && \
-    sudo make && \
-    sudo make install && \
+    sudo make >/dev/null && \
+    sudo make install >/dev/null && \
     : && \
     sudo cp -v examples/systemd/vnstat.service /etc/systemd/system/ && \
     sudo sed -i -e '/^ProtectSystem=/d' /etc/systemd/system/vnstat.service && \

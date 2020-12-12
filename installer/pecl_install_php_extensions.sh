@@ -84,7 +84,7 @@ apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
 #     mv ext-postgresql* ext-postgresql && cd ext-postgresql && \
 #     phpize && \
 #     ./configure && \
-#     make && make install && \
+#     make >/dev/null && make install >/dev/null && \
 #     echo 'extension=swoole_postgresql.so' > $PHP_INI_DIR/90-swoole_postgresql.ini
 
 ## Phalcon

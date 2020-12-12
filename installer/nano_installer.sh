@@ -54,7 +54,7 @@ fi
 #     sudo tar zxvf ncurses.tar.gz && \
 #     sudo mv ncurses-* ncurses && cd ncurses && \
 #     sudo ./configure --prefix=/opt/ncurses && \
-#     sudo make && sudo make install
+#     sudo make >/dev/null && sudo make install >/dev/null
 
 INSTALL_NAME="nano"
 IS_INSTALL="yes"
@@ -80,14 +80,24 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         mv ${WORKDIR}/nano-* "${WORKDIR}/nano" && \
         cd "${WORKDIR}/nano" && \
         ./configure --prefix=/usr --enable-utf8 && \
-        make && \
-        sudo make install
+        make >/dev/null && \
+        sudo make install >/dev/null
 fi
 
 # Change default editor to nano
 if [[ "${IS_UPDATE}" == "no" && -x "$(command -v nano)" ]]; then
-    sudo update-alternatives --install /usr/bin/editor editor $(which nano) 100
-    # sudo update-alternatives --config editor
+    if [[ -x "$(command -v update-alternatives)" ]]; then
+        sudo update-alternatives --install /usr/bin/editor editor $(which nano) 100
+        sudo update-alternatives --config editor
+    fi
+
+    # select default sensible-editor from all installed editors
+    [[ -x "$(command -v select-editor)" ]] && select-editor
+
+    # What About Distros That Don’t Provide select-editor?
+    # export VISUAL="nano"
+    # echo 'export VISUAL="nano"' >> "$HOME/.bashrc"
+    # echo 'export VISUAL="nano"' >> "$HOME/.zshrc"
 fi
 
 cd "${CURRENT_DIR}"

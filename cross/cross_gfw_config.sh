@@ -269,85 +269,6 @@ EOF
     fi
 }
 
-# subconverter
-# https://github.com/tindy2013/subconverter
-function install_update_subconverter() {
-    [[ -s "${MY_SHELL_SCRIPTS}/cross/subconverter_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/subconverter_installer.sh"
-}
-
-# clash
-# https://github.com/Dreamacro/clash
-function install_update_clash() {
-    [[ -s "${MY_SHELL_SCRIPTS}/cross/clash_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/clash_installer.sh"
-}
-
-function use_clash() {
-    local OS_WSL=$(uname -r)
-    local last_update="/srv/clash/.last_update"
-    local PROXY_URL=${1:-"127.0.0.1"}
-    local SOCKS_PORT=${2:-"7891"}
-    local MIXED_PORT=${3:-"7890"}
-    local SUB_CLASH_URL
-
-    if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
-        :
-    else
-        colorEcho ${BLUE} "  Checking & loading clash proxy..."
-
-        if [[ ! -s "/srv/subconverter/subconverter" && ! -s "/srv/clash/clash" ]]; then
-            Download_Install_Subconverter_Clash
-        fi
-
-        [[ -s "/srv/subconverter/subconverter" ]] || install_update_subconverter
-        [[ -s "/srv/subconverter/subconverter" ]] || {
-                colorEcho ${RED} "  Please install and run subconverter first!"
-                return 1
-            }
-
-        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] || {
-                Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"
-            }
-
-        [[ -s "/srv/clash/clash" ]] || install_update_clash
-        [[ -s "/srv/clash/clash" ]] || {
-                colorEcho ${RED} "  Please install and run clash first!"
-                return 1
-            }
-
-        [[ $(systemctl is-enabled clash 2>/dev/null) ]] || {
-                Install_systemd_Service "clash" "/srv/clash/clash -d /srv/clash"
-            }
-
-        if [[ $(systemctl is-enabled clash 2>/dev/null) ]]; then
-            # get clash config
-            [[ ! -s "$last_update" ]] && \
-                date -d "1 day ago" +"%F" > "$last_update"
-
-            # only update config one time per day
-            if [[ $(date -d $(date +"%F") +"%s") -gt $(date -d $(head -n1 "$last_update") +"%s") ]]; then
-                [[ -s "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh" ]] && \
-                    bash "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh"
-                # restart clash and sleep 3s wait for clash ready
-                sudo systemctl restart clash && sleep 3
-
-                date +"%F" > "$last_update"
-            fi
-
-            if check_socks5_proxy_up "${PROXY_URL}:${MIXED_PORT}"; then
-                return 0
-            fi
-
-            if check_socks5_proxy_up "${PROXY_URL}:${SOCKS_PORT}"; then
-                return 0
-            else
-                [[ -s "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh" ]] && \
-                    bash "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh"
-                sudo systemctl restart clash && sleep 3
-            fi
-        fi
-    fi
-}
-
 function use_v2ray() {
     local OS_WSL=$(uname -r)
     local SubList
@@ -399,6 +320,84 @@ function use_v2ray() {
     return 1
 }
 
+# subconverter
+# https://github.com/tindy2013/subconverter
+function install_update_subconverter() {
+    [[ -s "${MY_SHELL_SCRIPTS}/cross/subconverter_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/subconverter_installer.sh"
+}
+
+# clash
+# https://github.com/Dreamacro/clash
+function install_update_clash() {
+    [[ -s "${MY_SHELL_SCRIPTS}/cross/clash_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/clash_installer.sh"
+}
+
+function use_clash() {
+    local OS_WSL=$(uname -r)
+    local last_update="/srv/clash/.last_update"
+    local PROXY_URL=${1:-"127.0.0.1"}
+    local SOCKS_PORT=${2:-"7891"}
+    local MIXED_PORT=${3:-"7890"}
+    local SUB_CLASH_URL
+
+    if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
+        :
+    else
+        colorEcho ${BLUE} "  Checking & loading clash proxy..."
+
+        if [[ ! -s "/srv/subconverter/subconverter" && ! -s "/srv/clash/clash" ]]; then
+            Download_Install_Subconverter_Clash
+        fi
+
+        [[ -s "/srv/subconverter/subconverter" ]] || install_update_subconverter
+        [[ -s "/srv/subconverter/subconverter" ]] || {
+                colorEcho ${RED} "  Please install and run subconverter first!"
+                return 1
+            }
+
+        [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] || {
+                Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"
+            }
+
+        [[ -s "/srv/clash/clash" ]] || install_update_clash
+        [[ -s "/srv/clash/clash" ]] || {
+                colorEcho ${RED} "  Please install and run clash first!"
+                return 1
+            }
+
+        [[ $(systemctl is-enabled clash 2>/dev/null) ]] || {
+                Install_systemd_Service "clash" "/srv/clash/clash -d /srv/clash"
+            }
+
+        if [[ $(systemctl is-enabled clash 2>/dev/null) ]]; then
+            ## get clash config
+            # [[ ! -s "$last_update" ]] && \
+            #     date -d "1 day ago" +"%F" > "$last_update"
+
+            ## only update config one time per day
+            # if [[ $(date -d $(date +"%F") +"%s") -gt $(date -d $(head -n1 "$last_update") +"%s") ]]; then
+            #     [[ -s "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh" ]] && \
+            #         bash "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh"
+            #     # restart clash and sleep 3s wait for clash ready
+            #     sudo systemctl restart clash && sleep 3
+
+            #     date +"%F" > "$last_update"
+            # fi
+
+            if check_socks5_proxy_up "${PROXY_URL}:${MIXED_PORT}"; then
+                return 0
+            fi
+
+            if check_socks5_proxy_up "${PROXY_URL}:${SOCKS_PORT}"; then
+                return 0
+            else
+                [[ -s "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh" ]] && \
+                    bash "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh"
+                sudo systemctl restart clash && sleep 3
+            fi
+        fi
+    fi
+}
 
 ## main
 function main() {
@@ -410,7 +409,7 @@ function main() {
 
     # set global clash socks5 proxy or v2ray socks5 proxy
     if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
-        colorEcho ${BLUE} "Checking & loading socks proxy..."
+        colorEcho ${BLUE} "Checking & loading socks5 proxy..."
         use_clash 127.0.0.1 7891 7890
         if ! check_set_global_proxy 7891 7890; then
             echo -n "Clash not working, use v2ray?[y/N] "

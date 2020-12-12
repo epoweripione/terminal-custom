@@ -174,8 +174,6 @@ fi
 
 
 # Install & Update
-[[ -s "${MY_SHELL_SCRIPTS}/installer/starship_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/starship_installer.sh"
-
 # [[ -s "${MY_SHELL_SCRIPTS}/installer/proxychains_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/proxychains_installer.sh"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/nano_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/nano_installer.sh"
@@ -191,6 +189,8 @@ fi
 
 # Update only(manual install)
 IS_UPDATE_ONLY="yes"
+
+[[ -s "${MY_SHELL_SCRIPTS}/installer/starship_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/starship_installer.sh"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/gvm_go_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/gvm_go_installer.sh"
 

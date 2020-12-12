@@ -77,14 +77,14 @@ SUB_URL_TXT=${4:-"My_Clash_Sub_URL.txt"}
 
 OPTIMIZE_OPTION=${5:-"no"}
 
-CLASH_CONFIG=${6:-"${CURRENT_DIR}/clash_client_config.yml"}
+CLASH_CONFIG=${6:-"$HOME/clash_client_config.yml"}
 [[ ! -s "$CLASH_CONFIG" ]] && CLASH_CONFIG="${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_config.yml"
 if [[ ! -s "$CLASH_CONFIG" ]]; then
     colorEcho ${BLUE} "    ${CLASH_CONFIG} not exist!"
     exit 1
 fi
 
-SUB_LIST_FILE=${7:-"${CURRENT_DIR}/clash_client_subscription.list"}
+SUB_LIST_FILE=${7:-"$HOME/clash_client_subscription.list"}
 [[ ! -s "$SUB_LIST_FILE" ]] && SUB_LIST_FILE=${7:-"${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_subscription.list"}
 if [[ -s "$SUB_LIST_FILE" ]]; then
     SUB_LIST=()
@@ -139,7 +139,7 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
 
         if [[ ! -L "/srv/subconverter/config/${RULES_INI}" ]]; then
             CLASH_RULES="/etc/clash/${RULES_INI}"
-            [[ ! -s "$CLASH_RULES" ]] && CLASH_RULES="${CURRENT_DIR}/${RULES_INI}"
+            [[ ! -s "$CLASH_RULES" ]] && CLASH_RULES="$$HOME/${RULES_INI}"
             if [[ -s "$CLASH_RULES" ]]; then
                 ln -s "$CLASH_RULES" "/srv/subconverter/config/${RULES_INI}"
             fi

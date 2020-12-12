@@ -39,7 +39,7 @@ if [[ -x "$(command -v proxychains4)" ]]; then
         if [[ $(date -d "$git_latest_update") > $(date -d "$proxychains4_date") ]]; then
             cd "$HOME/proxychains-ng" && \
                 sudo ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
-                sudo make && sudo make install
+                sudo make >/dev/null && sudo make install >/dev/null
         fi
     fi
 else
@@ -56,14 +56,19 @@ else
         if [[ -d "$HOME/proxychains-ng" ]]; then
             cd "$HOME/proxychains-ng" && \
                 sudo ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
-                sudo make && sudo make install && sudo make install-config
+                sudo make >/dev/null && sudo make install >/dev/null && sudo make install-config >/dev/null
         fi
     fi
 
     if [[ -s "/etc/proxychains/proxychains.conf" ]]; then
         sudo cp /etc/proxychains/proxychains.conf /etc/proxychains/proxychains.conf.bak && \
-            sudo sed -i 's/socks4/# socks4/g' /etc/proxychains/proxychains.conf && \
+            sudo sed -i 's/socks4/# socks4/g' /etc/proxychains/proxychains.conf
+
+        if check_socks5_proxy_up "127.0.0.1:7890"; then
             echo 'socks5 127.0.0.1 7890' | sudo tee -a /etc/proxychains/proxychains.conf >/dev/null
+        elif check_socks5_proxy_up "127.0.0.1:7891"; then
+            echo 'socks5 127.0.0.1 7891' | sudo tee -a /etc/proxychains/proxychains.conf >/dev/null
+        fi
     fi
 fi
 

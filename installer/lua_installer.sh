@@ -71,8 +71,8 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         mv ${WORKDIR}/luarocks-* "${WORKDIR}/luarocks" && \
         cd "${WORKDIR}/luarocks" && \
         ./configure --with-lua-include=/usr/local/include && \
-        make && \
-        sudo make install
+        make >/dev/null && \
+        sudo make install >/dev/null
 fi
 
 cd "${CURRENT_DIR}"
