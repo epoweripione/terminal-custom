@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 # Usage:
-# ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_config.sh /etc/clash/config.yaml /srv/web/www/default/clash_config.yml
-# (crontab -l 2>/dev/null || true; echo "0 8,12,15,20 * * * /root/terminal-custom/cross/clash_client_config.sh /etc/clash/config.yaml /srv/web/www/default/clash_config.yml >/dev/null") | crontab -
+# ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_config.sh /etc/clash/config.yaml /srv/web/www/public/clash_config.yml
+# ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_config.sh /etc/clash/config_mini.yaml /srv/web/www/public/clash_mini.yml My_Clash_Rules.ini My_Clash_Sub_Exclude.txt
+# (crontab -l 2>/dev/null || true; echo "0 8,12,15,20 * * * /root/terminal-custom/cross/clash_client_config.sh /etc/clash/config.yaml /srv/web/www/public/clash_config.yml >/dev/null") | crontab -
 
 # while getopts ":t:c:i:u:o:g:l" OPTNAME; do
 #     case $OPTNAME in
@@ -182,6 +183,18 @@ if [[ -s "${WORKDIR}/rules.yml" ]]; then
     if [[ ${RULES_START_LINE} -gt 0 ]]; then
         RULES_START_LINE=$((${RULES_START_LINE} + 1))
         RULES=$(sed -n "${RULES_START_LINE},$ p" "${WORKDIR}/rules.yml")
+
+        # remove 2nd+ occurernce rules
+        # https://stackoverflow.com/questions/30688682/how-to-remove-from-second-occurrence-until-the-end-of-the-file
+        DUPLICATE_RULES=$(echo "${RULES}" | grep -Eo ",[a-zA-Z0-9./?=_%:-]*," \
+            | sort -n | uniq -c | awk '{if($1>1) print $2}' | sort -rn)
+        while read -r line; do
+            [[ -z "${line}" ]] && continue
+            DUPLICATE_ENTRY=$(echo "${line}" \
+                | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
+                | sed 's/]/\\&/g')
+            RULES=$(echo "${RULES}" | sed "0,/${DUPLICATE_ENTRY}/b; /${DUPLICATE_ENTRY}/d")
+        done <<<"$DUPLICATE_RULES"
     fi
 fi
 
@@ -294,9 +307,9 @@ while read -r line; do
     PROXY_TYPE+=("$line_type")
 done <<<"$PROXY"
 
-# Optimize rules
+# Optimize proxies
 if [[ "$OPTIMIZE_OPTION" == "yes" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
-    colorEcho ${BLUE} "  Optimizing rules..."
+    colorEcho ${BLUE} "  Optimizing proxies..."
 
     # GROUP_CNT=$(echo "$PROXY_GROUP" | grep -E "^[ ]*\-\sname:" | wc -l)
     PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i<=2")

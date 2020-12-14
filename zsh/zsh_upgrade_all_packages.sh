@@ -102,6 +102,7 @@ if [[ -x "$(command -v php)" && -x "$(command -v composer)" ]]; then
 fi
 
 
+# https://github.com/zyedidia/micro
 if [[ -x "$(command -v micro)" ]]; then
     colorEcho ${BLUE} "Checking latest version for Micro editor..."
 
@@ -111,7 +112,7 @@ if [[ -x "$(command -v micro)" ]]; then
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "  Installing micro ${REMOTE_VERSION}..."
-        cd /usr/local/bin && curl https://getmic.ro | sudo bash && cd $HOME
+        curl https://getmic.ro | bash && sudo mv micro "/usr/local/bin"
     fi
 fi
 
@@ -166,10 +167,7 @@ if [[ -d "$HOME/.sdkman" ]]; then
         [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
     fi
 
-    # [[ -z "$SDKMAN_NOT_USE_PROXY" && -n "$GIT_SOCKS5_PROXY_URL" ]] && \
-    #     set_proxy "socks5h://${GIT_SOCKS5_PROXY_URL}"
     sdk selfupdate && sdk update && printf "Y\n" | sdk upgrade
-    # [[ -z "$SDKMAN_NOT_USE_PROXY" && -n "$GIT_SOCKS5_PROXY_URL" ]] && clear_proxy
 fi
 
 

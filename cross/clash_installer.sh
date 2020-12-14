@@ -100,8 +100,8 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
     # MMDB_URL="https://raw.githubusercontent.com/alecthw/mmdb_china_ip_list/release/Country.mmdb"
 
     # Only CN
-    # https://github.com/Hackl0us/GeoIP-CN
-    CHECK_URL="https://api.github.com/repos/Hackl0us/GeoIP-CN"
+    # https://github.com/Hackl0us/GeoIP2-CN
+    CHECK_URL="https://api.github.com/repos/Hackl0us/GeoIP2-CN"
     MMDB_URL="https://github.com/Hackl0us/GeoIP2-CN/raw/release/Country.mmdb"
 
     # REPO_PUSH_AT=$(wget -qO- $CHECK_URL | grep 'pushed_at' | head -n1 | cut -d\" -f4)
