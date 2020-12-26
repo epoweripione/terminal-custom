@@ -1145,12 +1145,12 @@ function set_global_proxy() {
         set_git_proxy "${SOCKS_ADDRESS}"
         # set special socks5 proxy(curl...)
         set_special_socks5_proxy "${SOCKS_ADDRESS}"
-        colorEcho ${GREEN} " :: Now using ${SOCKS_PROTOCOL}://${SOCKS_ADDRESS} for global proxy!"
+        colorEcho ${GREEN} " :: Now using ${SOCKS_PROTOCOL}://${SOCKS_ADDRESS} for global socks5 proxy!"
 
         # wget must use http proxy
         if [[ -n "$HTTP_ADDRESS" ]]; then
             set_wget_proxy "${HTTP_ADDRESS}"
-            colorEcho ${GREEN} " :: Now using ${HTTP_ADDRESS} for wget proxy!"
+            colorEcho ${GREEN} " :: Now using ${HTTP_ADDRESS} for http proxy(wget etc.)!"
         else
             set_wget_proxy
         fi
