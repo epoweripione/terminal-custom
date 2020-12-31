@@ -77,6 +77,7 @@ $extensions = @(
 	"wscats.search"
 	"idleberg.innosetup"
 	"gera2ld.markmap-vscode"
+	"unbug.codelf"
 )
 
 $cmd = "code --list-extensions"

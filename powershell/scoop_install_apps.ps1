@@ -205,7 +205,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "syncbackfree"
         # "syncthing"
         # "sysinternals"
-        # "utools"
+        "utools"
         "ghostscript"
         "xnviewmp"
         # "draw.io"

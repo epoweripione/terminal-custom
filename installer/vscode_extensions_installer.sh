@@ -83,6 +83,7 @@ extensions=(
 	"wscats.search"
 	"idleberg.innosetup"
 	"gera2ld.markmap-vscode"
+	"unbug.codelf"
 )
 
 # How to export installed extensions list

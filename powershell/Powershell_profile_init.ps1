@@ -41,12 +41,9 @@ Write-Host "Installing powershell modules..." -ForegroundColor Blue
 # Find-Module, Get-InstalledModule, Update-Module, Uninstall-Module
 if (-Not (Get-Module -Name "PSReadLine")) {
     if (($null -eq $PROXY_ADDR) -or ($PROXY_ADDR -eq "")) {
-        Install-Module -Name "PSReadLine" `
-            -AllowPrerelease -SkipPublisherCheck -Force
+        Install-Module -Name "PSReadLine" -AllowPrerelease -SkipPublisherCheck -Force
     } else {
-        Install-Module -Name "PSReadLine" `
-            -Proxy http://$PROXY_ADDR `
-            -AllowPrerelease -SkipPublisherCheck -Force
+        Install-Module -Name "PSReadLine" -Proxy "http://$PROXY_ADDR" -AllowPrerelease -SkipPublisherCheck -Force
     }
 }
 
@@ -61,14 +58,19 @@ $InstallModules = @(
 foreach ($TargetModule in $InstallModules) {
     if (-Not (Get-Module -Name $TargetModule)) {
         if (($null -eq $PROXY_ADDR) -or ($PROXY_ADDR -eq "")) {
-            Install-Module -Name $TargetModule `
-                -AllowClobber
+            Install-Module -Name "$TargetModule" -AllowClobber
         } else {
-            Install-Module -Name $TargetModule `
-                -Proxy http://$PROXY_ADDR `
-                -AllowClobber
+            Install-Module -Name "$TargetModule" -Proxy "http://$PROXY_ADDR" -AllowClobber
         }
     }
+}
+
+# Oh my Posh 3
+# https://ohmyposh.dev/
+if (($null -eq $PROXY_ADDR) -or ($PROXY_ADDR -eq "")) {
+    Update-Module -Name oh-my-posh -AllowPrerelease
+} else {
+    Update-Module -Name oh-my-posh -Proxy "http://$PROXY_ADDR" -AllowPrerelease
 }
 
 $EnableModules = @(
