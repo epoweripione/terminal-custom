@@ -29,7 +29,7 @@ else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
 
     CHECK_URL="https://api.github.com/repos/starship/starship/releases/latest"
@@ -39,7 +39,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
     fi
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
     # curl -fsSL https://starship.rs/install.sh | bash
     curl -SL -o "${WORKDIR}/starship_install.sh" "https://starship.rs/install.sh" && \

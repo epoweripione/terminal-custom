@@ -32,7 +32,7 @@ else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
 
     CHECK_URL="https://api.github.com/repos/trojan-gfw/trojan/releases/latest"
@@ -42,7 +42,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
     fi
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
 
     [[ -z "$OS_INFO_TYPE" ]] && get_os_type

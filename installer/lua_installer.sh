@@ -44,7 +44,7 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     colorEcho ${BLUE} "  Installing lua ${REMOTE_VERSION} from source..."
     DOWNLOAD_URL="http://www.lua.org/ftp/lua-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/lua.tar.gz" "$DOWNLOAD_URL" && \
-        tar xzvf "${WORKDIR}/lua.tar.gz" -C "${WORKDIR}" && \
+        tar -xzPf "${WORKDIR}/lua.tar.gz" -C "${WORKDIR}" && \
         mv ${WORKDIR}/lua-* "${WORKDIR}/lua" && \
         cd "${WORKDIR}/lua" && \
         make all test && \
@@ -67,7 +67,7 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     colorEcho ${BLUE} "  Installing luarocks ${REMOTE_VERSION} from source..."
     DOWNLOAD_URL="https://luarocks.org/releases/luarocks-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/luarocks.tar.gz" "$DOWNLOAD_URL" && \
-        tar xzvf "${WORKDIR}/luarocks.tar.gz" -C "${WORKDIR}" && \
+        tar -xzPf "${WORKDIR}/luarocks.tar.gz" -C "${WORKDIR}" && \
         mv ${WORKDIR}/luarocks-* "${WORKDIR}/luarocks" && \
         cd "${WORKDIR}/luarocks" && \
         ./configure --with-lua-include=/usr/local/include && \

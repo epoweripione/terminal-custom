@@ -45,12 +45,12 @@ else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
 fi
 
 # new install
-if [[ "${IS_INSTALL}" == "yes" && "${IS_UPDATE}" == "no" ]] then
+if [[ "${IS_INSTALL}" == "yes" && "${IS_UPDATE}" == "no" ]]; then
     if [[ -x "$(command -v pacman)" ]]; then
         PackagesList=(
             bash

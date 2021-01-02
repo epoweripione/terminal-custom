@@ -32,7 +32,7 @@ else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
 
     CHECK_URL="https://api.github.com/repos/tindy2013/subconverter/releases/latest"
@@ -42,7 +42,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
     fi
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
 
     [[ -z "$OS_INFO_TYPE" ]] && get_os_type
@@ -51,7 +51,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
     DOWNLOAD_URL="https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${OS_INFO_TYPE}${OS_INFO_VDIS}.tar.gz"
 
     curl -SL -o "${WORKDIR}/subconverter.tar.gz" -C- "$DOWNLOAD_URL" && \
-        sudo tar -zxPf "${WORKDIR}/subconverter.tar.gz" -C "/srv" && \
+        sudo tar -xzPf "${WORKDIR}/subconverter.tar.gz" -C "/srv" && \
         echo ${REMOTE_VERSION} | sudo tee "/srv/subconverter/.version" >/dev/null
 
     [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] || {
@@ -60,7 +60,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
         Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"
     }
 
-    if [[ "${IS_UPDATE}" == "yes" ]] then
+    if [[ "${IS_UPDATE}" == "yes" ]]; then
         [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] && sudo systemctl restart subconverter
     fi
 fi

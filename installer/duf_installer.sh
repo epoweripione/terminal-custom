@@ -103,6 +103,6 @@ if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
     DOWNLOAD_URL="https://github.com/muesli/duf/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
     curl -SL -o "${WORKDIR}/duf.tar.gz" -C- "$DOWNLOAD_URL" && \
         sudo mkdir -p "/usr/local/duf" && \
-        sudo tar -zxPf "${WORKDIR}/duf.tar.gz" -C "/usr/local/duf" && \
+        sudo tar -xzPf "${WORKDIR}/duf.tar.gz" -C "/usr/local/duf" && \
         sudo cp -f "/usr/local/duf/duf" "/usr/local/bin/duf"
 fi

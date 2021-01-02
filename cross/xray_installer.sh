@@ -35,7 +35,7 @@ else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
 
     CHECK_URL="https://api.github.com/repos/XTLS/Xray-core/releases/latest"
@@ -45,12 +45,12 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
     fi
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
 
     bash <(curl -L https://raw.githubusercontent.com/XTLS/Xray-install/main/install-release.sh)
 
-    if [[ "${IS_UPDATE}" == "yes" ]] then
+    if [[ "${IS_UPDATE}" == "yes" ]]; then
         bash <(curl -L https://raw.githubusercontent.com/XTLS/Xray-install/main/install-dat-release.sh)
     fi
 fi

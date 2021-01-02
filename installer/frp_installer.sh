@@ -37,7 +37,7 @@ else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
 
     CHECK_URL="https://api.github.com/repos/fatedier/frp/releases/latest"
@@ -47,7 +47,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
     fi
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
 
     if pgrep -f "frps" >/dev/null 2>&1; then
@@ -56,7 +56,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
 
     DOWNLOAD_URL="https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_${OS_INFO_TYPE}_${OS_INFO_ARCH}.tar.gz"
     wget -O "${WORKDIR}/frp.tar.gz" "$DOWNLOAD_URL" && \
-        tar -zxPf "${WORKDIR}/frp.tar.gz" -C "${WORKDIR}" && \
+        tar -xzPf "${WORKDIR}/frp.tar.gz" -C "${WORKDIR}" && \
         sudo mkdir -p "/srv/frp" && \
         sudo cp -rf ${WORKDIR}/frp_*/* "/srv/frp"
 

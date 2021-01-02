@@ -76,7 +76,7 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION} from source..."
     DOWNLOAD_URL="https://www.nano-editor.org/dist/v${DIST_VERSION}/nano-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/nano.tar.gz" "$DOWNLOAD_URL" && \
-        tar xzvf "${WORKDIR}/nano.tar.gz" -C "${WORKDIR}" && \
+        tar -xzPf "${WORKDIR}/nano.tar.gz" -C "${WORKDIR}" && \
         mv ${WORKDIR}/nano-* "${WORKDIR}/nano" && \
         cd "${WORKDIR}/nano" && \
         ./configure --prefix=/usr --enable-utf8 && \

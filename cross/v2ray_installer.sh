@@ -35,7 +35,7 @@ else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
 
     CHECK_URL="https://api.github.com/repos/v2fly/v2ray-core/releases/latest"
@@ -45,7 +45,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
     fi
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
     # https://github.com/v2fly/fhs-install-v2ray/wiki/Migrate-from-the-old-script-to-this
     if [[ -d "/usr/bin/v2ray/" ]]; then
@@ -58,7 +58,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
 
     bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
 
-    if [[ "${IS_UPDATE}" == "yes" ]] then
+    if [[ "${IS_UPDATE}" == "yes" ]]; then
         bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-dat-release.sh)
     fi
 fi

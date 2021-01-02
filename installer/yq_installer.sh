@@ -31,7 +31,7 @@ else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
 
     CHECK_URL="https://api.github.com/repos/mikefarah/yq/releases/latest"
@@ -41,7 +41,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
     fi
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]] then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
 
     OS_TYPE=$(uname | sed 's/.*/\L&/')
@@ -50,7 +50,7 @@ if [[ "${IS_INSTALL}" == "yes" ]] then
     DOWNLOAD_URL="https://github.com/mikefarah/yq/releases/download/v${REMOTE_VERSION}/yq_${OS_TYPE}_${OS_INFO_ARCH}.tar.gz"
 
     curl -SL -o "${WORKDIR}/yq.tar.gz" -C- "$DOWNLOAD_URL" && \
-        sudo tar -zxPf "${WORKDIR}/yq.tar.gz" -C "${WORKDIR}" && \
+        sudo tar -xzPf "${WORKDIR}/yq.tar.gz" -C "${WORKDIR}" && \
         sudo mv -f ${WORKDIR}/yq_* "/usr/local/bin/yq"
         sudo chmod +x "/usr/local/bin/yq"
 fi
