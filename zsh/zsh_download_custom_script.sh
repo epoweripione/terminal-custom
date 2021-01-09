@@ -46,6 +46,10 @@ else
         --depth=1 --branch "${BRANCH:-master}" "$REPOREMOTE" "${MY_SHELL_SCRIPTS}"
 fi
 
+# starship config
+if [[ -x "$(command -v starship)" ]]; then
+    cp -f "${MY_SHELL_SCRIPTS}/zsh/themes/starship.toml" "$HOME/.config"
+fi
 
 # make *.sh executable
 find "${MY_SHELL_SCRIPTS}" -type f -iname "*.sh" -exec chmod +x {} \;

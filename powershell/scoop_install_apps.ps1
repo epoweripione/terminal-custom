@@ -226,7 +226,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "ExplorerPlusPlus"
         # "TablacusExplorer"
         # "HBuilderXFull"
-        # "GoldenDictOnline"
+        "UniExtract2"
         "NewFileTime"
         # "WiseCare365"
         "WiseDataRecovery"

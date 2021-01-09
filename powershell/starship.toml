@@ -27,9 +27,12 @@ $golang\
 $helm\
 $java\
 $julia\
+$kotlin\
+$lua\
 $nim\
 $nodejs\
 $ocaml\
+$openstack\
 $perl\
 $php\
 $purescript\
@@ -206,6 +209,25 @@ symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
+[kotlin]
+symbol = "🅺 "
+style = "bold fg:bright-cyan bg:#5a6374"
+format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
+
+[kubernetes]
+symbol = "☸ "
+style = "bold fg:bright-cyan bg:#5a6374"
+format = "[  ](fg:white bg:#5a6374)[$symbol$context(\\($namespace\\))]($style)"
+disabled = false
+
+[kubernetes.context_aliases]
+"dev.local.cluster.k8s" = "dev"
+
+[lua]
+symbol = "🌙 "
+style = "bold fg:bright-cyan bg:#5a6374"
+format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
+
 [memory_usage]
 symbol = " "
 show_percentage = true
@@ -235,6 +257,11 @@ format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
+[openstack]
+symbol = "☁️ "
+style = "bold fg:bright-cyan bg:#5a6374"
+format = "[  ](fg:white bg:#5a6374)[$symbol$cloud(\\($project\\))]($style)"
+
 [package]
 symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
@@ -250,11 +277,16 @@ symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
+[purescript]
+symbol = "<=> "
+style = "bold fg:bright-cyan bg:#5a6374"
+format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
+
 [python]
-scan_for_pyfiles = false
 symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
-format = "[  ](fg:white bg:#5a6374)[${symbol}${pyenv_prefix}${version}( $virtualenv)]($style)"
+format = "[  ](fg:white bg:#5a6374)[${symbol}${pyenv_prefix}${version}(\\($virtualenv\\))]($style)"
+scan_for_pyfiles = false
 
 [ruby]
 symbol = " "
@@ -288,6 +320,7 @@ style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$workspace]($style)"
 
 [zig]
+symbol = "⚡️ "
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
@@ -311,7 +344,7 @@ disabled = false
 variable = "USERNAME"
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](bold fg:bright-white bg:#5a6374)[$env_value]($style)"
-disabled = false
+disabled = true
 
 [custom.docker]
 description = "Shows the docker symbol if the current directory has Dockerfile or docker-compose.yml files"
