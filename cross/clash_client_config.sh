@@ -130,7 +130,9 @@ colorEcho ${BLUE} "Getting clash rules..."
 # Update ACL4SSR
 # https://github.com/ACL4SSR/ACL4SSR
 if [[ -s "/srv/subconverter/subconverter" ]]; then
-    cp -f /etc/clash/*_profile.ini /srv/subconverter/profiles
+    if [[ -d "/etc/clash" ]]; then
+        find "/etc/clash" -type f -name "*_Profile.ini" -print0 | xargs -0 -I{} cp {} "/srv/subconverter/profiles"
+    fi
 
     if Git_Clone_Update "ACL4SSR/ACL4SSR" "/srv/subconverter/ACL4SSR"; then
         cp -f /srv/subconverter/ACL4SSR/Clash/*.list \
@@ -144,7 +146,7 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
 
         if [[ ! -L "/srv/subconverter/config/${RULES_INI}" ]]; then
             CLASH_RULES="/etc/clash/${RULES_INI}"
-            [[ ! -s "$CLASH_RULES" ]] && CLASH_RULES="$$HOME/${RULES_INI}"
+            [[ ! -s "$CLASH_RULES" ]] && CLASH_RULES="$HOME/${RULES_INI}"
             if [[ -s "$CLASH_RULES" ]]; then
                 ln -s "$CLASH_RULES" "/srv/subconverter/config/${RULES_INI}"
             fi
