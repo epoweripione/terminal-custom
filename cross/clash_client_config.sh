@@ -78,15 +78,17 @@ SUB_URL_TXT=${4:-"My_Clash_Sub_URL.txt"}
 
 OPTIMIZE_OPTION=${5:-"no"}
 
-CLASH_CONFIG=${6:-"$HOME/clash_client_config.yml"}
+CLASH_CONFIG=${6:-"/etc/clash/clash_client_config.yml"}
+[[ ! -s "$CLASH_CONFIG" ]] && CLASH_CONFIG="$HOME/clash_client_config.yml"
 [[ ! -s "$CLASH_CONFIG" ]] && CLASH_CONFIG="${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_config.yml"
 if [[ ! -s "$CLASH_CONFIG" ]]; then
     colorEcho ${BLUE} "    ${CLASH_CONFIG} not exist!"
     exit 1
 fi
 
-SUB_LIST_FILE=${7:-"$HOME/clash_client_subscription.list"}
-[[ ! -s "$SUB_LIST_FILE" ]] && SUB_LIST_FILE=${7:-"${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_subscription.list"}
+SUB_LIST_FILE=${7:-"/etc/clash/clash_client_subscription.list"}
+[[ ! -s "$SUB_LIST_FILE" ]] && SUB_LIST_FILE="$HOME/clash_client_subscription.list"
+[[ ! -s "$SUB_LIST_FILE" ]] && SUB_LIST_FILE="${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_subscription.list"
 if [[ -s "$SUB_LIST_FILE" ]]; then
     SUB_LIST=()
     # || In case the file has an incomplete (missing newline) last line
@@ -128,6 +130,8 @@ colorEcho ${BLUE} "Getting clash rules..."
 # Update ACL4SSR
 # https://github.com/ACL4SSR/ACL4SSR
 if [[ -s "/srv/subconverter/subconverter" ]]; then
+    cp -f /etc/clash/*_profile.ini /srv/subconverter/profiles
+
     if Git_Clone_Update "ACL4SSR/ACL4SSR" "/srv/subconverter/ACL4SSR"; then
         cp -f /srv/subconverter/ACL4SSR/Clash/*.list \
             /srv/subconverter/rules/ACL4SSR/Clash && \
@@ -149,12 +153,18 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
 fi
 
 CFW_BYPASS_LINE=$(grep -E -n "^# \[CFW_BYPASS\]" "$CLASH_CONFIG" | cut -d: -f1)
-PROXY_CUSTOM_LINE=0
-# PROXY_CUSTOM_LINE=$(grep -E -n "^# \[PROXY_CUSTOM\]" "$CLASH_CONFIG" | cut -d: -f1)
+[[ -z "${CFW_BYPASS_LINE}" ]] && CFW_BYPASS_LINE=0
+
+PROXY_CUSTOM_LINE=$(grep -E -n "^# \[PROXY_CUSTOM\]" "$CLASH_CONFIG" | cut -d: -f1)
+[[ -z "${PROXY_CUSTOM_LINE}" ]] && PROXY_CUSTOM_LINE=0
+
 PROXY_LINE=$(grep -E -n "^# \[PROXY\]" "$CLASH_CONFIG" | cut -d: -f1)
-PROXY_MERGE_LINE=0
-# PROXY_MERGE_LINE=$(grep -E -n "^# \[PROXY_MERGE\]" "$CLASH_CONFIG" | cut -d: -f1)
+
+PROXY_MERGE_LINE=$(grep -E -n "^# \[PROXY_MERGE\]" "$CLASH_CONFIG" | cut -d: -f1)
+[[ -z "${PROXY_MERGE_LINE}" ]] && PROXY_MERGE_LINE=0
+
 PROXY_GROUP_LINE=$(grep -E -n "^# \[PROXY_GROUP\]" "$CLASH_CONFIG" | cut -d: -f1)
+
 RULES_LINE=$(grep -E -n "^# \[RULES\]" "$CLASH_CONFIG" | cut -d: -f1)
 
 # [RULES]
@@ -448,9 +458,10 @@ colorEcho ${BLUE} "  Setting all config to ${TARGET_CONFIG_FILE}..."
 [[ -f "$TARGET_CONFIG_FILE" ]] && rm -f "$TARGET_CONFIG_FILE"
 
 START_LINE=1
-ADD_CONTENT=$(sed -n "${START_LINE},${CFW_BYPASS_LINE} p" "$CLASH_CONFIG")
-# while read -r line; do printf "%s\n" "${line}" >> "$TARGET_CONFIG_FILE"; done <<<"$ADD_CONTENT"
-echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
+if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
+    ADD_CONTENT=$(sed -n "${START_LINE},${CFW_BYPASS_LINE} p" "$CLASH_CONFIG")
+    echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
+fi
 
 if [[ -n "$CFW_BYPASS" ]]; then
     colorEcho ${BLUE} "    Setting cfw bypass..."

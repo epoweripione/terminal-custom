@@ -83,7 +83,7 @@ apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
 #     tar zxvf ./pecl_downloads/ext-postgresql.tar.gz && \
 #     mv ext-postgresql* ext-postgresql && cd ext-postgresql && \
 #     phpize && \
-#     ./configure && \
+#     ./configure >/dev/null && \
 #     make >/dev/null && make install >/dev/null && \
 #     echo 'extension=swoole_postgresql.so' > $PHP_INI_DIR/90-swoole_postgresql.ini
 

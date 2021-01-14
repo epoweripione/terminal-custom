@@ -53,7 +53,7 @@ fi
 #     curl -SL http://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz -o ncurses.tar.gz && \
 #     sudo tar zxvf ncurses.tar.gz && \
 #     sudo mv ncurses-* ncurses && cd ncurses && \
-#     sudo ./configure --prefix=/opt/ncurses && \
+#     sudo ./configure --prefix=/opt/ncurses >/dev/null && \
 #     sudo make >/dev/null && sudo make install >/dev/null
 
 INSTALL_NAME="nano"
@@ -79,7 +79,7 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         tar -xzPf "${WORKDIR}/nano.tar.gz" -C "${WORKDIR}" && \
         mv ${WORKDIR}/nano-* "${WORKDIR}/nano" && \
         cd "${WORKDIR}/nano" && \
-        ./configure --prefix=/usr --enable-utf8 && \
+        ./configure --prefix=/usr --enable-utf8 >/dev/null && \
         make >/dev/null && \
         sudo make install >/dev/null
 fi

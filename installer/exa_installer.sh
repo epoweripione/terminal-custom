@@ -20,16 +20,20 @@ fi
 [[ -z "$OS_INFO_TYPE" ]] && get_os_type
 [[ -z "$OS_INFO_VDIS" ]] && get_sysArch
 
-## fix: /lib64/libc.so.6: version `GLIBC_2.18' not found (required by exa)
-## strings /usr/lib64/libc.so.6 | grep GLIBC_2.18
-# curl -SL -o "${WORKDIR}/glibc.tar.gz" "http://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz" && \
-#     tar -zxvf "${WORKDIR}/glibc.tar.gz" -C "${WORKDIR}" && \
-#         mv ${WORKDIR}/glibc-* "${WORKDIR}/glibc" && \
-#         mkdir "${WORKDIR}/glibc/build" && \
-#         cd "${WORKDIR}/glibc/build" && \
-#         ../configure --prefix=/usr && \
-#         make -j$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) >/dev/null && \
-#         sudo make install >/dev/null 
+# fix: /lib64/libc.so.6: version `GLIBC_2.18' not found (required by exa)
+if strings /usr/lib64/libc.so.6 | grep GLIBC_2.18 >/dev/null; then
+    :
+else
+    colorEcho ${BLUE} "  Installing `GLIBC 2.18` (required by exa)..."
+    curl -SL -o "${WORKDIR}/glibc.tar.gz" "http://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz" && \
+        tar -zxvf "${WORKDIR}/glibc.tar.gz" -C "${WORKDIR}" && \
+            mv ${WORKDIR}/glibc-* "${WORKDIR}/glibc" && \
+            mkdir "${WORKDIR}/glibc/build" && \
+            cd "${WORKDIR}/glibc/build" && \
+            ../configure --prefix=/usr >/dev/null && \
+            make -j$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) >/dev/null && \
+            sudo make install >/dev/null
+fi
 
 # exa
 # https://github.com/ogham/exa

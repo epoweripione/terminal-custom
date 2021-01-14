@@ -131,7 +131,7 @@ if [[ -x "$(command -v pacman)" ]]; then
         git clone https://github.com/tmux/tmux && \
             cd tmux && \
             sudo sh autogen.sh && \
-            sudo ./configure && sudo make >/dev/null
+            sudo ./configure >/dev/null && sudo make >/dev/null
     fi
 fi
 
@@ -156,7 +156,7 @@ if [[ ! -x "$(command -v zsh)" ]]; then
                 sudo tar xJvf "${WORKDIR}/zsh.tar.xz" -C "${WORKDIR}" && \
                 sudo mv ${WORKDIR}/zsh-* "${WORKDIR}/zsh" && \
                 cd "${WORKDIR}/zsh" && \
-                sudo ./configure && \
+                sudo ./configure >/dev/null && \
                 sudo make >/dev/null && \
                 sudo make install >/dev/null
         fi

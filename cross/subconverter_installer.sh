@@ -54,6 +54,15 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
         sudo tar -xzPf "${WORKDIR}/subconverter.tar.gz" -C "/srv" && \
         echo ${REMOTE_VERSION} | sudo tee "/srv/subconverter/.version" >/dev/null
 
+    if [[ "${IS_UPDATE}" == "no" ]]; then
+        read -s -p "Enter api access password: " API_PASSWORD
+        if [[ -n "${API_PASSWORD}" ]]; then
+            sed -i "s|api_access_token:.*|api_access_token: ${API_PASSWORD}|" "/srv/subconverter/pref.yml"
+            # sed -i "s|api_access_token:.*|api_access_token: ${API_PASSWORD}|" "/srv/subconverter/pref-new.yml"
+            # sed -i "s|api_access_token=.*|api_access_token=${API_PASSWORD}|" "/srv/subconverter/pref.ini"
+        fi
+    fi
+
     [[ $(systemctl is-enabled subconverter 2>/dev/null) ]] || {
         # [[ "${IS_UPDATE}" == "no" ]] && read -p "Install clash subconverter service?[y/N]:" CHOICE
         # [[ "$CHOICE" == 'y' || "$CHOICE" == 'Y' ]] && Install_systemd_Service "subconverter" "/srv/subconverter/subconverter"

@@ -38,7 +38,7 @@ if [[ -x "$(command -v proxychains4)" ]]; then
         # if [[ $(date -d "$git_latest_update") > $(date --date='7 day ago') ]]; then
         if [[ $(date -d "$git_latest_update") > $(date -d "$proxychains4_date") ]]; then
             cd "$HOME/proxychains-ng" && \
-                sudo ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
+                sudo ./configure --prefix=/usr --sysconfdir=/etc/proxychains >/dev/null && \
                 sudo make >/dev/null && sudo make install >/dev/null
         fi
     fi
@@ -55,7 +55,7 @@ else
 
         if [[ -d "$HOME/proxychains-ng" ]]; then
             cd "$HOME/proxychains-ng" && \
-                sudo ./configure --prefix=/usr --sysconfdir=/etc/proxychains && \
+                sudo ./configure --prefix=/usr --sysconfdir=/etc/proxychains >/dev/null && \
                 sudo make >/dev/null && sudo make install >/dev/null && sudo make install-config >/dev/null
         fi
     fi

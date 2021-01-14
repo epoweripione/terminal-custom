@@ -22,7 +22,7 @@ install_ip2location_c() {
     git clone https://github.com/chrislim2888/IP2Location-C-Library $CURRENT_DIR/IP2Location-C-Library && \
         cd $CURRENT_DIR/IP2Location-C-Library && \
         sudo autoreconf -i -v --force && \
-        sudo ./configure && sudo make >/dev/null && sudo make install >/dev/null && \
+        sudo ./configure >/dev/null && sudo make >/dev/null && sudo make install >/dev/null && \
         cd data && perl ip-country.pl
 
     # Compile ip2locationLatLong

@@ -36,7 +36,7 @@ cd "${WORKDIR}" && \
     curl -SL -o vnstat.tar.gz https://humdi.net/vnstat/vnstat-latest.tar.gz && \
     sudo tar xvzf vnstat.tar.gz && \
     sudo mv vnstat-* vnstat && cd vnstat/ && \
-    sudo ./configure --prefix=/usr --sysconfdir=/etc && \
+    sudo ./configure --prefix=/usr --sysconfdir=/etc >/dev/null && \
     sudo make >/dev/null && \
     sudo make install >/dev/null && \
     : && \

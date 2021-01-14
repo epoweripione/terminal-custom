@@ -70,7 +70,7 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         tar -xzPf "${WORKDIR}/luarocks.tar.gz" -C "${WORKDIR}" && \
         mv ${WORKDIR}/luarocks-* "${WORKDIR}/luarocks" && \
         cd "${WORKDIR}/luarocks" && \
-        ./configure --with-lua-include=/usr/local/include && \
+        ./configure --with-lua-include=/usr/local/include >/dev/null && \
         make >/dev/null && \
         sudo make install >/dev/null
 fi
