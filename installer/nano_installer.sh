@@ -23,7 +23,7 @@ fi
 colorEcho ${BLUE} "Checking latest version for nano..."
 if [[ -x "$(command -v pacman)" ]]; then
     # Remove old version nano
-    if pacman -Q nano >/dev/null 2>&1; then
+    if pacman -Qi nano >/dev/null 2>&1; then
         sudo pacman --noconfirm -R nano >/dev/null 2>&1
     fi
 
@@ -39,7 +39,8 @@ if [[ -x "$(command -v pacman)" ]]; then
         )
         for TargetPackage in "${PackagesList[@]}"; do
             if pacman -Si "$TargetPackage" >/dev/null 2>&1; then
-                if ! pacman -Q "$TargetPackage" >/dev/null 2>&1; then
+                if ! pacman -Qi "$TargetPackage" >/dev/null 2>&1; then
+                    colorEcho ${BLUE} "  Installing $TargetPackage..."
                     sudo pacman --noconfirm -S "$TargetPackage"
                 fi
             fi

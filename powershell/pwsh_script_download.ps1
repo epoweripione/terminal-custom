@@ -76,11 +76,11 @@ if ($?) {
     if (-Not (Test-Path $CONFIG_DIR)) {
         New-Item -path $CONFIG_DIR -type Directory | Out-Null
     }
-    Copy-Item -Path ".\terminal-custom\powershell\starship.toml" -Destination $CONFIG_DIR
+    Copy-Item -Path ".\terminal-custom\powershell\themes\starship.toml" -Destination $CONFIG_DIR
 
     $THEME_DIR = "~\Documents\PowerShell\PoshThemes"
     if (-Not (Test-Path $THEME_DIR)) {New-Item -path $THEME_DIR -type Directory | Out-Null}
-    Copy-Item -Path ".\terminal-custom\powershell\*.psm1" -Destination $THEME_DIR
+    Copy-Item -Path ".\terminal-custom\powershell\themes\*.psm1" -Destination $THEME_DIR
 
     $IMAGE_DIR = "~\Pictures"
     Copy-Item -Path ".\terminal-custom\wsl\*.jpg" -Destination $IMAGE_DIR

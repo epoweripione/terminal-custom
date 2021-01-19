@@ -275,6 +275,8 @@ fi
 
 # gvm
 if [[ -d "$HOME/.gvm" ]]; then
+    ENV_PATH_OLD=$PATH
+
     if type 'gvm' 2>/dev/null | grep -q 'function'; then
         :
     else
@@ -288,27 +290,27 @@ if [[ -d "$HOME/.gvm" ]]; then
         gvm use go1.4 >/dev/null 2>&1
         export GOROOT_BOOTSTRAP=$GOROOT
 
+        # fix (maybe) break PATH
+        export PATH=${ENV_PATH_OLD}
+
         # Set default go version
-        if [[ -n "$CURRENT_VERSION" ]]; then
-            gvm use $CURRENT_VERSION --default >/dev/null 2>&1
-        fi
+        [[ -n "$CURRENT_VERSION" ]] && gvm use $CURRENT_VERSION --default >/dev/null 2>&1
     fi
 
-    # GOBIN
-    if [[ -z "$GOBIN" && -n "$GOROOT" ]]; then
-        export GOBIN=$GOROOT/bin
-    fi
+    unset ENV_PATH_OLD
+fi
 
-    # Go module proxy for china
-    if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
-        GO_VERSION=$(go version | cut -d' ' -f3)
-        if version_ge $GO_VERSION 'go1.13'; then
-            go env -w GO111MODULE=on
-            go env -w GOPROXY="https://goproxy.io,direct"
-        else
-            export GO111MODULE=on
-            export GOPROXY="https://goproxy.io"
-        fi
+# go
+if [[ -x "$(command -v go)" ]]; then
+    [[ -z "$GOBIN" && -n "$GOROOT" ]] && export GOBIN=$GOROOT/bin
+    # go module
+    GO_VERSION=$(go version | cut -d' ' -f3)
+    if version_ge $GO_VERSION 'go1.13'; then
+        go env -w GO111MODULE=on
+        [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" ]] && go env -w GOPROXY="https://goproxy.io,direct"
+    else
+        export GO111MODULE=on
+        [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" ]] && export GOPROXY="https://goproxy.io"
     fi
 fi
 

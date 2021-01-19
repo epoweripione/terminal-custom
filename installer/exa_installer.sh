@@ -72,7 +72,7 @@ fi
 
 if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
     colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
-    if [[ -s "/usr/local/bin/duf" ]]; then
+    if [[ -s "/usr/local/bin/exa" ]]; then
         sudo rm -f "/usr/local/bin/exa"
     fi
 

@@ -13,6 +13,7 @@ else
 fi
 
 [[ -z "$OS_INFO_TYPE" ]] && get_os_type
+[[ -z "$OS_INFO_ARCH" ]] && get_arch
 
 # Use proxy or mirror when some sites were blocked or low speed
 set_proxy_mirrors_env
@@ -66,7 +67,8 @@ if [[ "${IS_INSTALL}" == "yes" && "${IS_UPDATE}" == "no" ]]; then
         )
         for TargetPackage in "${PackagesList[@]}"; do
             if pacman -Si "$TargetPackage" >/dev/null 2>&1; then
-                if ! pacman -Q "$TargetPackage" >/dev/null 2>&1; then
+                if ! pacman -Qi "$TargetPackage" >/dev/null 2>&1; then
+                    colorEcho ${BLUE} "  Installing $TargetPackage..."
                     sudo pacman --noconfirm -S "$TargetPackage"
                 fi
             fi
@@ -83,12 +85,12 @@ if [[ "${IS_INSTALL}" == "yes" && "${IS_UPDATE}" == "no" ]]; then
 fi
 
 
-if [[ "${IS_INSTALL}" == "yes" && -z "$GVM_INSTALLER_NOT_USE_PROXY" ]]; then
-    if [[ ! -x "$(command -v proxychains4)" ]]; then
-        [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/proxychains_installer.sh" ]] && \
-            source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/proxychains_installer.sh"
-    fi
-fi
+# if [[ "${IS_INSTALL}" == "yes" && -z "$GVM_INSTALLER_NOT_USE_PROXY" ]]; then
+#     if [[ ! -x "$(command -v proxychains4)" ]]; then
+#         [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/proxychains_installer.sh" ]] && \
+#             source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/proxychains_installer.sh"
+#     fi
+# fi
 
 
 if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
@@ -98,31 +100,52 @@ if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
         [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
     fi
 
+    case "$OS_INFO_TYPE" in
+        windows)
+            GVM_DOWNLOAD_EXT="zip"
+            ;;
+        *)
+            GVM_DOWNLOAD_EXT="tar.gz"
+            ;;
+    esac
+
     ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
     if [[ ! "$(gvm list | grep 'go1.4')" ]]; then
-        if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-            proxychains4 gvm install go1.4 -B
-        else
+        # if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+        #     proxychains4 gvm install go1.4 -B
+        # else
+        #     gvm install go1.4 -B
+        # fi
+        GVM_DOWNLOAD_VERSION="go1.4"
+        GVM_DOWNLOAD_NAME="${GVM_DOWNLOAD_VERSION}.${OS_INFO_TYPE}-${OS_INFO_ARCH}.${GVM_DOWNLOAD_EXT}"
+        GVM_DOWNLOAD_SOURCE="https://dl.google.com/go/${GVM_DOWNLOAD_NAME}"
+
+        curl -SL -o "$HOME/.gvm/archive/${GVM_DOWNLOAD_NAME}" -C- "${GVM_DOWNLOAD_SOURCE}" && \
             gvm install go1.4 -B
-        fi
     fi
 
     CURRENT_VERSION=$(gvm list | grep '=>' | cut -d' ' -f2)
     if [[ "$(gvm list | grep 'go1.4')" ]]; then
-        # Set GOROOT_BOOTSTRAP to compile Go 1.5+
-        gvm use go1.4
-        GOROOT_BOOTSTRAP=$GOROOT
+        ## Set GOROOT_BOOTSTRAP to compile Go 1.5+
+        # gvm use go1.4
+        # GOROOT_BOOTSTRAP=$GOROOT
 
         # Install latest go version
         REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         # REMOTE_VERSION=${REMOTE_VERSION%.}
 
         if [[ -n "$REMOTE_VERSION" ]] && [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
-            if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
-                proxychains4 gvm install $REMOTE_VERSION
-            else
-                gvm install $REMOTE_VERSION
-            fi
+            # if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+            #     proxychains4 gvm install $REMOTE_VERSION
+            # else
+            #     gvm install $REMOTE_VERSION
+            # fi
+            GVM_DOWNLOAD_VERSION="${REMOTE_VERSION}"
+            GVM_DOWNLOAD_NAME="${GVM_DOWNLOAD_VERSION}.${OS_INFO_TYPE}-${OS_INFO_ARCH}.${GVM_DOWNLOAD_EXT}"
+            GVM_DOWNLOAD_SOURCE="https://dl.google.com/go/${GVM_DOWNLOAD_NAME}"
+
+            curl -SL -o "$HOME/.gvm/archive/${GVM_DOWNLOAD_NAME}" -C- "${GVM_DOWNLOAD_SOURCE}" && \
+                gvm install ${REMOTE_VERSION} -B
         fi
 
         # Set default go version
@@ -139,6 +162,8 @@ fi
 
 # go env
 if [[ -d "$HOME/.gvm" ]]; then
+    ENV_PATH_OLD=$PATH
+
     if type 'gvm' 2>/dev/null | grep -q 'function'; then
         :
     else
@@ -152,16 +177,17 @@ if [[ -d "$HOME/.gvm" ]]; then
         gvm use go1.4 >/dev/null 2>&1
         export GOROOT_BOOTSTRAP=$GOROOT
 
+        # fix (maybe) break PATH
+        export PATH=${ENV_PATH_OLD}
+
         # Set default go version
-        if [[ -n "$CURRENT_VERSION" ]]; then
-            gvm use $CURRENT_VERSION --default >/dev/null 2>&1
-        fi
+        [[ -n "$CURRENT_VERSION" ]] && gvm use $CURRENT_VERSION --default >/dev/null 2>&1
     fi
 
+    unset ENV_PATH_OLD
+
     # GOBIN
-    if [[ -z "$GOBIN" && -n "$GOROOT" ]]; then
-        export GOBIN=$GOROOT/bin
-    fi
+    [[ -z "$GOBIN" && -n "$GOROOT" ]] && export GOBIN=$GOROOT/bin
 
     # Go module proxy for china
     if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then

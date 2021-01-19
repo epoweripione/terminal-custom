@@ -245,6 +245,8 @@ Plugins="git"
 Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 # Plugins="${Plugins} command-time"
 
+[[ -d "$HOME/.asdf" ]] && Plugins="${Plugins} asdf"
+
 [[ -x "$(command -v tmux)" ]] && Plugins="${Plugins} tmux"
 [[ -x "$(command -v fzf)" || -d $HOME/.fzf ]] && Plugins="${Plugins} fzf"
 [[ -x "$(command -v autojump)" ]] && Plugins="${Plugins} autojump"

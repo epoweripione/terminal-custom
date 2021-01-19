@@ -160,6 +160,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
 
     $Apps = @(
         "vcredist"
+        "hub"
         "starship"
         "googlechrome-dev"
         # "chromium"
@@ -293,6 +294,13 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
 } else {
     Write-Host "Install apps using scoop failed!"
 }
+
+
+## Bucket Operations
+## Check update for all apps in bucket
+# .\bin\checkver.ps1 -App * -Update
+## Push updates directly to 'origin master'
+# .\bin\auto-pr.ps1 -Push -SkipUpdated
 
 
 # https://github.com/lukesampson/scoop/wiki/Custom-PHP-configuration

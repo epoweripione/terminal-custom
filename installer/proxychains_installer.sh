@@ -60,14 +60,22 @@ else
         fi
     fi
 
-    if [[ -s "/etc/proxychains/proxychains.conf" ]]; then
-        sudo cp /etc/proxychains/proxychains.conf /etc/proxychains/proxychains.conf.bak && \
-            sudo sed -i 's/socks4/# socks4/g' /etc/proxychains/proxychains.conf
+    isNewInstall="yes"
+fi
 
-        if check_socks5_proxy_up "127.0.0.1:7890"; then
-            echo 'socks5 127.0.0.1 7890' | sudo tee -a /etc/proxychains/proxychains.conf >/dev/null
-        elif check_socks5_proxy_up "127.0.0.1:7891"; then
-            echo 'socks5 127.0.0.1 7891' | sudo tee -a /etc/proxychains/proxychains.conf >/dev/null
+if [[ "$isNewInstall" == "yes" ]]; then
+    PROXYCHAINS_CONFIG="/etc/proxychains/proxychains.conf"
+    [[ ! -s "${PROXYCHAINS_CONFIG}" ]] && \
+        PROXYCHAINS_CONFIG="/etc/proxychains4.conf"
+
+    if [[ -s "${PROXYCHAINS_CONFIG}" ]]; then
+        sudo cp ${PROXYCHAINS_CONFIG} ${PROXYCHAINS_CONFIG}.bak && \
+            sudo sed -i 's/socks4/# socks4/g' ${PROXYCHAINS_CONFIG}
+
+        check_set_global_proxy 7891 7890
+
+        if [[ -n "${GLOBAL_PROXY_IP}" ]] then
+            echo 'socks5 ${GLOBAL_PROXY_IP} ${GLOBAL_PROXY_SOCKS_PORT}' | sudo tee -a ${PROXYCHAINS_CONFIG} >/dev/null
         fi
     fi
 fi
