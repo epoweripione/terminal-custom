@@ -2,12 +2,12 @@
 
 ## How to use
 ## 1. Install curl first
-## 2. Install zsh and oh-my-zsh: source <(curl -fsL https://git.io/fA8Jb)
-##                               source <(curl -fsL http://t.cn/AigJm9ut)
-## 3. Init: source <(curl -fsL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh && $HOME/terminal-custom/zsh/zsh_init.sh
-##          source <(curl -fsL http://t.cn/AigJuOCW) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh && $HOME/terminal-custom/zsh/zsh_init.sh
-## 4. Update: source <(curl -fsL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh
-##            source <(curl -fsL http://t.cn/AigJuOCW) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh
+## 2. Install zsh and oh-my-zsh: source <(curl -fsSL https://git.io/fA8Jb)
+##                               source <(curl -fsSL http://t.cn/AigJm9ut)
+## 3. Init: source <(curl -fsSL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh && $HOME/terminal-custom/zsh/zsh_init.sh
+##          source <(curl -fsSL http://t.cn/AigJuOCW) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh && $HOME/terminal-custom/zsh/zsh_init.sh
+## 4. Update: source <(curl -fsSL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh
+##            source <(curl -fsSL http://t.cn/AigJuOCW) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
 #######color code########

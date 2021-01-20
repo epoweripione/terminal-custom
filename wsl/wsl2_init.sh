@@ -108,7 +108,7 @@ fi
 ## yarn
 ## https://yarnpkg.com/zh-Hans/docs/install
 # if [[ ! -e "/etc/apt/sources.list.d/yarn.list" ]]; then
-#     curl -fsL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+#     curl -fsSL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 #     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 # fi
 
@@ -141,7 +141,7 @@ sudo chmod u+s /bin/ping
 ## wslu
 ## https://github.com/wslutilities/wslu
 # colorEcho ${BLUE} "Install git wslu..."
-# curl -fsL "https://packagecloud.io/install/repositories/whitewaterfoundry/wslu/script.deb.sh" \
+# curl -fsSL "https://packagecloud.io/install/repositories/whitewaterfoundry/wslu/script.deb.sh" \
 #         | sudo bash && \
 #     sudo apt install -y wslu
 

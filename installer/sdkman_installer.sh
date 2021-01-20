@@ -19,7 +19,7 @@ fi
 ## To see what is currently in use for all Candidates: sdk current
 colorEcho ${BLUE} "Installing sdkman..."
 if [[ ! -d "$HOME/.sdkman" ]]; then
-    curl -fsL "https://get.sdkman.io" | bash
+    curl -fsSL "https://get.sdkman.io" | bash
 fi
 
 if [[ "$(command -v sdk)" ]]; then

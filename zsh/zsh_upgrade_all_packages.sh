@@ -150,7 +150,7 @@ if [[ -d "$HOME/.jabba" ]]; then
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "  Installing jabba ${REMOTE_VERSION}..."
-        curl -fsL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
+        curl -fsSL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
             . ~/.jabba/jabba.sh && \
             sed -i "/jabba.sh/d" ~/.zshrc && \
             cd $HOME

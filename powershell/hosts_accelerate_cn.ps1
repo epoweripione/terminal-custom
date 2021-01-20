@@ -97,7 +97,7 @@ $WANHostsList=@(
     "http://ipinfo.io/ip"
 )
 foreach ($TargetHost in $WANHostsList) {
-    $LocalWANIP = curl -fsL -4 "$TargetHost"
+    $LocalWANIP = curl -fsSL -4 "$TargetHost"
     $LocalWANIP = ($LocalWANIP | Select-String -Pattern "\d{1,3}(\.\d{1,3}){3}" -AllMatches).Matches.Value
     $LocalWANIP = $LocalWANIP | Select-Object -first 1
     if (($null -eq $LocalWANIP) -or ($LocalWANIP -eq "")) {
@@ -179,7 +179,7 @@ foreach ($TargetHost in $HostsList) {
     }
     # get ip use curl
     if ($SameIPPrior -eq "no") {
-        $IPContent = curl -fsL --connect-timeout 5 --max-time 15 $TargetURL
+        $IPContent = curl -fsSL --connect-timeout 5 --max-time 15 $TargetURL
         $TargetIP = ($IPContent | Select-String -Pattern "\d{1,3}(\.\d{1,3}){3}" -AllMatches).Matches.Value
         $TargetIP = $TargetIP | Where-Object {$_ -NotContains $LocalWANIP} | Select-Object -first 1
     }
@@ -188,7 +188,7 @@ foreach ($TargetHost in $HostsList) {
         Write-Host " (Error)" -ForegroundColor Red
     } else {
         if ($SameIPPrior -eq "no") {
-            # $IPGeo = curl -fsL --connect-timeout 5 --max-time 15 https://ipinfo.io/$TargetIP/country
+            # $IPGeo = curl -fsSL --connect-timeout 5 --max-time 15 https://ipinfo.io/$TargetIP/country
             $IPGeoURL = "http://ip-api.com/json/$TargetIP"
             try {
                 $IPGeoRequest = Invoke-RestMethod -Method Get -URI $IPGeoURL  

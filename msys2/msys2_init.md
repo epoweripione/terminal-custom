@@ -44,7 +44,7 @@ sed -i "/^\[mingw32\]/i\[git-for-windows]\nServer = https://wingit.blob.core.win
 
 ### Authorize signing key (this step may have to be repeated occasionally until https://github.com/msys2/msys2/issues/62 is fixed)
 ```
-curl -fsL https://raw.githubusercontent.com/git-for-windows/build-extra/master/git-for-windows-keyring/git-for-windows.gpg | pacman-key --add - && pacman-key --lsign-key 1A9F3986
+curl -fsSL https://raw.githubusercontent.com/git-for-windows/build-extra/master/git-for-windows-keyring/git-for-windows.gpg | pacman-key --add - && pacman-key --lsign-key 1A9F3986
 ```
 
 ### Then synchronize new repository

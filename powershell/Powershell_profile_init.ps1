@@ -177,11 +177,11 @@ function  SearchScoopBucket {
 function UpdateMyScript {
     Set-Location ~
     if (check_socks5_proxy_up $SCOOP_PROXY_ADDR) {
-        curl -fsL --socks5-hostname "127.0.0.1:7890" `
+        curl -fsSL --socks5-hostname "127.0.0.1:7890" `
             -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d" && `
         .\pwsh_script_download.ps1
     } else {
-        curl -fsL -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d" && `
+        curl -fsSL -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d" && `
         .\pwsh_script_download.ps1
     }
 }
@@ -201,7 +201,7 @@ function DockerListAll{
 function PrettyLS {colorls --light -A}
 function GitStat {git status}
 function GoBack {Set-Location ..}
-function GetMyIp {curl -fsL -4 http://ip-api.com/json/ | ConvertFrom-Json}
+function GetMyIp {curl -fsSL -4 http://ip-api.com/json/ | ConvertFrom-Json}
 function EditHosts {sudo notepad $env:windir\System32\drivers\etc\hosts}
 function EditHistory {notepad (Get-PSReadlineOption).HistorySavePath}
 

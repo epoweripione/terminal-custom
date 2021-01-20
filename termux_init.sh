@@ -41,7 +41,7 @@
 # pkg up -y && pkg i -y nano curl wget git unzip unrar htop nmap screenfetch starship
 
 ## init termux
-# source <(curl -fsL https://git.io/fNpeJ) && ./termux_init.sh
+# source <(curl -fsSL https://git.io/fNpeJ) && ./termux_init.sh
 
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 

@@ -57,7 +57,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
     # Pre-release
-    REMOTE_VERSION=$(curl -fsL -N https://github.com/Dreamacro/clash/releases \
+    REMOTE_VERSION=$(curl -fsSL -N https://github.com/Dreamacro/clash/releases \
         | grep -Eo -m1 '\/releases\/tag\/v([0-9]{1,}\.)+[0-9]{1,}' \
         | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then

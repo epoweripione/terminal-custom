@@ -47,11 +47,11 @@ if [[ "$OS_INFO_TYPE" == "windows" ]]; then
     fi
 
     if [[ "$USE_PROXY" == 'y' || "$USE_PROXY" == 'Y' ]]; then
-        chromium_ver1=$(curl --socks5-hostname 127.0.0.1:55880 -fsL ${url1}/LAST_CHANGE)
-        chromium_ver2=$(curl --socks5-hostname 127.0.0.1:55880 -fsL ${url2}/LAST_CHANGE)
+        chromium_ver1=$(curl -fsSL --socks5-hostname 127.0.0.1:55880 "${url1}/LAST_CHANGE")
+        chromium_ver2=$(curl -fsSL --socks5-hostname 127.0.0.1:55880 "${url2}/LAST_CHANGE")
     else
-        chromium_ver1=$(curl -fsL ${url1}/LAST_CHANGE)
-        chromium_ver2=$(curl -fsL ${url2}/LAST_CHANGE)
+        chromium_ver1=$(curl -fsSL "${url1}/LAST_CHANGE")
+        chromium_ver2=$(curl -fsSL "${url2}/LAST_CHANGE")
     fi
 
     if [[ $chromium_ver1 -gt $chromium_ver2 ]]; then

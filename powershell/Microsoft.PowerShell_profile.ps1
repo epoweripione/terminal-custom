@@ -112,7 +112,7 @@ function DockerListAll{
 function PrettyLS {colorls --light -A}
 function GitStat {git status}
 function GoBack {Set-Location ..}
-function GetMyIp {curl -fsL -4 http://ip-api.com/json/ | ConvertFrom-Json}
+function GetMyIp {curl -fsSL -4 http://ip-api.com/json/ | ConvertFrom-Json}
 function EditHosts {sudo notepad $env:windir\System32\drivers\etc\hosts}
 function EditHistory {notepad (Get-PSReadlineOption).HistorySavePath}
 

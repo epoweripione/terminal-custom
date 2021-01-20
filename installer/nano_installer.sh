@@ -68,7 +68,7 @@ if [[ -x "$(command -v nano)" ]]; then
     CURRENT_VERSION=$(nano -V | grep -Eo -m1 '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
 fi
 
-REMOTE_VERSION=$(curl -fsL -N https://www.nano-editor.org/download.php \
+REMOTE_VERSION=$(curl -fsSL -N https://www.nano-editor.org/download.php \
     | grep -Eo -m1 'nano-([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d'-' -f2)
     # | grep -m 1 -o 'nano-\([0-9]\)\+\.\([0-9]\)\+' | head -n1 | cut -d'-' -f2)
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)

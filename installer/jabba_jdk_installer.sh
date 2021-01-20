@@ -17,7 +17,7 @@ fi
 ## Install jabba
 colorEcho ${BLUE} "Installing jabba..."
 if [[ ! -d "$HOME/.jabba" ]]; then
-    curl -fsL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
+    curl -fsSL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
         . ~/.jabba/jabba.sh && \
         sed -i "/jabba.sh/d" ~/.zshrc
 fi

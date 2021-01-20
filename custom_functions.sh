@@ -675,7 +675,7 @@ function get_network_wan_ipv4() {
     # php:
     # <?php echo $_SERVER["REMOTE_ADDR"]; ?>
     # pacman -S --noconfirm html2text
-    # curl -fsL http://yourdomainname/getip.php | html2text
+    # curl -fsSL http://yourdomainname/getip.php | html2text
     # nodejs:
     # https://github.com/alsotang/externalip
     # https://github.com/sindresorhus/public-ip
