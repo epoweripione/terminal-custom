@@ -316,7 +316,7 @@ sudo pacman --noconfirm -S conky-lua-nv conky-manager jq lua-clock-manjaro
 # http://forum.ubuntu.org.cn/viewtopic.php?f=94&t=313031
 # http://www.manongzj.com/blog/4-lhjnjqtantllpnj.html
 yay --noconfirm -S conky-colors
-curl -SL -o $HOME/conky-convert.lua \
+curl -fSL -o $HOME/conky-convert.lua \
     https://raw.githubusercontent.com/brndnmtthws/conky/master/extras/convert.lua
 # conky-colors --help
 conky-colors --theme=human --side=right --arch --cpu=2 --proc=5 \
@@ -405,8 +405,8 @@ git clone --depth 1 https://github.com/blackPantherOS/Conky-themes $HOME/.conky/
 # cityId=${OpenWeatherMap_CityID}
 # unit=metric
 # lang=${OpenWeatherMap_LANG}
-# curl -s "api.openweathermap.org/data/2.5/forecast?id=\${cityId}&cnt=5&units=\${unit}&appid=\${apiKey}&lang=\${lang}" -o $HOME/.cache/harmattan-conky/forecast.json
-# curl -s "api.openweathermap.org/data/2.5/weather?id=\${cityId}&cnt=5&units=\${unit}&appid=\${apiKey}&lang=\${lang}" -o $HOME/.cache/harmattan-conky/weather.json
+# curl -fsSL "api.openweathermap.org/data/2.5/forecast?id=\${cityId}&cnt=5&units=\${unit}&appid=\${apiKey}&lang=\${lang}" -o $HOME/.cache/harmattan-conky/forecast.json
+# curl -fsSL "api.openweathermap.org/data/2.5/weather?id=\${cityId}&cnt=5&units=\${unit}&appid=\${apiKey}&lang=\${lang}" -o $HOME/.cache/harmattan-conky/weather.json
 # sleep 2
 # conky 2>/dev/null &
 # EOF

@@ -51,7 +51,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     [[ $(systemctl is-enabled trojan 2>/dev/null) ]] && sudo systemctl stop trojan
 
     DOWNLOAD_URL="https://github.com/trojan-gfw/trojan/releases/download/v${REMOTE_VERSION}/trojan-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.xz"
-    curl -SL -o "${WORKDIR}/trojan.tar.xz" -C- "$DOWNLOAD_URL" && \
+    curl -fSL -o "${WORKDIR}/trojan.tar.xz" -C- "$DOWNLOAD_URL" && \
         sudo tar -JxPf "${WORKDIR}/trojan.tar.xz" -C "/srv/"
 
     if [[ ! -s "/etc/systemd/system/trojan.service" ]]; then

@@ -58,7 +58,7 @@ if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; the
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "  ${ECHO_TYPE} pacaptr ${REMOTE_VERSION}..."
         DOWNLOAD_URL="https://github.com/rami3l/pacaptr/releases/download/v${REMOTE_VERSION}/pacaptr-${OS_TYPE}-amd64.tar.gz"
-        curl -SL -o "${WORKDIR}/pacaptr.tar.gz" -C- "$DOWNLOAD_URL" && \
+        curl -fSL -o "${WORKDIR}/pacaptr.tar.gz" -C- "$DOWNLOAD_URL" && \
             sudo tar -xzPf "${WORKDIR}/pacaptr.tar.gz" -C "/usr/local/bin" && \
             sudo ln -sv "/usr/local/bin/pacaptr" "/usr/bin/pacman" || true
     fi

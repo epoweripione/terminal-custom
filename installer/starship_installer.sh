@@ -42,7 +42,7 @@ fi
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
     # curl -fsSL https://starship.rs/install.sh | bash
-    curl -SL -o "${WORKDIR}/starship_install.sh" "https://starship.rs/install.sh" && \
+    curl -fSL -o "${WORKDIR}/starship_install.sh" "https://starship.rs/install.sh" && \
         bash "${WORKDIR}/starship_install.sh" --force
 
     ## config

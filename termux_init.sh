@@ -16,7 +16,7 @@
 # cd ~./ssh; python -m http.server 8080
 
 ## termux:
-# curl -o ~/.ssh/id_ed25519.pub "http://<local computer ip>:8080/id_ed25519.pub"
+# curl -fsSL -o ~/.ssh/id_ed25519.pub "http://<local computer ip>:8080/id_ed25519.pub"
 # cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys
 
 ## local computer:
@@ -41,7 +41,7 @@
 # pkg up -y && pkg i -y nano curl wget git unzip unrar htop nmap screenfetch starship
 
 ## init termux
-# source <(curl -sL https://git.io/fNpeJ) && ./termux_init.sh
+# source <(curl -fsL https://git.io/fNpeJ) && ./termux_init.sh
 
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
@@ -102,7 +102,7 @@ if [[ ! -d "$HOME/frp" ]]; then
 
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL="https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_linux_arm64.tar.gz"
-        curl -SL -o frp.tar.gz -C- "$DOWNLOAD_URL" && \
+        curl -fSL -o frp.tar.gz -C- "$DOWNLOAD_URL" && \
             tar -xzPf frp.tar.gz -C "$HOME" && \
             rm frp.tar.gz && \
             mkdir -p "$HOME/frp" && \

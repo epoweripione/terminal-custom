@@ -675,7 +675,7 @@ function get_network_wan_ipv4() {
     # php:
     # <?php echo $_SERVER["REMOTE_ADDR"]; ?>
     # pacman -S --noconfirm html2text
-    # curl -s http://yourdomainname/getip.php | html2text
+    # curl -fsL http://yourdomainname/getip.php | html2text
     # nodejs:
     # https://github.com/alsotang/externalip
     # https://github.com/sindresorhus/public-ip
@@ -693,7 +693,7 @@ function get_network_wan_ipv4() {
     )
 
     for target_host in ${remote_host_list[@]}; do
-        NETWORK_WAN_NET_IP=$(curl -s -4 --connect-timeout 5 --max-time 10 "${target_host}" \
+        NETWORK_WAN_NET_IP=$(curl -fsL -4 --connect-timeout 5 --max-time 10 "${target_host}" \
                         | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
                         | head -n1)
         [[ -n "$NETWORK_WAN_NET_IP" ]] && break
@@ -714,7 +714,7 @@ function get_network_wan_ipv6() {
     )
 
     for target_host in ${remote_host_list[@]}; do
-        NETWORK_WAN_NET_IPV6=$(curl -s -6 --connect-timeout 5 --max-time 10 "${target_host}" \
+        NETWORK_WAN_NET_IPV6=$(curl -fsL -6 --connect-timeout 5 --max-time 10 "${target_host}" \
                         | grep -Eo '^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$' \
                         | head -n1)
         [[ -n "$NETWORK_WAN_NET_IPV6" ]] && break
@@ -733,11 +733,11 @@ function get_network_wan_geo() {
 
     if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
         # Country lookup: China
-        NETWORK_WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 \
+        NETWORK_WAN_NET_IP_GEO=`curl -fsL -4 --connect-timeout 5 --max-time 10 \
             "http://ip-api.com/line/?fields=country"`
         if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
             # Country lookup: CN
-            NETWORK_WAN_NET_IP_GEO=`curl -s -4 --connect-timeout 5 --max-time 10 \
+            NETWORK_WAN_NET_IP_GEO=`curl -fsL -4 --connect-timeout 5 --max-time 10 \
                 "http://ip-api.com/line/?fields=countryCode"`
         fi
     fi
@@ -844,7 +844,7 @@ function check_webservice_up() {
     # if check_webservice_up www.google.com; then echo "ok"; else echo "something wrong"; fi
     local webservice_url=${1:-"www.google.com"}
 
-    local http=`curl -sL --noproxy "*" --connect-timeout 3 --max-time 5 \
+    local http=`curl -fsL --noproxy "*" --connect-timeout 3 --max-time 5 \
                 -w "%{http_code}\\n" "${webservice_url}" -o /dev/null`
     local exitStatus=0
 
@@ -892,7 +892,7 @@ function check_webservice_up() {
 function check_webservice_timeout() {
     local webservice_url=${1:-"www.google.com"}
 
-    local http_timeout=`curl -sL --connect-timeout 5 --max-time 20 \
+    local http_timeout=`curl -fsL --connect-timeout 5 --max-time 20 \
                 -w "%{time_connect} + %{time_starttransfer} = %{time_total}\\n" \
                 "${webservice_url}" -o /dev/null`
     echo "time_connect + time_starttransfer: $http_timeout"
@@ -906,7 +906,7 @@ function check_socks5_proxy_up() {
     local webservice_url=${2:-"www.google.com"}
     local exitStatus=0
 
-    curl -sSf -I --connect-timeout 3 --max-time 5 \
+    curl -fsL -I --connect-timeout 3 --max-time 5 \
         --socks5-hostname "${socks_proxy_url}" \
         "${webservice_url}" >/dev/null 2>&1 || exitStatus=$?
 
@@ -925,7 +925,7 @@ function check_http_proxy_up() {
     local webservice_url=${2:-"www.google.com"}
     local exitStatus=0
 
-    curl -sSf -I --connect-timeout 3 --max-time 5 \
+    curl -fsL -I --connect-timeout 3 --max-time 5 \
         --proxy "${socks_proxy_url}" \
         "${webservice_url}" >/dev/null 2>&1 || exitStatus=$?
 
@@ -1264,7 +1264,7 @@ function download_hosts() {
     [[ -z "$hostsURL" ]] && return 1
 
     colorEcho ${BLUE} "Downloading hosts from ${hostsURL}..."
-    curl -SL --connect-timeout 5 --max-time 20 \
+    curl -fSL --connect-timeout 5 --max-time 20 \
         -o "/tmp/hosts" "$hostsURL" || exitStatus=$?
     if [[ "$exitStatus" -eq "0" ]]; then
         if [[ "${hostsFile}" == "/etc/hosts" ]]; then
@@ -1533,7 +1533,7 @@ function get_weather() {
         wttr_url="wttr.in/${wttr_city}?format=${wttr_format}"
     fi
 
-    curl -sL --connect-timeout 3 --max-time 10 \
+    curl -fsL --connect-timeout 3 --max-time 10 \
         --noproxy '*' -H "Accept-Language: ${wttr_lang}" --compressed \
         "${wttr_url}"
 }
@@ -1551,7 +1551,7 @@ function get_weather_custom() {
 
     wttr_url="wttr.in/${wttr_city}?format=${wttr_format}"
 
-    wttr_weather=$(curl -sL --connect-timeout 3 --max-time 10 \
+    wttr_weather=$(curl -fsL --connect-timeout 3 --max-time 10 \
         --noproxy '*' -H "Accept-Language: ${wttr_lang}" --compressed \
         "${wttr_url}")
     [[ $? -eq 0 ]] && colorEcho ${YELLOW} "${wttr_weather}"

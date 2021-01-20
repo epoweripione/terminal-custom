@@ -72,7 +72,7 @@ if [[ -n "$REMOTE_FILENAME" && "${IS_INSTALL}" == "yes" ]]; then
     fi
 
     DOWNLOAD_URL="https://github.com/${GITHUB_REPO_NAME}/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
-    curl -SL -o "${WORKDIR}/${EXEC_INSTALL_NAME}.zip" -C- "$DOWNLOAD_URL" && \
+    curl -fSL -o "${WORKDIR}/${EXEC_INSTALL_NAME}.zip" -C- "$DOWNLOAD_URL" && \
         unzip -qo "${WORKDIR}/${EXEC_INSTALL_NAME}.zip" -d "${WORKDIR}" && \
         sudo mv -f ${WORKDIR}/${EXEC_INSTALL_NAME}_* "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
         echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null

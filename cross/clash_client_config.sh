@@ -100,7 +100,7 @@ if [[ -s "$SUB_LIST_FILE" ]]; then
     for TargetURL in "${SUB_LIST[@]}"; do
         [[ -z "$TargetURL" ]] && continue
         colorEcho ${BLUE} "Downloading clash client connfig from ${TargetURL}..."
-        curl -SL --connect-timeout 10 --max-time 60 \
+        curl -fSL --connect-timeout 10 --max-time 60 \
             -o "$SUB_DOWNLOAD_FILE" "$TargetURL"
         if [[ $? -eq 0 ]]; then
             sed -i "s/^allow-lan:.*/allow-lan: false/" "$SUB_DOWNLOAD_FILE"
@@ -182,7 +182,7 @@ else
 fi
 
 if [[ -n "$RULES_URL" ]]; then
-    curl -sL --connect-timeout 10 --max-time 30 \
+    curl -fsL --connect-timeout 10 --max-time 30 \
         -o "${WORKDIR}/rules.yml" "${RULES_URL}"
     if [[ $? != 0 ]]; then
         colorEcho ${RED} "    Can't get rules from ${RULES_URL}!"
@@ -252,7 +252,7 @@ if [[ ${PROXY_MERGE_LINE} -gt 0 ]]; then
     MERGE_URL=$(sed -n "${PROXY_MERGE_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
     if [[ -n "$MERGE_URL" ]]; then
         colorEcho ${BLUE} "  Getting merge proxies..."
-        curl -sL --connect-timeout 10 --max-time 30 \
+        curl -fsL --connect-timeout 10 --max-time 30 \
             -o "${WORKDIR}/merge.yml" "${MERGE_URL}"
         if [[ $? != 0 ]]; then
             colorEcho ${RED} "    Can't get merge proxies from ${MERGE_URL}!"
@@ -274,7 +274,7 @@ if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
         CFW_BYPASS_FILE=""
         CFW_BYPASS_URL=$(sed -n "${CFW_BYPASS_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
         if [[ -n "$CFW_BYPASS_URL" ]]; then
-            curl -sL --connect-timeout 10 --max-time 30 \
+            curl -fsL --connect-timeout 10 --max-time 30 \
                 -o "${CFW_BYPASS_FILE}" "${CFW_BYPASS_URL}"
             if [[ $? != 0  ]]; then
                 colorEcho ${RED} "    Can't get cfw bypass rules from ${CFW_BYPASS_URL}!"

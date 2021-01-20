@@ -35,7 +35,7 @@ EOF
     firewall-cmd --permanent --zone=public --add-port=10000/tcp
     firewall-cmd --reload
 elif check_release_package_manager packageManager apt; then
-    curl -sL http://www.webmin.com/jcameron-key.asc | sudo apt-key add -
+    curl -fsL http://www.webmin.com/jcameron-key.asc | sudo apt-key add -
     echo "deb https://download.webmin.com/download/repository sarge contrib" | tee /etc/apt/sources.list.d/webmin.list
     apt update && apt -y install apt-transport-https webmin
 fi

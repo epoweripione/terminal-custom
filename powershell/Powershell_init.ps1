@@ -7,8 +7,8 @@
 # dotnet tool update --global PowerShell
 ## 2. Run pwsh as Administrator
 ## 3. Download pwsh_script_download.ps1
-## curl -L --socks5-hostname 127.0.0.1:7890 -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d"
-# curl -L -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d"
+## curl -fsSL --socks5-hostname 127.0.0.1:7890 -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d"
+# curl -fsSL -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d"
 ## 4. Exec pwsh_script_download.ps1
 # .\pwsh_script_download.ps1
 ## 5. Exec Powershell_init.ps1
@@ -307,7 +307,7 @@ if (-Not (Get-Command -Name "check_webservice_up" 2>$null)) {
 #     New-Item -path $DST_DIR -type Directory | Out-Null
 # }
 # cd ~\tools; `
-#     curl -L -o ColorTool.zip `
+#     curl -fsSL -o ColorTool.zip `
 #         https://github.com/microsoft/terminal/releases/download/1904.29002/ColorTool.zip; `
 #     Expand-Archive -LiteralPath ~\tools\ColorTool.zip `
 #         -DestinationPath ~\tools\ColorTool -Verbose; `

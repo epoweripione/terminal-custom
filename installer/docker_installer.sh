@@ -86,7 +86,7 @@ if [[ ! -x "$(command -v docker-compose)" ]]; then
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL="https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
-        curl -SL -o "${WORKDIR}/docker-compose" -C- $DOWNLOAD_URL && \
+        curl -fSL -o "${WORKDIR}/docker-compose" -C- $DOWNLOAD_URL && \
             mv -f "${WORKDIR}/docker-compose" "/usr/local/bin/docker-compose" && \
             chmod +x "/usr/local/bin/docker-compose"
     fi
@@ -109,7 +109,7 @@ if [[ ! -x "$(command -v ctop)" ]]; then
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL="https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}"
-        curl -SL -o "${WORKDIR}/ctop" -C- $DOWNLOAD_URL && \
+        curl -fSL -o "${WORKDIR}/ctop" -C- $DOWNLOAD_URL && \
             mv -f "${WORKDIR}/ctop" "/usr/local/bin/ctop" && \
             chmod +x "/usr/local/bin/ctop"
     fi
@@ -131,7 +131,7 @@ fi
 #     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
 #     if [[ -n "$REMOTE_VERSION" ]]; then
 #         DOWNLOAD_URL="https://github.com/jesseduffield/lazydocker/releases/download/v$REMOTE_VERSION/lazydocker_${REMOTE_VERSION}_${DOWNLOAD_FILE_SUFFIX}"
-#         curl -SL $DOWNLOAD_URL -o ${WORKDIR}/lazydocker.tar.gz && \
+#         curl -fSL $DOWNLOAD_URL -o ${WORKDIR}/lazydocker.tar.gz && \
 #             mkdir -p "${WORKDIR}/lazydocker” && \
 #             tar -xzPf "${WORKDIR}/lazydocker.tar.gz" -C "${WORKDIR}/lazydocker" && \
 #             mv -f "${WORKDIR}/lazydocker/lazydocker" "/usr/local/bin/lazydocker" && \

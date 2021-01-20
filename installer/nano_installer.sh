@@ -51,7 +51,7 @@ fi
 
 # ncurses
 # cd "${WORKDIR}" && \
-#     curl -SL http://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz -o ncurses.tar.gz && \
+#     curl -fSL http://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz -o ncurses.tar.gz && \
 #     sudo tar zxvf ncurses.tar.gz && \
 #     sudo mv ncurses-* ncurses && cd ncurses && \
 #     sudo ./configure --prefix=/opt/ncurses >/dev/null && \
@@ -68,7 +68,7 @@ if [[ -x "$(command -v nano)" ]]; then
     CURRENT_VERSION=$(nano -V | grep -Eo -m1 '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
 fi
 
-REMOTE_VERSION=$(curl -s -N https://www.nano-editor.org/download.php \
+REMOTE_VERSION=$(curl -fsL -N https://www.nano-editor.org/download.php \
     | grep -Eo -m1 'nano-([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d'-' -f2)
     # | grep -m 1 -o 'nano-\([0-9]\)\+\.\([0-9]\)\+' | head -n1 | cut -d'-' -f2)
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
@@ -78,11 +78,15 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     DOWNLOAD_URL="https://www.nano-editor.org/dist/v${DIST_VERSION}/nano-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/nano.tar.gz" "$DOWNLOAD_URL" && \
         tar -xzPf "${WORKDIR}/nano.tar.gz" -C "${WORKDIR}" && \
-        mv ${WORKDIR}/nano-* "${WORKDIR}/nano" && \
+        mv ${WORKDIR}/nano-* "${WORKDIR}/nano"
+
+    if [[ -d "${WORKDIR}/nano" ]]; then
+        colorEcho ${BLUE} "  Compiling nano..."
         cd "${WORKDIR}/nano" && \
         ./configure --prefix=/usr --enable-utf8 >/dev/null && \
         make >/dev/null && \
         sudo make install >/dev/null
+    fi
 fi
 
 # Change default editor to nano

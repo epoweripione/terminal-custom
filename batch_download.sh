@@ -17,7 +17,7 @@ function get_remote_file_size() {
     local REMOTE_FILE_URL=$1
 
     if [[ -n "$REMOTE_FILE_URL" ]]; then
-        curl -sSL -I "${REMOTE_FILE_URL}" \
+        curl -fsSL -I "${REMOTE_FILE_URL}" \
             | grep -i "content-length" \
             | cut -d' ' -f2
     else
@@ -29,7 +29,7 @@ function get_remote_file_timestamp_modified() {
     local REMOTE_FILE_URL=$1
 
     if [[ -n "$REMOTE_FILE_URL" ]]; then
-        curl -sSL -I "$REMOTE_FILE_URL" \
+        curl -fsSL -I "$REMOTE_FILE_URL" \
             | grep -i "last-modified" \
             | cut -d' ' -f2- \
             | xargs -I{} date -d {} "+%s"
@@ -85,7 +85,7 @@ fi
 
 # for TargetFile in ${DOWNLOAD_FILES[@]}; do
 #     colorEcho ${BLUE} "Downloading ${TargetFile}..."
-#     curl -SL -o "${DOWNLOAD_DIR}/${TargetFile}" "${DOWNLOAD_URL}/${TargetFile}"
+#     curl -fSL -o "${DOWNLOAD_DIR}/${TargetFile}" "${DOWNLOAD_URL}/${TargetFile}"
 # done
 
 
@@ -107,7 +107,7 @@ while read -r TargetUrl; do
     if [[ -n "$TargetUrl" ]]; then
         colorEcho ${BLUE} "Downloading ${TargetUrl}..."
         # TargetFileName=$(echo "${TargetUrl}" | awk -F '/' '{print $NF}')
-        # curl -SL -o "${TargetFileName}" "${TargetUrl}"
+        # curl -fSL -o "${TargetFileName}" "${TargetUrl}"
         wget -c "${TargetUrl}"
     fi
 done < "$DOWNLOAD_FILES_URL"
@@ -142,7 +142,7 @@ done < "$DOWNLOAD_FILES_URL"
 # # 	: && \
 # # 	# fix latest version issue patch char i,j not correct
 # # 	# rm -f ~/nerd-fonts/font-patcher && \
-# # 	# 	curl -SL -o ~/nerd-fonts/font-patcher \
+# # 	# 	curl -fSL -o ~/nerd-fonts/font-patcher \
 # # 	# 		https://github.com/ryanoasis/nerd-fonts/raw/3241ea6e44191ec89c0260f51112dec691363ebd/font-patcher
 # # 	# : && \
 # # 	cd ~ && zip -qyr nerd-fonts.zip ./nerd-fonts && \

@@ -56,10 +56,10 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
         sudo rm -f /etc/init.d/v2ray
     fi
 
-    bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
+    bash <(curl -fsSL https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
 
     if [[ "${IS_UPDATE}" == "yes" ]]; then
-        bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-dat-release.sh)
+        bash <(curl -fsSL https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-dat-release.sh)
     fi
 fi
 

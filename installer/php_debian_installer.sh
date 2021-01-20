@@ -91,7 +91,7 @@ composer g require "hirak/prestissimo" && \
 
 colorEcho ${BLUE} "Downloading psysh chinese php_manual..."
 mkdir -p $HOME/.local/share/psysh/ && \
-    curl -SL http://psysh.org/manual/zh/php_manual.sqlite -o $HOME/php_manual.sqlite && \
+    curl -fSL http://psysh.org/manual/zh/php_manual.sqlite -o $HOME/php_manual.sqlite && \
     mv -f $HOME/php_manual.sqlite $HOME/.local/share/psysh/php_manual.sqlite
 
 

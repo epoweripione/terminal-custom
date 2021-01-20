@@ -67,7 +67,7 @@ if [[ -x "$(command -v docker-compose)" ]]; then
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "  Installing docker-compose ${REMOTE_VERSION}..."
         DOWNLOAD_URL="https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
-        curl -SL --config ${CURL_SPECIAL_CONFIG} -o "${WORKDIR}/docker-compose" -C- $DOWNLOAD_URL && \
+        curl -fSL -o "${WORKDIR}/docker-compose" -C- $DOWNLOAD_URL && \
             sudo mv -f "${WORKDIR}/docker-compose" "/usr/local/bin/docker-compose" && \
             sudo chmod +x "/usr/local/bin/docker-compose"
     fi
@@ -89,7 +89,7 @@ if [[ -x "$(command -v ctop)" ]]; then
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "  Installing ctop ${REMOTE_VERSION}..."
         DOWNLOAD_URL="https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}"
-        curl -SL --config ${CURL_SPECIAL_CONFIG} -o "${WORKDIR}/ctop" -C- $DOWNLOAD_URL && \
+        curl -fSL -o "${WORKDIR}/ctop" -C- $DOWNLOAD_URL && \
             sudo mv -f "${WORKDIR}/ctop" "/usr/local/bin/ctop" && \
             sudo chmod +x "/usr/local/bin/ctop"
     fi
@@ -150,7 +150,7 @@ if [[ -d "$HOME/.jabba" ]]; then
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "  Installing jabba ${REMOTE_VERSION}..."
-        curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
+        curl -fsL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
             . ~/.jabba/jabba.sh && \
             sed -i "/jabba.sh/d" ~/.zshrc && \
             cd $HOME

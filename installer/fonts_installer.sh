@@ -66,7 +66,7 @@ colorEcho ${BLUE} "Downloading nerd-fonts & font-patcher..."
 # 	# : && \
 # 	# fix latest version issue patch char i,j not correct
 # 	# rm -f ~/nerd-fonts/font-patcher && \
-# 	# 	curl -SL -o ~/nerd-fonts/font-patcher \
+# 	# 	curl -fSL -o ~/nerd-fonts/font-patcher \
 # 	# 		https://github.com/ryanoasis/nerd-fonts/raw/3241ea6e44191ec89c0260f51112dec691363ebd/font-patcher
 # 	# : && \
 # 	rm -f /srv/web/www/default/nerd-fonts.zip || true && \

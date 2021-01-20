@@ -48,10 +48,10 @@ fi
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
 
-    bash <(curl -L https://raw.githubusercontent.com/XTLS/Xray-install/main/install-release.sh)
+    bash <(curl -fsSL https://raw.githubusercontent.com/XTLS/Xray-install/main/install-release.sh)
 
     if [[ "${IS_UPDATE}" == "yes" ]]; then
-        bash <(curl -L https://raw.githubusercontent.com/XTLS/Xray-install/main/install-dat-release.sh)
+        bash <(curl -fsSL https://raw.githubusercontent.com/XTLS/Xray-install/main/install-dat-release.sh)
     fi
 fi
 

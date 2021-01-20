@@ -29,7 +29,7 @@ if (Get-Command "lxrunoffline" -ErrorAction SilentlyContinue) {
         New-Item -path $WSL_INSTALL_DIR -type Directory | Out-Null
     }
 
-    curl -L -o "$WSL_APPX_NAME" "$WSL_URL"
+    curl -fsL -o "$WSL_APPX_NAME" "$WSL_URL"
     if ($?) {
         Rename-Item .\$WSL_APPX_NAME .\$WSL_ZIP_NAME
         Expand-Archive .\$WSL_ZIP_NAME .\$WSL_BASE_NAME
@@ -45,7 +45,7 @@ if (Get-Command "lxrunoffline" -ErrorAction SilentlyContinue) {
     # Invoke-WebRequest -Uri $URL -OutFile $Filename -UseBasicParsing
     # Invoke-Item $FileName
 
-    curl -L -o "$WSL_APPX_NAME" "$WSL_URL"
+    curl -fsL -o "$WSL_APPX_NAME" "$WSL_URL"
     if ($?) {
         Add-AppxPackage .\$WSL_APPX_NAME
         Remove-Item .\$WSL_APPX_NAME

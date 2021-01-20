@@ -45,13 +45,13 @@ fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
-    # curl -SL \
+    # curl -fSL \
     #     https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh \
     # | sudo bash
     DOWNLOAD_URL="https://github.com/snail007/goproxy/releases/download/v${REMOTE_VERSION}/proxy-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.gz"
     cd "${WORKDIR}" && \
-        curl -SL -o proxy-linux-amd64.tar.gz -C- "$DOWNLOAD_URL" && \
-        curl -SL "https://raw.githubusercontent.com/snail007/goproxy/master/install.sh" | sudo bash
+        curl -fSL -o proxy-linux-amd64.tar.gz -C- "$DOWNLOAD_URL" && \
+        curl -fSL "https://raw.githubusercontent.com/snail007/goproxy/master/install.sh" | sudo bash
 fi
 
 if [[ -d "/etc/proxy" && -x "$(command -v proxy)" ]]; then
@@ -90,7 +90,7 @@ fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "Installing ProxyAdmin ${REMOTE_VERSION}..."
-    curl -SL "https://raw.githubusercontent.com/snail007/proxy_admin_free/master/install_auto.sh" | sudo bash && \
+    curl -fSL "https://raw.githubusercontent.com/snail007/proxy_admin_free/master/install_auto.sh" | sudo bash && \
         echo ${REMOTE_VERSION} | sudo tee "/etc/gpa/.version" >/dev/null
 fi
 

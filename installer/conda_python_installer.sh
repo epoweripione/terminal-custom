@@ -17,7 +17,7 @@ set_proxy_mirrors_env
 
 
 # python3 & pip
-# bash <(curl -sL https://python3.netlify.com/install.sh)
+# bash <(curl -fsSL https://python3.netlify.com/install.sh)
 
 # fix `pip list` warning
 if [[ ! $(grep "format=columns" $HOME/.pip/pip.conf) ]]; then

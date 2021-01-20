@@ -60,7 +60,7 @@ if [[ ! -s "$HostsFile" ]]; then
     # colorEcho ${RED} "${HostsFile} not exist!"
     # exit 1
     Hosts_URL="https://raw.githubusercontent.com/googlehosts/hosts/master/hosts-files/hosts"
-    curl -SL --connect-timeout 5 --max-time 20 \
+    curl -fSL --connect-timeout 5 --max-time 20 \
         -o "$HostsFile" "$Hosts_URL"
 fi
 
@@ -226,7 +226,7 @@ for TargetHost in "${HostsList[@]}"; do
                         | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
                         | grep -v ${WAN_NET_IP} | head -n1)
         else
-            TargetIP=$(curl -sL --connect-timeout 5 --max-time 15 ${TargetURL} \
+            TargetIP=$(curl -fsL --connect-timeout 5 --max-time 15 ${TargetURL} \
                         | grep -Eo '<main>.*</main>' \
                         | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
                         | grep -v ${WAN_NET_IP} | head -n1)
@@ -237,8 +237,8 @@ for TargetHost in "${HostsList[@]}"; do
         if [[ -x "$(command -v geoiplookup)" ]]; then
             TargetIPGeo=$(geoiplookup ${TargetIP} | head -n1 | cut -d':' -f2-)
             # TargetIPGeo=""
-            # # IPGeo=$(curl -sL --connect-timeout 5 --max-time 15 https://ipinfo.io/${TargetIP}/country)
-            # IPGeo=$(curl -sL --connect-timeout 5 --max-time 15 \
+            # # IPGeo=$(curl -fsL --connect-timeout 5 --max-time 15 https://ipinfo.io/${TargetIP}/country)
+            # IPGeo=$(curl -fsL --connect-timeout 5 --max-time 15 \
             #                 https://ipinfo.io/${TargetIP}/geo \
             #                 | sed -e 's/[{}", ]//g' -e 's/\r//g')
             # if [[ -n "$IPGeo" ]]; then

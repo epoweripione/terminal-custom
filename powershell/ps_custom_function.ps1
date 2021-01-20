@@ -149,7 +149,7 @@ function check_webservice_up() {
         $webservice_url = "www.google.com"
     }
 
-    curl -fsSL --connect-timeout 3 --max-time 5 -I "$webservice_url"
+    curl -fsL --connect-timeout 3 --max-time 5 -I "$webservice_url"
     if ($?) {
         return $true
     } else {
@@ -170,7 +170,7 @@ function check_socks5_proxy_up() {
         $webservice_url = "www.google.com"
     }
 
-    curl -fsSL --connect-timeout 3 --max-time 5 --socks5-hostname "$socks_proxy_url" -I "$webservice_url"
+    curl -fsL --connect-timeout 3 --max-time 5 --socks5-hostname "$socks_proxy_url" -I "$webservice_url"
     if ($?) {
         return $true
     } else {
@@ -314,9 +314,9 @@ function DownloadHosts() {
     }
 
     if (($null -eq $Proxy) -or ($Proxy -eq "")) {
-        curl -L --connect-timeout 5 --ssl-no-revoke -o "$DOWNLOAD_TO" "$HostsURL"
+        curl -fsL --connect-timeout 5 --ssl-no-revoke -o "$DOWNLOAD_TO" "$HostsURL"
     } else {
-        curl -L --connect-timeout 5 --ssl-no-revoke --socks5-hostname "$Proxy" -o "$DOWNLOAD_TO" "$HostsURL"
+        curl -fsL --connect-timeout 5 --ssl-no-revoke --socks5-hostname "$Proxy" -o "$DOWNLOAD_TO" "$HostsURL"
     }
 
     if ($?) {

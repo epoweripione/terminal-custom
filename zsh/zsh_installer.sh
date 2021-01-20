@@ -2,8 +2,8 @@
 
 ## How to use
 ## 1. Install curl first
-## 2. Install zsh and oh-my-zsh: source <(curl -sL https://git.io/fA8Jb)
-##                               source <(curl -sL http://t.cn/AigJm9ut)
+## 2. Install zsh and oh-my-zsh: source <(curl -fsL https://git.io/fA8Jb)
+##                               source <(curl -fsL http://t.cn/AigJm9ut)
 
 trap 'rm -r "$WORKDIR"' EXIT
 
@@ -61,7 +61,7 @@ if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; the
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho ${BLUE} "${ECHO_TYPE} pacaptr - Pacman-like syntax wrapper for many package managers..."
         DOWNLOAD_URL="https://github.com/rami3l/pacaptr/releases/download/v${REMOTE_VERSION}/pacaptr-${OS_TYPE}-amd64.tar.gz"
-        curl -SL -o "${WORKDIR}/pacaptr.tar.gz" -C- "$DOWNLOAD_URL" && \
+        curl -fSL -o "${WORKDIR}/pacaptr.tar.gz" -C- "$DOWNLOAD_URL" && \
             sudo tar -xzPf "${WORKDIR}/pacaptr.tar.gz" -C "/usr/local/bin" && \
             sudo ln -sv "/usr/local/bin/pacaptr" "/usr/bin/pacman" || true
     fi
@@ -147,13 +147,13 @@ if [[ ! -x "$(command -v zsh)" ]]; then
 
         # ZSH_REPO_VERSION=$(yum info zsh | grep -E "[Vv]ersion" | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
 
-        REMOTE_VERSION=$(curl -s http://zsh.sourceforge.net/News/ \
+        REMOTE_VERSION=$(curl -fsL http://zsh.sourceforge.net/News/ \
                             | grep -Eo -m1 'Release ([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         REMOTE_VERSION=$(echo $REMOTE_VERSION | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
 
         if [[ -n "$REMOTE_VERSION" ]]; then
             DOWNLOAD_URL="https://nchc.dl.sourceforge.net/project/zsh/zsh/${REMOTE_VERSION}/zsh-${REMOTE_VERSION}.tar.xz"
-            sudo curl -SL -o "${WORKDIR}/zsh.tar.xz" "$DOWNLOAD_URL" && \
+            sudo curl -fSL -o "${WORKDIR}/zsh.tar.xz" "$DOWNLOAD_URL" && \
                 sudo tar xJvf "${WORKDIR}/zsh.tar.xz" -C "${WORKDIR}" && \
                 sudo mv ${WORKDIR}/zsh-* "${WORKDIR}/zsh" && \
                 cd "${WORKDIR}/zsh" && \

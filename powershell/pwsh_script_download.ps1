@@ -7,7 +7,7 @@ function check_webservice_up() {
         $webservice_url = "www.google.com"
     }
 
-    curl -fsSL --connect-timeout 3 --max-time 5 -I "$webservice_url"
+    curl -fsL --connect-timeout 3 --max-time 5 -I "$webservice_url"
     if ($?) {
         return $true
     } else {
@@ -28,7 +28,7 @@ function check_socks5_proxy_up() {
         $webservice_url = "www.google.com"
     }
 
-    curl -fsSL --connect-timeout 3 --max-time 5 --socks5-hostname "$socks_proxy_url" -I "$webservice_url"
+    curl -fsL --connect-timeout 3 --max-time 5 --socks5-hostname "$socks_proxy_url" -I "$webservice_url"
     if ($?) {
         return $true
     } else {
@@ -57,9 +57,9 @@ Set-Location ~
 
 $DOWNLOAD_URL = "https://github.com/epoweripione/terminal-custom/archive/master.zip"
 if (($null -eq $SOCKS_PROXY_ADDR) -or ($SOCKS_PROXY_ADDR -eq "")) {
-    curl -L -o ".\terminal-custom.zip" "$DOWNLOAD_URL"
+    curl -fsL -o ".\terminal-custom.zip" "$DOWNLOAD_URL"
 } else {
-    curl -L --socks5-hostname "$SOCKS_PROXY_ADDR" -o ".\terminal-custom.zip" "$DOWNLOAD_URL"
+    curl -fsL --socks5-hostname "$SOCKS_PROXY_ADDR" -o ".\terminal-custom.zip" "$DOWNLOAD_URL"
 }
 
 if ($?) {

@@ -81,7 +81,7 @@ if [[ "${IS_INSTALL}" == "yes" && "${IS_UPDATE}" == "no" ]]; then
         brew install mercurial
     fi
 
-    bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+    bash < <(curl -fsSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
 fi
 
 
@@ -120,7 +120,7 @@ if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
         GVM_DOWNLOAD_NAME="${GVM_DOWNLOAD_VERSION}.${OS_INFO_TYPE}-${OS_INFO_ARCH}.${GVM_DOWNLOAD_EXT}"
         GVM_DOWNLOAD_SOURCE="https://dl.google.com/go/${GVM_DOWNLOAD_NAME}"
 
-        curl -SL -o "$HOME/.gvm/archive/${GVM_DOWNLOAD_NAME}" -C- "${GVM_DOWNLOAD_SOURCE}" && \
+        curl -fSL -o "$HOME/.gvm/archive/${GVM_DOWNLOAD_NAME}" -C- "${GVM_DOWNLOAD_SOURCE}" && \
             gvm install go1.4 -B
     fi
 
@@ -131,7 +131,7 @@ if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
         # GOROOT_BOOTSTRAP=$GOROOT
 
         # Install latest go version
-        REMOTE_VERSION=$(curl -s https://golang.org/dl/ | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+        REMOTE_VERSION=$(curl -fsL https://golang.org/dl/ | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         # REMOTE_VERSION=${REMOTE_VERSION%.}
 
         if [[ -n "$REMOTE_VERSION" ]] && [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
@@ -144,7 +144,7 @@ if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
             GVM_DOWNLOAD_NAME="${GVM_DOWNLOAD_VERSION}.${OS_INFO_TYPE}-${OS_INFO_ARCH}.${GVM_DOWNLOAD_EXT}"
             GVM_DOWNLOAD_SOURCE="https://dl.google.com/go/${GVM_DOWNLOAD_NAME}"
 
-            curl -SL -o "$HOME/.gvm/archive/${GVM_DOWNLOAD_NAME}" -C- "${GVM_DOWNLOAD_SOURCE}" && \
+            curl -fSL -o "$HOME/.gvm/archive/${GVM_DOWNLOAD_NAME}" -C- "${GVM_DOWNLOAD_SOURCE}" && \
                 gvm install ${REMOTE_VERSION} -B
         fi
 

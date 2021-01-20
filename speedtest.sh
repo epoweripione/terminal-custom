@@ -52,11 +52,11 @@ function ZBench() {
 }
 
 function LemonBenchFast() {
-    curl -fsSL https://ilemonrain.com/download/shell/LemonBench.sh | bash -s fast
+    curl -fsL https://ilemonrain.com/download/shell/LemonBench.sh | bash -s fast
 }
 
 function LemonBenchFull() {
-    curl -fsSL https://ilemonrain.com/download/shell/LemonBench.sh | bash -s full
+    curl -fsL https://ilemonrain.com/download/shell/LemonBench.sh | bash -s full
 }
 
 function UnixBench() {

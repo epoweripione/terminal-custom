@@ -36,7 +36,7 @@ REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
 if [[ -n "$REMOTE_VERSION" ]]; then
     colorEcho ${BLUE} "  Installing shadowtunnel ${REMOTE_VERSION}..."
     DOWNLOAD_URL="https://github.com/snail007/shadowtunnel/releases/download/$REMOTE_VERSION/shadowtunnel-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.gz"
-    curl -SL -o "${WORKDIR}/shadowtunnel.tar.gz" "$DOWNLOAD_URL" && \
+    curl -fSL -o "${WORKDIR}/shadowtunnel.tar.gz" "$DOWNLOAD_URL" && \
         sudo tar zxfv "${WORKDIR}/shadowtunnel.tar.gz" -C "/usr/local/bin" && \
         chmod +x "/usr/local/bin/shadowtunnel"
 fi

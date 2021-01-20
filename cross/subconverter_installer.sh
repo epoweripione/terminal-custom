@@ -50,7 +50,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 
     DOWNLOAD_URL="https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${OS_INFO_TYPE}${OS_INFO_VDIS}.tar.gz"
 
-    curl -SL -o "${WORKDIR}/subconverter.tar.gz" -C- "$DOWNLOAD_URL" && \
+    curl -fSL -o "${WORKDIR}/subconverter.tar.gz" -C- "$DOWNLOAD_URL" && \
         sudo tar -xzPf "${WORKDIR}/subconverter.tar.gz" -C "/srv" && \
         echo ${REMOTE_VERSION} | sudo tee "/srv/subconverter/.version" >/dev/null
 

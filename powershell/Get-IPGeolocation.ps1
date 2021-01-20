@@ -9,7 +9,7 @@ function GetIPGeolocation_ipinfo() {
 
     $resource = "https://ipinfo.io/$ipaddress/geo"
     try {
-        # $geoip = curl -sL https://ipinfo.io/$TargetIP/geo | ConvertFrom-Json
+        # $geoip = curl -fsL https://ipinfo.io/$TargetIP/geo | ConvertFrom-Json
         $geoip = Invoke-RestMethod -Method Get -URI $resource
     } catch {
         Write-Verbose -Message "Catched an error"

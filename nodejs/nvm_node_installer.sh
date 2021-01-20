@@ -23,7 +23,7 @@ if [[ ! -d "$HOME/.nvm" ]]; then
     CHECK_URL="https://api.github.com/repos/creationix/nvm/releases/latest"
     REMOTE_VERSION=$(wget --no-check-certificate -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if [[ -n "$REMOTE_VERSION" ]]; then
-        curl -o- https://raw.githubusercontent.com/creationix/nvm/v$REMOTE_VERSION/install.sh | bash
+        curl -fsSL -o- "https://raw.githubusercontent.com/creationix/nvm/v$REMOTE_VERSION/install.sh" | bash
     fi
 fi
 

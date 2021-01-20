@@ -22,6 +22,8 @@ fi
 INSTALL_NAME="tldr"
 GITHUB_REPO_NAME="isacikgoz/tldr"
 
+ARCHIVE_EXEC_NAME="tldr"
+
 EXEC_INSTALL_PATH="/usr/local/bin"
 EXEC_INSTALL_NAME="tldr"
 
@@ -36,7 +38,7 @@ VERSION_FILENAME=""
 
 if [[ -x "$(command -v ${EXEC_INSTALL_NAME})" ]]; then
     IS_UPDATE="yes"
-    # CURRENT_VERSION=v$(head -n1 ${VERSION_FILENAME})
+    [[ -n "${VERSION_FILENAME}" ]] && CURRENT_VERSION=v$(head -n1 ${VERSION_FILENAME})
     CURRENT_VERSION=v$(${EXEC_INSTALL_NAME} --version 2>&1 | cut -d' ' -f3)
 else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
@@ -58,9 +60,11 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 
     [[ "$OS_INFO_TYPE" == "windows" ]] && REMOTE_FILEEXT="zip"
     REMOTE_FILENAME="${EXEC_INSTALL_NAME}_${REMOTE_VERSION}_${OS_INFO_TYPE}_${OS_INFO_ARCH}.${REMOTE_FILEEXT}"
+
+    [[ -z "${REMOTE_FILENAME}" ]] && IS_INSTALL="no"
 fi
 
-if [[ -n "${REMOTE_FILENAME}" && "${IS_INSTALL}" == "yes" ]]; then
+if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
 
     if [[ -s "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" ]]; then
@@ -69,15 +73,15 @@ if [[ -n "${REMOTE_FILENAME}" && "${IS_INSTALL}" == "yes" ]]; then
 
     DOWNLOAD_URL="https://github.com/${GITHUB_REPO_NAME}/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
     if [[ "${REMOTE_FILEEXT}" == "zip" ]]; then
-        curl -SL -o "${WORKDIR}/${EXEC_INSTALL_NAME}.${REMOTE_FILEEXT}" -C- "$DOWNLOAD_URL" && \
+        curl -fSL -o "${WORKDIR}/${EXEC_INSTALL_NAME}.${REMOTE_FILEEXT}" -C- "$DOWNLOAD_URL" && \
             unzip -qo "${WORKDIR}/${EXEC_INSTALL_NAME}.${REMOTE_FILEEXT}" -d "${WORKDIR}" && \
-            sudo mv -f ${WORKDIR}/${EXEC_INSTALL_NAME} "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
+            sudo mv -f ${WORKDIR}/${ARCHIVE_EXEC_NAME} "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
             sudo chmod +x "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
             [[ -n "${VERSION_FILENAME}" ]] && echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null
     else
-        curl -SL -o "${WORKDIR}/${EXEC_INSTALL_NAME}.${REMOTE_FILEEXT}" -C- "$DOWNLOAD_URL" && \
+        curl -fSL -o "${WORKDIR}/${EXEC_INSTALL_NAME}.${REMOTE_FILEEXT}" -C- "$DOWNLOAD_URL" && \
             tar -xzPf "${WORKDIR}/${EXEC_INSTALL_NAME}.${REMOTE_FILEEXT}" -C "${WORKDIR}" && \
-            sudo mv -f ${WORKDIR}/${EXEC_INSTALL_NAME} "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
+            sudo mv -f ${WORKDIR}/${ARCHIVE_EXEC_NAME} "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
             sudo chmod +x "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
             [[ -n "${VERSION_FILENAME}" ]] && echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null
     fi
@@ -85,14 +89,14 @@ fi
 
 
 # Pulls the github.com/tldr-pages/tldr repository
-if [[ "${IS_INSTALL}" == "yes" ]]; then
+if [[ "${IS_INSTALL}" == "yes" || "${IS_UPDATE}" == "yes" ]]; then
     [[ -z "$OS_INFO_TYPE" ]] && get_os_type
     case "$OS_INFO_TYPE" in
         darwin)
             TLDR_PAGES="$HOME/Library/Application Support/tldr"
             ;;
         windows)
-            # TLDR_PAGES="$HOME/AppData/Roaming"
+            # TLDR_PAGES="$HOME/AppData/Roaming/tldr"
             TLDR_PAGES=""
             ;;
         *)

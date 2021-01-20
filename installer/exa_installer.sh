@@ -27,7 +27,7 @@ if [[ -n "${FILE_LIBC}" ]]; then
         :
     else
         colorEcho ${BLUE} "  Installing `GLIBC 2.18` (required by exa)..."
-        curl -SL -o "${WORKDIR}/glibc.tar.gz" "http://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz" && \
+        curl -fSL -o "${WORKDIR}/glibc.tar.gz" "http://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz" && \
             tar -xzPf "${WORKDIR}/glibc.tar.gz" -C "${WORKDIR}" && \
                 mv ${WORKDIR}/glibc-* "${WORKDIR}/glibc" && \
                 mkdir "${WORKDIR}/glibc/build" && \
@@ -77,7 +77,7 @@ if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
     fi
 
     DOWNLOAD_URL="https://github.com/ogham/exa/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
-    curl -SL -o "${WORKDIR}/exa.zip" -C- "$DOWNLOAD_URL" && \
+    curl -fSL -o "${WORKDIR}/exa.zip" -C- "$DOWNLOAD_URL" && \
         unzip -qo "${WORKDIR}/exa.zip" -d "${WORKDIR}" && \
         sudo mv -f ${WORKDIR}/exa-* "/usr/local/bin/exa"
 fi

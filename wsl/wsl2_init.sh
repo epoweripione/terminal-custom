@@ -85,7 +85,7 @@ fi
 # git lfs
 # https://github.com/git-lfs/git-lfs/wiki/Tutorial
 if [[ ! -e "/etc/apt/sources.list.d/github_git-lfs.list" ]]; then
-    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+    curl -fsSL "https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh" | sudo bash
 
     # echo 'Acquire::http::Proxy::packagecloud-repositories.s3.dualstack.us-west-1.amazonaws.com "http://127.0.0.1:7890/";' \
     #     | sudo tee -a /etc/apt/apt.conf.d/99proxy >/dev/null
@@ -108,7 +108,7 @@ fi
 ## yarn
 ## https://yarnpkg.com/zh-Hans/docs/install
 # if [[ ! -e "/etc/apt/sources.list.d/yarn.list" ]]; then
-#     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+#     curl -fsL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 #     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 # fi
 
@@ -141,8 +141,7 @@ sudo chmod u+s /bin/ping
 ## wslu
 ## https://github.com/wslutilities/wslu
 # colorEcho ${BLUE} "Install git wslu..."
-# curl -s \
-#         https://packagecloud.io/install/repositories/whitewaterfoundry/wslu/script.deb.sh \
+# curl -fsL "https://packagecloud.io/install/repositories/whitewaterfoundry/wslu/script.deb.sh" \
 #         | sudo bash && \
 #     sudo apt install -y wslu
 

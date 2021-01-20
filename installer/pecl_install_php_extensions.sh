@@ -39,12 +39,12 @@ apt install -y libmagickwand-dev libmemcached-dev zlib1g-dev --no-install-recomm
     mkdir -p "${WORKDIR}/pecl_downloads" && \
     cd "${WORKDIR}/pecl_downloads" && \
     : && \
-    curl -SL http://pecl.php.net/get/imagick -o imagick.tgz && \
-    curl -SL http://pecl.php.net/get/memcached -o memcached.tgz && \
-    curl -SL http://pecl.php.net/get/mongodb -o mongodb.tgz && \
-    curl -SL http://pecl.php.net/get/oauth -o oauth.tgz && \
-    curl -SL http://pecl.php.net/get/redis -o redis.tgz && \
-    curl -SL http://pecl.php.net/get/xdebug -o xdebug.tgz && \
+    curl -fSL http://pecl.php.net/get/imagick -o imagick.tgz && \
+    curl -fSL http://pecl.php.net/get/memcached -o memcached.tgz && \
+    curl -fSL http://pecl.php.net/get/mongodb -o mongodb.tgz && \
+    curl -fSL http://pecl.php.net/get/oauth -o oauth.tgz && \
+    curl -fSL http://pecl.php.net/get/redis -o redis.tgz && \
+    curl -fSL http://pecl.php.net/get/xdebug -o xdebug.tgz && \
     : && \
     printf "\n" | pecl install --force imagick.tgz && \
     printf "\n" | pecl install --force memcached.tgz && \
@@ -65,8 +65,8 @@ apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
     mkdir -p "${WORKDIR}/pecl_downloads" && \
     cd "${WORKDIR}/pecl_downloads" && \
     : && \
-    curl -SL http://pecl.php.net/get/psr -o psr.tgz && \
-    curl -SL http://pecl.php.net/get/swoole -o swoole.tgz && \
+    curl -fSL http://pecl.php.net/get/psr -o psr.tgz && \
+    curl -fSL http://pecl.php.net/get/swoole -o swoole.tgz && \
     : && \
     printf "\n" | pecl install --force psr.tgz && \
     printf "\n" | pecl install --force swoole.tgz && \
@@ -79,7 +79,7 @@ apt install -y libpq-dev nghttp2 libnghttp2-dev --no-install-recommends && \
 # mkdir -p "${WORKDIR}/pecl_downloads" && \
 #     cd "${WORKDIR}" && \
 #     : && \
-#     curl -o ./pecl_downloads/ext-postgresql.tar.gz https://github.com/swoole/ext-postgresql/archive/master.tar.gz -L && \
+#     curl -fSL -o ./pecl_downloads/ext-postgresql.tar.gz "https://github.com/swoole/ext-postgresql/archive/master.tar.gz" && \
 #     tar zxvf ./pecl_downloads/ext-postgresql.tar.gz && \
 #     mv ext-postgresql* ext-postgresql && cd ext-postgresql && \
 #     phpize && \
@@ -93,7 +93,7 @@ apt install -y php${PHP_VERSION}-dev libpcre3-dev gcc make re2c --no-install-rec
     mkdir -p "${WORKDIR}/pecl_downloads" && \
     cd "${WORKDIR}" && \
     : && \
-    curl -o ./pecl_downloads/cphalcon.tar.gz https://github.com/phalcon/cphalcon/archive/master.tar.gz -L && \
+    curl -fSL -o ./pecl_downloads/cphalcon.tar.gz "https://github.com/phalcon/cphalcon/archive/master.tar.gz" && \
     tar zxvf ./pecl_downloads/cphalcon.tar.gz && \
     mv cphalcon* cphalcon && cd cphalcon/build && \
     ./install --phpize /usr/bin/phpize${PHP_VERSION} --php-config /usr/bin/php-config${PHP_VERSION} && \
@@ -106,7 +106,7 @@ PDFlib_CURRENT_VER=$(php --ri pdflib | grep "Binary-Version" | cut -d'>' -f2 | c
 PDFlib_BIN_VER=$(echo "${PHP_VERSION}0" | cut -c 1,3-)
 if [[ "$PDFlib_CURRENT_VER" != "$PDFlib_REMOTE_VER" ]]; then
     cd "${WORKDIR}" && \
-        curl -o pdflib.tar.gz https://www.pdflib.com/binaries/PDFlib/920/PDFlib-9.2.0-Linux-x86_64-php.tar.gz -L && \
+        curl -fSL -o pdflib.tar.gz "https://www.pdflib.com/binaries/PDFlib/920/PDFlib-9.2.0-Linux-x86_64-php.tar.gz" && \
         tar -xvf pdflib.tar.gz && \
         mv PDFlib-* pdflib
 
@@ -161,10 +161,10 @@ ORACLE_INSTANT_CLIENT="19c"
 
 if [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "19c" ]]; then
     mkdir -p /opt/oracle && cd /opt/oracle && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-basic-linux.x64-19.3.0.0.0dbru.zip && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sdk-linux.x64-19.3.0.0.0dbru.zip && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sqlplus-linux.x64-19.3.0.0.0dbru.zip && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-tools-linux.x64-19.3.0.0.0dbru.zip && \
+        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-basic-linux.x64-19.3.0.0.0dbru.zip && \
+        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sdk-linux.x64-19.3.0.0.0dbru.zip && \
+        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sqlplus-linux.x64-19.3.0.0.0dbru.zip && \
+        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-tools-linux.x64-19.3.0.0.0dbru.zip && \
         : && \
         unzip instantclient-basic-linux.x64-19.3.0.0.0dbru.zip && \
         unzip instantclient-sdk-linux.x64-19.3.0.0.0dbru.zip && \
@@ -178,10 +178,10 @@ if [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "19c" ]]; t
         rm -rf /opt/oracle/*.zip
 elif [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "18c" ]]; then
     mkdir -p /opt/oracle && cd /opt/oracle && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-tools-linux.x64-18.5.0.0.0dbru.zip && \
+        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip && \
+        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip && \
+        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip && \
+        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-tools-linux.x64-18.5.0.0.0dbru.zip && \
         : && \
         unzip instantclient-basic-linux.x64-18.5.0.0.0dbru.zip && \
         unzip instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip && \
@@ -195,10 +195,10 @@ elif [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "18c" ]];
         rm -rf /opt/oracle/*.zip
 elif [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "12c" ]]; then
     mkdir -p /opt/oracle && cd /opt/oracle && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-basic-linux.x64-12.2.0.1.0.zip && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-sdk-linux.x64-12.2.0.1.0.zip && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip && \
-        curl -SL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-tools-linux.x64-12.2.0.1.0.zip && \
+        curl -fSL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-basic-linux.x64-12.2.0.1.0.zip && \
+        curl -fSL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-sdk-linux.x64-12.2.0.1.0.zip && \
+        curl -fSL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip && \
+        curl -fSL -O https://github.com/epoweripione/oracle-instantclient/raw/master/instantclient-tools-linux.x64-12.2.0.1.0.zip && \
         : && \
         unzip instantclient-basic-linux.x64-12.2.0.1.0.zip && \
         unzip instantclient-sdk-linux.x64-12.2.0.1.0.zip && \
@@ -255,7 +255,7 @@ if ls /etc/ld.so.conf.d/oracle-instantclient* >/dev/null 2>&1; then
             mkdir -p "${WORKDIR}/pecl_downloads" && \
             cd "${WORKDIR}/pecl_downloads" && \
             : && \
-            curl -SL http://pecl.php.net/get/oci8 -o oci8.tgz && \
+            curl -fSL http://pecl.php.net/get/oci8 -o oci8.tgz && \
             printf "instantclient,$ORACLE_HOME\n" | pecl install --force oci8.tgz && \
             echo 'extension=oci8.so' > $PHP_INI_DIR/90-oci8.ini
     fi

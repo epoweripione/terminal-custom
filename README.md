@@ -8,10 +8,10 @@ custom scripts for zsh, msys2, powershell, wsl, etc.
 [oh-my-zsh](https://ohmyz.sh/)
 
 ### 2. Install ZSH & Oh My ZSH (debian/ubuntu/redhat/centos/archlinux)
-`source <(curl -sL https://git.io/fA8Jb)`
+`source <(curl -fsL https://git.io/fA8Jb)`
 
 ### 2. Init
-`source <(curl -sL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_update.sh && $HOME/terminal-custom/zsh/zsh_init.sh`
+`source <(curl -fsL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_update.sh && $HOME/terminal-custom/zsh/zsh_init.sh`
 
 ### Update
-`source <(curl -sL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_update.sh`
+`source <(curl -fsL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_update.sh`

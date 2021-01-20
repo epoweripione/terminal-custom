@@ -44,7 +44,7 @@ if [[ -z "$NVM_NOT_UPDATE" && -d "$HOME/.nvm" ]]; then
     CURRENT_VERSION=$(nvm --version)
     REMOTE_VERSION=$(wget --no-check-certificate -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        curl -o- https://raw.githubusercontent.com/creationix/nvm/v$REMOTE_VERSION/install.sh | bash
+        curl -fsSL -o- "https://raw.githubusercontent.com/creationix/nvm/v$REMOTE_VERSION/install.sh"| bash
     fi
 
     if [[ -z "$NVM_INSTALLER_NOT_USE_MIRROR" ]]; then

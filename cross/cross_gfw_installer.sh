@@ -73,8 +73,8 @@ fi
 # if [[ ! -x "$(command -v v2ray-util)" ]]; then
 #     colorEcho ${BLUE} "Installing v2ray-util..."
 
-#     source <(curl -sL https://multi.netlify.com/v2ray.sh) --zh
-#     # source <(curl -sL https://git.io/fNgqx) --zh
+#     source <(curl -fsL https://multi.netlify.com/v2ray.sh) --zh
+#     # source <(curl -fsL https://git.io/fNgqx) --zh
 # fi
 
 
