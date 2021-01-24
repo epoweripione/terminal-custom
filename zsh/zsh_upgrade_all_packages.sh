@@ -202,6 +202,8 @@ IS_UPDATE_ONLY="yes"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/goproxy_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/goproxy_installer.sh"
 
+[[ -s "${MY_SHELL_SCRIPTS}/installer/inlets_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/inlets_installer.sh"
+
 [[ -s "${MY_SHELL_SCRIPTS}/cross/xray_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/xray_installer.sh"
 
 [[ -s "${MY_SHELL_SCRIPTS}/cross/v2ray_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/v2ray_installer.sh"

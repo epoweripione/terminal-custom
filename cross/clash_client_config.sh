@@ -82,7 +82,7 @@ CLASH_CONFIG=${6:-"/etc/clash/clash_client_config.yml"}
 [[ ! -s "$CLASH_CONFIG" ]] && CLASH_CONFIG="$HOME/clash_client_config.yml"
 [[ ! -s "$CLASH_CONFIG" ]] && CLASH_CONFIG="${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_config.yml"
 if [[ ! -s "$CLASH_CONFIG" ]]; then
-    colorEcho ${BLUE} "    ${CLASH_CONFIG} not exist!"
+    colorEcho ${RED} "    ${CLASH_CONFIG} not exist!"
     exit 1
 fi
 
@@ -130,8 +130,11 @@ colorEcho ${BLUE} "Getting clash rules..."
 # Update ACL4SSR
 # https://github.com/ACL4SSR/ACL4SSR
 if [[ -s "/srv/subconverter/subconverter" ]]; then
+    colorEcho ${BLUE} " Updating ACL4SSR..."
     if [[ -d "/etc/clash" ]]; then
-        find "/etc/clash" -type f -name "*_Profile.ini" -print0 | xargs -0 -I{} cp {} "/srv/subconverter/profiles"
+        find "/etc/clash" -type f -name "*_Profile*" -print0 | xargs -0 -I{} cp -f {} "/srv/subconverter/profiles"
+        find "/srv/subconverter/config" -type l -name "*_Rules*" -print0 | xargs -0 -I{} rm -f {}
+        find "/etc/clash" -type f -name "*_Rules*" -print0 | xargs -0 -I{} cp -f {} "/srv/subconverter/config"
     fi
 
     if Git_Clone_Update "ACL4SSR/ACL4SSR" "/srv/subconverter/ACL4SSR"; then
@@ -143,14 +146,6 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
             /srv/subconverter/config && \
         cp -f /srv/subconverter/ACL4SSR/Clash/config/*.ini \
             /srv/subconverter/config
-
-        if [[ ! -L "/srv/subconverter/config/${RULES_INI}" ]]; then
-            CLASH_RULES="/etc/clash/${RULES_INI}"
-            [[ ! -s "$CLASH_RULES" ]] && CLASH_RULES="$HOME/${RULES_INI}"
-            if [[ -s "$CLASH_RULES" ]]; then
-                ln -s "$CLASH_RULES" "/srv/subconverter/config/${RULES_INI}"
-            fi
-        fi
     fi
 fi
 
@@ -307,7 +302,7 @@ PROXY_TYPE=()
 while read -r line; do
     [[ -z "${line}" ]] && continue
     line_name=$(echo "$line" \
-        | sed -rn "s/.*name:([^,{}]+).*/\1/ip" \
+        | sed -rn "s/.*[\s\{\,]+name:([^,{}]+).*/\1/ip" \
         | sed -e "s/^\s//" -e "s/\s$//" \
         | sed -e "s/^\"//" -e "s/\"$//")
     PROXY_NAME+=("$line_name")
@@ -333,7 +328,7 @@ if [[ "$OPTIMIZE_OPTION" == "yes" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         while read -r line; do
             [[ -z "${line}" ]] && continue
             line_name=$(echo "$line" \
-                | sed -rn "s/.*name:([^,{}]+).*/\1/ip" \
+                | sed -rn "s/.*[\s\{\,]+name:([^,{}]+).*/\1/ip" \
                 | sed -e "s/^\s//" -e "s/\s$//" \
                 | sed -e "s/^\"//" -e "s/\"$//")
             CUSTOM_NAME+=("$line_name")
@@ -356,7 +351,7 @@ if [[ "$OPTIMIZE_OPTION" == "yes" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         while read -r line; do
             [[ -z "${line}" ]] && continue
             line_name=$(echo "$line" \
-                | sed -rn "s/.*name:([^,{}]+).*/\1/ip" \
+                | sed -rn "s/.*[\s\{\,]+name:([^,{}]+).*/\1/ip" \
                 | sed -e "s/^\s//" -e "s/\s$//" \
                 | sed -e "s/^\"//" -e "s/\"$//")
             MERGE_NAME+=("$line_name")

@@ -19,7 +19,7 @@ fi
 
 # re-txt
 # https://github.com/alash3al/re-txt
-INSTALL_NAME="re-txt"
+APP_INSTALL_NAME="re-txt"
 GITHUB_REPO_NAME="alash3al/re-txt"
 
 EXEC_INSTALL_PATH="/usr/local/bin"
@@ -40,7 +40,7 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
+    colorEcho ${BLUE} "Checking latest version for ${APP_INSTALL_NAME}..."
 
     CHECK_URL="https://api.github.com/repos/${GITHUB_REPO_NAME}/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
@@ -65,7 +65,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ -n "$REMOTE_FILENAME" && "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
+    colorEcho ${BLUE} "  Installing ${APP_INSTALL_NAME} ${REMOTE_VERSION}..."
 
     if [[ -s "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" ]]; then
         sudo rm -f "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}"

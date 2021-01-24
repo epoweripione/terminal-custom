@@ -23,7 +23,7 @@ fi
 # /usr/local/etc/v2ray/config.json
 # /var/log/v2ray/
 # UUID: v2ray uuid
-INSTALL_NAME="v2ray"
+APP_INSTALL_NAME="v2ray"
 IS_INSTALL="yes"
 IS_UPDATE="no"
 CURRENT_VERSION="0.0.0"
@@ -36,7 +36,7 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
+    colorEcho ${BLUE} "Checking latest version for ${APP_INSTALL_NAME}..."
 
     CHECK_URL="https://api.github.com/repos/v2fly/v2ray-core/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
@@ -46,7 +46,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
+    colorEcho ${BLUE} "  Installing ${APP_INSTALL_NAME} ${REMOTE_VERSION}..."
     # https://github.com/v2fly/fhs-install-v2ray/wiki/Migrate-from-the-old-script-to-this
     if [[ -d "/usr/bin/v2ray/" ]]; then
         sudo systemctl disable v2ray.service --now

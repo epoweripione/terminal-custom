@@ -22,7 +22,7 @@ fi
 
 # frp
 # https://github.com/fatedier/frp
-INSTALL_NAME="frp"
+APP_INSTALL_NAME="frp"
 IS_INSTALL="yes"
 CURRENT_VERSION="0.0.0"
 
@@ -38,7 +38,7 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
+    colorEcho ${BLUE} "Checking latest version for ${APP_INSTALL_NAME}..."
 
     CHECK_URL="https://api.github.com/repos/fatedier/frp/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
@@ -48,7 +48,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
+    colorEcho ${BLUE} "  Installing ${APP_INSTALL_NAME} ${REMOTE_VERSION}..."
 
     if pgrep -f "frps" >/dev/null 2>&1; then
         sudo pkill -f "frps"

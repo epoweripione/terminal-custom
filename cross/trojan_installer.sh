@@ -19,7 +19,7 @@ fi
 
 # trojan
 # https://github.com/trojan-gfw/trojan
-INSTALL_NAME="trojan"
+APP_INSTALL_NAME="trojan"
 IS_INSTALL="yes"
 IS_UPDATE="no"
 CURRENT_VERSION="0.0.0"
@@ -33,7 +33,7 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
+    colorEcho ${BLUE} "Checking latest version for ${APP_INSTALL_NAME}..."
 
     CHECK_URL="https://api.github.com/repos/trojan-gfw/trojan/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
@@ -43,7 +43,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
+    colorEcho ${BLUE} "  Installing ${APP_INSTALL_NAME} ${REMOTE_VERSION}..."
 
     [[ -z "$OS_INFO_TYPE" ]] && get_os_type
     [[ -z "$OS_INFO_ARCH" ]] && get_arch

@@ -37,7 +37,7 @@ fi
 
 # clash
 # https://github.com/Dreamacro/clash
-INSTALL_NAME="clash"
+APP_INSTALL_NAME="clash"
 IS_INSTALL="yes"
 IS_UPDATE="no"
 CURRENT_VERSION="0.0.0"
@@ -51,13 +51,13 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
+    colorEcho ${BLUE} "Checking latest version for ${APP_INSTALL_NAME}..."
 
     # CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
     # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
     # Pre-release
-    REMOTE_VERSION=$(curl -fsSL -N https://github.com/Dreamacro/clash/releases \
+    REMOTE_VERSION=$(curl -fsL -N https://github.com/Dreamacro/clash/releases \
         | grep -Eo -m1 '\/releases\/tag\/v([0-9]{1,}\.)+[0-9]{1,}' \
         | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
@@ -66,7 +66,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
+    colorEcho ${BLUE} "  Installing ${APP_INSTALL_NAME} ${REMOTE_VERSION}..."
 
     [[ -z "$OS_INFO_TYPE" ]] && get_os_type
     [[ -z "$OS_INFO_ARCH" ]] && get_arch

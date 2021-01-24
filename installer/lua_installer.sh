@@ -37,7 +37,7 @@ else
     CURRENT_VERSION=0.0
 fi
 
-REMOTE_VERSION=$(curl -fsSL -N http://www.lua.org/download.html \
+REMOTE_VERSION=$(curl -fsL -N http://www.lua.org/download.html \
     | grep -Eo -m1 'lua-([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d'-' -f2)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
@@ -60,7 +60,7 @@ else
     CURRENT_VERSION=0.0
 fi
 
-REMOTE_VERSION=$(curl -fsSL -N https://luarocks.org/ \
+REMOTE_VERSION=$(curl -fsL -N https://luarocks.org/ \
     | grep -Eo -m1 'luarocks-([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d'-' -f2)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then

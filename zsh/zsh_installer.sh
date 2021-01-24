@@ -147,7 +147,7 @@ if [[ ! -x "$(command -v zsh)" ]]; then
 
         # ZSH_REPO_VERSION=$(yum info zsh | grep -E "[Vv]ersion" | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
 
-        REMOTE_VERSION=$(curl -fsSL http://zsh.sourceforge.net/News/ \
+        REMOTE_VERSION=$(curl -fsL http://zsh.sourceforge.net/News/ \
                             | grep -Eo -m1 'Release ([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         REMOTE_VERSION=$(echo $REMOTE_VERSION | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
 

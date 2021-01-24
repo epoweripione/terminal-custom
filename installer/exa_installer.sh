@@ -40,9 +40,9 @@ fi
 
 # exa
 # https://github.com/ogham/exa
-INSTALL_NAME="exa"
+APP_INSTALL_NAME="exa"
 
-colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
+colorEcho ${BLUE} "Checking latest version for ${APP_INSTALL_NAME}..."
 
 CHECK_URL="https://api.github.com/repos/ogham/exa/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
@@ -71,7 +71,7 @@ fi
 
 
 if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
-    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION}..."
+    colorEcho ${BLUE} "  Installing ${APP_INSTALL_NAME} ${REMOTE_VERSION}..."
     if [[ -s "/usr/local/bin/exa" ]]; then
         sudo rm -f "/usr/local/bin/exa"
     fi

@@ -28,13 +28,13 @@ colorEcho() {
 # bench.sh
 # https://teddysun.com/444.html
 function bench() {
-    curl -Lso- bench.sh | bash
+    curl -fsSL -o- bench.sh | bash
 }
 
 # Superbench.sh & SuperSpeed.sh
 # https://www.oldking.net/305.html
 function SuperBench() {
-    curl -Lso- https://raw.githubusercontent.com/oooldking/script/master/superbench.sh | bash
+    curl -fsSL -o- https://raw.githubusercontent.com/oooldking/script/master/superbench.sh | bash
 }
 
 function SuperSpeed() {

@@ -35,7 +35,7 @@ set_proxy_mirrors_env
 ## Install Mercurial from http://pkgs.repoforge.org/mercurial/
 ## FreeBSD Requirements
 # sudo pkg_add -r bash git mercurial
-INSTALL_NAME="gvm & go"
+APP_INSTALL_NAME="gvm & go"
 IS_INSTALL="yes"
 IS_UPDATE="no"
 CURRENT_VERSION="go0.0.0"
@@ -47,7 +47,7 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "Checking latest version for ${INSTALL_NAME}..."
+    colorEcho ${BLUE} "Checking latest version for ${APP_INSTALL_NAME}..."
 fi
 
 # new install
@@ -131,7 +131,7 @@ if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
         # GOROOT_BOOTSTRAP=$GOROOT
 
         # Install latest go version
-        REMOTE_VERSION=$(curl -fsSL https://golang.org/dl/ | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+        REMOTE_VERSION=$(curl -fsL https://golang.org/dl/ | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         # REMOTE_VERSION=${REMOTE_VERSION%.}
 
         if [[ -n "$REMOTE_VERSION" ]] && [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then

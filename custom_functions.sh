@@ -1611,6 +1611,21 @@ function get_zone_time() {
 }
 
 
+## Sort an array
+## https://gist.github.com/suewonjp/7150f3fe449a58b2ce6cbb456882bed6
+# tmp=( c d a e b )
+# sort_array tmp
+# echo ${tmp[*]} ### a b c d e
+function sort_array() {
+    if [[ -n "$1" ]]; then
+        local IFS=$'\n'
+        eval "local arr=( \${$1[*]} )"
+        arr=( $( sort <<<"${arr[*]}" ) )
+        eval "$1=( \${arr[*]} )"
+    fi
+}
+
+
 ## ProgressBar
 # bar=''
 # for ((i=0;$i<=100;i++)); do

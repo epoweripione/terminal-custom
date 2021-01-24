@@ -17,16 +17,16 @@ else
     fi
 fi
 
-# tldr++: fast and interactive tldr client written with go
-# https://github.com/isacikgoz/tldr
-APP_INSTALL_NAME="tldr++"
-GITHUB_REPO_NAME="isacikgoz/tldr"
+# proxypool
+# https://github.com/Sansui233/proxypool
+APP_INSTALL_NAME="proxypool"
+GITHUB_REPO_NAME="Sansui233/proxypool"
 
-ARCHIVE_EXT="tar.gz"
-ARCHIVE_EXEC_NAME="tldr"
+ARCHIVE_EXT="gz"
+ARCHIVE_EXEC_NAME="proxypool"
 
 EXEC_INSTALL_PATH="/usr/local/bin"
-EXEC_INSTALL_NAME="tldr"
+EXEC_INSTALL_NAME="proxypool"
 
 [[ -z "${ARCHIVE_EXEC_NAME}" ]] && ARCHIVE_EXEC_NAME="${EXEC_INSTALL_NAME}"
 
@@ -40,14 +40,13 @@ IS_INSTALL="yes"
 IS_UPDATE="no"
 
 CURRENT_VERSION="0.0.0"
-VERSION_FILENAME=""
-# VERSION_FILENAME="${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}.version"
+# VERSION_FILENAME=""
+VERSION_FILENAME="${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}.version"
 
 if [[ -x "$(command -v ${EXEC_INSTALL_NAME})" ]]; then
     IS_UPDATE="yes"
     [[ -n "${VERSION_FILENAME}" ]] && CURRENT_VERSION=v$(head -n1 ${VERSION_FILENAME})
     # CURRENT_VERSION=v$(${EXEC_INSTALL_NAME} --version 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-    CURRENT_VERSION=v$(${EXEC_INSTALL_NAME} --version 2>&1 | cut -d' ' -f3)
 else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi
@@ -66,8 +65,15 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     [[ -z "${OS_INFO_TYPE}" ]] && get_os_type
     [[ -z "${OS_INFO_ARCH}" ]] && get_arch
 
-    [[ "${OS_INFO_TYPE}" == "windows" ]] && ARCHIVE_EXT="zip"
-    REMOTE_FILENAME="${EXEC_INSTALL_NAME}_${REMOTE_VERSION}_${OS_INFO_TYPE}_${OS_INFO_ARCH}.${ARCHIVE_EXT}"
+    REMOTE_FILENAME="${EXEC_INSTALL_NAME}-${OS_INFO_TYPE}-${OS_INFO_ARCH}-v${REMOTE_VERSION}.${ARCHIVE_EXT}"
+    case "${OS_INFO_ARCH}" in
+        arm64)
+            REMOTE_FILENAME="${EXEC_INSTALL_NAME}-${OS_INFO_TYPE}-armv8-v${REMOTE_VERSION}.${ARCHIVE_EXT}"
+            ;;
+        arm)
+            REMOTE_FILENAME="${EXEC_INSTALL_NAME}-${OS_INFO_TYPE}-armv7-v${REMOTE_VERSION}.${ARCHIVE_EXT}"
+            ;;
+    esac
 
     [[ -z "${REMOTE_FILENAME}" ]] && IS_INSTALL="no"
 fi
@@ -106,6 +112,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 
     # Install
     if [[ $? -eq 0 ]]; then
+        [[ -z "${ARCHIVE_EXEC_NAME}" ]] && ARCHIVE_EXEC_NAME="${EXEC_INSTALL_NAME}"
         sudo mv -f ${WORKDIR}/${ARCHIVE_EXEC_NAME} "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
             sudo chmod +x "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
             [[ -n "${VERSION_FILENAME}" ]] && echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null
@@ -113,23 +120,23 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 
-# Pulls the github.com/tldr-pages/tldr repository
-if [[ "${IS_INSTALL}" == "yes" || "${IS_UPDATE}" == "yes" ]]; then
-    [[ -z "$OS_INFO_TYPE" ]] && get_os_type
-    case "$OS_INFO_TYPE" in
-        darwin)
-            TLDR_PAGES="$HOME/Library/Application Support/tldr"
-            ;;
-        windows)
-            # TLDR_PAGES="$HOME/AppData/Roaming/tldr"
-            TLDR_PAGES=""
-            ;;
-        *)
-            TLDR_PAGES="$HOME/.local/share/tldr"
-            ;;
-    esac
-    [[ -n "${TLDR_PAGES}" ]] && Git_Clone_Update "tldr-pages/tldr" "${TLDR_PAGES}"
+# config
+if [[ ! -s "/etc/proxypool/config.yaml" ]]; then
+    mkdir -p "/etc/proxypool" && \
+        curl -fSL -o "${WORKDIR}/source.yaml" \
+            "https://raw.githubusercontent.com/Sansui233/proxypool/master/config/source.yaml" && \
+        curl -fSL -o "${WORKDIR}/config.yaml" \
+            "https://raw.githubusercontent.com/Sansui233/proxypool/master/config/config.yaml" && \
+        sudo mv -f "${WORKDIR}/source.yaml" "/etc/proxypool/source.yaml" && \
+        sudo mv -f "${WORKDIR}/config.yaml" "/etc/proxypool/config.yaml" && \
+        sudo sed -i "s|./config/source.yaml|/etc/proxypool/source.yaml|" "/etc/proxypool/config.yaml"
 fi
+
+# sudo sed -i "s|domain:.*|domain: pool.example.com|" "/etc/proxypool/config.yaml"
+# Install_systemd_Service "proxypool" "/usr/local/bin/proxypool -c /etc/proxypool/config.yaml"
+
+## nginx
+# proxy_pass http://127.0.0.1:12580/;
 
 
 cd "${CURRENT_DIR}"

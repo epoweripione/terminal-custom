@@ -57,7 +57,7 @@ fi
 #     sudo ./configure --prefix=/opt/ncurses >/dev/null && \
 #     sudo make >/dev/null && sudo make install >/dev/null
 
-INSTALL_NAME="nano"
+APP_INSTALL_NAME="nano"
 IS_INSTALL="yes"
 IS_UPDATE="no"
 CURRENT_VERSION="0.0"
@@ -68,13 +68,13 @@ if [[ -x "$(command -v nano)" ]]; then
     CURRENT_VERSION=$(nano -V | grep -Eo -m1 '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
 fi
 
-REMOTE_VERSION=$(curl -fsSL -N https://www.nano-editor.org/download.php \
+REMOTE_VERSION=$(curl -fsL -N https://www.nano-editor.org/download.php \
     | grep -Eo -m1 'nano-([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d'-' -f2)
     # | grep -m 1 -o 'nano-\([0-9]\)\+\.\([0-9]\)\+' | head -n1 | cut -d'-' -f2)
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    colorEcho ${BLUE} "  Installing ${INSTALL_NAME} ${REMOTE_VERSION} from source..."
+    colorEcho ${BLUE} "  Installing ${APP_INSTALL_NAME} ${REMOTE_VERSION} from source..."
     DOWNLOAD_URL="https://www.nano-editor.org/dist/v${DIST_VERSION}/nano-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/nano.tar.gz" "$DOWNLOAD_URL" && \
         tar -xzPf "${WORKDIR}/nano.tar.gz" -C "${WORKDIR}" && \
