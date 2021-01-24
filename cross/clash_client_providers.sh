@@ -189,7 +189,11 @@ colorEcho ${BLUE} "  Processing proxies..."
 PROXIES_PUBLIC=$(echo "${PROXIES_PUBLIC}" | sort | uniq)
 
 # Proxies
-PROXIES_ALL=$(echo -e "${PROXIES_PRIVATE}\n${PROXIES_PUBLIC}" | sed 's/^-/  -/g')
+if [[ -n "${PROXIES_PRIVATE}" ]]; then
+    PROXIES_ALL=$(echo -e "${PROXIES_PRIVATE}\n${PROXIES_PUBLIC}" | sed 's/^-/  -/g')
+else
+    PROXIES_ALL=$(echo -e "${PROXIES_PUBLIC}" | sed 's/^-/  -/g')
+fi
 
 ## Add placeholder for proxy-groups
 # PROXIES_ALL=$(echo -e "${PROXIES_ALL}\n  - {name: FORBIDDEN-PLACEHOLDER, server: forbidden-placeholder.com, port: 0000, type: trojan, password: Trojan}")
@@ -268,7 +272,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
         *)
             MATCH_TAG="no"
             for TargetFile in "${FILELIST[@]}"; do
-                if [[ "${TargetFile}" == "${TARGET_TAG}" ]]; then
+                if [[ "${TargetFile}" == "${TARGET_TAG}" && -s "${WORKDIR}/${TargetFile}.list" ]]; then
                     MATCH_TAG="yes"
                     CONTENT_TAG=$(cat "${WORKDIR}/${TargetFile}.list")
                 fi
@@ -292,6 +296,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
     # delete empty group
     if [[ -z "${CONTENT_TAG}" && "${CONTENT_IS_GROUP}" == "yes" ]]; then
         CONTENT_PREFIX=$(echo "${CONTENT_PREFIX}" | sed "/name:\s*${TARGET_GROUP}$/,$ d")
+        CONTENT_PREFIX=$(echo "${CONTENT_PREFIX}" | sed "/^\s*\-\s*${TARGET_GROUP}$/d")
         sed -i "/^\s*\-\s*${TARGET_GROUP}$/d" "${TARGET_CONFIG_FILE}"
     fi
 
@@ -307,9 +312,11 @@ if [[ -n "${COPY_TO_DIR}" ]]; then
     COPY_TO_FILE="${COPY_TO_DIR}/${TARGET_CONFIG_NAME}"
     cp -f "${TARGET_CONFIG_FILE}" "${COPY_TO_FILE}"
 
-    if [[ ! -s "${COPY_TO_FILE}.md5" ]]; then
-        colorEcho ${BLUE} "  Gen md5 for ${COPY_TO_FILE}..."
-        (openssl md5 -hex "${COPY_TO_FILE}" | cut -d" " -f2) > "${COPY_TO_FILE}.md5"
+    if [[ -n "${PROXIES_PRIVATE}" ]]; then
+        if [[ ! -s "${COPY_TO_FILE}.md5" ]]; then
+            colorEcho ${BLUE} "  Gen md5 for ${COPY_TO_FILE}..."
+            (openssl md5 -hex "${COPY_TO_FILE}" | cut -d" " -f2) > "${COPY_TO_FILE}.md5"
+        fi
     fi
 
     # FILE_INDEX=-1
