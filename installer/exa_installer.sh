@@ -21,7 +21,7 @@ fi
 [[ -z "$OS_INFO_VDIS" ]] && get_sysArch
 
 # fix: /lib64/libc.so.6: version `GLIBC_2.18' not found (required by exa)
-FILE_LIBC=$(find /usr/lib /lib -name "libc.so.6" | head -n1)
+FILE_LIBC=$(find /usr /lib -name "libc.so.6" | head -n1)
 if [[ -n "${FILE_LIBC}" ]]; then
     if strings "${FILE_LIBC}" | grep GLIBC_2.18 >/dev/null; then
         :

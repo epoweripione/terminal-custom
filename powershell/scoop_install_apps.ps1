@@ -221,6 +221,8 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         ## markdown editor
         "pandoc"
         "marktext"
+        # "tightvnc"
+        "vncviewer"
         ## epower
         "chromium-marmaduke-dev-sync"
         # "chromium-robrich-dev"

@@ -1300,6 +1300,7 @@ function Git_Clone_Update() {
     local BRANCH=${3:-""}
     local REPOURL=${4:-github.com}
     local REPOREMOTE=""
+    local DEFAULTBRANCH=""
     local CurrentDir
 
     if [[ -z "$REPONAME" ]]; then
@@ -1307,7 +1308,7 @@ function Git_Clone_Update() {
         return 1
     fi
 
-    if [[ -z "$REPODIR" ]]; then
+    if [[ -z "${REPODIR}" ]]; then
         REPODIR=$(echo ${REPONAME} | awk -F"/" '{print $NF}')
     fi
 
@@ -1317,10 +1318,24 @@ function Git_Clone_Update() {
 
         CurrentDir=$(pwd)
 
-        cd "$REPODIR"
-        BRANCH=$(git symbolic-ref --short HEAD)
-        [[ -z "$BRANCH" ]] && BRANCH="master"
-        git pull --rebase --stat origin "$BRANCH"
+        cd "${REPODIR}"
+        BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
+        [[ -z "${BRANCH}" ]] && BRANCH="master"
+
+        git pull --rebase --stat origin "${BRANCH}"
+        # pull error: fallback to default branch
+        if [[ $? != 0 ]]; then
+            DEFAULTBRANCH=$(git ls-remote --symref "${REPOREMOTE}" HEAD \
+                        | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
+            if [[ -n "${DEFAULTBRANCH}" && "${DEFAULTBRANCH}" != "${BRANCH}" ]]; then
+                git branch -m "${BRANCH}" "${DEFAULTBRANCH}"
+                sed -i "s|${BRANCH}|${DEFAULTBRANCH}|g" "${CurrentDir}/.git/config"
+                # git fetch origin
+                # git branch --unset-upstream
+                # git branch -u "origin/${DEFAULTBRANCH}" "${DEFAULTBRANCH}"
+                # git symbolic-ref "refs/remotes/origin/HEAD" "refs/remotes/origin/${DEFAULTBRANCH}"
+            fi
+        fi
 
         ## master branch
         # git fetch --depth 1 && git reset --hard origin/master
@@ -1333,15 +1348,15 @@ function Git_Clone_Update() {
         cd "${CurrentDir}"
     else
         colorEcho ${BLUE} "  Cloning ${REPONAME}..."
-        BRANCH=$(git ls-remote --symref "$REPOREMOTE" HEAD \
+        BRANCH=$(git ls-remote --symref "${REPOREMOTE}" HEAD \
                     | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
-        [[ -z "$BRANCH" ]] && BRANCH="master"
+        [[ -z "${BRANCH}" ]] && BRANCH="master"
 
         git clone -c core.autocrlf=false -c core.filemode=false \
             -c fsck.zeroPaddedFilemode=ignore \
             -c fetch.fsck.zeroPaddedFilemode=ignore \
             -c receive.fsck.zeroPaddedFilemode=ignore \
-            --depth=1 --branch "$BRANCH" "$REPOREMOTE" "$REPODIR" || {
+            --depth=1 --branch "${BRANCH}" "${REPOREMOTE}" "${REPODIR}" || {
                 colorEcho ${RED} "  git clone of ${REPONAME} failed!"
                 return 1
             }
@@ -1377,18 +1392,18 @@ function git_update_repo_in_subdir() {
     CurrentDir=$(pwd)
     for TargetDir in "${DIRLIST[@]}"; do
         cd "${TargetDir}"
-        BRANCH=$(git symbolic-ref --short HEAD)
-        [[ -z "$BRANCH" ]] && BRANCH="master"
-        git pull --rebase --stat origin "$BRANCH"
+        BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
+        [[ -z "${BRANCH}" ]] && BRANCH="master"
+        git pull --rebase --stat origin "${BRANCH}"
     done
     cd "${CurrentDir}"
 
     # if [[ -z "${FindDepth}" ]]; then
     #     find "${SubDir}" -type d -name ".git" \
-    #         -execdir git pull --rebase --stat origin "$BRANCH" \;
+    #         -execdir git pull --rebase --stat origin "${BRANCH}" \;
     # else
     #     find "${SubDir}" -maxdepth ${FindDepth} -type d -name ".git" \
-    #         -execdir git pull --rebase --stat origin "$BRANCH" \;
+    #         -execdir git pull --rebase --stat origin "${BRANCH}" \;
     # fi
 }
 
@@ -1404,12 +1419,12 @@ function git_update_repo_in_subdir_parallel() {
         find "${SubDir}" -type d -name ".git" \
             | sed 's/\/.git//' \
             | xargs -P10 -I{} git --git-dir="{}/.git" --work-tree="{}" \
-                pull --rebase --stat origin "$BRANCH"
+                pull --rebase --stat origin "${BRANCH}"
     else
         find "${SubDir}" -maxdepth ${FindDepth} -type d -name ".git" \
             | sed 's/\/.git//' \
             | xargs -P10 -I{} git --git-dir="{}/.git" --work-tree="{}" \
-                pull --rebase --stat origin "$BRANCH"
+                pull --rebase --stat origin "${BRANCH}"
     fi
 }
 
@@ -1417,14 +1432,14 @@ function git_get_remote_default_branch() {
     local REPOREMOTE=${1:-""}
 
     if [[ -z "${REPOREMOTE}" && -d ".git" ]]; then
-        REPO_DEFAULT_BRANCH=$(git symbolic-ref --short HEAD)
+        REPO_DEFAULT_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
     else
         [[ -z "${REPOREMOTE}" ]] && exit 0
 
         ## Github: https://api.github.com/repos/docker/compose
-        # REPO_DEFAULT_BRANCH=$(wget -qO- "$REPOREMOTE" | grep 'default_branch' | cut -d\" -f4)
+        # REPO_DEFAULT_BRANCH=$(wget -qO- "${REPOREMOTE}" | grep 'default_branch' | cut -d\" -f4)
 
-        REPO_DEFAULT_BRANCH=$(git ls-remote --symref "$REPOREMOTE" HEAD \
+        REPO_DEFAULT_BRANCH=$(git ls-remote --symref "${REPOREMOTE}" HEAD \
                                 | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
     fi
 }
