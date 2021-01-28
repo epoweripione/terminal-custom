@@ -1330,10 +1330,13 @@ function Git_Clone_Update() {
             if [[ -n "${DEFAULTBRANCH}" && "${DEFAULTBRANCH}" != "${BRANCH}" ]]; then
                 git branch -m "${BRANCH}" "${DEFAULTBRANCH}"
                 sed -i "s|${BRANCH}|${DEFAULTBRANCH}|g" "${CurrentDir}/.git/config"
+
                 # git fetch origin
                 # git branch --unset-upstream
                 # git branch -u "origin/${DEFAULTBRANCH}" "${DEFAULTBRANCH}"
                 # git symbolic-ref "refs/remotes/origin/HEAD" "refs/remotes/origin/${DEFAULTBRANCH}"
+
+                git pull --rebase --stat origin "${DEFAULTBRANCH}"
             fi
         fi
 
