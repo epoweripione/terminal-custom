@@ -1329,7 +1329,9 @@ function Git_Clone_Update() {
                         | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
             if [[ -n "${DEFAULTBRANCH}" && "${DEFAULTBRANCH}" != "${BRANCH}" ]]; then
                 git branch -m "${BRANCH}" "${DEFAULTBRANCH}"
-                sed -i "s|${BRANCH}|${DEFAULTBRANCH}|g" "${CurrentDir}/.git/config"
+
+                [[ -s "${REPODIR}/.git/config" ]] && \
+                    sed -i "s|${BRANCH}|${DEFAULTBRANCH}|g" "${REPODIR}/.git/config"
 
                 # git fetch origin
                 # git branch --unset-upstream
