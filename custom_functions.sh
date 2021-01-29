@@ -1,22 +1,49 @@
-#######color code########
-RED="31m"      # Error message
-GREEN="32m"    # Success message
-YELLOW="33m"   # Warning message
-BLUE="36m"     # Info message
-FUCHSIA="35m"
-
-NO_PROXY_LISTS="localhost,127.0.0.1,.local"
-NO_PROXY_LISTS="${NO_PROXY_LISTS},ip-api.com,ident.me,ifconfig.co,icanhazip.com,ipinfo.io"
+# Colors
+NOCOLOR='\033[0m'
+RED='\033[0;31m'        # Error message
+LIGHTRED='\033[1;31m'
+GREEN='\033[0;32m'      # Success message
+LIGHTGREEN='\033[1;32m'
+ORANGE='\033[0;33m'
+YELLOW='\033[1;33m'     # Warning message
+BLUE='\033[0;34m'       # Info message
+LIGHTBLUE='\033[1;34m'
+PURPLE='\033[0;35m'
+FUCHSIA='\033[0;35m'
+LIGHTPURPLE='\033[1;35m'
+CYAN='\033[0;36m'
+LIGHTCYAN='\033[1;36m'
+DARKGRAY='\033[1;30m'
+LIGHTGRAY='\033[0;37m'
+WHITE='\033[1;37m'
 
 function colorEcho() {
-    local COLOR=$1
-    echo -e "\033[${COLOR}${@:2}\033[0m"
+    if [[ $# > 1 ]]; then
+        local COLOR=$1
+        echo -e "${COLOR}${@:2}${NOCOLOR}"
+    else
+        echo -e "${@:1}${NOCOLOR}"
+    fi
 }
 
 function colorEchoN() {
-    local COLOR=$1
-    echo -e -n "\033[${COLOR}${@:2}\033[0m"
+    if [[ $# > 1 ]]; then
+        local COLOR=$1
+        echo -e -n "${COLOR}${@:2}${NOCOLOR}"
+    else
+        echo -e -n "${@:1}${NOCOLOR}"
+    fi
 }
+
+function colorEchoAllColor() {
+    colorEchoN "${RED}red ${GREEN}green ${YELLOW}yellow ${BLUE}blue ${ORANGE}orange ${PURPLE}purple ${FUCHSIA}fuchsia ${CYAN}cyan "
+    colorEchoN "${LIGHTRED}lightred ${LIGHTGREEN}lightgreen ${LIGHTBLUE}lightblue ${LIGHTPURPLE}lightpurple ${LIGHTCYAN}lightcyan "
+    colorEcho "${LIGHTGRAY}lightgray ${DARKGRAY}darkgray ${WHITE}white"
+}
+
+# no proxy lists
+NO_PROXY_LISTS="localhost,127.0.0.1,.local"
+NO_PROXY_LISTS="${NO_PROXY_LISTS},ip-api.com,ident.me,ifconfig.co,icanhazip.com,ipinfo.io"
 
 # get os type: darwin, windows, linux, bsd, solaris
 function get_os_type() {
@@ -1145,12 +1172,12 @@ function set_global_proxy() {
         set_git_proxy "${SOCKS_ADDRESS}"
         # set special socks5 proxy(curl...)
         set_special_socks5_proxy "${SOCKS_ADDRESS}"
-        colorEcho ${GREEN} " :: Now using ${SOCKS_PROTOCOL}://${SOCKS_ADDRESS} for global socks5 proxy!"
+        colorEcho "${GREEN} :: Now using ${FUCHSIA}${SOCKS_PROTOCOL}://${SOCKS_ADDRESS} ${GREEN}for global socks5 proxy!"
 
         # wget must use http proxy
         if [[ -n "$HTTP_ADDRESS" ]]; then
             set_wget_proxy "${HTTP_ADDRESS}"
-            colorEcho ${GREEN} " :: Now using ${HTTP_ADDRESS} for http proxy(wget etc.)!"
+            colorEcho "${GREEN} :: Now using ${FUCHSIA}${HTTP_ADDRESS} ${GREEN}for http proxy(wget etc.)!"
         else
             set_wget_proxy
         fi
@@ -1263,7 +1290,7 @@ function download_hosts() {
 
     [[ -z "$hostsURL" ]] && return 1
 
-    colorEcho ${BLUE} "Downloading hosts from ${hostsURL}..."
+    colorEcho "${BLUE}Downloading hosts from ${hostsURL}..."
     curl -fSL --connect-timeout 5 --max-time 20 \
         -o "/tmp/hosts" "$hostsURL" || exitStatus=$?
     if [[ "$exitStatus" -eq "0" ]]; then
@@ -1304,7 +1331,7 @@ function Git_Clone_Update() {
     local CurrentDir
 
     if [[ -z "$REPONAME" ]]; then
-        colorEcho ${RED} "Error! Repository name can't empty!"
+        colorEcho "${RED}Error! Repository name can't empty!"
         return 1
     fi
 
@@ -1314,7 +1341,7 @@ function Git_Clone_Update() {
 
     REPOREMOTE="https://${REPOURL}/${REPONAME}.git"
     if [[ -d "${REPODIR}/.git" ]]; then
-        colorEcho ${BLUE} "  Updating ${REPONAME}..."
+        colorEcho "${BLUE}  Updating ${REPONAME}..."
 
         CurrentDir=$(pwd)
 
@@ -1352,7 +1379,7 @@ function Git_Clone_Update() {
 
         cd "${CurrentDir}"
     else
-        colorEcho ${BLUE} "  Cloning ${REPONAME}..."
+        colorEcho "${BLUE}  Cloning ${REPONAME}..."
         BRANCH=$(git ls-remote --symref "${REPOREMOTE}" HEAD \
                     | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
         [[ -z "${BRANCH}" ]] && BRANCH="master"
@@ -1362,7 +1389,7 @@ function Git_Clone_Update() {
             -c fetch.fsck.zeroPaddedFilemode=ignore \
             -c receive.fsck.zeroPaddedFilemode=ignore \
             --depth=1 --branch "${BRANCH}" "${REPOREMOTE}" "${REPODIR}" || {
-                colorEcho ${RED} "  git clone of ${REPONAME} failed!"
+                colorEcho "${RED}  git clone of ${REPONAME} failed!"
                 return 1
             }
     fi
@@ -1457,16 +1484,16 @@ function Install_cron_job() {
     [[ -z "${cronjob}" ]] && return 0
 
     (crontab -l 2>/dev/null || true; echo "${cronjob}") | crontab - || {
-        colorEcho ${RED} "  cron job install failed!"
+        colorEcho "${RED}  cron job install failed!"
         return 1
     }
 
     cronline=$(crontab -l | wc -l)
 
     colorEchoN ${FUCHSIA} "  ${cronjob}"
-    colorEcho ${GREEN} " installed!"
-    colorEcho ${YELLOW} "  How to delete this job:"
-    colorEcho ${FUCHSIA} "  (crontab -l 2>/dev/null | sed \"${cronline}d\") | crontab -"
+    colorEcho "${GREEN} installed!"
+    colorEcho "${YELLOW}  How to delete this job:"
+    colorEcho "${FUCHSIA}  (crontab -l 2>/dev/null | sed \"${cronline}d\") | crontab -"
 }
 
 
@@ -1514,9 +1541,9 @@ EOF
 
     sudo systemctl enable "$service_name" && sudo systemctl restart "$service_name"
     if [[ $(systemctl is-enabled "$service_name" 2>/dev/null) ]]; then
-        colorEcho ${GREEN} "  systemd service ${service_name} installed!"
+        colorEcho "${GREEN}  systemd service ${service_name} installed!"
     else
-        colorEcho ${RED} "   systemd service ${service_name} install failed!"
+        colorEcho "${RED}   systemd service ${service_name} install failed!"
     fi
 }
 
@@ -1535,7 +1562,7 @@ function Download_Install_Subconverter_Clash() {
             rm -f "/tmp/subconverter_clash.zip" && \
             Install_systemd_Service "subconverter" "/srv/subconverter/subconverter" && \
             Install_systemd_Service "clash" "/srv/clash/clash -d /srv/clash" && \
-            colorEcho ${GREEN} "Subconverter & Clash installed!"
+            colorEcho "${GREEN}Subconverter & Clash installed!"
     fi
 }
 
@@ -1574,7 +1601,7 @@ function get_weather_custom() {
     wttr_weather=$(curl -fsL --connect-timeout 3 --max-time 10 \
         --noproxy '*' -H "Accept-Language: ${wttr_lang}" --compressed \
         "${wttr_url}")
-    [[ $? -eq 0 ]] && colorEcho ${YELLOW} "${wttr_weather}"
+    [[ $? -eq 0 ]] && colorEcho "${YELLOW}${wttr_weather}"
 }
 
 # Bash Function To Rename Files Without Typing Full Name Twice
@@ -1618,15 +1645,15 @@ function get_zone_time() {
     DISPLAY_FORMAT="%F %T %Z %z"
 
     UTC_TIME=$(date -u -d "$CURRENT_UTC_TIME" +"$DISPLAY_FORMAT")
-    colorEcho ${YELLOW} "UTC Time: ${UTC_TIME}"
+    colorEcho "${YELLOW}UTC Time: ${UTC_TIME}"
 
     LOCAL_TIME=$(date -d "$CURRENT_UTC_TIME" +"$DISPLAY_FORMAT")
-    colorEcho ${FUCHSIA} "Local Time: ${LOCAL_TIME}"
+    colorEcho "${FUCHSIA}Local Time: ${LOCAL_TIME}"
 
     ZONE_LIST=($(echo ${TZONES}))
     for tz in ${ZONE_LIST[@]}; do
         ZONE_TIME=$(TZ="$tz" date -d "$CURRENT_UTC_TIME" +"$DISPLAY_FORMAT")
-        colorEcho ${BLUE} "${tz}: ${ZONE_TIME}"
+        colorEcho "${BLUE}${tz}: ${ZONE_TIME}"
     done
 }
 

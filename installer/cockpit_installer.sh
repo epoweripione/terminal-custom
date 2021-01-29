@@ -20,7 +20,7 @@ fi
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/getting_started_with_cockpit/index
 
 # Setting up the primary Cockpit server
-colorEcho ${BLUE} "Installing Cockpit..."
+colorEcho "${BLUE}Installing ${FUCHSIA}Cockpit${BLUE}..."
 if check_release_package_manager release centos; then
     sudo yum install -y -q cockpit cockpit-docker
     # sudo yum install -y -q cockpit-doc cockpit-machines

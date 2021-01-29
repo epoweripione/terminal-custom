@@ -24,7 +24,7 @@ if [[ ! -x "$(command -v pacaptr)" ]]; then
 fi
 
 
-colorEcho ${BLUE} "Installing vnstat..."
+colorEcho "${BLUE}Installing ${FUCHSIA}vnstat${BLUE}..."
 if pacman -Si sqlite-devel >/dev/null 2>&1; then
     pacman --noconfirm -S sqlite sqlite-devel
 else

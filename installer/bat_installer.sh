@@ -25,7 +25,7 @@ fi
 # https://github.com/sharkdp/bat
 APP_INSTALL_NAME="bat"
 
-colorEcho ${BLUE} "Checking latest version for ${APP_INSTALL_NAME}..."
+colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
 CHECK_URL="https://api.github.com/repos/sharkdp/bat/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
@@ -84,7 +84,7 @@ fi
 
 
 if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
-    colorEcho ${BLUE} "  Installing ${APP_INSTALL_NAME} ${REMOTE_VERSION}..."
+    colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
     if [[ -s "/usr/bin/bat" ]]; then
         sudo rm -f "/usr/bin/bat"
     fi

@@ -15,7 +15,7 @@ fi
 
 # jabba & JDK
 ## Install jabba
-colorEcho ${BLUE} "Installing jabba..."
+colorEcho "${BLUE}Installing ${FUCHSIA}jabba${BLUE}..."
 if [[ ! -d "$HOME/.jabba" ]]; then
     curl -fsSL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
         . ~/.jabba/jabba.sh && \
@@ -31,7 +31,7 @@ if [[ -d "$HOME/.jabba" ]]; then
 fi
 
 ## OpenJDK
-colorEcho ${BLUE} "Installing JDK..."
+colorEcho "${BLUE}Installing ${FUCHSIA}JDK${BLUE}..."
 # apt install -y default-jdk default-jre
 # jabba install openjdk@1.11.0-2 && jabba alias default openjdk@1.11.0-2
 jabba install zulu@1.8 && jabba alias default zulu@1.8
@@ -59,7 +59,7 @@ jabba install zulu@1.11.0-5
 
 ## Oracle jdk 8
 ## http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-# colorEcho ${BLUE} "Installing Oracle JDK 8..."
+# colorEcho "${BLUE}Installing ${FUCHSIA}Oracle JDK 8${BLUE}..."
 # mkdir -p /usr/lib/jvm && cd /usr/lib/jvm && \
 #     wget --no-check-certificate --no-cookies \
 #         --header "Cookie: oraclelicense=accept-securebackup-cookie" \
@@ -70,7 +70,7 @@ jabba install zulu@1.11.0-5
 
 ## Oracle jdk 11
 ## https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html
-# colorEcho ${BLUE} "Installing Oracle JDK 11..."
+# colorEcho "${BLUE}Installing ${FUCHSIA}Oracle JDK 11${BLUE}..."
 # mkdir -p /usr/lib/jvm && cd /usr/lib/jvm && \
 #     wget --no-check-certificate --no-cookies \
 #         --header "Cookie: oraclelicense=accept-securebackup-cookie" \

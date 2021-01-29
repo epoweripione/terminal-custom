@@ -1,15 +1,31 @@
 #!/usr/bin/env bash
 
-#######color code########
-# https://misc.flogisoft.com/bash/tip_colors_and_formatting
-RED="31m"      # Error message
-GREEN="32m"    # Success message
-YELLOW="33m"   # Warning message
-BLUE="36m"     # Info message
+# Colors
+NOCOLOR='\033[0m'
+RED='\033[0;31m'        # Error message
+LIGHTRED='\033[1;31m'
+GREEN='\033[0;32m'      # Success message
+LIGHTGREEN='\033[1;32m'
+ORANGE='\033[0;33m'
+YELLOW='\033[1;33m'     # Warning message
+BLUE='\033[0;34m'       # Info message
+LIGHTBLUE='\033[1;34m'
+PURPLE='\033[0;35m'
+FUCHSIA='\033[0;35m'
+LIGHTPURPLE='\033[1;35m'
+CYAN='\033[0;36m'
+LIGHTCYAN='\033[1;36m'
+DARKGRAY='\033[1;30m'
+LIGHTGRAY='\033[0;37m'
+WHITE='\033[1;37m'
 
-colorEcho() {
-    COLOR=$1
-    echo -e "\033[${COLOR}${@:2}\033[0m"
+function colorEcho() {
+    if [[ $# > 1 ]]; then
+        local COLOR=$1
+        echo -e "${COLOR}${@:2}${NOCOLOR}"
+    else
+        echo -e "${@:1}${NOCOLOR}"
+    fi
 }
 
 # PageSpeed Insights
@@ -81,7 +97,7 @@ while :; do echo
         if [[ -z ${CHOICE} ]]; then
             exit 0
         fi
-		colorEcho ${RED} "Input error, please choose test from above!"
+		colorEcho "${RED}Input error, please choose test from above!"
 	else
         echo -e "\n"
 		break
@@ -114,6 +130,6 @@ case "$CHOICE" in
         UnixBench
         ;;
     *)
-        colorEcho ${YELLOW} "Wrong choice!"  # unknown option
+        colorEcho "${YELLOW}Wrong choice!"  # unknown option
         ;;
 esac

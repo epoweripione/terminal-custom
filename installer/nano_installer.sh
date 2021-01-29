@@ -20,7 +20,7 @@ fi
 
 # https://www.nano-editor.org/dist/latest/faq.html
 # http://mybookworld.wikidot.com/compile-nano-from-source
-colorEcho ${BLUE} "Checking latest version for nano..."
+colorEcho "${BLUE}Checking latest version for ${FUCHSIA}nano${BLUE}..."
 if [[ -x "$(command -v pacman)" ]]; then
     # Remove old version nano
     if pacman -Qi nano >/dev/null 2>&1; then
@@ -40,7 +40,7 @@ if [[ -x "$(command -v pacman)" ]]; then
         for TargetPackage in "${PackagesList[@]}"; do
             if pacman -Si "$TargetPackage" >/dev/null 2>&1; then
                 if ! pacman -Qi "$TargetPackage" >/dev/null 2>&1; then
-                    colorEcho ${BLUE} "  Installing $TargetPackage..."
+                    colorEcho "${BLUE}  Installing $TargetPackage..."
                     sudo pacman --noconfirm -S "$TargetPackage"
                 fi
             fi
@@ -74,14 +74,14 @@ REMOTE_VERSION=$(curl -fsL -N https://www.nano-editor.org/download.php \
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    colorEcho ${BLUE} "  Installing ${APP_INSTALL_NAME} ${REMOTE_VERSION} from source..."
+    colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE} from source..."
     DOWNLOAD_URL="https://www.nano-editor.org/dist/v${DIST_VERSION}/nano-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/nano.tar.gz" "$DOWNLOAD_URL" && \
         tar -xzPf "${WORKDIR}/nano.tar.gz" -C "${WORKDIR}" && \
         mv ${WORKDIR}/nano-* "${WORKDIR}/nano"
 
     if [[ -d "${WORKDIR}/nano" ]]; then
-        colorEcho ${BLUE} "  Compiling nano..."
+        colorEcho "${BLUE}  Compiling nano..."
         cd "${WORKDIR}/nano" && \
         ./configure --prefix=/usr --enable-utf8 >/dev/null && \
         make >/dev/null && \

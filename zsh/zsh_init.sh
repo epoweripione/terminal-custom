@@ -1,14 +1,31 @@
 #!/usr/bin/env bash
 
-#######color code########
-RED="31m"      # Error message
-GREEN="32m"    # Success message
-YELLOW="33m"   # Warning message
-BLUE="36m"     # Info message
+# Colors
+NOCOLOR='\033[0m'
+RED='\033[0;31m'        # Error message
+LIGHTRED='\033[1;31m'
+GREEN='\033[0;32m'      # Success message
+LIGHTGREEN='\033[1;32m'
+ORANGE='\033[0;33m'
+YELLOW='\033[1;33m'     # Warning message
+BLUE='\033[0;34m'       # Info message
+LIGHTBLUE='\033[1;34m'
+PURPLE='\033[0;35m'
+FUCHSIA='\033[0;35m'
+LIGHTPURPLE='\033[1;35m'
+CYAN='\033[0;36m'
+LIGHTCYAN='\033[1;36m'
+DARKGRAY='\033[1;30m'
+LIGHTGRAY='\033[0;37m'
+WHITE='\033[1;37m'
 
-colorEcho() {
-    COLOR=$1
-    echo -e "\033[${COLOR}${@:2}\033[0m"
+function colorEcho() {
+    if [[ $# > 1 ]]; then
+        local COLOR=$1
+        echo -e "${COLOR}${@:2}${NOCOLOR}"
+    else
+        echo -e "${@:1}${NOCOLOR}"
+    fi
 }
 
 # Determine which desktop environment is installed from the shell
@@ -21,7 +38,7 @@ fi
 
 
 # custom configuration
-colorEcho ${BLUE} "custom configuration..."
+colorEcho "${BLUE}custom configuration..."
 if [[ ! $(grep "zsh_custom_conf.sh" $HOME/.zshrc) ]]; then
     echo -e "\n# Custom configuration\nsource ~/terminal-custom/zsh/zsh_custom_conf.sh" >> $HOME/.zshrc
 fi
@@ -41,7 +58,7 @@ sed -i "s/[#]*[ ]*DISABLE_AUTO_UPDATE.*/DISABLE_AUTO_UPDATE=\"true\"/" $HOME/.zs
 
 
 # custom theme
-colorEcho ${BLUE} "custom theme..."
+colorEcho "${BLUE}custom theme..."
 cp "~/terminal-custom/zsh/zsh_custom_env.sh" $HOME/.zshenv
 
 theme="ys"
@@ -68,4 +85,4 @@ fi
 # fi
 
 
-colorEcho ${GREEN} "ZSH init done, please restart ZSH!"
+colorEcho "${GREEN}ZSH init done, please restart ZSH!"

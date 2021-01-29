@@ -27,7 +27,7 @@ fi
 # proxychains
 if [[ -x "$(command -v proxychains4)" ]]; then
     if [[ -d "$HOME/proxychains-ng" ]]; then
-        colorEcho ${BLUE} "Updating proxychains-ng..."
+        colorEcho "${BLUE}Updating ${FUCHSIA}proxychains-ng${BLUE}..."
 
         Git_Clone_Update "rofl0r/proxychains-ng" "$HOME/proxychains-ng"
 
@@ -43,7 +43,7 @@ if [[ -x "$(command -v proxychains4)" ]]; then
         fi
     fi
 else
-    colorEcho ${BLUE} "Installing proxychains-ng..."
+    colorEcho "${BLUE}Installing ${FUCHSIA}proxychains-ng${BLUE}..."
     if [[ -x "$(command -v pacman)" ]]; then
         if pacman -Si proxychains4 >/dev/null 2>&1; then
             sudo pacman --noconfirm -S proxychains4

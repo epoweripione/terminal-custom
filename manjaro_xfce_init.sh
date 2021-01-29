@@ -131,13 +131,13 @@ fi
 
 
 # pre-requisite packages
-colorEcho ${BLUE} "Installing pre-requisite packages..."
+colorEcho "${BLUE}Installing ${FUCHSIA}pre-requisite packages${BLUE}..."
 sudo pacman --noconfirm -S git curl wget unzip
 
 
 # iTerm2-Color-Schemes
 # https://github.com/mbadolato/iTerm2-Color-Schemes
-colorEcho ${BLUE} "Installing iTerm2-Color-Schemes..."
+colorEcho "${BLUE}Installing ${FUCHSIA}iTerm2-Color-Schemes${BLUE}..."
 git clone --depth 1 https://github.com/mbadolato/iTerm2-Color-Schemes $HOME/iTerm2-Color-Schemes && \
     mkdir -p $HOME/.local/share/xfce4/terminal/colorschemes && \
     cp $HOME/iTerm2-Color-Schemes/xfce4terminal/colorschemes/*.theme $HOME/.local/share/xfce4/terminal/colorschemes
@@ -152,7 +152,7 @@ git clone --depth 1 https://github.com/mbadolato/iTerm2-Color-Schemes $HOME/iTer
 # yay -Y --gendb                  Generate development package database used for devel update.
 # yay -Syu --devel --timeupdate   Perform system upgrade, but also check for development package updates and 
 #                                     use PKGBUILD modification time (not version number) to determine update.
-colorEcho ${BLUE} "Installing yay..."
+colorEcho "${BLUE}Installing ${FUCHSIA}yay${BLUE}..."
 if [[ -d $HOME/yay ]]; then
     cd $HOME/yay && git pull && makepkg -si
 else
@@ -491,6 +491,18 @@ sudo pacman --noconfirm -S compton feh inkscape mate-power-manager mpd ncmpcpp p
 # # i3exit i3status-manjaro manjaro-i3-settings manjaro-i3-settings-bldbk
 # sudo pacman --noconfirm -S i3-manjaro
 
+# # DWM
+# # https://wiki.archlinux.org/index.php/Dwm_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)
+# # https://github.com/GoDzM4TT3O/dotfiles
+# git clone --recurse-submodules https://github.com/GoDzM4TT3O/dotfiles && \
+#     cd dotfiles && \
+#     cp -r .{config,vim*,z*,x*,X*,alias*,p10k.zsh,local} $HOME && \
+#     cp -r dwm $HOME
+
+# # Rofi: A window switcher, Application launcher and dmenu replacement
+# # https://github.com/davatorium/rofi
+# # https://github.com/adi1090x/rofi
+
 # # powerline: Statusline plugin for vim, and provides statuslines and prompts for several other applications, 
 # # including zsh, bash, tmux, IPython, Awesome, i3 and Qtile
 # sudo pacman --noconfirm -S powerline
@@ -604,4 +616,4 @@ yay -Yc
 
 
 cd ${CURRENT_DIR}
-colorEcho ${GREEN} "Done!"
+colorEcho "${GREEN}Done!"

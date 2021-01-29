@@ -17,12 +17,12 @@ set_proxy_mirrors_env
 
 
 if [[ ! -x "$(command -v npm)" ]]; then
-    colorEcho ${RED} "npm is not installed! Please install node & npm first!"
+    colorEcho "${RED}npm is not installed! Please install node & npm first!"
     exit 0
 fi
 
 # npm config
-colorEcho ${BLUE} "Setting npm config..."
+colorEcho "${BLUE}Setting npm config..."
 npm config set user 0
 npm config set unsafe-perm true
 
@@ -33,7 +33,7 @@ export PATH=$PATH:$HOME/.npm-global/bin
 
 # Change npm registry to taobao
 if [[ -z "$NPM_INSTALLER_NOT_USE_MIRROR" ]]; then
-    colorEcho ${BLUE} "Change npm registry to taobao..."
+    colorEcho "${BLUE}Change npm registry to taobao..."
     npm set registry https://registry.npm.taobao.org
 
     npm set disturl https://npm.taobao.org/dist # node-gyp
@@ -51,4 +51,4 @@ fi
 # npm config ls -l
 npm config list
 
-colorEcho ${GREEN} "Done!"
+colorEcho "${GREEN}Done!"

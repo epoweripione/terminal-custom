@@ -59,12 +59,12 @@ fi
 
 # https://termux.com/
 if [[ -z "$PREFIX" ]]; then
-    colorEcho ${RED} "This script only for Termux!"
+    colorEcho "${RED}This script only for Termux!"
     exit 0
 fi
 
 # extra keys rows
-colorEcho ${BLUE} "Setting termux.properties..."
+colorEcho "${BLUE}Setting termux.properties..."
 mkdir -p "$HOME/.termux"
 tee "$HOME/.termux/termux.properties" >/dev/null <<-'EOF'
 extra-keys = [ \
@@ -77,11 +77,11 @@ EOF
 # termux-reload-settings
 
 # https://wiki.termux.com/wiki/Termux:API
-colorEcho ${BLUE} "Installing termux-api..."
+colorEcho "${BLUE}Installing ${FUCHSIA}termux-api${BLUE}..."
 pkg i -y termux-api
 
 # nanorc
-colorEcho ${BLUE} "Setting nanorc..."
+colorEcho "${BLUE}Setting nanorc..."
 git clone --depth=1 "https://github.com/scopatz/nanorc" "$HOME/.local/share/nano"
 tee "$HOME/.nanorc" >/dev/null <<-EOF
 set titlecolor brightwhite,red
@@ -96,7 +96,7 @@ EOF
 
 # frp
 if [[ ! -d "$HOME/frp" ]]; then
-    colorEcho ${BLUE} "Installing frp..."
+    colorEcho "${BLUE}Installing ${FUCHSIA}frp${BLUE}..."
     CHECK_URL="https://api.github.com/repos/fatedier/frp/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
@@ -114,12 +114,12 @@ fi
 
 # zsh
 if [[ -x "$(command -v zsh)" ]]; then
-    colorEcho ${BLUE} "Installing zsh & oh-my-zsh..."
+    colorEcho "${BLUE}Installing ${FUCHSIA}zsh & oh-my-zsh${BLUE}..."
     sh -c "$(curl -fsSL https://github.com/Cabbagec/termux-ohmyzsh/raw/master/install.sh)"
 fi
 
 if [[ -s "$HOME/.zshrc" ]]; then
-    colorEcho ${BLUE} "Setting zsh..."
+    colorEcho "${BLUE}Setting zsh..."
     ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 
     # ys theme
@@ -175,12 +175,12 @@ if [[ -s "$HOME/.zshrc" ]]; then
 fi
 
 ## webui-aria2
-# colorEcho ${BLUE} "Installing webui-aria2..."
+# colorEcho "${BLUE}Installing ${FUCHSIA}webui-aria2${BLUE}..."
 # git clone https://github.com/ziahamza/webui-aria2 "$HOME/webui-aria2" && \
 #     cd "$HOME/webui-aria2" && node node-server.js
 
 # sshd auto start
-colorEcho ${BLUE} "Setting sshd start with zsh..."
+colorEcho "${BLUE}Setting sshd start with zsh..."
 echo "sshd" >> "$HOME/.zshrc"
 
 cd "${CURRENT_DIR}"

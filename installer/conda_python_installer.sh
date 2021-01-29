@@ -51,7 +51,7 @@ fi
 
 
 # Miniconda
-colorEcho ${BLUE} "Installing Miniconda3..."
+colorEcho "${BLUE}Installing ${FUCHSIA}Miniconda3${BLUE}..."
 if [[ ! -d "$HOME/miniconda3" ]]; then
     wget -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
         bash ./Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3

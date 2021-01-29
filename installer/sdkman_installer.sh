@@ -17,12 +17,12 @@ fi
 ## https://sdkman.io/
 ## To get a listing of available Candidates: sdk list
 ## To see what is currently in use for all Candidates: sdk current
-colorEcho ${BLUE} "Installing sdkman..."
+colorEcho "${BLUE}Installing ${FUCHSIA}sdkman${BLUE}..."
 if [[ ! -d "$HOME/.sdkman" ]]; then
     curl -fsSL "https://get.sdkman.io" | bash
 fi
 
 if [[ "$(command -v sdk)" ]]; then
-    colorEcho ${BLUE} "Installing maven gradle kotlin using sdkman..."
+    colorEcho "${BLUE}Installing ${FUCHSIA}maven gradle kotlin ${BLUE}using sdkman..."
     sdk install maven && sdk install gradle && sdk install kotlin
 fi

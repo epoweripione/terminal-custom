@@ -23,12 +23,12 @@ if [[ ! -e /etc/apt/sources.list.d/php.list ]]; then
     echo "deb https://mirror.xtom.com.hk/sury/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
 fi
 
-colorEcho ${BLUE} "Updating repositories..."
+colorEcho "${BLUE}Updating ${FUCHSIA}repositories${BLUE}..."
 apt update
 
 
 ## Install dev packages
-colorEcho ${BLUE} "Install dev packages..."
+colorEcho "${BLUE}Installing ${FUCHSIA}dev packages${BLUE}..."
 apt install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libicu-dev \
     libxml2-dev libxslt-dev libbz2-dev libpspell-dev aspell-en \
     libcurl3 libcurl4-openssl-dev libssl-dev libc-client-dev libkrb5-dev \
@@ -42,13 +42,13 @@ PHP_VERSION=${1:-7.4}
 if [[ -x "$(command -v php)" ]]; then
     PHP_VERSION_OLD=$(php --version | head -n 1 | cut -d " " -f 2 | cut -c 1-3)
     if [[ "$PHP_VERSION" != "$PHP_VERSION_OLD" ]]; then
-        colorEcho ${BLUE} "Removing installed php ${PHP_VERSION_OLD}..."
+        colorEcho "${BLUE}Removing installed php ${PHP_VERSION_OLD}..."
         apt remove -y --purge "php${PHP_VERSION_OLD}*" && apt autoremove -y
         # rm -rf /usr/lib/php/${PHP_VERSION_OLD} /usr/include/php/${PHP_VERSION_OLD} /etc/php/${PHP_VERSION_OLD}
     fi
 fi
 
-colorEcho ${BLUE} "Installing PHP ${PHP_VERSION}..."
+colorEcho "${BLUE}Installing ${FUCHSIA}PHP ${YELLOW}${PHP_VERSION}${BLUE}..."
 apt install -y pkg-config php${PHP_VERSION} php${PHP_VERSION}-fpm php${PHP_VERSION}-curl php${PHP_VERSION}-dev \
     php${PHP_VERSION}-gd php${PHP_VERSION}-mbstring php${PHP_VERSION}-mysql php${PHP_VERSION}-pgsql \
     php${PHP_VERSION}-sqlite3 php${PHP_VERSION}-xml php${PHP_VERSION}-xsl php${PHP_VERSION}-zip
@@ -71,7 +71,7 @@ echo 'expose_php = off' > /etc/php/${PHP_VERSION}/cli/conf.d/hide-header-version
 
 
 ## Install composer
-colorEcho ${BLUE} "Installing composer..."
+colorEcho "${BLUE}Installing ${FUCHSIA}composer${BLUE}..."
 export COMPOSER_ALLOW_SUPERUSER=1 && \
     export COMPOSER_HOME=/usr/local/share/composer && \
     mkdir -p /usr/local/share/composer && \
@@ -83,13 +83,13 @@ export COMPOSER_ALLOW_SUPERUSER=1 && \
 composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 ### Install composer packages
-colorEcho ${BLUE} "Installing composer packages..."
+colorEcho "${BLUE}Installing ${FUCHSIA}composer packages${BLUE}..."
 composer g require "hirak/prestissimo" && \
     composer g require friendsofphp/php-cs-fixer && \
     composer g require --dev phpunit/phpunit ^8 && \
     composer g require psy/psysh:@stable
 
-colorEcho ${BLUE} "Downloading psysh chinese php_manual..."
+colorEcho "${BLUE}Downloading ${FUCHSIA}psysh chinese php_manual${BLUE}..."
 mkdir -p $HOME/.local/share/psysh/ && \
     curl -fSL http://psysh.org/manual/zh/php_manual.sqlite -o $HOME/php_manual.sqlite && \
     mv -f $HOME/php_manual.sqlite $HOME/.local/share/psysh/php_manual.sqlite
@@ -97,7 +97,7 @@ mkdir -p $HOME/.local/share/psysh/ && \
 
 ## pear & pecl
 if [[ -x "$(command -v pecl)" ]]; then
-    colorEcho ${BLUE} "Fix for pecl..."
+    colorEcho "${BLUE}Fix for pecl..."
     pecl update-channels && rm -rf /tmp/pear $HOME/.pearrc
 
     ### fix PHP Fatal error: Cannot use result of built-in function in write context in /usr/share/php/Archive/Tar.php on line 639

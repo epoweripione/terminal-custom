@@ -40,13 +40,13 @@ set_proxy_mirrors_env
 [[ $(uname -r) =~ "Microsoft" ]] && WSL_VERSION=1
 [[ $(uname -r) =~ "microsoft" ]] && WSL_VERSION=2
 if [[ -z "$WSL_VERSION" ]]; then
-    colorEcho ${RED} "Please run this script in WSL(Windows Subsystem for Linux)!"
+    colorEcho "${RED}Please run this script in WSL(Windows Subsystem for Linux)!"
     exit 0
 fi
 
 
 # Custom WSL settings
-colorEcho ${BLUE} "Custom WSL settings..."
+colorEcho "${BLUE}Custom WSL settings..."
 # make drives mounted at /c or /e instead of /mnt/c and /mnt/e.
 if [[ ! $(grep "automount" /etc/wsl.conf) ]]; then
     sudo tee /etc/wsl.conf >/dev/null <<-'EOF'
@@ -62,21 +62,21 @@ fi
 # Install packages
 # Use USTC mirror & Install pre-requisite packages
 if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
-    colorEcho ${BLUE} "Setting apt mirror..."
+    colorEcho "${BLUE}Setting apt mirror..."
     sudo sed -i \
         -e 's|ftp.debian.org|mirrors.tuna.tsinghua.edu.cn|g' \
         -e 's|deb.debian.org|mirrors.tuna.tsinghua.edu.cn|g' \
         -e's|security.debian.org|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list
 fi
 
-colorEcho ${BLUE} "Installing pre-requisite packages..."
+colorEcho "${BLUE}Installing ${FUCHSIA}pre-requisite packages${BLUE}..."
 sudo apt update && \
     sudo apt install -y apt-transport-https apt-utils ca-certificates \
         lsb-release software-properties-common curl wget
 
 
 # Add custom repositories
-colorEcho ${BLUE} "Add custom repositories..."
+colorEcho "${BLUE}Add ${FUCHSIA}custom repositories${BLUE}..."
 if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
     # Use https mirror
     sudo sed -i 's|http://mirrors.tuna.tsinghua.edu.cn|https://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list
@@ -114,18 +114,18 @@ fi
 
 
 # Update all repositories & Upgrade
-colorEcho ${BLUE} "Update all repositories & Upgrade..."
+colorEcho "${BLUE}Updating ${FUCHSIA}all repositories & Upgrade${BLUE}..."
 sudo apt update && sudo apt upgrade -y
 
 
 # Install useful packages
-colorEcho ${BLUE} "Install useful packages..."
+colorEcho "${BLUE}Installing ${FUCHSIA}useful packages${BLUE}..."
 sudo apt install -y binutils build-essential di dnsutils g++ gcc \
     git htop iproute2 make net-tools p7zip psmisc tree unzip zip
 
 
 # Enable broadcast WINS
-colorEcho ${BLUE} "Enable broadcast WINS..."
+colorEcho "${BLUE}Enable broadcast ${FUCHSIA}WINS${BLUE}..."
 sudo apt install -y libnss-winbind
 
 if [[ ! $(grep "wins" /etc/nsswitch.conf) ]]; then
@@ -140,18 +140,18 @@ sudo chmod u+s /bin/ping
 
 ## wslu
 ## https://github.com/wslutilities/wslu
-# colorEcho ${BLUE} "Install git wslu..."
+# colorEcho "${BLUE}Install git wslu..."
 # curl -fsSL "https://packagecloud.io/install/repositories/whitewaterfoundry/wslu/script.deb.sh" \
 #         | sudo bash && \
 #     sudo apt install -y wslu
 
-colorEcho ${BLUE} "Install git lfs..."
+colorEcho "${BLUE}Install git lfs${BLUE}..."
 sudo apt install -y git-lfs && git lfs install
 
-# colorEcho ${BLUE} "Installing .NET Core SDK..."
+# colorEcho "${BLUE}Installing ${FUCHSIA}.NET Core SDK${BLUE}..."
 # sudo apt install -y dotnet-sdk-3.1
 
-# colorEcho ${BLUE} "Installing yarn..."
+# colorEcho "${BLUE}Installing ${FUCHSIA}yarn${BLUE}..."
 # sudo apt install -y yarn --no-install-recommends
 
 
@@ -184,4 +184,4 @@ fi
     echo "%sudo ALL=NOPASSWD:$(which pacapt)" | sudo tee -a /etc/sudoers >/dev/null
 
 
-colorEcho ${GREEN} "WSL init done, please restart WSL!"
+colorEcho "${GREEN}WSL init done, please restart WSL!"

@@ -17,7 +17,7 @@ set_proxy_mirrors_env
 
 
 if [[ ! -x "$(command -v yarn)" ]]; then
-    colorEcho ${RED} "yarn is not installed! Please install yarn first!"
+    colorEcho "${RED}yarn is not installed! Please install yarn first!"
     exit 0
 fi
 
@@ -26,7 +26,7 @@ yarn config set emoji true
 
 # if [[ -x "$(command -v npm)" ]]; then
 #     # Change npm registry to taobao
-#     colorEcho ${BLUE} "Change npm registry to taobao..."
+#     colorEcho "${BLUE}Change npm registry to ${FUCHSIA}taobao${BLUE}..."
 #     npm set registry https://registry.npm.taobao.org
 
 #     npm set disturl https://npm.taobao.org/dist # node-gyp
@@ -41,7 +41,7 @@ yarn config set emoji true
 # fi
 
 # Change yarn registry to taobao
-# colorEcho ${BLUE} "Change yarn registry to taobao..."
+# colorEcho "${BLUE}Change yarn registry to ${FUCHSIA}taobao${BLUE}..."
 # yarn config set registry https://registry.npm.taobao.org
 
 # yarn config set disturl https://npm.taobao.org/dist # node-gyp
@@ -62,67 +62,67 @@ yarn config set emoji true
 # By default that will be: ~/.config/yarn/global
 
 # Install global packages with binaries
-colorEcho ${BLUE} "Installing es-checker eslint tslint jslint jshint standard..."
+colorEcho "${BLUE}Installing ${FUCHSIA}es-checker eslint tslint jslint jshint standard${BLUE}..."
 yarn global add es-checker eslint tslint jslint jshint standard
 
-colorEcho ${BLUE} "Installing babel-cli webpack traceur..."
+colorEcho "${BLUE}Installing ${FUCHSIA}babel-cli webpack traceur${BLUE}..."
 yarn global add @babel/core @babel/cli webpack webpack-cli traceur
 
-colorEcho ${BLUE} "Installing typescript..."
+colorEcho "${BLUE}Installing ${FUCHSIA}typescript${BLUE}..."
 yarn global add typescript
 
-colorEcho ${BLUE} "Installing angular/cli..."
+colorEcho "${BLUE}Installing ${FUCHSIA}angular/cli${BLUE}..."
 yarn global add @angular/cli
 
-colorEcho ${BLUE} "Installing vue/cli..."
+colorEcho "${BLUE}Installing ${FUCHSIA}vue/cli${BLUE}..."
 yarn global add @vue/cli
 
-colorEcho ${BLUE} "Installing quasar/cli..."
+colorEcho "${BLUE}Installing ${FUCHSIA}quasar/cli${BLUE}..."
 yarn global add @quasar/cli
 
-colorEcho ${BLUE} "Installing storybook/cli..."
+colorEcho "${BLUE}Installing ${FUCHSIA}storybook/cli${BLUE}..."
 yarn global add react react-dom
 yarn global add @storybook/cli
 
-colorEcho ${BLUE} "Installing parcel-bundler..."
+colorEcho "${BLUE}Installing ${FUCHSIA}parcel-bundler${BLUE}..."
 yarn global add parcel-bundler
 
-colorEcho ${BLUE} "Installing cordova ionic..."
+colorEcho "${BLUE}Installing ${FUCHSIA}cordova ionic${BLUE}..."
 yarn global add cordova ionic
 
-colorEcho ${BLUE} "Installing electron..."
+colorEcho "${BLUE}Installing ${FUCHSIA}electron${BLUE}..."
 yarn global add electron
 
 # https://ice.work/iceworks
-colorEcho ${BLUE} "Installing iceworks..."
+colorEcho "${BLUE}Installing ${FUCHSIA}iceworks${BLUE}..."
 yarn global add iceworks
 
-colorEcho ${BLUE} "Installing express-generator..."
+colorEcho "${BLUE}Installing ${FUCHSIA}express-generator${BLUE}..."
 yarn global add express-generator
 
-colorEcho ${BLUE} "Installing tldr..."
+colorEcho "${BLUE}Installing ${FUCHSIA}tldr${BLUE}..."
 yarn global add tldr
 
 # https://github.com/cnwhy/lib-qqwry/
-colorEcho ${BLUE} "Installing lib-qqwry..."
+colorEcho "${BLUE}Installing ${FUCHSIA}lib-qqwry${BLUE}..."
 yarn global add lib-qqwry
 
-# colorEcho ${BLUE} "Installing arch-wiki-man..."
+# colorEcho "${BLUE}Installing ${FUCHSIA}arch-wiki-man${BLUE}..."
 # # arch-wiki-man
 # ## https://github.com/greg-js/arch-wiki-man
 # yarn global add arch-wiki-man
 
 # Install global packages without binaries
-colorEcho ${BLUE} "Installing puppeteer..."
+colorEcho "${BLUE}Installing ${FUCHSIA}puppeteer${BLUE}..."
 yarn global add puppeteer
 
-# colorEcho ${BLUE} "Installing jquery popper.js bootstrap..."
+# colorEcho "${BLUE}Installing ${FUCHSIA}jquery popper.js bootstrap${BLUE}..."
 # yarn global add jquery popper.js bootstrap
 
-# colorEcho ${BLUE} "Installing mdbootstrap..."
+# colorEcho "${BLUE}Installing ${FUCHSIA}mdbootstrap${BLUE}..."
 # yarn global add mdbootstrap
 
-# colorEcho ${BLUE} "Installing echarts echarts-gl..."
+# colorEcho "${BLUE}Installing ${FUCHSIA}echarts echarts-gl${BLUE}..."
 # yarn global add echarts echarts-gl
 
 # Clean yarn cache
@@ -130,7 +130,7 @@ yarn global add puppeteer
 # yarn cache verify
 
 # List Installed packages
-colorEcho ${BLUE} "List Installed packages..."
+colorEcho "${BLUE}List Installed packages..."
 yarn global list
 
-colorEcho ${GREEN} "Install yarn package finished!"
+colorEcho "${GREEN}Install yarn package finished!"

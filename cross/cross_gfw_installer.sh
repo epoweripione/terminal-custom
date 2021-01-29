@@ -71,7 +71,7 @@ fi
 #     echo $TZ | sudo tee /etc/timezone >/dev/null
 
 # if [[ ! -x "$(command -v v2ray-util)" ]]; then
-#     colorEcho ${BLUE} "Installing v2ray-util..."
+#     colorEcho "${BLUE}Installing ${FUCHSIA}v2ray-util${BLUE}..."
 
 #     source <(curl -fsSL https://multi.netlify.com/v2ray.sh) --zh
 #     # source <(curl -fsSL https://git.io/fNgqx) --zh

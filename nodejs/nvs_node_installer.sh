@@ -16,7 +16,7 @@ fi
 set_proxy_mirrors_env
 
 
-colorEcho ${BLUE} "Installing nvs & nodejs..."
+colorEcho "${BLUE}Installing ${FUCHSIA}nvs & nodejs${BLUE}..."
 ## Install nvs
 # https://github.com/jasongin/nvs
 if [[ ! -d "$HOME/.nvs" ]]; then
@@ -41,10 +41,10 @@ fi
 ## Install nodejs
 if type 'nvs' 2>/dev/null | grep -q 'function'; then
     if [[ ! "$(command -v node)" ]]; then
-        colorEcho ${BLUE} "Installing node LTS..."
+        colorEcho "${BLUE}Installing ${FUCHSIA}node LTS${BLUE}..."
         nvs add lts
 
-        colorEcho ${BLUE} "Installing node latest..."
+        colorEcho "${BLUE}Installing ${FUCHSIA}node latest${BLUE}..."
         nvs add latest
 
         # nvs use latest

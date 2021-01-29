@@ -17,7 +17,7 @@ fi
 
 
 if [[ -d "$HOME/.nvs" ]]; then
-    colorEcho ${BLUE} "Updating nvs..."
+    colorEcho "${BLUE}Updating ${FUCHSIA}nvs${BLUE}..."
     if type 'nvs' 2>/dev/null | grep -q 'function'; then
         :
     else
@@ -33,21 +33,21 @@ if [[ -d "$HOME/.nvs" ]]; then
         cd $NVS_HOME && git pull && cd -
     fi
 
-    colorEcho ${BLUE} "Updating node LTS..."
+    colorEcho "${BLUE}Updating ${FUCHSIA}node LTS${BLUE}..."
     nvs upgrade lts
 
-    colorEcho ${BLUE} "Updating node latest..."
+    colorEcho "${BLUE}Updating ${FUCHSIA}node latest${BLUE}..."
     nvs upgrade latest
 fi
 
 
 if [[ -x "$(command -v npm-check)" ]]; then
-    colorEcho ${BLUE} "Updating npm global packages..."
+    colorEcho "${BLUE}Updating ${FUCHSIA}npm global packages${BLUE}..."
     npm-check -y -g
 fi
 
 
 if [[ -x "$(command -v yarn)" ]]; then
-    colorEcho ${BLUE} "Updating yarn global packages..."
+    colorEcho "${BLUE}Updating ${FUCHSIA}yarn global packages${BLUE}..."
     yarn global upgrade --latest
 fi

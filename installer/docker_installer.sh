@@ -30,7 +30,7 @@ get_os_release
 
 
 ## Docker
-colorEcho ${BLUE} "Installing Docker..."
+colorEcho "${BLUE}Installing ${FUCHSIA}Docker${BLUE}..."
 # apt install -y docker-ce
 # https://github.com/docker/docker-install
 if [[ ! -x "$(command -v docker)" ]]; then
@@ -73,14 +73,14 @@ if [[ ! -x "$(command -v docker)" ]]; then
 fi
 
 if [[ ! -x "$(command -v docker)" ]]; then
-    colorEcho ${RED} "Docker is not installed! Please manual install docker-ce or docker-engine!"
+    colorEcho "${RED}Docker is not installed! Please manual install docker-ce or docker-engine!"
     exit 1
 fi
 
 
 ## Docker Compose
 if [[ ! -x "$(command -v docker-compose)" ]]; then
-    colorEcho ${BLUE} "Installing Docker Compose..."
+    colorEcho "${BLUE}Installing ${FUCHSIA}Docker Compose${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
@@ -98,7 +98,7 @@ fi
 
 ## ctop
 if [[ ! -x "$(command -v ctop)" ]]; then
-    colorEcho ${BLUE} "Installing ctop..."
+    colorEcho "${BLUE}Installing ${FUCHSIA}ctop${BLUE}..."
     if uname -m | grep -Eqi "amd64|x86_64"; then
         DOWNLOAD_FILE_SUFFIX='linux-amd64'
     else
@@ -120,7 +120,7 @@ fi
 # https://github.com/jesseduffield/lazydocker
 # https://github.com/jesseduffield/lazydocker/blob/master/docs/keybindings/Keybindings_en.md
 # if [[ ! -x "$(command -v lazydocker)" ]]; then
-#     colorEcho ${BLUE} "Installing lazydocker..."
+#     colorEcho "${BLUE}Installing ${FUCHSIA}lazydocker${BLUE}..."
 #     if uname -m | grep -Eqi "amd64|x86_64"; then
 #         DOWNLOAD_FILE_SUFFIX='Linux_x86_64.tar.gz'
 #     else

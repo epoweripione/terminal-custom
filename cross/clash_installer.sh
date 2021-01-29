@@ -24,14 +24,14 @@ set_proxy_mirrors_env
 if [[ ! -x "$(command -v jq)" ]]; then
     if [[ -x "$(command -v pacman)" ]]; then
         if pacman -Si jq >/dev/null 2>&1; then
-            colorEcho ${BLUE} "Installing jq..."
+            colorEcho "${BLUE}Installing ${FUCHSIA}jq${BLUE}..."
             sudo pacman --noconfirm -S jq
         fi
     fi
 fi
 
 if [[ ! -x "$(command -v jq)" ]]; then
-    colorEcho ${RED} "jq is not installed!"
+    colorEcho "${RED}jq is not installed!"
     exit 1
 fi
 
@@ -51,7 +51,7 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "Checking latest version for ${APP_INSTALL_NAME}..."
+    colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
     # CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
     # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
@@ -66,7 +66,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "  Installing ${APP_INSTALL_NAME} ${REMOTE_VERSION}..."
+    colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
 
     [[ -z "$OS_INFO_TYPE" ]] && get_os_type
     [[ -z "$OS_INFO_ARCH" ]] && get_arch
@@ -109,7 +109,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     REMOTE_VERSION=$(date -d $REPO_PUSH_AT +"%Y%m%d")
 
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        colorEcho ${BLUE} "  Installing clash geo database ${REMOTE_VERSION}..."
+        colorEcho "${BLUE}  Installing ${FUCHSIA}clash geo database ${YELLOW}${REMOTE_VERSION}${BLUE}..."
         curl -fSL -o "${WORKDIR}/Country.mmdb" "$MMDB_URL" && \
             sudo mv -f "${WORKDIR}/Country.mmdb" "/srv/clash/Country.mmdb" && \
             echo ${REMOTE_VERSION} | sudo tee "/srv/clash/mmdb.ver" >/dev/null

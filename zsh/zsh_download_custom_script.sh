@@ -10,27 +10,44 @@
 ##            source <(curl -fsSL http://t.cn/AigJuOCW) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
-#######color code########
-RED="31m"      # Error message
-GREEN="32m"    # Success message
-YELLOW="33m"   # Warning message
-BLUE="36m"     # Info message
+# Colors
+NOCOLOR='\033[0m'
+RED='\033[0;31m'        # Error message
+LIGHTRED='\033[1;31m'
+GREEN='\033[0;32m'      # Success message
+LIGHTGREEN='\033[1;32m'
+ORANGE='\033[0;33m'
+YELLOW='\033[1;33m'     # Warning message
+BLUE='\033[0;34m'       # Info message
+LIGHTBLUE='\033[1;34m'
+PURPLE='\033[0;35m'
+FUCHSIA='\033[0;35m'
+LIGHTPURPLE='\033[1;35m'
+CYAN='\033[0;36m'
+LIGHTCYAN='\033[1;36m'
+DARKGRAY='\033[1;30m'
+LIGHTGRAY='\033[0;37m'
+WHITE='\033[1;37m'
 
-colorEcho() {
-    COLOR=$1
-    echo -e "\033[${COLOR}${@:2}\033[0m"
+function colorEcho() {
+    if [[ $# > 1 ]]; then
+        local COLOR=$1
+        echo -e "${COLOR}${@:2}${NOCOLOR}"
+    else
+        echo -e "${@:1}${NOCOLOR}"
+    fi
 }
 
 
 if [[ ! "$(command -v git)" ]]; then
-    colorEcho ${RED} "git is not installed! Please install git first!"
+    colorEcho "${RED}git is not installed! Please install git first!"
     exit
 fi
 
 
 MY_SHELL_SCRIPTS="${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}"
 
-colorEcho ${BLUE} "Cloning custom shell scripts repository to $HOME/terminal-custom..."
+colorEcho "${BLUE}Cloning custom shell scripts repository to $HOME/terminal-custom..."
 if [[ -d "${MY_SHELL_SCRIPTS}" ]]; then
     cd "${MY_SHELL_SCRIPTS}" && \
         BRANCH=$(git symbolic-ref --short HEAD) && \
@@ -57,7 +74,7 @@ find "${MY_SHELL_SCRIPTS}" -type f -iname "*.sh" -exec chmod +x {} \;
 # fix zsh_custom_conf.sh location in .zshrc
 sed -i "s|^source ~/zsh_custom_conf.sh|source ~/terminal-custom/zsh/zsh_custom_conf.sh|" $HOME/.zshrc
 
-colorEcho ${BLUE} "copy zsh custom plugins & theme to $ZSH/custom..."
+colorEcho "${BLUE}copy zsh custom plugins & theme to $ZSH/custom..."
 if [[ -d "$ZSH/custom" ]]; then
     # zsh custom plugins
     [ -d "$HOME/terminal-custom/zsh/plugins" ] && cp -f $HOME/terminal-custom/zsh/plugins/* "$ZSH/custom/plugins"
@@ -68,4 +85,4 @@ fi
 
 
 cd ${CURRENT_DIR}
-colorEcho ${GREEN} "Custom shell script download finished!"
+colorEcho "${GREEN}Custom shell script download finished!"

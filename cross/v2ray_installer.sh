@@ -36,7 +36,7 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "Checking latest version for ${APP_INSTALL_NAME}..."
+    colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/v2fly/v2ray-core/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
@@ -46,7 +46,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "  Installing ${APP_INSTALL_NAME} ${REMOTE_VERSION}..."
+    colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
     # https://github.com/v2fly/fhs-install-v2ray/wiki/Migrate-from-the-old-script-to-this
     if [[ -d "/usr/bin/v2ray/" ]]; then
         sudo systemctl disable v2ray.service --now

@@ -58,7 +58,7 @@ function get_timestamp() {
 read -p "Please input download DIR?[/tmp]:" DOWNLOAD_DIR
 [[ -z "$DOWNLOAD_DIR" ]] && DOWNLOAD_DIR="/tmp"
 if [[ ! -d "$DOWNLOAD_DIR" ]]; then
-    colorEcho ${RED} "${DOWNLOAD_DIR} is not exist or not a valid directory!"
+    colorEcho "${RED}${DOWNLOAD_DIR} is not exist or not a valid directory!"
     exit 1
 fi
 
@@ -72,7 +72,7 @@ fi
 # done
 
 # if [[ -z "$DOWNLOAD_URL" ]]; then
-#     colorEcho ${RED} "Please input valid download URL!"
+#     colorEcho "${RED}Please input valid download URL!"
 #     exit 1
 # fi
 
@@ -84,7 +84,7 @@ fi
 # )
 
 # for TargetFile in ${DOWNLOAD_FILES[@]}; do
-#     colorEcho ${BLUE} "Downloading ${TargetFile}..."
+#     colorEcho "${BLUE}Downloading ${TargetFile}..."
 #     curl -fSL -o "${DOWNLOAD_DIR}/${TargetFile}" "${DOWNLOAD_URL}/${TargetFile}"
 # done
 
@@ -105,7 +105,7 @@ fi
 CD "${DOWNLOAD_DIR}"
 while read -r TargetUrl; do
     if [[ -n "$TargetUrl" ]]; then
-        colorEcho ${BLUE} "Downloading ${TargetUrl}..."
+        colorEcho "${BLUE}Downloading ${TargetUrl}..."
         # TargetFileName=$(echo "${TargetUrl}" | awk -F '/' '{print $NF}')
         # curl -fSL -o "${TargetFileName}" "${TargetUrl}"
         wget -c "${TargetUrl}"

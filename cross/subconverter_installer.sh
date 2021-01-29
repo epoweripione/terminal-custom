@@ -33,7 +33,7 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "Checking latest version for ${APP_INSTALL_NAME}..."
+    colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/tindy2013/subconverter/releases/latest"
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
@@ -43,7 +43,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "  Installing ${APP_INSTALL_NAME} ${REMOTE_VERSION}..."
+    colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
 
     [[ -z "$OS_INFO_TYPE" ]] && get_os_type
     [[ -z "$OS_INFO_VDIS" ]] && get_sysArch

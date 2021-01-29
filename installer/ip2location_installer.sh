@@ -81,12 +81,12 @@ BIN_FILE="IP2LOCATION-LITE-DB5.BIN"
 # C-Library
 if [[ ! -s "$CURRENT_DIR/ip2locationLatLong" ]]; then
     if [[ ! -x "$(command -v make)" ]]; then
-        colorEcho ${RED} "make is not installed!"
+        colorEcho "${RED}make is not installed!"
         exit 1
     fi
 
     if [[ ! -x "$(command -v gcc)" ]]; then
-        colorEcho ${RED} "gcc is not installed!"
+        colorEcho "${RED}gcc is not installed!"
         exit 1
     fi
 
@@ -103,4 +103,4 @@ fi
 
 
 cd ${CURRENT_DIR}
-colorEcho ${GREEN} "ip2locationLatLong installed!"
+colorEcho "${GREEN}ip2locationLatLong installed!"

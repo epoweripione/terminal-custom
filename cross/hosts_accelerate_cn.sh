@@ -31,14 +31,14 @@ fi
 if [[ "${WAN_NET_IP_GEO}" =~ 'China' || "${WAN_NET_IP_GEO}" =~ 'CN' ]]; then
     :
 else
-    colorEcho ${BLUE} "You are not in china! Congratulations!"
+    colorEcho "${BLUE}You are not in china! Congratulations!"
     echo -n "Continue?[y/N] "
     read -t 5 EXIT_CONTINUE
     [[ -z "$EXIT_CONTINUE" || "$EXIT_CONTINUE" == "n" || "$EXIT_CONTINUE" == "N" ]] && exit 0
 fi
 
 if [[ -z "$WAN_NET_IP" ]]; then
-    colorEcho ${RED} "Can't get local WAN IP address!"
+    colorEcho "${RED}Can't get local WAN IP address!"
     exit 1
 fi
 
@@ -57,7 +57,7 @@ else
 fi
 
 if [[ ! -s "$HostsFile" ]]; then
-    # colorEcho ${RED} "${HostsFile} not exist!"
+    # colorEcho "${RED}${HostsFile} not exist!"
     # exit 1
     Hosts_URL="https://raw.githubusercontent.com/googlehosts/hosts/master/hosts-files/hosts"
     curl -fSL --connect-timeout 5 --max-time 20 \
@@ -83,20 +83,20 @@ fi
 if [[ "$CHECK_METHOD" == "dig" && ! -x "$(command -v dig)" ]]; then
     if [[ -x "$(command -v pacman)" ]]; then
         if pacman -Si bind-tools >/dev/null 2>&1; then
-            colorEcho ${BLUE} "Installing bind-tools..."
+            colorEcho "${BLUE}Installing ${FUCHSIA}bind-tools${BLUE}..."
             sudo pacman --noconfirm -S bind-tools
         elif pacman -Si bind-utils >/dev/null 2>&1; then
-            colorEcho ${BLUE} "Installing bind-utils..."
+            colorEcho "${BLUE}Installing ${FUCHSIA}bind-utils${BLUE}..."
             sudo pacman --noconfirm -S bind-utils
         elif pacman -Si dnsutils >/dev/null 2>&1; then
-            colorEcho ${BLUE} "Installing dnsutils..."
+            colorEcho "${BLUE}Installing ${FUCHSIA}dnsutils${BLUE}..."
             sudo pacman --noconfirm -S dnsutils
         fi
     fi
 fi
 
 if [[ "$CHECK_METHOD" == "dig" && ! -x "$(command -v dig)" ]]; then
-    colorEcho ${RED} "dig is not installed!"
+    colorEcho "${RED}dig is not installed!"
     exit 1
 fi
 
@@ -108,7 +108,7 @@ fi
 
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
-colorEcho ${BLUE} "Reading hosts list..."
+colorEcho "${BLUE}Reading hosts list..."
 # first char with `-`: Same IP as prior host
 HostListFile="${CURRENT_DIR}/hosts_accelerate_cn.list"
 if [[ -s "$HostListFile" ]]; then
@@ -149,7 +149,7 @@ fi
 
 # Delete exist host entry
 if [[ -z "$TEST_OR_DOWNLOAD_URL" ]]; then
-    colorEcho ${BLUE} "Deleting exist entry in hosts..."
+    colorEcho "${BLUE}Deleting exist entry in hosts..."
     # if [[ $(grep "^# Github Start" ${HostsFile}) ]]; then
     #     LineBegin=$(cat -n ${HostsFile} | grep '# Github Start' | awk '{print $1}')
     #     LineEnd=$(cat -n ${HostsFile} | grep '# Github End' | awk '{print $1}')
@@ -189,7 +189,7 @@ fi
 # https://github.com.ipaddress.com/
 # https://github.com.ipaddress.com/assets-cdn.github.com
 # https://fastly.net.ipaddress.com/github.global.ssl.fastly.net
-colorEcho ${BLUE} "Setting host entries..."
+colorEcho "${BLUE}Setting host entries..."
 IP_HOSTS=""
 for TargetHost in "${HostsList[@]}"; do
     # remove both leading and trailing spaces
@@ -248,7 +248,7 @@ for TargetHost in "${HostsList[@]}"; do
             #     TargetIPGeo="${IPGeoCity}, ${IPGeoRegion}, ${IPGeoCountry}"
             # fi
         fi
-        colorEcho ${YELLOW} " ${TargetIP}(${TargetIPGeo/[[:space:]]/})"
+        colorEcho "${YELLOW} ${TargetIP}(${TargetIPGeo/[[:space:]]/})"
 
         if [[ -z "$IP_HOSTS" ]]; then
             IP_HOSTS="${TargetIP} ${TargetHost}"
@@ -256,7 +256,7 @@ for TargetHost in "${HostsList[@]}"; do
             IP_HOSTS="${IP_HOSTS}\n${TargetIP} ${TargetHost}"
         fi
     else
-        colorEcho ${RED} " error!"
+        colorEcho "${RED} error!"
     fi
 done
 
@@ -290,4 +290,4 @@ else
 fi
 
 
-colorEcho ${BLUE} "Done."
+colorEcho "${BLUE}Done."

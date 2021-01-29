@@ -23,12 +23,12 @@ if [[ ! "$(command -v curl)" ]]; then
 fi
 
 if [[ ! "$(command -v wget)" ]]; then
-    colorEcho ${RED} "wget is not installed! Please install wget first!"
+    colorEcho "${RED}wget is not installed! Please install wget first!"
     exit
 fi
 
 if [[ ! "$(command -v curl)" ]]; then
-    colorEcho ${RED} "curl is not installed! Please install curl first!"
+    colorEcho "${RED}curl is not installed! Please install curl first!"
     exit
 fi
 

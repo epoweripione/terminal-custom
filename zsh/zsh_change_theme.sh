@@ -1,15 +1,31 @@
 #!/usr/bin/env bash
 
-#######color code########
-# https://misc.flogisoft.com/bash/tip_colors_and_formatting
-RED="31m"      # Error message
-GREEN="32m"    # Success message
-YELLOW="33m"   # Warning message
-BLUE="36m"     # Info message
+# Colors
+NOCOLOR='\033[0m'
+RED='\033[0;31m'        # Error message
+LIGHTRED='\033[1;31m'
+GREEN='\033[0;32m'      # Success message
+LIGHTGREEN='\033[1;32m'
+ORANGE='\033[0;33m'
+YELLOW='\033[1;33m'     # Warning message
+BLUE='\033[0;34m'       # Info message
+LIGHTBLUE='\033[1;34m'
+PURPLE='\033[0;35m'
+FUCHSIA='\033[0;35m'
+LIGHTPURPLE='\033[1;35m'
+CYAN='\033[0;36m'
+LIGHTCYAN='\033[1;36m'
+DARKGRAY='\033[1;30m'
+LIGHTGRAY='\033[0;37m'
+WHITE='\033[1;37m'
 
-colorEcho() {
-    COLOR=$1
-    echo -e "\033[${COLOR}${@:2}\033[0m"
+function colorEcho() {
+    if [[ $# > 1 ]]; then
+        local COLOR=$1
+        echo -e "${COLOR}${@:2}${NOCOLOR}"
+    else
+        echo -e "${@:1}${NOCOLOR}"
+    fi
 }
 
 changeTheme() {
@@ -18,7 +34,7 @@ changeTheme() {
     local custom_theme="zsh_custom_theme_${theme}"
 
     if [[ ! -s "$ZSH/themes/${theme}.zsh-theme" && ! -s "$ZSH_CUSTOM/themes/${theme}.zsh-theme" ]]; then
-        colorEcho ${RED} "Theme ${theme} not exist!"
+        colorEcho "${RED}Theme ${theme} not exist!"
         exit
     fi
 
@@ -69,12 +85,12 @@ changeTheme() {
         cp ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/zsh/zsh_custom_env.sh $HOME/.zshenv
     fi
 
-    colorEcho ${GREEN} "ZSH theme has change to ${theme}，please exit and restart ZSH Shell!"
+    colorEcho "${GREEN}ZSH theme has change to ${theme}，please exit and restart ZSH Shell!"
 }
 
 
 if [[ -z "$ZSH" ]]; then
-    colorEcho ${RED} "Please install ZSH & Oh-my-zsh first!"
+    colorEcho "${RED}Please install ZSH & Oh-my-zsh first!"
     exit 0
 else
     [[ -z "$ZSH_CUSTOM" ]] && ZSH_CUSTOM=$ZSH/custom
@@ -111,7 +127,7 @@ while :; do
     [[ -z "$CHOICE" ]] && exit 0
 	# if [[ ! $CHOICE =~ ^[0-9a-zA-Z]$ ]]; then
 	if [[ ! $CHOICE =~ ^[0-9]$ ]]; then
-		colorEcho ${RED} "Input error, please choose theme from above!"
+		colorEcho "${RED}Input error, please choose theme from above!"
 	else
 		break
 	fi
@@ -146,6 +162,6 @@ case "$CHOICE" in
         changeTheme "pure"
         ;;
     *)
-        colorEcho ${YELLOW} "Wrong choice!"  # unknown option
+        colorEcho "${YELLOW}Wrong choice!"  # unknown option
         ;;
 esac

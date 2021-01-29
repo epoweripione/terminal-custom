@@ -33,7 +33,7 @@ get_os_type
 # https://github.com/ryanoasis/nerd-fonts
 if [[ ! -x "$(command -v fontforge)" ]]; then
 	## http://designwithfontforge.com/en-US/Installing_Fontforge.html
-	colorEcho ${BLUE} "Installing fontforge..."
+	colorEcho "${BLUE}Installing ${FUCHSIA}fontforge${BLUE}..."
 	# if check_release_package_manager packageManager apt; then
 	# 	sudo apt-get install -y software-properties-common && \
 	# 		sudo add-apt-repository ppa:fontforge/fontforge && \
@@ -53,7 +53,7 @@ if [[ ! -x "$(command -v fontforge)" ]]; then
 	fi
 fi
 
-colorEcho ${BLUE} "Downloading nerd-fonts & font-patcher..."
+colorEcho "${BLUE}Downloading ${FUCHSIA}nerd-fonts & font-patcher${BLUE}..."
 ## Use remote server to reduce `git clone` network traffic in local machine
 ## git clone --depth=1 --no-checkout --filter=blob:limit=1m \
 # git clone --depth=1 --no-checkout --filter=blob:none \
@@ -95,7 +95,7 @@ else
 fi
 
 
-colorEcho ${BLUE} "Downloading Nerd fonts..."
+colorEcho "${BLUE}Downloading ${FUCHSIA}Nerd fonts${BLUE}..."
 mkdir -p ~/patched-fonts
 
 # echo "Downloading SourceCodePro..."
@@ -104,25 +104,25 @@ mkdir -p ~/patched-fonts
 #   unzip -q ~/patched-fonts/SourceCodePro.zip -d ~/patched-fonts/SourceCodePro && \
 #   rm -f ~/patched-fonts/SourceCodePro.zip
 
-# colorEcho ${BLUE} "Downloading FiraCode..."
+# colorEcho "${BLUE}Downloading FiraCode..."
 # curl -fSL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/FiraCode.zip -o ~/patched-fonts/FiraCode.zip
 # mkdir -p ~/patched-fonts/FiraCode && \
 #   unzip -q ~/patched-fonts/FiraCode.zip -d ~/patched-fonts/FiraCode && \
 #   rm -f ~/patched-fonts/FiraCode.zip
 
-# colorEcho ${BLUE} "Downloading FiraMono..."
+# colorEcho "${BLUE}Downloading FiraMono..."
 # curl -fSL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/FiraMono.zip -o ~/patched-fonts/FiraMono.zip
 # mkdir -p ~/patched-fonts/FiraMono && \
 #   unzip -q ~/patched-fonts/FiraMono.zip -d ~/patched-fonts/FiraMono && \
 #   rm -f ~/patched-fonts/FiraMono.zip
 
-# colorEcho ${BLUE} "Downloading Iosevka..."
+# colorEcho "${BLUE}Downloading Iosevka..."
 # curl -fSL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/Iosevka.zip -o ~/patched-fonts/Iosevka.zip
 # mkdir -p ~/patched-fonts/Iosevka && \
 #   unzip -q ~/patched-fonts/Iosevka.zip -d ~/patched-fonts/Iosevka && \
 #   rm -f ~/patched-fonts/Iosevka.zip
 
-colorEcho ${BLUE} "Downloading FiraCode Nerd Font Complete Mono..."
+colorEcho "${BLUE}Downloading ${FUCHSIA}FiraCode Nerd Font Complete Mono${BLUE}..."
 # https://github.com/tonsky/FiraCode
 ## Patch fonts
 # cd ~/nerd-fonts && for font in /c/DevWorkSpaces/nerd-fonts/Fira_Code_v5.2/ttf/*.ttf; do fontforge -script font-patcher -out /c/DevWorkSpaces/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done && cd /c/DevWorkSpaces/nerd-fonts/patched && zip -r /c/DevWorkSpaces/nerd-fonts/FiraCode-Mono.zip . -i "Fira Code*.ttf"
@@ -131,7 +131,7 @@ mkdir -p ~/patched-fonts/FiraCode-Mono && \
 	unzip -q ~/patched-fonts/FiraCode-Mono.zip -d ~/patched-fonts/FiraCode-Mono && \
 	rm -f ~/patched-fonts/FiraCode-Mono.zip
 
-colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono..."
+colorEcho "${BLUE}Downloading ${FUCHSIA}Iosevka Term SS05 Nerd Font Complete Mono${BLUE}..."
 # https://github.com/be5invis/Iosevka
 # ## Patch fonts
 # # cd ~/nerd-fonts && for font in /c/DevWorkSpaces/nerd-fonts/ttf-iosevka-term-ss05-4.0.3/ttf/*.ttf; do fontforge -script font-patcher -out /c/DevWorkSpaces/nerd-fonts/patched --quiet --careful --complete --mono --adjust-line-height "$font"; done && cd /c/DevWorkSpaces/nerd-fonts/patched && zip -r /c/DevWorkSpaces/nerd-fonts/iosevka-term-ss05-Mono.zip . -i "Iosevka Term SS05*.ttf"
@@ -143,13 +143,13 @@ colorEcho ${BLUE} "Downloading Iosevka Term SS05 Nerd Font Complete Mono..."
 # Install Script
 curl -fSL https://github.com/ryanoasis/nerd-fonts/raw/master/install.sh -o ~/nerdfonts_installer.sh && chmod +x ~/nerdfonts_installer.sh
 
-colorEcho ${BLUE} "Installing Nerd fonts..."
+colorEcho "${BLUE}Installing ${FUCHSIA}Nerd fonts${BLUE}..."
 if [[ "$OS_INFO_TYPE" == "windows" ]]; then
 	cd ~ && ./nerdfonts_installer.sh --quiet --clean --use-single-width-glyphs --install-to-user-path
-	colorEcho ${BLUE} "Please manual install fonts from $HOME/.local/share/fonts"
+	colorEcho "${BLUE}Please manual install fonts from $HOME/.local/share/fonts"
 else
 	cd ~ && ./nerdfonts_installer.sh --quiet --clean --use-single-width-glyphs --install-to-system-path
-	colorEcho ${GREEN} "Nerd fonts install complete!"
+	colorEcho "${GREEN}Nerd fonts install complete!"
 fi
 
 cd "${CURRENT_DIR}"

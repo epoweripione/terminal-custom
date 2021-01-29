@@ -16,7 +16,7 @@ fi
 set_proxy_mirrors_env
 
 
-colorEcho ${BLUE} "Installing nvm & nodejs..."
+colorEcho "${BLUE}Installing ${FUCHSIA}nvm & nodejs${BLUE}..."
 ## Install nvm
 # https://github.com/creationix/nvm
 if [[ ! -d "$HOME/.nvm" ]]; then
@@ -42,16 +42,16 @@ fi
 if type 'nvm' 2>/dev/null | grep -q 'function'; then
     if [[ ! "$(command -v node)" ]]; then
         if [[ -z "$NVM_INSTALLER_NOT_USE_MIRROR" ]]; then
-            colorEcho ${BLUE} "Installing node LTS..."
+            colorEcho "${BLUE}Installing ${FUCHSIA}node LTS${BLUE}..."
             NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node nvm install --lts
 
-            colorEcho ${BLUE} "Installing node latest..."
+            colorEcho "${BLUE}Installing ${FUCHSIA}node latest${BLUE}..."
             NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node nvm install node
         else
-            colorEcho ${BLUE} "Installing node LTS..."
+            colorEcho "${BLUE}Installing ${FUCHSIA}node LTS${BLUE}..."
             nvm install --lts
 
-            colorEcho ${BLUE} "Installing node latest..."
+            colorEcho "${BLUE}Installing ${FUCHSIA}node latest${BLUE}..."
             nvm install node
         fi
 

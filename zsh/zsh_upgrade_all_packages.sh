@@ -35,7 +35,7 @@ CURL_SPECIAL_CONFIG=${CURL_SPECIAL_CONFIG:-"$HOME/.curl_socks5"}
 [[ -s "${MY_SHELL_SCRIPTS}/installer/pacaptr_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/pacaptr_installer.sh"
 
 
-colorEcho ${BLUE} "Updating system packages..."
+colorEcho "${BLUE}Updating ${FUCHSIA}system packages${BLUE}..."
 if [[ -x "$(command -v pacman)" ]]; then
     if [[ $UID -ne 0 && "$(command -v yay)" ]]; then
         yay --noconfirm -Syu
@@ -58,14 +58,14 @@ fi
 
 
 if [[ -x "$(command -v docker-compose)" ]]; then
-    colorEcho ${BLUE} "Checking latest version for docker-compose..."
+    colorEcho "${BLUE}Checking latest version for ${FUCHSIA}docker-compose${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
 
     CURRENT_VERSION=$(docker-compose -v | cut -d',' -f1 | cut -d' ' -f3)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        colorEcho ${BLUE} "  Installing docker-compose ${REMOTE_VERSION}..."
+        colorEcho "${BLUE}  Installing ${FUCHSIA}docker-compose ${YELLOW}${REMOTE_VERSION}${BLUE}..."
         DOWNLOAD_URL="https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
         curl -fSL -o "${WORKDIR}/docker-compose" -C- $DOWNLOAD_URL && \
             sudo mv -f "${WORKDIR}/docker-compose" "/usr/local/bin/docker-compose" && \
@@ -75,7 +75,7 @@ fi
 
 
 if [[ -x "$(command -v ctop)" ]]; then
-    colorEcho ${BLUE} "Checking latest version for ctop..."
+    colorEcho "${BLUE}Checking latest version for ${FUCHSIA}ctop${BLUE}..."
     if uname -m | grep -Eqi "amd64|x86_64"; then
         DOWNLOAD_FILE_SUFFIX='linux-amd64'
     else
@@ -87,7 +87,7 @@ if [[ -x "$(command -v ctop)" ]]; then
     CURRENT_VERSION=$(ctop -v | cut -d',' -f1 | cut -d' ' -f3)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        colorEcho ${BLUE} "  Installing ctop ${REMOTE_VERSION}..."
+        colorEcho "${BLUE}  Installing ${FUCHSIA}ctop ${YELLOW}${REMOTE_VERSION}${BLUE}..."
         DOWNLOAD_URL="https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}"
         curl -fSL -o "${WORKDIR}/ctop" -C- $DOWNLOAD_URL && \
             sudo mv -f "${WORKDIR}/ctop" "/usr/local/bin/ctop" && \
@@ -97,47 +97,47 @@ fi
 
 
 if [[ -x "$(command -v php)" && -x "$(command -v composer)" ]]; then
-    colorEcho ${BLUE} "Updating composer & composer global packages..."
+    colorEcho "${BLUE}Updating ${FUCHSIA}composer & composer global packages${BLUE}..."
     composer selfupdate && composer g update
 fi
 
 
 # https://github.com/zyedidia/micro
 if [[ -x "$(command -v micro)" ]]; then
-    colorEcho ${BLUE} "Checking latest version for Micro editor..."
+    colorEcho "${BLUE}Checking latest version for ${FUCHSIA}Micro editor${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/zyedidia/micro/releases/latest"
 
     CURRENT_VERSION=$(micro -version | grep Version | cut -d',' -f2)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        colorEcho ${BLUE} "  Installing micro ${REMOTE_VERSION}..."
+        colorEcho "${BLUE}  Installing ${FUCHSIA}micro ${YELLOW}${REMOTE_VERSION}${BLUE}..."
         curl https://getmic.ro | bash && sudo mv micro "/usr/local/bin"
     fi
 fi
 
 
 # if [[ -x "$(command -v pear)" ]]; then
-#     colorEcho ${BLUE} "Updating pear..."
+#     colorEcho "${BLUE}Updating ${FUCHSIA}pear${BLUE}..."
 #     pear upgrade --force PEAR && pear upgrade -all
 #     # pecl update-channels && rm -rf /tmp/pear $HOME/.pearrc
 # fi
 
 
 # if [[ -x "$(command -v pip)" ]]; then
-#     colorEcho ${BLUE} "Updating pip packages..."
+#     colorEcho "${BLUE}Updating ${FUCHSIA}pip packages${BLUE}..."
 #     sudo pip list -o | grep -E -v '^-|^Package' | cut -d' ' -f1 | sudo xargs -n1 pip install -U
 # fi
 
 
 # if [[ "$(command -v fuck)" && -x "$(command -v pip)" ]]; then
-#     colorEcho ${BLUE} "Updating thefuck..."
+#     colorEcho "${BLUE}Updating ${FUCHSIA}thefuck${BLUE}..."
 #     sudo pip install thefuck --upgrade
 # fi
 
 
 if [[ -d "$HOME/.jabba" ]]; then
-    colorEcho ${BLUE} "Checking latest version for jabba..."
+    colorEcho "${BLUE}Checking latest version for ${FUCHSIA}jabba${BLUE}..."
     if type 'jabba' 2>/dev/null | grep -q 'function'; then
         :
     else
@@ -149,7 +149,7 @@ if [[ -d "$HOME/.jabba" ]]; then
     CURRENT_VERSION=$(jabba --version | cut -d' ' -f2)
     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        colorEcho ${BLUE} "  Installing jabba ${REMOTE_VERSION}..."
+        colorEcho "${BLUE}  Installing ${FUCHSIA}jabba ${YELLOW}${REMOTE_VERSION}${BLUE}..."
         curl -fsSL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \
             . ~/.jabba/jabba.sh && \
             sed -i "/jabba.sh/d" ~/.zshrc && \
@@ -159,7 +159,7 @@ fi
 
 
 if [[ -d "$HOME/.sdkman" ]]; then
-    colorEcho ${BLUE} "Updating sdk using sdkman..."
+    colorEcho "${BLUE}Updating ${FUCHSIA}sdk ${BLUE}using sdkman..."
     if type 'sdk' 2>/dev/null | grep -q 'function'; then
         :
     else
@@ -218,10 +218,10 @@ unset IS_UPDATE_ONLY
 
 
 if [[ -x "$(command -v conda)" ]]; then
-    # colorEcho ${BLUE} "Updating conda..."
+    # colorEcho "${BLUE}Updating ${FUCHSIA}conda${BLUE}..."
     # conda update -y conda
 
-    colorEcho ${BLUE} "Updating all installed conda packages..."
+    colorEcho "${BLUE}Updating ${FUCHSIA}all installed conda packages${BLUE}..."
     conda update -y --all
 fi
 
@@ -238,7 +238,7 @@ fi
 
 if [[ -n "$ZSH" ]]; then
     if [[ -s "${MY_SHELL_SCRIPTS}/zsh/zsh_update.sh" ]]; then
-        colorEcho ${BLUE} "Updating oh-my-zsh & custom stuff..."
+        colorEcho "${BLUE}Updating ${FUCHSIA}oh-my-zsh & custom stuff${BLUE}..."
         source "${MY_SHELL_SCRIPTS}/zsh/zsh_update.sh"
         # -i : Force shell to be interactive
         # Then, if the shell is interactive, 
@@ -251,4 +251,4 @@ fi
 
 
 cd "${CURRENT_DIR}"
-colorEcho ${GREEN} "Upgarde all packages done!"
+colorEcho "${GREEN}Upgarde all packages done!"

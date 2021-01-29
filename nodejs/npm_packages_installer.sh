@@ -17,12 +17,12 @@ set_proxy_mirrors_env
 
 
 if [[ ! -x "$(command -v npm)" ]]; then
-    colorEcho ${RED} "npm is not installed! Please install node & npm first!"
+    colorEcho "${RED}npm is not installed! Please install node & npm first!"
     exit 0
 fi
 
 # # npm config
-# colorEcho ${BLUE} "Setting npm config..."
+# colorEcho "${BLUE}Setting npm config.."
 # npm config set user 0
 # npm config set unsafe-perm true
 
@@ -33,7 +33,7 @@ fi
 
 # # Change npm registry to taobao
 # if [[ -z "$NPM_INSTALLER_NOT_USE_MIRROR" ]]; then
-#     colorEcho ${BLUE} "Change npm registry to taobao..."
+#     colorEcho "${BLUE}Change npm registry to ${FUCHSIA}taobao${BLUE}..."
 #     npm set registry https://registry.npm.taobao.org
 
 #     npm set disturl https://npm.taobao.org/dist # node-gyp
@@ -51,70 +51,70 @@ fi
 # nrm use taobao
 
 # Install global packages with binaries
-colorEcho ${BLUE} "Installing cnpm..."
+colorEcho "${BLUE}Installing ${FUCHSIA}cnpm${BLUE}..."
 npm install -g cnpm
 
-colorEcho ${BLUE} "Installing npm-check es-checker eslint tslint jslint jshint standard..."
+colorEcho "${BLUE}Installing ${FUCHSIA}npm-check es-checker eslint tslint jslint jshint standard${BLUE}..."
 npm install -g npm-check es-checker eslint tslint jslint jshint standard
 
-colorEcho ${BLUE} "Installing babel webpack traceur..."
+colorEcho "${BLUE}Installing ${FUCHSIA}babel webpack traceur${BLUE}..."
 npm install -g @babel/core @babel/cli webpack webpack-cli traceur
 
-colorEcho ${BLUE} "Installing typescript..."
+colorEcho "${BLUE}Installing ${FUCHSIA}typescript${BLUE}..."
 npm install -g typescript
 
-colorEcho ${BLUE} "Installing angular/cli..."
+colorEcho "${BLUE}Installing ${FUCHSIA}angular/cli${BLUE}..."
 npm install -g @angular/cli
 
-colorEcho ${BLUE} "Installing vue/cli..."
+colorEcho "${BLUE}Installing ${FUCHSIA}vue/cli${BLUE}..."
 npm install -g @vue/cli
 
-colorEcho ${BLUE} "Installing quasar/cli..."
+colorEcho "${BLUE}Installing ${FUCHSIA}quasar/cli${BLUE}..."
 npm install -g @quasar/cli
 
-colorEcho ${BLUE} "Installing storybook/cli..."
+colorEcho "${BLUE}Installing ${FUCHSIA}storybook/cli${BLUE}..."
 npm install -g react react-dom
 npm install -g @storybook/cli
 
-colorEcho ${BLUE} "Installing parcel-bundler..."
+colorEcho "${BLUE}Installing ${FUCHSIA}parcel-bundler${BLUE}..."
 npm install -g parcel-bundler
 
-colorEcho ${BLUE} "Installing cordova ionic..."
+colorEcho "${BLUE}Installing ${FUCHSIA}cordova ionic${BLUE}..."
 npm install -g cordova ionic
 
-colorEcho ${BLUE} "Installing electron..."
+colorEcho "${BLUE}Installing ${FUCHSIA}electron${BLUE}..."
 npm install -g electron
 
 # https://ice.work/iceworks
-colorEcho ${BLUE} "Installing iceworks..."
+colorEcho "${BLUE}Installing ${FUCHSIA}iceworks${BLUE}..."
 npm install -g iceworks
 
-colorEcho ${BLUE} "Installing express-generator..."
+colorEcho "${BLUE}Installing ${FUCHSIA}express-generator${BLUE}..."
 npm install -g express-generator
 
-colorEcho ${BLUE} "Installing tldr..."
+colorEcho "${BLUE}Installing ${FUCHSIA}tldr${BLUE}..."
 npm install -g tldr
 
 # https://github.com/cnwhy/lib-qqwry/
-colorEcho ${BLUE} "Installing lib-qqwry..."
+colorEcho "${BLUE}Installing ${FUCHSIA}lib-qqwry${BLUE}..."
 npm install -g lib-qqwry
 
-# colorEcho ${BLUE} "Installing arch-wiki-man..."
+# colorEcho "${BLUE}Installing ${FUCHSIA}arch-wiki-man${BLUE}..."
 # # arch-wiki-man
 # ## https://github.com/greg-js/arch-wiki-man
 # npm install -g arch-wiki-man
 
 # Install global packages without binaries
-colorEcho ${BLUE} "Installing puppeteer..."
+colorEcho "${BLUE}Installing ${FUCHSIA}puppeteer${BLUE}..."
 npm install -g puppeteer
 
-# colorEcho ${BLUE} "Installing jquery popper.js bootstrap..."
+# colorEcho "${BLUE}Installing ${FUCHSIA}jquery popper.js bootstrap${BLUE}..."
 # npm install -g jquery popper.js bootstrap
 
-# colorEcho ${BLUE} "Installing mdbootstrap..."
+# colorEcho "${BLUE}Installing ${FUCHSIA}mdbootstrap${BLUE}..."
 # npm install -g mdbootstrap
 
-# colorEcho ${BLUE} "Installing echarts echarts-gl..."
+# colorEcho "${BLUE}Installing ${FUCHSIA}echarts echarts-gl${BLUE}..."
 # npm install -g echarts echarts-gl
 
 # Clean npm cache
@@ -122,7 +122,7 @@ npm install -g puppeteer
 # npm cache verify
 
 # List Installed packages
-colorEcho ${BLUE} "List Installed packages..."
+colorEcho "${BLUE}List Installed packages..."
 npm list --depth=0 -g
 
-colorEcho ${GREEN} "Install npm package finished!"
+colorEcho "${GREEN}Install npm package finished!"

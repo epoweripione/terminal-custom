@@ -20,7 +20,7 @@ fi
 
 # Webmin
 # http://www.webmin.com/index.html
-colorEcho ${BLUE} "Installing Webmin..."
+colorEcho "${BLUE}Installing ${FUCHSIA}Webmin${BLUE}..."
 if check_release_package_manager packageManager yum; then
     tee /etc/yum.repos.d/webmin.repo <<-'EOF'
 [Webmin]

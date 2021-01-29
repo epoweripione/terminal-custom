@@ -28,13 +28,13 @@ fi
 
 # shadowtunnel
 # https://github.com/snail007/shadowtunnel
-colorEcho ${BLUE} "Checking latest version for shadowtunnel..."
+colorEcho "${BLUE}Checking latest version for ${FUCHSIA}shadowtunnel${BLUE}..."
 
 CHECK_URL="https://api.github.com/repos/snail007/shadowtunnel/releases/latest"
 REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
 
 if [[ -n "$REMOTE_VERSION" ]]; then
-    colorEcho ${BLUE} "  Installing shadowtunnel ${REMOTE_VERSION}..."
+    colorEcho "${BLUE}  Installing ${FUCHSIA}shadowtunnel ${YELLOW}${REMOTE_VERSION}${BLUE}..."
     DOWNLOAD_URL="https://github.com/snail007/shadowtunnel/releases/download/$REMOTE_VERSION/shadowtunnel-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.gz"
     curl -fSL -o "${WORKDIR}/shadowtunnel.tar.gz" "$DOWNLOAD_URL" && \
         sudo tar zxfv "${WORKDIR}/shadowtunnel.tar.gz" -C "/usr/local/bin" && \

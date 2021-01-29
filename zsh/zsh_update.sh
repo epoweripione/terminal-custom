@@ -6,7 +6,7 @@ trap 'rm -r "$WORKDIR"' EXIT
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
 if [[ -z "$ZSH" ]]; then
-    colorEcho ${RED} "Please install ZSH & Oh-my-zsh first!"
+    colorEcho "${RED}Please install ZSH & Oh-my-zsh first!"
     exit 0
 else
     [[ -z "$ZSH_CUSTOM" ]] && ZSH_CUSTOM="$ZSH/custom"
@@ -72,7 +72,7 @@ fi
 # tmux
 if [[ ! -x "$(command -v tmux)" ]] && [[ -x "$(command -v pacman)" ]]; then
     if pacman -Si tmux >/dev/null 2>&1; then
-        colorEcho ${BLUE} "Installing tmux..."
+        colorEcho "${BLUE}Installing ${FUCHSIA}tmux${BLUE}..."
         sudo pacman --noconfirm -S tmux
     fi
 fi
@@ -100,7 +100,7 @@ fi
 # neofetch
 if [[ ! -x "$(command -v neofetch)" ]] && [[ -x "$(command -v pacman)" ]]; then
     if pacman -Si neofetch >/dev/null 2>&1; then
-        colorEcho ${BLUE} "Installing neofetch..."
+        colorEcho "${BLUE}Installing ${FUCHSIA}neofetch${BLUE}..."
         sudo pacman --noconfirm -S neofetch
     fi
 fi
@@ -127,7 +127,7 @@ fi
 # fzf
 if [[ ! -x "$(command -v fzf)" ]] && [[ -x "$(command -v pacman)" ]]; then
     if pacman -Si fzf >/dev/null 2>&1; then
-        colorEcho ${BLUE} "Installing fzf..."
+        colorEcho "${BLUE}Installing ${FUCHSIA}fzf${BLUE}..."
         sudo pacman --noconfirm -S fzf
     fi
 fi
@@ -144,7 +144,7 @@ fi
 # navi
 # Git_Clone_Update "denisidoro/navi" "/opt/navi"
 # if [[ ! -x "$(command -v navi)" ]]; then
-#     colorEcho ${BLUE} "Installing navi..."
+#     colorEcho "${BLUE}Installing ${FUCHSIA}navi${BLUE}..."
 #     cd /opt/navi && sudo make install
 # elif [[ -d "/opt/navi" ]]; then
 #     cd /opt/navi && sudo make update
@@ -152,7 +152,7 @@ fi
 
 
 # Custom plugins
-colorEcho ${BLUE} "Oh-my-zsh custom plugins..."
+colorEcho "${BLUE}Oh-my-zsh custom plugins..."
 
 # zsh-navigation-tools
 # echo "Updating zsh-navigation-tools..."
@@ -181,7 +181,7 @@ done
 
 
 # Custom themes
-colorEcho ${BLUE} "Oh-my-zsh custom themes..."
+colorEcho "${BLUE}Oh-my-zsh custom themes..."
 ThemeList=(
     "zakaziko99/agnosterzak-ohmyzsh-theme"
     "denysdovhan/spaceship-prompt"
@@ -233,7 +233,7 @@ done
 
 
 # Enable plugins
-colorEcho ${BLUE} "enable plugins..."
+colorEcho "${BLUE}enable plugins..."
 
 # plugin list
 Plugins="git"
@@ -303,7 +303,7 @@ sed -i "${LineBegin}a\\${Plugins}" "$HOME/.zshrc"
 # nano
 Git_Clone_Update "scopatz/nanorc" "$HOME/.local/share/nano"
 
-colorEcho ${BLUE} "nano settings..."
+colorEcho "${BLUE}nano settings..."
 if [[ ! $(grep "set titlecolor" "$HOME/.nanorc") ]]; then
     echo "set titlecolor brightwhite,red" >> "$HOME/.nanorc"
 fi
@@ -340,4 +340,4 @@ fi
 
 
 cd "${CURRENT_DIR}"
-# colorEcho ${GREEN} "Update finished!"
+# colorEcho "${GREEN}Update finished!"

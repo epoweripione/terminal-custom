@@ -10,15 +10,32 @@ trap 'rm -r "$WORKDIR"' EXIT
 [[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
-#######color code########
-RED="31m"      # Error message
-GREEN="32m"    # Success message
-YELLOW="33m"   # Warning message
-BLUE="36m"     # Info message
+# Colors
+NOCOLOR='\033[0m'
+RED='\033[0;31m'        # Error message
+LIGHTRED='\033[1;31m'
+GREEN='\033[0;32m'      # Success message
+LIGHTGREEN='\033[1;32m'
+ORANGE='\033[0;33m'
+YELLOW='\033[1;33m'     # Warning message
+BLUE='\033[0;34m'       # Info message
+LIGHTBLUE='\033[1;34m'
+PURPLE='\033[0;35m'
+FUCHSIA='\033[0;35m'
+LIGHTPURPLE='\033[1;35m'
+CYAN='\033[0;36m'
+LIGHTCYAN='\033[1;36m'
+DARKGRAY='\033[1;30m'
+LIGHTGRAY='\033[0;37m'
+WHITE='\033[1;37m'
 
 function colorEcho() {
-    COLOR=$1
-    echo -e "\033[${COLOR}${@:2}\033[0m"
+    if [[ $# > 1 ]]; then
+        local COLOR=$1
+        echo -e "${COLOR}${@:2}${NOCOLOR}"
+    else
+        echo -e "${@:1}${NOCOLOR}"
+    fi
 }
 
 
@@ -59,7 +76,7 @@ if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; the
         sudo rm -f "/usr/bin/pacman" && sudo rm -f "/usr/bin/pacapt"
 
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        colorEcho ${BLUE} "${ECHO_TYPE} pacaptr - Pacman-like syntax wrapper for many package managers..."
+        colorEcho "${BLUE}${ECHO_TYPE} ${FUCHSIA}pacaptr - Pacman-like syntax wrapper for many package managers${BLUE}..."
         DOWNLOAD_URL="https://github.com/rami3l/pacaptr/releases/download/v${REMOTE_VERSION}/pacaptr-${OS_TYPE}-amd64.tar.gz"
         curl -fSL -o "${WORKDIR}/pacaptr.tar.gz" -C- "$DOWNLOAD_URL" && \
             sudo tar -xzPf "${WORKDIR}/pacaptr.tar.gz" -C "/usr/local/bin" && \
@@ -70,10 +87,10 @@ fi
 
 # Install ZSH Shell
 if [[ -x "$(command -v pacman)" ]]; then
-    colorEcho ${BLUE} "Updating installed packages..."
+    colorEcho "${BLUE}Updating ${FUCHSIA}installed packages${BLUE}..."
     sudo pacman --noconfirm -Syu
 
-    colorEcho ${BLUE} "Installing pre-requisite packages..."
+    colorEcho "${BLUE}Installing ${FUCHSIA}pre-requisite packages${BLUE}..."
     sudo pacman --noconfirm -S git curl wget g++ gcc make zip unzip
 
     ## Install Latest Git ( Git 2.x ) on CentOS 7
@@ -117,7 +134,7 @@ if [[ -x "$(command -v pacman)" ]]; then
     for TargetPackage in "${PackagesList[@]}"; do
         if pacman -Si "$TargetPackage" >/dev/null 2>&1; then
             if ! pacman -Qi "$TargetPackage" >/dev/null 2>&1; then
-                colorEcho ${BLUE} "  Installing $TargetPackage..."
+                colorEcho "${BLUE}  Installing $TargetPackage..."
                 sudo pacman --noconfirm -S "$TargetPackage"
             fi
         fi
@@ -125,7 +142,7 @@ if [[ -x "$(command -v pacman)" ]]; then
 
     # tmux
     # https://github.com/tmux/tmux
-    colorEcho ${BLUE} "Installing tmux..."
+    colorEcho "${BLUE}Installing ${FUCHSIA}tmux${BLUE}..."
     if pacman -Si tmux >/dev/null 2>&1; then
         sudo pacman --noconfirm -S tmux
     else
@@ -136,7 +153,7 @@ if [[ -x "$(command -v pacman)" ]]; then
     fi
 fi
 
-colorEcho ${BLUE} "Installing ZSH Shell..."
+colorEcho "${BLUE}Installing ${FUCHSIA}ZSH ${BLUE}Shell..."
 # http://zsh.sourceforge.net/
 if [[ ! -x "$(command -v zsh)" ]]; then
     if [[ -f /etc/redhat-release ]]; then
@@ -182,7 +199,7 @@ fi
 
 
 if [[ ! -x "$(command -v zsh)" ]]; then
-    colorEcho ${RED} "ZSH is not installed! Please manual install ZSH!"
+    colorEcho "${RED}ZSH is not installed! Please manual install ZSH!"
     exit
 fi
 
@@ -215,10 +232,10 @@ fi
 
 ## Install oh-my-zsh
 if [[ -d "$HOME/.oh-my-zsh" ]]; then
-    colorEcho ${BLUE} "Updating oh-my-zsh..."
+    colorEcho "${BLUE}Updating ${FUCHSIA}oh-my-zsh${BLUE}..."
     cd "$HOME/.oh-my-zsh" && git pull
 else
-    colorEcho ${BLUE} "Installing oh-my-zsh..."
+    colorEcho "${BLUE}Installing ${FUCHSIA}oh-my-zsh${BLUE}..."
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 fi
 

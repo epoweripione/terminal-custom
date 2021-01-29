@@ -17,19 +17,19 @@ set_proxy_mirrors_env
 
 
 if [[ -x "$(command -v npm-check)" ]]; then
-    colorEcho ${BLUE} "Updating npm global packages..."
+    colorEcho "${BLUE}Updating ${FUCHSIA}npm global packages${BLUE}..."
     npm-check -y -g
 fi
 
 
 if [[ -x "$(command -v yarn)" ]]; then
-    colorEcho ${BLUE} "Updating yarn global packages..."
+    colorEcho "${BLUE}Updating ${FUCHSIA}yarn global packages${BLUE}..."
     yarn global upgrade --latest
 fi
 
 
 if [[ -z "$NVM_NOT_UPDATE" && -d "$HOME/.nvm" ]]; then
-    colorEcho ${BLUE} "Updating nvm..."
+    colorEcho "${BLUE}Updating ${FUCHSIA}nvm${BLUE}..."
     if type 'nvm' 2>/dev/null | grep -q 'function'; then
         :
     else
@@ -48,16 +48,16 @@ if [[ -z "$NVM_NOT_UPDATE" && -d "$HOME/.nvm" ]]; then
     fi
 
     if [[ -z "$NVM_INSTALLER_NOT_USE_MIRROR" ]]; then
-        colorEcho ${BLUE} "Updating node LTS..."
+        colorEcho "${BLUE}Updating ${FUCHSIA}node LTS${BLUE}..."
         NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node nvm install --lts
 
-        colorEcho ${BLUE} "Updating node latest..."
+        colorEcho "${BLUE}Updating ${FUCHSIA}node latest${BLUE}..."
         NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node nvm install node --reinstall-packages-from=node
     else
-        colorEcho ${BLUE} "Updating node LTS..."
+        colorEcho "${BLUE}Updating ${FUCHSIA}node LTS${BLUE}..."
         nvm install --lts
 
-        colorEcho ${BLUE} "Updating node latest..."
+        colorEcho "${BLUE}Updating ${FUCHSIA}node latest${BLUE}..."
         nvm install node --reinstall-packages-from=node
     fi
 
@@ -68,21 +68,21 @@ if [[ -z "$NVM_NOT_UPDATE" && -d "$HOME/.nvm" ]]; then
     [ -L "/usr/bin/npm" ] && rm -f /usr/bin/npm
     ln -s "$(which node)" /usr/bin/node && ln -s "$(which npm)" /usr/bin/npm
 
-    # colorEcho ${BLUE} "Getting node LTS version..."
+    # colorEcho "${BLUE}Getting node LTS version..."
     # CURRENT_VERSION=$(nvm version lts/*)
     # REMOTE_VERSION=$(nvm version-remote lts/*)
 
     # if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    #     colorEcho ${BLUE} "Updating node LTS..."
+    #     colorEcho "${BLUE}Updating ${FUCHSIA}node LTS${BLUE}..."
     #     nvm install --lts --latest-npm
     # fi
 
-    # colorEcho ${BLUE} "Getting node version..."
+    # colorEcho "${BLUE}Getting node version..."
     # CURRENT_VERSION=$(nvm version)
     # REMOTE_VERSION=$(nvm version-remote)
 
     # if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    #     colorEcho ${BLUE} "Updating node latest..."
+    #     colorEcho "${BLUE}Updating ${FUCHSIA}node latest${BLUE}..."
     #     nvm install node --reinstall-packages-from=node --latest-npm
     #     # nvm use node
     #     nvm alias default node

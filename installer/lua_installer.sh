@@ -18,7 +18,7 @@ else
 fi
 
 
-colorEcho ${BLUE} "Checking latest version for Lua & LuaRocks..."
+colorEcho "${BLUE}Checking latest version for ${FUCHSIA}Lua & LuaRocks${BLUE}..."
 
 if [[ -x "$(command -v apt)" ]]; then
     sudo apt -y install build-essential libreadline-dev
@@ -41,7 +41,7 @@ REMOTE_VERSION=$(curl -fsL -N http://www.lua.org/download.html \
     | grep -Eo -m1 'lua-([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d'-' -f2)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    colorEcho ${BLUE} "  Installing lua ${REMOTE_VERSION} from source..."
+    colorEcho "${BLUE}  Installing ${FUCHSIA}lua ${YELLOW}${REMOTE_VERSION} ${BLUE}from source..."
     DOWNLOAD_URL="http://www.lua.org/ftp/lua-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/lua.tar.gz" "$DOWNLOAD_URL" && \
         tar -xzPf "${WORKDIR}/lua.tar.gz" -C "${WORKDIR}" && \
@@ -64,7 +64,7 @@ REMOTE_VERSION=$(curl -fsL -N https://luarocks.org/ \
     | grep -Eo -m1 'luarocks-([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d'-' -f2)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-    colorEcho ${BLUE} "  Installing luarocks ${REMOTE_VERSION} from source..."
+    colorEcho "${BLUE}  Installing ${FUCHSIA}luarocks ${YELLOW}${REMOTE_VERSION} ${BLUE}from source..."
     DOWNLOAD_URL="https://luarocks.org/releases/luarocks-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/luarocks.tar.gz" "$DOWNLOAD_URL" && \
         tar -xzPf "${WORKDIR}/luarocks.tar.gz" -C "${WORKDIR}" && \

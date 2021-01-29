@@ -47,7 +47,7 @@ else
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho ${BLUE} "Checking latest version for ${APP_INSTALL_NAME}..."
+    colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 fi
 
 # new install
@@ -68,7 +68,7 @@ if [[ "${IS_INSTALL}" == "yes" && "${IS_UPDATE}" == "no" ]]; then
         for TargetPackage in "${PackagesList[@]}"; do
             if pacman -Si "$TargetPackage" >/dev/null 2>&1; then
                 if ! pacman -Qi "$TargetPackage" >/dev/null 2>&1; then
-                    colorEcho ${BLUE} "  Installing $TargetPackage..."
+                    colorEcho "${BLUE}  Installing $TargetPackage..."
                     sudo pacman --noconfirm -S "$TargetPackage"
                 fi
             fi

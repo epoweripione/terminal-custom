@@ -27,14 +27,14 @@ fi
 if [[ ! -x "$(command -v jq)" ]]; then
     if [[ -x "$(command -v pacman)" ]]; then
         if pacman -Si jq >/dev/null 2>&1; then
-            colorEcho ${BLUE} "Installing jq..."
+            colorEcho "${BLUE}Installing ${FUCHSIA}jq${BLUE}..."
             sudo pacman --noconfirm -S jq
         fi
     fi
 fi
 
 if [[ ! -x "$(command -v jq)" ]]; then
-    colorEcho ${RED} "jq is not installed!"
+    colorEcho "${RED}jq is not installed!"
     exit 1
 fi
 
@@ -55,11 +55,11 @@ function get_v2ray_config_from_subscription() {
     local DECODE_FILENAME="${WORKDIR}/v2ray_decode.vmess"
     local exitStatus=1
 
-    colorEcho ${BLUE} "  Getting v2ray subscriptions..."
+    colorEcho "${BLUE}  Getting v2ray subscriptions..."
     curl -fsL -4 --connect-timeout 10 --max-time 30 \
         -o "${VMESS_FILENAME}" "${SUBSCRIBE_URL}"
     if [[ $? != 0 ]]; then
-        colorEcho ${RED} "  Can't get the subscriptions from ${SUBSCRIBE_URL}!"
+        colorEcho "${RED}  Can't get the subscriptions from ${SUBSCRIBE_URL}!"
         return 1
     fi
 
@@ -71,11 +71,11 @@ function get_v2ray_config_from_subscription() {
     fi
 
     if [[ ! -s "${DECODE_FILENAME}" ]]; then
-        colorEcho ${RED} "  Can't get the subscriptions from ${SUBSCRIBE_URL}!"
+        colorEcho "${RED}  Can't get the subscriptions from ${SUBSCRIBE_URL}!"
         return 1
     fi
 
-    colorEcho ${BLUE} "  Testing v2ray config from subscriptions..."
+    colorEcho "${BLUE}  Testing v2ray config from subscriptions..."
     # Decode subscriptions line by line
     local V2RAY_PORT
     local READLINE
@@ -115,7 +115,7 @@ function get_v2ray_config_from_subscription() {
         VMESS_WS_HOST=$(echo "${VMESS_CONFIG}" | jq -r '.host//empty')
         VMESS_WS_PATH=$(echo "${VMESS_CONFIG}" | jq -r '.path//empty')
 
-        colorEcho ${BLUE} "  Testing ${VMESS_PS} ${VMESS_ADDR}:${VMESS_PORT}..."
+        colorEcho "${BLUE}  Testing ${VMESS_PS} ${VMESS_ADDR}:${VMESS_PORT}..."
         if [[ -z "${VMESS_SECURITY}" ]]; then
             VMESS_SECURITY=$(echo "null")
         else
@@ -279,7 +279,7 @@ function use_v2ray() {
     if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
         :
     else
-        colorEcho ${BLUE} "  Checking & loading v2ray proxy..."
+        colorEcho "${BLUE}  Checking & loading v2ray proxy..."
 
         [[ ! -x "$(command -v v2ray)" ]] && install_v2ray_client
 
@@ -308,7 +308,7 @@ function use_v2ray() {
                 done
 
                 if [[ "$SubError" == "yes" ]]; then
-                    colorEcho ${RED} "  Something wrong when setup proxy ${PROXY_URL}!"
+                    colorEcho "${RED}  Something wrong when setup proxy ${PROXY_URL}!"
                     return 1
                 else
                     return 0
@@ -343,7 +343,7 @@ function use_clash() {
     if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
         :
     else
-        colorEcho ${BLUE} "  Checking & loading clash proxy..."
+        colorEcho "${BLUE}  Checking & loading clash proxy..."
 
         if [[ ! -s "/srv/subconverter/subconverter" && ! -s "/srv/clash/clash" ]]; then
             Download_Install_Subconverter_Clash
@@ -351,7 +351,7 @@ function use_clash() {
 
         [[ -s "/srv/subconverter/subconverter" ]] || install_update_subconverter
         [[ -s "/srv/subconverter/subconverter" ]] || {
-                colorEcho ${RED} "  Please install and run subconverter first!"
+                colorEcho "${RED}  Please install and run subconverter first!"
                 return 1
             }
 
@@ -361,7 +361,7 @@ function use_clash() {
 
         [[ -s "/srv/clash/clash" ]] || install_update_clash
         [[ -s "/srv/clash/clash" ]] || {
-                colorEcho ${RED} "  Please install and run clash first!"
+                colorEcho "${RED}  Please install and run clash first!"
                 return 1
             }
 
@@ -409,7 +409,7 @@ function main() {
 
     # set global clash socks5 proxy or v2ray socks5 proxy
     if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
-        colorEcho ${BLUE} "Checking & loading socks5 proxy..."
+        colorEcho "${BLUE}Checking & loading socks5 proxy..."
         use_clash 127.0.0.1 7891 7890
         if ! check_set_global_proxy 7891 7890; then
             echo -n "Clash not working, use v2ray?[y/N] "
@@ -420,7 +420,7 @@ function main() {
                 if use_v2ray "${SOCKS_ADDRESS}"; then
                     set_special_socks5_proxy "${SOCKS_ADDRESS}"
                     set_git_special_proxy "github.com,gitlab.com" "${SOCKS_ADDRESS}"
-                    colorEcho ${GREEN} "  Socks5 proxy address: ${SOCKS_ADDRESS}"
+                    colorEcho "${GREEN}  Socks5 proxy address: ${FUCHSIA}${SOCKS_ADDRESS}"
                 else
                     set_special_socks5_proxy
                     set_git_special_proxy "github.com,gitlab.com"

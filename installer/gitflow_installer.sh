@@ -15,7 +15,7 @@ fi
 
 ## git-flow (AVH Edition)
 # https://github.com/petervanderdoes/gitflow-avh
-colorEcho ${BLUE} "Installing git-flow (AVH Edition)..."
+colorEcho "${BLUE}Installing ${FUCHSIA}git-flow (AVH Edition)${BLUE}..."
 DOWNLOAD_URL="https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh"
 wget --no-check-certificate -q "$DOWNLOAD_URL" && \
     sudo bash gitflow-installer.sh install develop && \
