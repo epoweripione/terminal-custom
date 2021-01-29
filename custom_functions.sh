@@ -1341,7 +1341,7 @@ function Git_Clone_Update() {
 
     REPOREMOTE="https://${REPOURL}/${REPONAME}.git"
     if [[ -d "${REPODIR}/.git" ]]; then
-        colorEcho "${BLUE}  Updating ${REPONAME}..."
+        colorEcho "${BLUE}  Updating ${FUCHSIA}${REPONAME}${BLUE}..."
 
         CurrentDir=$(pwd)
 
@@ -1379,7 +1379,7 @@ function Git_Clone_Update() {
 
         cd "${CurrentDir}"
     else
-        colorEcho "${BLUE}  Cloning ${REPONAME}..."
+        colorEcho "${BLUE}  Cloning ${FUCHSIA}${REPONAME}${BLUE}..."
         BRANCH=$(git ls-remote --symref "${REPOREMOTE}" HEAD \
                     | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
         [[ -z "${BRANCH}" ]] && BRANCH="master"
@@ -1389,7 +1389,7 @@ function Git_Clone_Update() {
             -c fetch.fsck.zeroPaddedFilemode=ignore \
             -c receive.fsck.zeroPaddedFilemode=ignore \
             --depth=1 --branch "${BRANCH}" "${REPOREMOTE}" "${REPODIR}" || {
-                colorEcho "${RED}  git clone of ${REPONAME} failed!"
+                colorEcho "${RED}  git clone of ${FUCHSIA}${REPONAME} ${RED}failed!"
                 return 1
             }
     fi

@@ -98,25 +98,25 @@ fi
 colorEcho "${BLUE}Downloading ${FUCHSIA}Nerd fonts${BLUE}..."
 mkdir -p ~/patched-fonts
 
-# echo "Downloading SourceCodePro..."
+# echo "Downloading ${FUCHSIA}SourceCodePro${BLUE}..."
 # curl -fSL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/SourceCodePro.zip -o ~/patched-fonts/SourceCodePro.zip
 # mkdir -p ~/patched-fonts/SourceCodePro && \
 #   unzip -q ~/patched-fonts/SourceCodePro.zip -d ~/patched-fonts/SourceCodePro && \
 #   rm -f ~/patched-fonts/SourceCodePro.zip
 
-# colorEcho "${BLUE}Downloading FiraCode..."
+# colorEcho "${BLUE}Downloading ${FUCHSIA}FiraCode${BLUE}..."
 # curl -fSL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/FiraCode.zip -o ~/patched-fonts/FiraCode.zip
 # mkdir -p ~/patched-fonts/FiraCode && \
 #   unzip -q ~/patched-fonts/FiraCode.zip -d ~/patched-fonts/FiraCode && \
 #   rm -f ~/patched-fonts/FiraCode.zip
 
-# colorEcho "${BLUE}Downloading FiraMono..."
+# colorEcho "${BLUE}Downloading ${FUCHSIA}FiraMono${BLUE}..."
 # curl -fSL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/FiraMono.zip -o ~/patched-fonts/FiraMono.zip
 # mkdir -p ~/patched-fonts/FiraMono && \
 #   unzip -q ~/patched-fonts/FiraMono.zip -d ~/patched-fonts/FiraMono && \
 #   rm -f ~/patched-fonts/FiraMono.zip
 
-# colorEcho "${BLUE}Downloading Iosevka..."
+# colorEcho "${BLUE}Downloading ${FUCHSIA}Iosevka${BLUE}..."
 # curl -fSL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/Iosevka.zip -o ~/patched-fonts/Iosevka.zip
 # mkdir -p ~/patched-fonts/Iosevka && \
 #   unzip -q ~/patched-fonts/Iosevka.zip -d ~/patched-fonts/Iosevka && \
