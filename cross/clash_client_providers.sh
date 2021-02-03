@@ -110,27 +110,6 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
         if [[ ${RULES_START_LINE} -gt 0 ]]; then
             RULES_START_LINE=$((${RULES_START_LINE} + 1))
             RULES=$(sed -n "${RULES_START_LINE},$ p" "${DOWNLOAD_FILE}")
-
-            # remove 2nd+ occurernce rules
-            colorEcho "${BLUE}    Processing ${FUCHSIA}duplicate rules${BLUE}..."
-            DUPLICATE_RULES=$(echo "${RULES}" | grep -Eo ",[a-zA-Z0-9./?=_%:-]*," \
-                | sort -n | uniq -c | awk '{if($1>1) print $2}' | sort -rn)
-            while read -r line; do
-                [[ -z "${line}" ]] && continue
-                DUPLICATE_ENTRY=$(echo "${line}" \
-                    | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
-                    | sed 's/]/\\&/g')
-
-                # https://stackoverflow.com/questions/30688682/how-to-remove-from-second-occurrence-until-the-end-of-the-file
-                # maybe too slow with large entries
-                # RULES=$(echo "${RULES}" | sed "0,/${DUPLICATE_ENTRY}/b; /${DUPLICATE_ENTRY}/d")
-
-                # https://stackoverflow.com/questions/16202900/using-sed-between-specific-lines-only
-                ENTRY_FIRST_LINE=$(echo "${RULES}" | grep -En "${DUPLICATE_ENTRY}" | cut -d: -f1 | head -n1)
-                [[ -z "${ENTRY_FIRST_LINE}" ]] && continue
-                ENTRY_START_LINE=$((${ENTRY_FIRST_LINE} + 1))
-                RULES=$(echo "${RULES}" | sed "${ENTRY_START_LINE},$ {/${DUPLICATE_ENTRY}/d;}")
-            done <<<"${DUPLICATE_RULES}"
         fi
     else
         FILELIST+=("${TARGET_FILE}")
@@ -231,6 +210,29 @@ if [[ -s "${RULE_CUSTOM_FILE}" ]]; then
     RULE_CUSTOM=$(cat "${RULE_CUSTOM_FILE}")
 fi
 
+# all rules
+[[ -n "${RULE_CUSTOM}" ]] && RULES=$(echo -e "${RULE_CUSTOM}\n${RULES}")
+
+# remove 2nd+ occurernce rules
+colorEcho "${BLUE}  Processing ${FUCHSIA}duplicate rules${BLUE}..."
+DUPLICATE_RULES=$(echo "${RULES}" | grep -Eo ",[a-zA-Z0-9./?=_%:-]*," \
+                    | sort -n | uniq -c | awk '{if($1>1) print $2}' | sort -rn)
+while read -r line; do
+    [[ -z "${line}" ]] && continue
+    DUPLICATE_ENTRY=$(echo "${line}" \
+        | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
+        | sed 's/]/\\&/g')
+
+    # https://stackoverflow.com/questions/30688682/how-to-remove-from-second-occurrence-until-the-end-of-the-file
+    RULES=$(echo "${RULES}" | sed "0,/${DUPLICATE_ENTRY}/b; /${DUPLICATE_ENTRY}/d")
+
+    ## https://stackoverflow.com/questions/16202900/using-sed-between-specific-lines-only
+    # ENTRY_FIRST_LINE=$(echo "${RULES}" | grep -En "${DUPLICATE_ENTRY}" | cut -d: -f1 | head -n1)
+    # [[ -z "${ENTRY_FIRST_LINE}" ]] && continue
+    # ENTRY_START_LINE=$((${ENTRY_FIRST_LINE} + 1))
+    # RULES=$(echo "${RULES}" | sed "${ENTRY_START_LINE},$ {/${DUPLICATE_ENTRY}/d;}")
+done <<<"${DUPLICATE_RULES}"
+
 
 # Add contents to target config file
 colorEcho "${BLUE}  Setting all config to ${FUCHSIA}${TARGET_CONFIG_FILE}${BLUE}..."
@@ -259,11 +261,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
             CONTENT_TAG="${PROXY_USE_ALL}"
             ;;
         "rules")
-            if [[ -n "${RULE_CUSTOM}" ]]; then
-                CONTENT_TAG=$(echo -e "${RULE_CUSTOM}\n${RULES}")
-            else
-                CONTENT_TAG="${RULES}"
-            fi
+            CONTENT_TAG="${RULES}"
             ;;
         "OTHERS")
             for TargetName in "${PROXY_LIST_ALL[@]}"; do

@@ -189,26 +189,6 @@ if [[ -s "${WORKDIR}/rules.yml" ]]; then
     if [[ ${RULES_START_LINE} -gt 0 ]]; then
         RULES_START_LINE=$((${RULES_START_LINE} + 1))
         RULES=$(sed -n "${RULES_START_LINE},$ p" "${WORKDIR}/rules.yml")
-
-        # remove 2nd+ occurernce rules
-        DUPLICATE_RULES=$(echo "${RULES}" | grep -Eo ",[a-zA-Z0-9./?=_%:-]*," \
-            | sort -n | uniq -c | awk '{if($1>1) print $2}' | sort -rn)
-        while read -r line; do
-            [[ -z "${line}" ]] && continue
-            DUPLICATE_ENTRY=$(echo "${line}" \
-                | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
-                | sed 's/]/\\&/g')
-
-            # https://stackoverflow.com/questions/30688682/how-to-remove-from-second-occurrence-until-the-end-of-the-file
-            # maybe too slow with large entries
-            # RULES=$(echo "${RULES}" | sed "0,/${DUPLICATE_ENTRY}/b; /${DUPLICATE_ENTRY}/d")
-
-            # https://stackoverflow.com/questions/16202900/using-sed-between-specific-lines-only
-            ENTRY_FIRST_LINE=$(echo "${RULES}" | grep -En "${DUPLICATE_ENTRY}" | cut -d: -f1 | head -n1)
-            [[ -z "${ENTRY_FIRST_LINE}" ]] && continue
-            ENTRY_START_LINE=$((${ENTRY_FIRST_LINE} + 1))
-            RULES=$(echo "${RULES}" | sed "${ENTRY_START_LINE},$ {/${DUPLICATE_ENTRY}/d;}")
-        done <<<"$DUPLICATE_RULES"
     fi
 fi
 
@@ -300,6 +280,29 @@ if [[ -s "$RULE_CUSTOM_FILE" ]]; then
     colorEcho "${BLUE}  Getting ${FUCHSIA}custom rules${BLUE}..."
     RULE_CUSTOM=$(cat "$RULE_CUSTOM_FILE")
 fi
+
+# all rules
+[[ -n "${RULE_CUSTOM}" ]] && RULES=$(echo -e "${RULE_CUSTOM}\n${RULES}")
+
+# remove 2nd+ occurernce rules
+colorEcho "${BLUE}  Processing ${FUCHSIA}duplicate rules${BLUE}..."
+DUPLICATE_RULES=$(echo "${RULES}" | grep -Eo ",[a-zA-Z0-9./?=_%:-]*," \
+                    | sort -n | uniq -c | awk '{if($1>1) print $2}' | sort -rn)
+while read -r line; do
+    [[ -z "${line}" ]] && continue
+    DUPLICATE_ENTRY=$(echo "${line}" \
+        | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
+        | sed 's/]/\\&/g')
+
+    # https://stackoverflow.com/questions/30688682/how-to-remove-from-second-occurrence-until-the-end-of-the-file
+    RULES=$(echo "${RULES}" | sed "0,/${DUPLICATE_ENTRY}/b; /${DUPLICATE_ENTRY}/d")
+
+    ## https://stackoverflow.com/questions/16202900/using-sed-between-specific-lines-only
+    # ENTRY_FIRST_LINE=$(echo "${RULES}" | grep -En "${DUPLICATE_ENTRY}" | cut -d: -f1 | head -n1)
+    # [[ -z "${ENTRY_FIRST_LINE}" ]] && continue
+    # ENTRY_START_LINE=$((${ENTRY_FIRST_LINE} + 1))
+    # RULES=$(echo "${RULES}" | sed "${ENTRY_START_LINE},$ {/${DUPLICATE_ENTRY}/d;}")
+done <<<"${DUPLICATE_RULES}"
 
 # proxy list
 # Extract word from string using grep/sed/awk
@@ -524,10 +527,10 @@ START_LINE=$((${PROXY_GROUP_LINE} + 1))
 ADD_CONTENT=$(sed -n "${START_LINE},${RULES_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
-if [[ -n "$RULE_CUSTOM" ]]; then
-    colorEcho "${BLUE}    Setting ${FUCHSIA}custom rules${BLUE}..."
-    echo "${RULE_CUSTOM}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
-fi
+# if [[ -n "$RULE_CUSTOM" ]]; then
+#     colorEcho "${BLUE}    Setting ${FUCHSIA}custom rules${BLUE}..."
+#     echo "${RULE_CUSTOM}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
+# fi
 
 if [[ -n "$RULES" ]]; then
     colorEcho "${BLUE}    Setting ${FUCHSIA}rules${BLUE}..."
