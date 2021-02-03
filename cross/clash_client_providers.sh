@@ -51,12 +51,11 @@ if ! pgrep -f "subconverter" >/dev/null 2>&1; then
 fi
 
 
-colorEcho "${BLUE}Getting clash rules..."
+colorEcho "${BLUE}Getting ${FUCHSIA}clash rules${BLUE}..."
 
 # Update ACL4SSR
 # https://github.com/ACL4SSR/ACL4SSR
 if [[ -s "/srv/subconverter/subconverter" ]]; then
-    colorEcho "${BLUE}  Updating ${FUCHSIA}ACL4SSR${BLUE}..."
     if [[ -d "/etc/clash" ]]; then
         find "/etc/clash" -type f -name "*_Profile*" -print0 | xargs -0 -I{} cp -f {} "/srv/subconverter/profiles"
         find "/srv/subconverter/config" -type l -name "*_Rules*" -print0 | xargs -0 -I{} rm -f {}
@@ -95,7 +94,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
     TARGET_URL=$(echo ${READLINE} | cut -d' ' -f2)
     TARGET_OPTION=$(echo ${READLINE} | cut -d' ' -f3)
 
-    colorEcho "${BLUE}  Getting ${TARGET_FILE}..."
+    colorEcho "${BLUE}  Getting ${FUCHSIA}${TARGET_FILE}${BLUE}..."
     DOWNLOAD_FILE="${WORKDIR}/${TARGET_FILE}.yml"
     curl -fsL --connect-timeout 10 --max-time 30 -o "${DOWNLOAD_FILE}" "${TARGET_URL}"
     if [[ $? != 0 ]]; then
@@ -113,8 +112,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
             RULES=$(sed -n "${RULES_START_LINE},$ p" "${DOWNLOAD_FILE}")
 
             # remove 2nd+ occurernce rules
-            # https://stackoverflow.com/questions/30688682/how-to-remove-from-second-occurrence-until-the-end-of-the-file
-            colorEcho "${BLUE}    Processing duplicate rules..."
+            colorEcho "${BLUE}    Processing ${FUCHSIA}duplicate rules${BLUE}..."
             DUPLICATE_RULES=$(echo "${RULES}" | grep -Eo ",[a-zA-Z0-9./?=_%:-]*," \
                 | sort -n | uniq -c | awk '{if($1>1) print $2}' | sort -rn)
             while read -r line; do
@@ -122,7 +120,16 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
                 DUPLICATE_ENTRY=$(echo "${line}" \
                     | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
                     | sed 's/]/\\&/g')
-                RULES=$(echo "${RULES}" | sed "0,/${DUPLICATE_ENTRY}/b; /${DUPLICATE_ENTRY}/d")
+
+                # https://stackoverflow.com/questions/30688682/how-to-remove-from-second-occurrence-until-the-end-of-the-file
+                # maybe too slow with large entries
+                # RULES=$(echo "${RULES}" | sed "0,/${DUPLICATE_ENTRY}/b; /${DUPLICATE_ENTRY}/d")
+
+                # https://stackoverflow.com/questions/16202900/using-sed-between-specific-lines-only
+                ENTRY_FIRST_LINE=$(echo "${RULES}" | grep -En "${DUPLICATE_ENTRY}" | cut -d: -f1 | head -n1)
+                [[ -z "${ENTRY_FIRST_LINE}" ]] && continue
+                ENTRY_START_LINE=$((${ENTRY_FIRST_LINE} + 1))
+                RULES=$(echo "${RULES}" | sed "${ENTRY_START_LINE},$ {/${DUPLICATE_ENTRY}/d;}")
             done <<<"${DUPLICATE_RULES}"
         fi
     else
@@ -184,7 +191,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
 done < "${SUB_URL_LIST}"
 
 
-colorEcho "${BLUE}  Processing proxies..."
+colorEcho "${BLUE}  Processing ${FUCHSIA}proxies${BLUE}..."
 # Sort public proxies
 PROXIES_PUBLIC=$(echo "${PROXIES_PUBLIC}" | sort | uniq)
 
@@ -220,13 +227,13 @@ done
 # custom rules
 RULE_CUSTOM_FILE="/etc/clash/clash_rule_custom.yml"
 if [[ -s "${RULE_CUSTOM_FILE}" ]]; then
-    colorEcho "${BLUE}  Getting custom rules..."
+    colorEcho "${BLUE}  Getting ${FUCHSIA}custom rules${BLUE}..."
     RULE_CUSTOM=$(cat "${RULE_CUSTOM_FILE}")
 fi
 
 
 # Add contents to target config file
-colorEcho "${BLUE}  Setting all config to ${TARGET_CONFIG_FILE}..."
+colorEcho "${BLUE}  Setting all config to ${FUCHSIA}${TARGET_CONFIG_FILE}${BLUE}..."
 [[ -f "${TARGET_CONFIG_FILE}" ]] && rm -f "${TARGET_CONFIG_FILE}"
 
 FILL_LINES=$(grep -E -n "^#-" "${CLASH_CONFIG}")
@@ -239,7 +246,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
 
     LINE_END=$((${TARGET_LINE} - 1))
 
-    colorEcho "${BLUE}    Gen ${TARGET_TAG}..."
+    colorEcho "${BLUE}    Gen ${FUCHSIA}${TARGET_TAG}${BLUE}..."
     CONTENT_PREFIX=$(sed -n "${LINE_START},${LINE_END} p" "${CLASH_CONFIG}")
 
     CONTENT_TAG=""
@@ -314,7 +321,7 @@ if [[ -n "${COPY_TO_DIR}" ]]; then
 
     if [[ -n "${PROXIES_PRIVATE}" ]]; then
         if [[ ! -s "${COPY_TO_FILE}.md5" ]]; then
-            colorEcho "${BLUE}  Gen md5 for ${COPY_TO_FILE}..."
+            colorEcho "${BLUE}  Gen md5 for ${FUCHSIA}${COPY_TO_FILE}${BLUE}..."
             (openssl md5 -hex "${COPY_TO_FILE}" | cut -d" " -f2) > "${COPY_TO_FILE}.md5"
         fi
     fi
@@ -328,7 +335,7 @@ if [[ -n "${COPY_TO_DIR}" ]]; then
 
     #     if [[ "${FILEOPTION[$FILE_INDEX]}" == *"private"* ]]; then
     #         if [[ ! -s "${COPY_TO_FILE}.md5" ]]; then
-    #             colorEcho "${BLUE}  Gen md5 for ${COPY_TO_FILE}..."
+    #             colorEcho "${BLUE}  Gen md5 for ${FUCHSIA}${COPY_TO_FILE}${BLUE}..."
     #             (openssl md5 -hex "${COPY_TO_FILE}" | cut -d" " -f2) > "${COPY_TO_FILE}.md5"
     #         fi
     #     fi

@@ -51,9 +51,9 @@ $memory_usage\
 $cmd_duration\
 $jobs\
 $battery\
+$status\
 [](fg:#5a6374)\
 $line_break\
-$status\
 $character"""
 
 # Wait 30 milliseconds for starship to check files under the current directory.
@@ -68,9 +68,6 @@ style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$profile($region)]($style)"
 
 [battery]
-full_symbol = ""
-charging_symbol = ""
-discharging_symbol = ""
 format = "[  ](fg:white bg:#5a6374)[$symbol$percentage]($style)"
 
 [[battery.display]]
@@ -96,7 +93,6 @@ style = "bold fg:bright-red bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[ $duration]($style)"
 
 [conda]
-symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$environment]($style)"
 
@@ -110,15 +106,13 @@ style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
 [directory]
+home_symbol = " ~"
 truncation_length = 5
 truncation_symbol = ""
 truncate_to_repo = false
 style = "bold fg:bright-blue bg:#5a6374"
 read_only_style = "bold fg:bright-red bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$path]($style)[$read_only]($read_only_style)"
-
-[directory.substitutions]
-"~" = " ~"
 
 [docker]
 symbol = " "
@@ -148,13 +142,14 @@ style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$account($region)]($style)"
 
 [git_branch]
-symbol = " "
 style = "bold fg:bright-purple bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$branch]($style)"
 
 [git_commit]
 style = "bold fg:bright-green bg:#5a6374"
-format = "[ $hash]($style)"
+format = "[ $hash]($style)[ $tag]($style)"
+only_detached = true
+tag_disabled = false
 
 [git_state]
 style = "bold fg:bright-yellow bg:#5a6374"
@@ -308,7 +303,9 @@ format = "[  ](fg:white bg:#5a6374)[$symbol($env)]($style)"
 
 [status]
 style = "bold fg:bright-red bg:#5a6374"
-format = "[  ](fg:white bg:#5a6374)[$symbol$status]($style)"
+format = "[  ](fg:white bg:#5a6374)[$symbol $status $status_common_meaning$status_signal_name$status_maybe_int]($style)"
+map_symbol = true
+disabled = false
 
 [swift]
 symbol = "ﯣ "
@@ -341,10 +338,11 @@ disabled = false
 
 # windows
 [env_var]
-variable = "USERNAME"
-style = "bold fg:bright-cyan bg:#5a6374"
-format = "[  ](bold fg:bright-white bg:#5a6374)[$env_value]($style)"
-disabled = true
+variable = "OS_INFO_ICON"
+default = ""
+style = "bold fg:bright-white bg:#5a6374"
+format = "[ $env_value ]($style)"
+disabled = false
 
 [custom.docker]
 description = "Shows the docker symbol if the current directory has Dockerfile or docker-compose.yml files"

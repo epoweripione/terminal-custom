@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+trap 'rm -r "$WORKDIR"' EXIT
+
+[[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
+[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
+
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
@@ -20,9 +25,9 @@ set_proxy_mirrors_env
 # bash <(curl -fsSL https://python3.netlify.com/install.sh)
 
 # fix `pip list` warning
-if [[ ! $(grep "format=columns" $HOME/.pip/pip.conf) ]]; then
+if [[ ! $(grep "format=columns" "$HOME/.pip/pip.conf") ]]; then
     mkdir -p $HOME/.pip && \
-        echo -e "[global]\nformat=columns" >> $HOME/.pip/pip.conf
+        echo -e "[global]\nformat=columns" >> "$HOME/.pip/pip.conf"
 fi
 
 # pip upgrade
@@ -33,19 +38,19 @@ fi
 # alias pipinstall='pip install -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com'
 PIP_MIRROR_URL=https://mirrors.aliyun.com/pypi/simple/
 PIP_MIRROR_HOST=mirrors.aliyun.com
-if [[ -z "$PIP_NOT_USE_MIRROR" && ! $(grep "${PIP_MIRROR_HOST}" $HOME/.pip/pip.conf) ]]; then
-    if [[ $(grep "index-url=" $HOME/.pip/pip.conf) ]]; then
-        sed -i "s|index-url=.*|index-url=${PIP_MIRROR_URL}|" $HOME/.pip/pip.conf
+if [[ -z "$PIP_NOT_USE_MIRROR" && ! $(grep "${PIP_MIRROR_HOST}" "$HOME/.pip/pip.conf") ]]; then
+    if [[ $(grep "index-url=" "$HOME/.pip/pip.conf") ]]; then
+        sed -i "s|index-url=.*|index-url=${PIP_MIRROR_URL}|" "$HOME/.pip/pip.conf"
     else
-        sed -i "/^\[global\]/a\index-url=${PIP_MIRROR_URL}" $HOME/.pip/pip.conf
+        sed -i "/^\[global\]/a\index-url=${PIP_MIRROR_URL}" "$HOME/.pip/pip.conf"
     fi
 
-    if [[ $(grep "trusted-host=" $HOME/.pip/pip.conf) ]]; then
-        sed -i "s|trusted-host=.*|trusted-host=${PIP_MIRROR_HOST}|" $HOME/.pip/pip.conf
+    if [[ $(grep "trusted-host=" "$HOME/.pip/pip.conf") ]]; then
+        sed -i "s|trusted-host=.*|trusted-host=${PIP_MIRROR_HOST}|" "$HOME/.pip/pip.conf"
     else
-        [[ ! $(grep "[install]" $HOME/.pip/pip.conf) ]] && \
-            echo -e "\n[install]" | tee -a $HOME/.pip/pip.conf >/dev/null
-        sed -i "/^\[install\]/a\trusted-host=${PIP_MIRROR_HOST}" $HOME/.pip/pip.conf
+        [[ ! $(grep "[install]" "$HOME/.pip/pip.conf") ]] && \
+            echo -e "\n[install]" | tee -a "$HOME/.pip/pip.conf" >/dev/null
+        sed -i "/^\[install\]/a\trusted-host=${PIP_MIRROR_HOST}" "$HOME/.pip/pip.conf"
     fi
 fi
 
@@ -53,21 +58,37 @@ fi
 # Miniconda
 colorEcho "${BLUE}Installing ${FUCHSIA}Miniconda3${BLUE}..."
 if [[ ! -d "$HOME/miniconda3" ]]; then
-    wget -c https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-        bash ./Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
-
-    rm -f "$HOME/miniconda3"
+    DOWNLOAD_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+    wget -O "${WORKDIR}/Miniconda3.sh" -c "${DOWNLOAD_URL}" && \
+        bash "${WORKDIR}/Miniconda3.sh" -b -p "$HOME/miniconda3"
 fi
 
 if [[ -d "$HOME/miniconda3" ]]; then
     export PATH=$PATH:$HOME/miniconda3/condabin
-    source $HOME/miniconda3/bin/activate
+    source "$HOME/miniconda3/bin/activate"
 
     ## Use mirror channels
     if [[ -z "$CONDA_NOT_USE_MIRROR" ]]; then
-        conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/ && \
-            conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ && \
-            conda config --set show_channel_urls yes
+        # https://mirrors.tuna.tsinghua.edu.cn/help/anaconda/
+        tee -a "$HOME/.condarc" >/dev/null <<-'EOF'
+channels:
+  - defaults
+show_channel_urls: true
+default_channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2
+custom_channels:
+  conda-forge: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  msys2: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  bioconda: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  menpo: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  pytorch: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  simpleitk: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+EOF
+        # conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/ && \
+        #     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ && \
+        #     conda config --set show_channel_urls yes
 
         # conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/ && \
         #     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/msys2/ && \
@@ -78,6 +99,9 @@ if [[ -d "$HOME/miniconda3" ]]; then
 
     ## Use default channels
     # conda config --remove-key channels
+
+    ## clean channels cache
+    # conda clean -i
 
     conda update -y --all
 

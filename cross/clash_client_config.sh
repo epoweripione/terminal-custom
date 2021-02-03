@@ -99,7 +99,7 @@ if [[ -s "$SUB_LIST_FILE" ]]; then
     SUB_DOWNLOAD_FILE="${WORKDIR}/clash_sub.yaml"
     for TargetURL in "${SUB_LIST[@]}"; do
         [[ -z "$TargetURL" ]] && continue
-        colorEcho "${BLUE}Downloading clash client connfig from ${TargetURL}..."
+        colorEcho "${BLUE}Downloading clash client connfig from ${FUCHSIA}${TargetURL}${BLUE}..."
         curl -fSL --connect-timeout 10 --max-time 60 \
             -o "$SUB_DOWNLOAD_FILE" "$TargetURL"
         if [[ $? -eq 0 ]]; then
@@ -125,12 +125,11 @@ if ! pgrep -f "subconverter" >/dev/null 2>&1; then
 fi
 
 
-colorEcho "${BLUE}Getting clash rules..."
+colorEcho "${BLUE}Getting ${FUCHSIA}clash rules${BLUE}..."
 
 # Update ACL4SSR
 # https://github.com/ACL4SSR/ACL4SSR
 if [[ -s "/srv/subconverter/subconverter" ]]; then
-    colorEcho "${BLUE} Updating ${FUCHSIA}ACL4SSR${BLUE}..."
     if [[ -d "/etc/clash" ]]; then
         find "/etc/clash" -type f -name "*_Profile*" -print0 | xargs -0 -I{} cp -f {} "/srv/subconverter/profiles"
         find "/srv/subconverter/config" -type l -name "*_Rules*" -print0 | xargs -0 -I{} rm -f {}
@@ -165,7 +164,7 @@ PROXY_GROUP_LINE=$(grep -E -n "^# \[PROXY_GROUP\]" "$CLASH_CONFIG" | cut -d: -f1
 RULES_LINE=$(grep -E -n "^# \[RULES\]" "$CLASH_CONFIG" | cut -d: -f1)
 
 # [RULES]
-colorEcho "${BLUE}  Getting subscription rules..."
+colorEcho "${BLUE}  Getting ${FUCHSIA}subscription rules${BLUE}..."
 RULES=""
 
 if [[ -s "/etc/clash/${SUB_URL_TXT}" ]]; then
@@ -192,7 +191,6 @@ if [[ -s "${WORKDIR}/rules.yml" ]]; then
         RULES=$(sed -n "${RULES_START_LINE},$ p" "${WORKDIR}/rules.yml")
 
         # remove 2nd+ occurernce rules
-        # https://stackoverflow.com/questions/30688682/how-to-remove-from-second-occurrence-until-the-end-of-the-file
         DUPLICATE_RULES=$(echo "${RULES}" | grep -Eo ",[a-zA-Z0-9./?=_%:-]*," \
             | sort -n | uniq -c | awk '{if($1>1) print $2}' | sort -rn)
         while read -r line; do
@@ -200,13 +198,22 @@ if [[ -s "${WORKDIR}/rules.yml" ]]; then
             DUPLICATE_ENTRY=$(echo "${line}" \
                 | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
                 | sed 's/]/\\&/g')
-            RULES=$(echo "${RULES}" | sed "0,/${DUPLICATE_ENTRY}/b; /${DUPLICATE_ENTRY}/d")
+
+            # https://stackoverflow.com/questions/30688682/how-to-remove-from-second-occurrence-until-the-end-of-the-file
+            # maybe too slow with large entries
+            # RULES=$(echo "${RULES}" | sed "0,/${DUPLICATE_ENTRY}/b; /${DUPLICATE_ENTRY}/d")
+
+            # https://stackoverflow.com/questions/16202900/using-sed-between-specific-lines-only
+            ENTRY_FIRST_LINE=$(echo "${RULES}" | grep -En "${DUPLICATE_ENTRY}" | cut -d: -f1 | head -n1)
+            [[ -z "${ENTRY_FIRST_LINE}" ]] && continue
+            ENTRY_START_LINE=$((${ENTRY_FIRST_LINE} + 1))
+            RULES=$(echo "${RULES}" | sed "${ENTRY_START_LINE},$ {/${DUPLICATE_ENTRY}/d;}")
         done <<<"$DUPLICATE_RULES"
     fi
 fi
 
 # [PROXY_GROUP]
-colorEcho "${BLUE}  Getting proxy-groups..."
+colorEcho "${BLUE}  Getting ${FUCHSIA}proxy-groups${BLUE}..."
 PROXY_GROUP=""
 if [[ ${RULES_START_LINE} -gt 0 ]]; then
     if [[ -s "${WORKDIR}/rules.yml" ]]; then
@@ -220,7 +227,7 @@ if [[ ${RULES_START_LINE} -gt 0 ]]; then
 fi
 
 # [PROXY]
-colorEcho "${BLUE}  Getting proxies..."
+colorEcho "${BLUE}  Getting ${FUCHSIA}proxies${BLUE}..."
 PROXY=""
 if [[ ${GROUP_START_LINE} -gt 0 ]]; then
     if [[ -s "${WORKDIR}/rules.yml" ]]; then
@@ -237,7 +244,7 @@ fi
 PROXY_CUSTOM=""
 PROXY_CUSTOM_FILE="/etc/clash/clash_proxy_custom.yml"
 if [[ -s "$PROXY_CUSTOM_FILE" ]]; then
-    colorEcho "${BLUE}  Getting custom proxies..."
+    colorEcho "${BLUE}  Getting ${FUCHSIA}custom proxies${BLUE}..."
     PROXY_CUSTOM=$(cat "$PROXY_CUSTOM_FILE")
 fi
 
@@ -246,7 +253,7 @@ PROXY_MERGE=""
 if [[ ${PROXY_MERGE_LINE} -gt 0 ]]; then
     MERGE_URL=$(sed -n "${PROXY_MERGE_LINE}p" "$CLASH_CONFIG" | cut -d"]" -f2-)
     if [[ -n "$MERGE_URL" ]]; then
-        colorEcho "${BLUE}  Getting merge proxies..."
+        colorEcho "${BLUE}  Getting ${FUCHSIA}merge proxies${BLUE}..."
         curl -fsL --connect-timeout 10 --max-time 30 \
             -o "${WORKDIR}/merge.yml" "${MERGE_URL}"
         if [[ $? != 0 ]]; then
@@ -261,7 +268,7 @@ if [[ ${PROXY_MERGE_LINE} -gt 0 ]]; then
 fi
 
 # [CFW_BYPASS]
-colorEcho "${BLUE}  Getting cfw bypass rules..."
+colorEcho "${BLUE}  Getting ${FUCHSIA}cfw bypass rules${BLUE}..."
 CFW_BYPASS=""
 if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
     CFW_BYPASS_FILE="/srv/subconverter/config/GeneralClashConfig.yml"
@@ -290,7 +297,7 @@ fi
 # custom rules
 RULE_CUSTOM_FILE="/etc/clash/clash_rule_custom.yml"
 if [[ -s "$RULE_CUSTOM_FILE" ]]; then
-    colorEcho "${BLUE}  Getting custom rules..."
+    colorEcho "${BLUE}  Getting ${FUCHSIA}custom rules${BLUE}..."
     RULE_CUSTOM=$(cat "$RULE_CUSTOM_FILE")
 fi
 
@@ -316,7 +323,7 @@ done <<<"$PROXY"
 
 # Optimize proxies
 if [[ "$OPTIMIZE_OPTION" == "yes" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
-    colorEcho "${BLUE}  Optimizing proxies..."
+    colorEcho "${BLUE}  Optimizing ${FUCHSIA}proxies${BLUE}..."
 
     # GROUP_CNT=$(echo "$PROXY_GROUP" | grep -E "^[ ]*\-\sname:" | wc -l)
     PROXY_GROUP_MAIN=$(echo "$PROXY_GROUP" | awk "/^[ ]*-[ ]*name:/{i++}i<=2")
@@ -390,7 +397,7 @@ if [[ "$OPTIMIZE_OPTION" == "yes" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
 fi
 
 # Delete Shadowsocks proxies
-colorEcho "${BLUE}  Deleting Shadowsocks proxies..."
+colorEcho "${BLUE}  Deleting ${FUCHSIA}Shadowsocks proxies${BLUE}..."
 PROXY_INDEX=-1
 for TargetName in "${PROXY_NAME[@]}"; do
     PROXY_INDEX=$((${PROXY_INDEX} + 1))
@@ -408,7 +415,7 @@ for TargetName in "${PROXY_NAME[@]}"; do
 done
 
 # Delete empty group
-colorEcho "${BLUE}  Deleting empty group..."
+colorEcho "${BLUE}  Deleting ${FUCHSIA}empty group${BLUE}..."
 if [[ -n "$PROXY_GROUP" ]]; then
     GROUP_LIST=$(echo "$PROXY_GROUP" | grep -E "^[ ]*\-\sname:" | sed "s/^[ ]*\-\sname:\s//g")
     GROUP_NAME=()
@@ -451,7 +458,7 @@ if [[ -n "$PROXY_GROUP" ]]; then
 fi
 
 # Add contents to target config file
-colorEcho "${BLUE}  Setting all config to ${TARGET_CONFIG_FILE}..."
+colorEcho "${BLUE}  Setting ${FUCHSIA}all config to ${FUCHSIA}${TARGET_CONFIG_FILE}${BLUE}..."
 [[ -f "$TARGET_CONFIG_FILE" ]] && rm -f "$TARGET_CONFIG_FILE"
 
 START_LINE=1
@@ -461,7 +468,7 @@ if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
 fi
 
 if [[ -n "$CFW_BYPASS" ]]; then
-    colorEcho "${BLUE}    Setting cfw bypass..."
+    colorEcho "${BLUE}    Setting ${FUCHSIA}cfw bypass${BLUE}..."
     echo "${CFW_BYPASS}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -472,7 +479,7 @@ if [[ ${PROXY_CUSTOM_LINE} -gt 0 ]]; then
 fi
 
 if [[ -n "$PROXY_CUSTOM" ]]; then
-    colorEcho "${BLUE}    Setting custom proxies..."
+    colorEcho "${BLUE}    Setting ${FUCHSIA}custom proxies${BLUE}..."
     echo "${PROXY_CUSTOM}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -485,7 +492,7 @@ ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$PROXY" ]]; then
-    colorEcho "${BLUE}    Setting proxies..."
+    colorEcho "${BLUE}    Setting ${FUCHSIA}proxies${BLUE}..."
     echo "${PROXY}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -496,7 +503,7 @@ if [[ ${PROXY_MERGE_LINE} -gt 0 ]]; then
 fi
 
 if [[ -n "$PROXY_MERGE" ]]; then
-    colorEcho "${BLUE}    Setting merge proxies..."
+    colorEcho "${BLUE}    Setting ${FUCHSIA}merge proxies${BLUE}..."
     echo "${PROXY_MERGE}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -509,7 +516,7 @@ ADD_CONTENT=$(sed -n "${START_LINE},${PROXY_GROUP_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$PROXY_GROUP" ]]; then
-    colorEcho "${BLUE}    Setting proxy groups..."
+    colorEcho "${BLUE}    Setting ${FUCHSIA}proxy groups${BLUE}..."
     echo "${PROXY_GROUP}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -518,12 +525,12 @@ ADD_CONTENT=$(sed -n "${START_LINE},${RULES_LINE} p" "$CLASH_CONFIG")
 echo "$ADD_CONTENT" >> "$TARGET_CONFIG_FILE"
 
 if [[ -n "$RULE_CUSTOM" ]]; then
-    colorEcho "${BLUE}    Setting custom rules..."
+    colorEcho "${BLUE}    Setting ${FUCHSIA}custom rules${BLUE}..."
     echo "${RULE_CUSTOM}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
 if [[ -n "$RULES" ]]; then
-    colorEcho "${BLUE}    Setting rules..."
+    colorEcho "${BLUE}    Setting ${FUCHSIA}rules${BLUE}..."
     echo "${RULES}" | tee -a "$TARGET_CONFIG_FILE" >/dev/null
 fi
 
@@ -549,7 +556,7 @@ fi
 
 # Copy to file
 if [[ -n "$COPY_TO_FILE" ]]; then
-    colorEcho "${BLUE}  Copy config to ${COPY_TO_FILE}..."
+    colorEcho "${BLUE}  Copy config to ${FUCHSIA}${COPY_TO_FILE}${BLUE}..."
     if [[ -d "/srv/clash" && "$TARGET_CONFIG_FILE" != "/srv/clash/config.yaml" ]]; then
         cp -f "$TARGET_CONFIG_FILE" "/srv/clash/config.yaml"
     fi
@@ -557,16 +564,16 @@ if [[ -n "$COPY_TO_FILE" ]]; then
     cp -f "$TARGET_CONFIG_FILE" "$COPY_TO_FILE"
 
     if [[ ! -s "${COPY_TO_FILE}.md5" ]]; then
-        colorEcho "${BLUE}  Gen md5 for ${COPY_TO_FILE}..."
+        colorEcho "${BLUE}  Gen md5 for ${FUCHSIA}${COPY_TO_FILE}${BLUE}..."
         (openssl md5 -hex "${COPY_TO_FILE}" | cut -d" " -f2) > "${COPY_TO_FILE}.md5"
     fi
 
     COPY_TO_CUSTOM=$(echo "$COPY_TO_FILE" | sed 's/\./_custom\./')
-    colorEcho "${BLUE}  Copy config with custom proxy to ${COPY_TO_CUSTOM}..."
+    colorEcho "${BLUE}  Copy config with custom proxy to ${FUCHSIA}${COPY_TO_CUSTOM}${BLUE}..."
     cp -f "$TARGET_WITH_CUSTOM_PROXY" "$COPY_TO_CUSTOM"
 
     if [[ ! -s "${COPY_TO_CUSTOM}.md5" ]]; then
-        colorEcho "${BLUE}  Gen md5 for ${COPY_TO_CUSTOM}..."
+        colorEcho "${BLUE}  Gen md5 for ${FUCHSIA}${COPY_TO_CUSTOM}${BLUE}..."
         (openssl md5 -hex "${COPY_TO_CUSTOM}" | cut -d" " -f2) > "${COPY_TO_CUSTOM}.md5"
     fi
 fi

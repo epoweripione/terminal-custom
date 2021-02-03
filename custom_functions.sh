@@ -1490,8 +1490,7 @@ function Install_cron_job() {
 
     cronline=$(crontab -l | wc -l)
 
-    colorEchoN ${FUCHSIA} "  ${cronjob}"
-    colorEcho "${GREEN} installed!"
+    colorEcho "${FUCHSIA}${cronjob} ${GREEN}installed!"
     colorEcho "${YELLOW}  How to delete this job:"
     colorEcho "${FUCHSIA}  (crontab -l 2>/dev/null | sed \"${cronline}d\") | crontab -"
 }

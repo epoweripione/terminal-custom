@@ -23,7 +23,7 @@ if (-Not (check_webservice_up)) {
 if (-Not (Get-Command "winget" -ErrorAction SilentlyContinue)) {
     Write-Host "Installing winget..." -ForegroundColor Blue
     $WINGET_PATH = "$TEMP\winget.appxbundle"
-    $DOWNLOAD_URL = "https://github.com/microsoft/winget-cli/releases/download/v0.1.4331-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle"
+    $DOWNLOAD_URL = "https://github.com/microsoft/winget-cli/releases/download/v-0.2.10191-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle"
 
     if (($null -eq $SOCKS_PROXY_ADDR) -or ($SOCKS_PROXY_ADDR -eq "")) {
         curl -fsL --connect-timeout 5 -o "$WINGET_PATH" "$DOWNLOAD_URL"

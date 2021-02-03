@@ -91,7 +91,7 @@ extensions=(
 
 if [[ $PARAMS_NUM > 0 ]]; then
     if [[ ! -s "${ExtFile}" ]]; then
-        colorEcho ${RED} ${ExtFile}" is not exist or empty!"
+        colorEcho "${RED}${ExtFile} is not exist or empty!"
         exit 0
     fi
 

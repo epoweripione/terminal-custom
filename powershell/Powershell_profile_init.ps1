@@ -68,9 +68,9 @@ foreach ($TargetModule in $InstallModules) {
 ## Oh my Posh 3
 ## https://ohmyposh.dev/
 # if (($null -eq $PROXY_ADDR) -or ($PROXY_ADDR -eq "")) {
-#     Update-Module -Name oh-my-posh -AllowClobber -AllowPrerelease
+#     Update-Module -Name oh-my-posh -AllowPrerelease
 # } else {
-#     Update-Module -Name oh-my-posh -AllowClobber -AllowPrerelease -Proxy "http://$PROXY_ADDR"
+#     Update-Module -Name oh-my-posh -AllowPrerelease -Proxy "http://$PROXY_ADDR"
 # }
 
 $EnableModules = @(
