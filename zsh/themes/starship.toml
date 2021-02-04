@@ -33,7 +33,6 @@ $lua\
 $nim\
 $nodejs\
 $ocaml\
-$openstack\
 $perl\
 $php\
 $purescript\
@@ -42,11 +41,13 @@ $ruby\
 $rust\
 $swift\
 $terraform\
+$vagrant\
 $zig\
 $nix_shell\
 $conda\
 $aws\
 $gcloud\
+$openstack\
 $crystal\
 $memory_usage\
 $cmd_duration\
@@ -316,6 +317,10 @@ format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 [terraform]
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$workspace]($style)"
+
+[vagrant]
+style = "bold fg:bright-cyan bg:#5a6374"
+format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
 [zig]
 symbol = "⚡️ "
