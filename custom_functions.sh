@@ -1206,7 +1206,11 @@ function check_set_global_proxy() {
 
     if [[ "$(uname -r)" =~ "microsoft" ]]; then
         # wsl2
-        IP_LIST=$(ipconfig.exe | grep "IPv4" | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' | grep -Ev "^0\.|^127\.|^172\.")
+        IP_LIST=$(grep nameserver /etc/resolv.conf | grep -v ':' | awk '{ print $2 }' | head -1)
+        [[ -z "${IP_LIST}" ]] && \
+            IP_LIST=$(ipconfig.exe | grep "IPv4" \
+                        | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
+                        | grep -Ev "^0\.|^127\.|^172\.")
     fi
 
     unset GLOBAL_PROXY_IP
@@ -1228,7 +1232,7 @@ function check_set_global_proxy() {
         fi
 
         [[ "$PROXY_UP" == "YES" ]] && break
-    done <<<"$IP_LIST"
+    done <<<"${IP_LIST}"
 
     if [[ "$PROXY_UP" == "YES" ]]; then
         [[ -n "${SOCKS_PORT}" ]] && PROXY_SOCKS="${PROXY_IP}:${SOCKS_PORT}"

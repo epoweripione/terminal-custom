@@ -58,6 +58,9 @@ mountFsTab = false
 EOF
 fi
 
+colorEcho "${BLUE}map localhost to `vEthernet (WSL)` ip${BLUE}..."
+source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/wsl/wsl2-map-win-localhost.sh"
+
 
 # Install packages
 # Use USTC mirror & Install pre-requisite packages
