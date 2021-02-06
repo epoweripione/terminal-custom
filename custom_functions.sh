@@ -1202,20 +1202,24 @@ function check_set_global_proxy() {
     local PROXY_SOCKS=""
     local PROXY_HTTP=""
     local IP_LIST="127.0.0.1"
+    local IP_WSL="127.0.0.1"
     local PROXY_UP="NO"
 
     if [[ "$(uname -r)" =~ "microsoft" ]]; then
         # wsl2
-        IP_LIST=$(grep nameserver /etc/resolv.conf | grep -v ':' | awk '{ print $2 }' | head -1)
-        [[ -z "${IP_LIST}" ]] && \
-            IP_LIST=$(ipconfig.exe | grep "IPv4" \
-                        | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
-                        | grep -Ev "^0\.|^127\.|^172\.")
+        IP_LIST=$(ipconfig.exe | grep "IPv4" \
+                    | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
+                    | grep -Ev "^0\.|^127\.|^172\.")
+        # IP_WSL=$(grep nameserver /etc/resolv.conf | grep -v ':' | awk '{ print $2 }' | head -1)
+        # IP_LIST=$(echo -e "${IP_LIST}\n${IP_WSL}" | sort | uniq)
     fi
 
-    unset GLOBAL_PROXY_IP
-    unset GLOBAL_PROXY_SOCKS_PORT
-    unset GLOBAL_PROXY_HTTP_PORT
+    # unset GLOBAL_PROXY_IP
+    # unset GLOBAL_PROXY_SOCKS_PORT
+    # unset GLOBAL_PROXY_HTTP_PORT
+    export GLOBAL_PROXY_IP=""
+    export GLOBAL_PROXY_SOCKS_PORT=""
+    export GLOBAL_PROXY_SOCKS_PORT=""
 
     # Setting global proxy
     while read -r PROXY_IP; do
@@ -1239,9 +1243,9 @@ function check_set_global_proxy() {
         [[ -n "${MIXED_PORT}" ]] && PROXY_HTTP="${PROXY_IP}:${MIXED_PORT}"
 
         if set_global_proxy "${PROXY_SOCKS}" "${PROXY_HTTP}"; then
-            GLOBAL_PROXY_IP=${PROXY_IP}
-            GLOBAL_PROXY_SOCKS_PORT=${SOCKS_PORT}
-            GLOBAL_PROXY_HTTP_PORT=${MIXED_PORT}
+            export GLOBAL_PROXY_IP=${PROXY_IP}
+            export GLOBAL_PROXY_SOCKS_PORT=${SOCKS_PORT}
+            export GLOBAL_PROXY_HTTP_PORT=${MIXED_PORT}
 
             return 0
         fi
