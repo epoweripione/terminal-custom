@@ -186,5 +186,8 @@ fi
 [[ -x "$(command -v pacapt)" ]] && \
     echo "%sudo ALL=NOPASSWD:$(which pacapt)" | sudo tee -a /etc/sudoers >/dev/null
 
+[[ -x "$(command -v pacaptr)" ]] && \
+    echo "%sudo ALL=NOPASSWD:$(which pacaptr)" | sudo tee -a /etc/sudoers >/dev/null
+
 
 colorEcho "${GREEN}WSL init done, please restart WSL!"

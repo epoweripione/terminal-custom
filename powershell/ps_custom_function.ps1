@@ -1,5 +1,5 @@
 # New PSObject Template
-if (-not ('Windows.Media.Fonts' -as [Type])) {
+if (-Not ('Windows.Media.Fonts' -as [Type])) {
     Add-Type -AssemblyName 'PresentationCore'
 }
 

@@ -72,6 +72,8 @@
 # Get-NetConnectionProfile -IPv4Connectivity "Internet" | Select-Object -Property Name,InterfaceIndex,InterfaceAlias
 # Get-NetConnectionProfile -IPv4Connectivity "Internet" | Select-Object -ExpandProperty InterfaceIndex
 
+## Forwarding to be enabled across the two v-Switches
+# Get-NetIPInterface | Select-Object ifIndex,InterfaceAlias,AddressFamily,ConnectionState,Forwarding | Where-Object {$_.InterfaceAlias -eq 'vEthernet (WSL)' -or $_.InterfaceAlias -eq 'vEthernet (Default Switch)'} | Where-Object {$_.Forwarding -eq 'Disabled'} | Set-NetIPInterface -Forwarding 'Enabled'
 
 ## Get adapter ipv4 adderss which connect to Internet
 # Get-NetIPAddress -AddressFamily IPv4 | `

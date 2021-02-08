@@ -12,6 +12,13 @@ else
     fi
 fi
 
+
+## https://stackoverflow.com/questions/61002681/connecting-to-wsl2-server-via-local-network
+
+
+## https://github.com/shayne/go-wsl2-host
+
+
 ## https://superuser.com/questions/1594420/cant-access-127-0-0-180-outside-of-wsl2-ubuntu-20-04
 ## https://docs.microsoft.com/en-us/windows/wsl/wsl-config
 # @'
@@ -25,6 +32,7 @@ fi
 ## In the Administrative PowerShell Prompt run the following command:
 # New-NetFirewallRule -DisplayName "WSL" -Direction Inbound -InterfaceAlias "vEthernet (WSL)"  -Action Allow
 # Get-NetFirewallRule -Direction Inbound | Where-Object { $_.DisplayName -eq "WSL" }
+# Remove-NetFireWallRule -DisplayName "WSL"
 
 
 ## tunnel your port towards your IP address:

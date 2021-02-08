@@ -20,7 +20,7 @@ function Clear-SavedHistory {
         "command history"
     } 
 
-    if (-not $pscmdlet.ShouldProcess($target)) {
+    if (-Not $pscmdlet.ShouldProcess($target)) {
         return
     }
 

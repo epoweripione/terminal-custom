@@ -28,7 +28,7 @@ $details = @()
 $objFolder = $objShell.namespace($folder)
 for ($attr = 0; $attr -le 500; $attr++) {
     $attrName = $objFolder.getDetailsOf($objFolder.items, $attr)
-    if ( $attrName -and ( -not $attrList.Contains($attrName) )) {
+    if ( $attrName -and ( -Not $attrList.Contains($attrName) )) {
         $attrList.add( $attrName, $attr )
     }
 }
