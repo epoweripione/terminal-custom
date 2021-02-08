@@ -105,7 +105,7 @@ if [[ -s "$SUB_LIST_FILE" ]]; then
         if [[ $? -eq 0 ]]; then
             sed -i "s/^allow-lan:.*/allow-lan: false/" "$SUB_DOWNLOAD_FILE"
             sed -i "s/^external-controller:.*/# &/" "$SUB_DOWNLOAD_FILE"
-            cp -f "$SUB_DOWNLOAD_FILE" "$TARGET_CONFIG_FILE"
+            sudo cp -f "$SUB_DOWNLOAD_FILE" "$TARGET_CONFIG_FILE"
             exit 0
         fi
     done

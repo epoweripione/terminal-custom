@@ -38,6 +38,12 @@ function colorEcho() {
     fi
 }
 
+# version compare functions
+function version_gt() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" != "$1"; } # >
+function version_ge() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)" = "$1"; } # >=
+function version_lt() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)" != "$1"; } # <
+function version_le() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" = "$1"; } # <=
+
 
 # pacaptr - Pacman-like syntax wrapper for many package managers
 # https://github.com/rami3l/pacaptr
@@ -84,6 +90,10 @@ if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; the
     fi
 fi
 
+if [[ ! -x "$(command -v pacaptr)" ]]; then
+    colorEcho "${RED}pacaptr is not installed!"
+    exit 1
+fi
 
 # Install ZSH Shell
 if [[ -x "$(command -v pacman)" ]]; then
@@ -95,9 +105,9 @@ if [[ -x "$(command -v pacman)" ]]; then
 
     ## Install Latest Git ( Git 2.x ) on CentOS 7
     ## https://computingforgeeks.com/how-to-install-latest-version-of-git-git-2-x-on-centos-7/
-    # sudo yum -y remove git
-    # sudo yum -y install https://packages.endpoint.com/rhel/7/os/x86_64/endpoint-repo-1.7-1.x86_64.rpm
-    # sudo yum -y install git
+    # sudo dnf -y remove git
+    # sudo dnf -y install https://packages.endpoint.com/rhel/7/os/x86_64/endpoint-repo-1.7-1.x86_64.rpm
+    # sudo dnf -y install git
 
     # GeoIP binary and database
     # http://kbeezie.com/geoiplookup-command-line/
@@ -156,13 +166,14 @@ fi
 colorEcho "${BLUE}Installing ${FUCHSIA}ZSH ${BLUE}Shell..."
 # http://zsh.sourceforge.net/
 if [[ ! -x "$(command -v zsh)" ]]; then
-    if [[ -f /etc/redhat-release ]]; then
-        # install latest zsh for readhat & centos
-        # sudo yum -y remove zsh
-        sudo yum -y update && \
-            sudo yum -y install ncurses-devel gcc make
+    RHEL_VERSION=$(cat /etc/os-release | grep "^VERSION=" | cut -d'"' -f2)
+    if [[ "${RHEL_VERSION}" == "7" ]]; then
+        # install latest zsh for readhat 7 & centos 7
+        # sudo dnf -y remove zsh
+        sudo dnf -y update && \
+            sudo dnf -y install ncurses-devel gcc make
 
-        # ZSH_REPO_VERSION=$(yum info zsh | grep -E "[Vv]ersion" | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
+        # ZSH_REPO_VERSION=$(dnf info zsh | grep -E "[Vv]ersion" | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
 
         REMOTE_VERSION=$(curl -fsL http://zsh.sourceforge.net/News/ \
                             | grep -Eo -m1 'Release ([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
@@ -171,7 +182,7 @@ if [[ ! -x "$(command -v zsh)" ]]; then
         if [[ -n "$REMOTE_VERSION" ]]; then
             DOWNLOAD_URL="https://nchc.dl.sourceforge.net/project/zsh/zsh/${REMOTE_VERSION}/zsh-${REMOTE_VERSION}.tar.xz"
             sudo curl -fSL -o "${WORKDIR}/zsh.tar.xz" "$DOWNLOAD_URL" && \
-                sudo tar xJvf "${WORKDIR}/zsh.tar.xz" -C "${WORKDIR}" && \
+                sudo tar -xJPf "${WORKDIR}/zsh.tar.xz" -C "${WORKDIR}" && \
                 sudo mv ${WORKDIR}/zsh-* "${WORKDIR}/zsh" && \
                 cd "${WORKDIR}/zsh" && \
                 sudo ./configure >/dev/null && \

@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 
 ## How to use
-## 1. Install curl first
-## 2. Install zsh and oh-my-zsh: source <(curl -fsSL https://git.io/fA8Jb)
-##                               source <(curl -fsSL http://t.cn/AigJm9ut)
-## 3. Init: source <(curl -fsSL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh && $HOME/terminal-custom/zsh/zsh_init.sh
-##          source <(curl -fsSL http://t.cn/AigJuOCW) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh && $HOME/terminal-custom/zsh/zsh_init.sh
-## 4. Update: source <(curl -fsSL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh
-##            source <(curl -fsSL http://t.cn/AigJuOCW) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh
+## 1. Install `curl`
+## 2. Clone repo: source <(curl -fsSL https://git.io/fNpeJ)
+## 3. Install zsh and oh-my-zsh: $HOME/terminal-custom/zsh/zsh_installer.sh
+## 4. Init: $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh && $HOME/terminal-custom/zsh/zsh_init.sh
+## 5. Update: source <(curl -fsSL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
 # Colors
@@ -71,11 +69,18 @@ fi
 # make *.sh executable
 find "${MY_SHELL_SCRIPTS}" -type f -iname "*.sh" -exec chmod +x {} \;
 
-# fix zsh_custom_conf.sh location in .zshrc
-sed -i "s|^source ~/zsh_custom_conf.sh|source ~/terminal-custom/zsh/zsh_custom_conf.sh|" $HOME/.zshrc
+## git global config
+# if [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/git/git_global_config.sh" ]]; then
+#     source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/git/git_global_config.sh"
+# fi
 
-colorEcho "${BLUE}copy zsh custom plugins & theme to $ZSH/custom..."
+# fix zsh_custom_conf.sh location in .zshrc
+if [[ -s "$HOME/.zshrc" ]]; then
+    sed -i "s|^source ~/zsh_custom_conf.sh|source ~/terminal-custom/zsh/zsh_custom_conf.sh|" "$HOME/.zshrc"
+fi
+
 if [[ -d "$ZSH/custom" ]]; then
+    colorEcho "${BLUE}copy zsh custom plugins & theme to $ZSH/custom..."
     # zsh custom plugins
     [ -d "$HOME/terminal-custom/zsh/plugins" ] && cp -f $HOME/terminal-custom/zsh/plugins/* "$ZSH/custom/plugins"
 
