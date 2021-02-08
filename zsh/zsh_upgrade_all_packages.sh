@@ -63,7 +63,7 @@ if [[ -x "$(command -v docker-compose)" ]]; then
     CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
 
     CURRENT_VERSION=$(docker-compose -v | cut -d',' -f1 | cut -d' ' -f3)
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}  Installing ${FUCHSIA}docker-compose ${YELLOW}${REMOTE_VERSION}${BLUE}..."
         DOWNLOAD_URL="https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
@@ -85,7 +85,7 @@ if [[ -x "$(command -v ctop)" ]]; then
     CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
 
     CURRENT_VERSION=$(ctop -v | cut -d',' -f1 | cut -d' ' -f3)
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
+    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}  Installing ${FUCHSIA}ctop ${YELLOW}${REMOTE_VERSION}${BLUE}..."
         DOWNLOAD_URL="https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}"
@@ -109,7 +109,7 @@ if [[ -x "$(command -v micro)" ]]; then
     CHECK_URL="https://api.github.com/repos/zyedidia/micro/releases/latest"
 
     CURRENT_VERSION=$(micro -version | grep Version | cut -d',' -f2)
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}  Installing ${FUCHSIA}micro ${YELLOW}${REMOTE_VERSION}${BLUE}..."
         curl https://getmic.ro | bash && sudo mv micro "/usr/local/bin"
@@ -147,7 +147,7 @@ if [[ -d "$HOME/.jabba" ]]; then
     CHECK_URL="https://api.github.com/repos/shyiko/jabba/releases/latest"
 
     CURRENT_VERSION=$(jabba --version | cut -d' ' -f2)
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}  Installing ${FUCHSIA}jabba ${YELLOW}${REMOTE_VERSION}${BLUE}..."
         curl -fsSL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \

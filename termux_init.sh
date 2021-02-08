@@ -98,7 +98,7 @@ EOF
 if [[ ! -d "$HOME/frp" ]]; then
     colorEcho "${BLUE}Installing ${FUCHSIA}frp${BLUE}..."
     CHECK_URL="https://api.github.com/repos/fatedier/frp/releases/latest"
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL="https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_linux_arm64.tar.gz"

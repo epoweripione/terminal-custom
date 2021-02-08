@@ -31,7 +31,7 @@ fi
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}shadowtunnel${BLUE}..."
 
 CHECK_URL="https://api.github.com/repos/snail007/shadowtunnel/releases/latest"
-REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
 
 if [[ -n "$REMOTE_VERSION" ]]; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}shadowtunnel ${YELLOW}${REMOTE_VERSION}${BLUE}..."

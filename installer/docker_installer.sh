@@ -83,7 +83,7 @@ if [[ ! -x "$(command -v docker-compose)" ]]; then
     colorEcho "${BLUE}Installing ${FUCHSIA}Docker Compose${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL="https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
         curl -fSL -o "${WORKDIR}/docker-compose" -C- $DOWNLOAD_URL && \
@@ -106,7 +106,7 @@ if [[ ! -x "$(command -v ctop)" ]]; then
     fi
 
     CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
-    REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
+    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL="https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}"
         curl -fSL -o "${WORKDIR}/ctop" -C- $DOWNLOAD_URL && \
@@ -128,7 +128,7 @@ fi
 #     fi
 
 #     CHECK_URL="https://api.github.com/repos/jesseduffield/lazydocker/releases/latest"
-#     REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
+#     REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
 #     if [[ -n "$REMOTE_VERSION" ]]; then
 #         DOWNLOAD_URL="https://github.com/jesseduffield/lazydocker/releases/download/v$REMOTE_VERSION/lazydocker_${REMOTE_VERSION}_${DOWNLOAD_FILE_SUFFIX}"
 #         curl -fSL $DOWNLOAD_URL -o ${WORKDIR}/lazydocker.tar.gz && \

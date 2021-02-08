@@ -20,7 +20,7 @@ APP_INSTALL_NAME="croc"
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
 CHECK_URL="https://api.github.com/repos/schollz/croc/releases/latest"
-REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
 REMOTE_FILENAME="croc"
 

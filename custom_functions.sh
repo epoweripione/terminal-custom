@@ -1477,7 +1477,7 @@ function git_get_remote_default_branch() {
         [[ -z "${REPOREMOTE}" ]] && exit 0
 
         ## Github: https://api.github.com/repos/docker/compose
-        # REPO_DEFAULT_BRANCH=$(wget -qO- "${REPOREMOTE}" | grep 'default_branch' | cut -d\" -f4)
+        # REPO_DEFAULT_BRANCH=$(curl -fsL "${REPOREMOTE}" | grep 'default_branch' | cut -d\" -f4)
 
         REPO_DEFAULT_BRANCH=$(git ls-remote --symref "${REPOREMOTE}" HEAD \
                                 | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')

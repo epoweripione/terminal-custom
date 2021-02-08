@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## How to use
+## Usage:
 ## 1. Install `curl`
 ## 2. Clone repo: source <(curl -fsSL https://git.io/fNpeJ)
 ## 3. Install zsh and oh-my-zsh: $HOME/terminal-custom/zsh/zsh_installer.sh

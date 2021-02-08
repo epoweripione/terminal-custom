@@ -28,7 +28,7 @@ APP_INSTALL_NAME="bat"
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
 CHECK_URL="https://api.github.com/repos/sharkdp/bat/releases/latest"
-REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
 
 REMOTE_FILENAME=""
 case "$OS_INFO_TYPE" in

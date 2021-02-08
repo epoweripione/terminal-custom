@@ -54,7 +54,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
     # CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
-    # REMOTE_VERSION=$(wget -qO- $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    # REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
     # Pre-release
     REMOTE_VERSION=$(curl -fsL -N https://github.com/Dreamacro/clash/releases \
@@ -92,7 +92,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     ## https://geolite.clash.dev/
     # CHECK_URL="https://geolite.clash.dev/version"
     # MMDB_URL="https://geolite.clash.dev/Country.mmdb"
-    # REMOTE_VERSION=$(wget -qO- $CHECK_URL)
+    # REMOTE_VERSION=$(curl -fsL $CHECK_URL)
 
     ## All Country
     ## https://github.com/alecthw/mmdb_china_ip_list
@@ -104,8 +104,8 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     CHECK_URL="https://api.github.com/repos/Hackl0us/GeoIP2-CN"
     MMDB_URL="https://github.com/Hackl0us/GeoIP2-CN/raw/release/Country.mmdb"
 
-    # REPO_PUSH_AT=$(wget -qO- $CHECK_URL | grep 'pushed_at' | head -n1 | cut -d\" -f4)
-    REPO_PUSH_AT=$(wget -qO- $CHECK_URL | jq -r '.pushed_at//empty')
+    # REPO_PUSH_AT=$(curl -fsL $CHECK_URL | grep 'pushed_at' | head -n1 | cut -d\" -f4)
+    REPO_PUSH_AT=$(curl -fsL $CHECK_URL | jq -r '.pushed_at//empty')
     REMOTE_VERSION=$(date -d $REPO_PUSH_AT +"%Y%m%d")
 
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
