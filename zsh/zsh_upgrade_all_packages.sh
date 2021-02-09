@@ -21,6 +21,13 @@ fi
 
 ## Setting by pass gfw proxy
 [[ -s "${MY_SHELL_SCRIPTS}/cross/cross_gfw_config.sh" ]] && source "${MY_SHELL_SCRIPTS}/cross/cross_gfw_config.sh"
+
+# WSL2: map host ip to localhost
+if [[ "$(uname -r)" =~ "microsoft" ]]; then
+    [[ -s "$HOME/terminal-custom/wsl/wsl2-map-win-localhost.sh" ]] && \
+        source "$HOME/terminal-custom/wsl/wsl2-map-win-localhost.sh"
+fi
+
 CURL_SPECIAL_CONFIG=${CURL_SPECIAL_CONFIG:-"$HOME/.curl_socks5"}
 
 # OS Type: darwin, windows, linux, bsd, solaris

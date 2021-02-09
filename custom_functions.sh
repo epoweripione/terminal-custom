@@ -1212,14 +1212,12 @@ function check_set_global_proxy() {
                     | grep -Ev "^0\.|^127\.|^172\.")
         # IP_WSL=$(grep nameserver /etc/resolv.conf | grep -v ':' | awk '{ print $2 }' | head -1)
         # IP_LIST=$(echo -e "${IP_LIST}\n${IP_WSL}" | sort | uniq)
+        export GLOBAL_WSL2_HOST_IP=$(echo "${IP_LIST}" | head -n1)
     fi
 
-    # unset GLOBAL_PROXY_IP
-    # unset GLOBAL_PROXY_SOCKS_PORT
-    # unset GLOBAL_PROXY_HTTP_PORT
-    export GLOBAL_PROXY_IP=""
-    export GLOBAL_PROXY_SOCKS_PORT=""
-    export GLOBAL_PROXY_SOCKS_PORT=""
+    unset GLOBAL_PROXY_IP
+    unset GLOBAL_PROXY_SOCKS_PORT
+    unset GLOBAL_PROXY_HTTP_PORT
 
     # Setting global proxy
     while read -r PROXY_IP; do
@@ -1247,11 +1245,7 @@ function check_set_global_proxy() {
             export GLOBAL_PROXY_SOCKS_PORT=${SOCKS_PORT}
             export GLOBAL_PROXY_HTTP_PORT=${MIXED_PORT}
 
-            # WSL2: map host ip to localhost
-            if [[ "$(uname -r)" =~ "microsoft" ]]; then
-                [[ -s "$HOME/terminal-custom/wsl/wsl2-map-win-localhost.sh" ]] && \
-                    source "$HOME/terminal-custom/wsl/wsl2-map-win-localhost.sh"
-            fi
+            [[ "$(uname -r)" =~ "microsoft" ]] && export GLOBAL_WSL2_HOST_IP=${PROXY_IP}
 
             return 0
         fi

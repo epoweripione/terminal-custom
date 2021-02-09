@@ -84,6 +84,9 @@
 
 ## Gets the CIM instances of a class from a CIM server
 # wmic nic where PhysicalAdapter=True get Index,MACAddress,NetConnectionStatus,PhysicalAdapter,InterfaceIndex,Name
+# wmic nic where "PhysicalAdapter=True AND NetConnectionStatus=2" get Index,MACAddress,InterfaceIndex,Name
+# wmic path win32_networkadapterconfiguration where "IPEnabled=True" get Index,InterfaceIndex,MACAddress,IPAddress,IPSubnet
+
 # Get-CimClass -ClassName *disk*
 # Get-CimClass -ClassName Win32* -PropertyName Handle
 # Get-CimClass -ClassName *Network*
