@@ -48,17 +48,18 @@ fi
 
 ## https://gist.github.com/toryano0820/6ee3bff2474cdf13e70d972da710996a
 if [[ -n "${GLOBAL_PROXY_IP}" ]]; then
-    nameserver="${GLOBAL_PROXY_IP}"
+    WSL_HOST_IP="${GLOBAL_PROXY_IP}"
 else
-    nameserver=$(grep -m 1 nameserver /etc/resolv.conf | awk '{print $2}')
+    WSL_HOST_IP=$(grep -m 1 nameserver /etc/resolv.conf | awk '{print $2}')
 fi
 
-if [[ -n "${nameserver}" ]]; then
-    localhost_entry=$(grep -v "127.0.0.1" /etc/hosts | grep "\slocalhost$")
-    if [[ -n "${localhost_entry}" ]]; then
-        sudo sed -i "s/${localhost_entry}/${nameserver} localhost/g" /etc/hosts
+if [[ -n "${WSL_HOST_IP}" ]]; then
+    colorEcho "${BLUE}  Mapping ${FUCHSIA}${WSL_HOST_IP}${BLUE} to ${YELLOW}localhost${BLUE}..."
+    LOCALHOST_ENTRY=$(grep -v "127.0.0.1" /etc/hosts | grep "\slocalhost$")
+    if [[ -n "${LOCALHOST_ENTRY}" ]]; then
+        sudo sed -i "s/${LOCALHOST_ENTRY}/${WSL_HOST_IP} localhost/g" /etc/hosts
     else
-        echo "${nameserver} localhost" | sudo tee -a /etc/hosts >/dev/null
+        echo "${WSL_HOST_IP} localhost" | sudo tee -a /etc/hosts >/dev/null
     fi
 fi
 

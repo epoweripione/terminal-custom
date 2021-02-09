@@ -341,7 +341,7 @@ function use_clash() {
     if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
         :
     else
-        colorEcho "${BLUE}  Checking & loading clash proxy..."
+        colorEcho "${BLUE}  Checking & loading ${FUCHSIA}clash${BLUE} proxy..."
 
         if [[ ! -s "/srv/subconverter/subconverter" && ! -s "/srv/clash/clash" ]]; then
             Download_Install_Subconverter_Clash
@@ -407,7 +407,7 @@ function main() {
 
     # set global clash socks5 proxy or v2ray socks5 proxy
     if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
-        colorEcho "${BLUE}Checking & loading socks5 proxy..."
+        colorEcho "${BLUE}Checking & loading ${FUCHSIA}socks5${BLUE} proxy..."
         use_clash 127.0.0.1 7891 7890
         if ! check_set_global_proxy 7891 7890; then
             echo -n "Clash not working, use v2ray?[y/N] "

@@ -1172,12 +1172,12 @@ function set_global_proxy() {
         set_git_proxy "${SOCKS_ADDRESS}"
         # set special socks5 proxy(curl...)
         set_special_socks5_proxy "${SOCKS_ADDRESS}"
-        colorEcho "${GREEN} :: Now using ${FUCHSIA}${SOCKS_PROTOCOL}://${SOCKS_ADDRESS} ${GREEN}for global socks5 proxy!"
+        colorEcho "${GREEN}  :: Now using ${FUCHSIA}${SOCKS_PROTOCOL}://${SOCKS_ADDRESS} ${GREEN}for global socks5 proxy!"
 
         # wget must use http proxy
         if [[ -n "$HTTP_ADDRESS" ]]; then
             set_wget_proxy "${HTTP_ADDRESS}"
-            colorEcho "${GREEN} :: Now using ${FUCHSIA}${HTTP_ADDRESS} ${GREEN}for http proxy(wget etc.)!"
+            colorEcho "${GREEN}  :: Now using ${FUCHSIA}${HTTP_ADDRESS} ${GREEN}for http proxy(wget etc.)!"
         else
             set_wget_proxy
         fi
@@ -1246,6 +1246,12 @@ function check_set_global_proxy() {
             export GLOBAL_PROXY_IP=${PROXY_IP}
             export GLOBAL_PROXY_SOCKS_PORT=${SOCKS_PORT}
             export GLOBAL_PROXY_HTTP_PORT=${MIXED_PORT}
+
+            # WSL2: map host ip to localhost
+            if [[ "$(uname -r)" =~ "microsoft" ]]; then
+                [[ -s "$HOME/terminal-custom/wsl/wsl2-map-win-localhost.sh" ]] && \
+                    source "$HOME/terminal-custom/wsl/wsl2-map-win-localhost.sh"
+            fi
 
             return 0
         fi
