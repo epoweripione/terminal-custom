@@ -24,7 +24,9 @@ colorEcho "${BLUE}Checking latest version for ${FUCHSIA}nano${BLUE}..."
 if [[ -x "$(command -v pacman)" ]]; then
     # Remove old version nano
     if checkPackageInstalled "nano"; then
-        sudo pacman --noconfirm -Rs nano >/dev/null 2>&1
+        CURRENT_VERSION=$(nano -V | grep -Eo -m1 '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+        colorEcho "${BLUE}  Removing ${FUCHSIA}nano ${YELLOW}${CURRENT_VERSION}${BLUE}..."
+        sudo pacman --noconfirm -R nano
     fi
 
     if [[ ! -x "$(command -v nano)" ]]; then
@@ -39,7 +41,7 @@ if [[ -x "$(command -v pacman)" ]]; then
         )
         for TargetPackage in "${PackagesList[@]}"; do
             if checkPackageNeedInstall "${TargetPackage}"; then
-                colorEcho "${BLUE}  Installing ${TargetPackage}..."
+                colorEcho "${BLUE}  Installing ${FUCHSIA}${TargetPackage}${BLUE}..."
                 sudo pacman --noconfirm -S "${TargetPackage}"
             fi
         done

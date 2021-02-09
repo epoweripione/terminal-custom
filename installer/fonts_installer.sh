@@ -78,7 +78,7 @@ colorEcho "${BLUE}Downloading ${FUCHSIA}nerd-fonts & font-patcher${BLUE}..."
 echo "Download URL for nerd-fonts repository?"
 read -p "[Use git clone if empty] " NerdFont_URL
 if [[ -z "$NerdFont_URL" ]]; then
-	if [[ -d "~/nerd-fonts" ]]; then
+	if [[ -d "$HOME/nerd-fonts" ]]; then
 		cd ~/nerd-fonts && git pull
 	else
 		git clone --depth=1 --no-checkout --filter=blob:none \
@@ -89,7 +89,7 @@ if [[ -z "$NerdFont_URL" ]]; then
 		git checkout master
 	fi
 else
-	[[ -d "~/nerd-fonts" ]] && rm -rf ~/nerd-fonts
+	[[ -d "$HOME/nerd-fonts" ]] && rm -rf ~/nerd-fonts
 	wget -c -O ~/nerd-fonts.zip "$NerdFont_URL" && \
 		unzip -q nerd-fonts.zip -d ~
 fi

@@ -181,7 +181,7 @@ if [[ -x "$(command -v pacman)" ]]; then
     )
     for TargetPackage in "${PackagesList[@]}"; do
         if checkPackageNeedInstall "${TargetPackage}"; then
-            colorEcho "${BLUE}  Installing ${TargetPackage}..."
+            colorEcho "${BLUE}  Installing ${FUCHSIA}${TargetPackage}${BLUE}..."
             sudo pacman --noconfirm -S "${TargetPackage}"
         fi
     done
@@ -215,7 +215,9 @@ if [[ ! -x "$(command -v zsh)" ]]; then
         # sudo dnf -y remove zsh
         # sudo dnf -y update && sudo dnf -y install ncurses-devel gcc make
         if checkPackageInstalled "zsh"; then
-            sudo pacman --noconfirm -Rs zsh >/dev/null 2>&1
+        CURRENT_VERSION=$(zsh --version | grep -Eo -m1 '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+        colorEcho "${BLUE}  Removing ${FUCHSIA}nano ${YELLOW}${CURRENT_VERSION}${BLUE}..."
+            sudo pacman --noconfirm -R zsh
         fi
 
         PackagesList=(
@@ -225,7 +227,7 @@ if [[ ! -x "$(command -v zsh)" ]]; then
         )
         for TargetPackage in "${PackagesList[@]}"; do
             if checkPackageNeedInstall "${TargetPackage}"; then
-                colorEcho "${BLUE}  Installing ${TargetPackage}..."
+                colorEcho "${BLUE}  Installing ${FUCHSIA}${TargetPackage}${BLUE}..."
                 sudo pacman --noconfirm -S "${TargetPackage}"
             fi
         done

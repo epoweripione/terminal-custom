@@ -42,7 +42,7 @@ if [[ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]]; then
     else
         echo "Download URL for oh-my-zsh custom plugins & themes?"
         echo -n "[Use github by default] "
-        read OHMYZSH_CUSTOM_URL
+        read -t 10 OHMYZSH_CUSTOM_URL
     fi
 
     if [[ -n "$OHMYZSH_CUSTOM_URL" ]]; then

@@ -59,7 +59,7 @@ sed -i "s/[#]*[ ]*DISABLE_AUTO_UPDATE.*/DISABLE_AUTO_UPDATE=\"true\"/" $HOME/.zs
 
 # custom theme
 colorEcho "${BLUE}custom theme..."
-cp "~/terminal-custom/zsh/zsh_custom_env.sh" $HOME/.zshenv
+cp "$HOME/terminal-custom/zsh/zsh_custom_env.sh" $HOME/.zshenv
 
 theme="ys"
 custom_theme="zsh_custom_theme_${theme}"
@@ -67,7 +67,7 @@ custom_theme="zsh_custom_theme_${theme}"
 sed -i "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" $HOME/.zshrc
 
 sed -i "/zsh_custom_theme_.*/d" $HOME/.zshrc
-if [[ -s "~/terminal-custom/zsh/${custom_theme}.sh" ]]; then
+if [[ -s "$HOME/terminal-custom/zsh/${custom_theme}.sh" ]]; then
     sed -i "/^ZSH_THEME=.*/a\source ~/terminal-custom/zsh/${custom_theme}.sh" $HOME/.zshrc
 fi
 
