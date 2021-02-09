@@ -211,15 +211,15 @@ colorEcho "${BLUE}Installing ${FUCHSIA}ZSH ${BLUE}Shell..."
 if [[ ! -x "$(command -v zsh)" ]]; then
     RHEL_VERSION=$(cat /etc/os-release | grep "^VERSION=" | cut -d'"' -f2)
     if [[ "${RHEL_VERSION}" == "7" ]]; then
-        # install latest zsh for readhat 7 & centos 7
-        # sudo dnf -y remove zsh
-        # sudo dnf -y update && sudo dnf -y install ncurses-devel gcc make
-        if checkPackageInstalled "zsh"; then
-        CURRENT_VERSION=$(zsh --version | grep -Eo -m1 '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-        colorEcho "${BLUE}  Removing ${FUCHSIA}nano ${YELLOW}${CURRENT_VERSION}${BLUE}..."
-            sudo pacman --noconfirm -R zsh
-        fi
+        ## install latest zsh for readhat 7 & centos 7
+        ## sudo dnf -y remove zsh
+        # if checkPackageInstalled "zsh"; then
+        #     CURRENT_VERSION=$(zsh --version | grep -Eo -m1 '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+        #     colorEcho "${BLUE}  Removing ${FUCHSIA}zsh ${YELLOW}${CURRENT_VERSION}${BLUE}..."
+        #     sudo pacman --noconfirm -R zsh
+        # fi
 
+        # sudo dnf -y update && sudo dnf -y install ncurses-devel gcc make
         PackagesList=(
             ncurses-devel
             gcc

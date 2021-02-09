@@ -22,12 +22,12 @@ fi
 # http://mybookworld.wikidot.com/compile-nano-from-source
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}nano${BLUE}..."
 if [[ -x "$(command -v pacman)" ]]; then
-    # Remove old version nano
-    if checkPackageInstalled "nano"; then
-        CURRENT_VERSION=$(nano -V | grep -Eo -m1 '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-        colorEcho "${BLUE}  Removing ${FUCHSIA}nano ${YELLOW}${CURRENT_VERSION}${BLUE}..."
-        sudo pacman --noconfirm -R nano
-    fi
+    ## Remove old version nano
+    # if checkPackageInstalled "nano"; then
+    #     CURRENT_VERSION=$(nano -V | grep -Eo -m1 '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+    #     colorEcho "${BLUE}  Removing ${FUCHSIA}nano ${YELLOW}${CURRENT_VERSION}${BLUE}..."
+    #     sudo pacman --noconfirm -R nano
+    # fi
 
     if [[ ! -x "$(command -v nano)" ]]; then
         # Pre-requisite packages

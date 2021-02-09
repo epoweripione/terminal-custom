@@ -141,8 +141,8 @@ fi
 
 
 ## docker mirror in china
-if [[ -z "$DOCKER_INSTALLER_NOT_USE_MIRROR" ]]; then
-    tee /etc/docker/daemon.json <<-'EOF'
+if [[ -z "$DOCKER_INSTALLER_NOT_USE_MIRROR" && ! -s "/etc/docker/daemon.json" ]]; then
+    tee /etc/docker/daemon.json >/dev/null <<-'EOF'
 {
     "registry-mirrors": [
         "https://docker.mirrors.sjtug.sjtu.edu.cn",
