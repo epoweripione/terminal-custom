@@ -29,15 +29,20 @@ fi
 
 # GeoIP binary and database
 # http://kbeezie.com/geoiplookup-command-line/
-if pacman -Si geoip-bin >/dev/null 2>&1; then
-    sudo pacman -S --noconfirm geoip-bin geoip-database
-else
-    if pacman -Si GeoIP >/dev/null 2>&1; then
-        sudo pacman -S --noconfirm GeoIP GeoIP-data
-    else
-        sudo pacman -S --noconfirm geoip geoip-data
+PackagesList=(
+    geoip-bin
+    geoip-database
+    GeoIP
+    GeoIP-data
+    geoip
+    geoip-data
+)
+for TargetPackage in "${PackagesList[@]}"; do
+    if checkPackageNeedInstall "${TargetPackage}"; then
+        colorEcho "${BLUE}  Installing ${TargetPackage}..."
+        sudo pacman --noconfirm -S "${TargetPackage}"
     fi
-fi
+done
 
 ## How to use
 # geoiplookup 8.8.8.8

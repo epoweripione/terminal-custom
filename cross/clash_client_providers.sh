@@ -4,7 +4,7 @@
 # ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_providers.sh /srv/web/www/public
 # (crontab -l 2>/dev/null || true; echo "0 8,12,15,20 * * * /root/terminal-custom/cross/clash_client_providers.sh /srv/web/www/public >/dev/null") | crontab -
 
-trap 'rm -r "$WORKDIR"' EXIT
+trap 'rm -rf "$WORKDIR"' EXIT
 
 [[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)

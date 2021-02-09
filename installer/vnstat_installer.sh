@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-trap 'rm -r "$WORKDIR"' EXIT
+trap 'rm -rf "$WORKDIR"' EXIT
 
 [[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
@@ -25,11 +25,17 @@ fi
 
 
 colorEcho "${BLUE}Installing ${FUCHSIA}vnstat${BLUE}..."
-if pacman -Si sqlite-devel >/dev/null 2>&1; then
-    pacman --noconfirm -S sqlite sqlite-devel
-else
-    pacman --noconfirm -S libsqlite3-dev
-fi
+PackagesList=(
+    sqlite
+    sqlite-devel
+    libsqlite3-dev
+)
+for TargetPackage in "${PackagesList[@]}"; do
+    if checkPackageNeedInstall "${TargetPackage}"; then
+        colorEcho "${BLUE}  Installing ${TargetPackage}..."
+        sudo pacman --noconfirm -S "${TargetPackage}"
+    fi
+done
 
 
 cd "${WORKDIR}" && \
@@ -52,7 +58,7 @@ cd "${CURRENT_DIR}"
 
 # Error: Unable to open database "/var/lib/vnstat/vnstat.db": No such file or directory
 # update-rc.d vnstat defaults && service vnstat start
-# [ -d /var/lib/vnstat ] && rm -r /var/lib/vnstat
+# [ -d /var/lib/vnstat ] && rm -rf /var/lib/vnstat
 # mkdir -p /var/lib/vnstat && chown -R vnstat:vnstat /var/lib/vnstat
 
 # 定时生成数据库

@@ -5,7 +5,7 @@
 ## 2. Install zsh and oh-my-zsh: source <(curl -fsSL https://git.io/fA8Jb)
 ##                               source <(curl -fsSL http://t.cn/AigJm9ut)
 
-trap 'rm -r "$WORKDIR"' EXIT
+trap 'rm -rf "$WORKDIR"' EXIT
 
 [[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
@@ -44,6 +44,44 @@ function version_ge() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)"
 function version_lt() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)" != "$1"; } # <
 function version_le() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" = "$1"; } # <=
 
+# Check pacakge is installed
+function checkPackageInstalled() {
+    local PackageName=${1:-""}
+    local PackageLocalFiles=""
+    local PackageInstalled="no"
+
+    [[ -n "${PackageName}" ]] || return 1
+    [[ -x "$(command -v pacman)" ]] || return 1
+
+    PackageLocalFiles=$(pacman -Ql "${PackageName}" 2>&1)
+    if [[ $? -eq 0 ]]; then
+        PackageInstalled="yes"
+    else
+        if [[ "${PackageLocalFiles}" == *"unimplemented"* ]]; then
+            if pacman -Qi "${PackageName}" >/dev/null 2>&1; then
+                PackageInstalled="yes"
+            fi
+        fi
+    fi
+
+    [[ "${PackageInstalled}" == "yes" ]] && return 0 || return 1
+}
+
+# Check pacakge exist and not installed
+function checkPackageNeedInstall() {
+    local PackageName=${1:-""}
+
+    [[ -n "${PackageName}" ]] || return 1
+    [[ -x "$(command -v pacman)" ]] || return 1
+
+    if pacman -Si "${PackageName}" >/dev/null 2>&1; then
+        if ! checkPackageInstalled "${PackageName}"; then
+            return 0
+        fi
+    fi
+
+    return 1
+}
 
 # pacaptr - Pacman-like syntax wrapper for many package managers
 # https://github.com/rami3l/pacaptr
@@ -101,7 +139,7 @@ if [[ -x "$(command -v pacman)" ]]; then
     sudo pacman --noconfirm -Syu
 
     colorEcho "${BLUE}Installing ${FUCHSIA}pre-requisite packages${BLUE}..."
-    sudo pacman --noconfirm -S git curl wget g++ gcc make zip unzip
+    sudo pacman --noconfirm -S git curl wget zip unzip
 
     ## Install Latest Git ( Git 2.x ) on CentOS 7
     ## https://computingforgeeks.com/how-to-install-latest-version-of-git-git-2-x-on-centos-7/
@@ -116,13 +154,11 @@ if [[ -x "$(command -v pacman)" ]]; then
     # jq
     # https://stedolan.github.io/jq/
 
-    ## https://github.com/man-pages-zh/manpages-zh
-    sudo localedef -i zh_CN -c -f UTF-8 -A /usr/share/locale/locale.alias zh_CN.UTF-8
-    # alias man="LC_MESSAGES=zh_CN.UTF-8 man"
-    # alias man="man -Lzh_CN"
-
     # Pre-requisite packages
     PackagesList=(
+        g++
+        gcc
+        make
         rsync
         geoip
         GeoIP
@@ -136,24 +172,24 @@ if [[ -x "$(command -v pacman)" ]]; then
         jq
         connect-proxy
         netcat-openbsd
+        glibc-locale-source
+        glibc-langpack-en
         man
         manpages-zh
         man-pages-zh_cn
         man-pages-zh-CN
     )
     for TargetPackage in "${PackagesList[@]}"; do
-        if pacman -Si "$TargetPackage" >/dev/null 2>&1; then
-            if ! pacman -Qi "$TargetPackage" >/dev/null 2>&1; then
-                colorEcho "${BLUE}  Installing $TargetPackage..."
-                sudo pacman --noconfirm -S "$TargetPackage"
-            fi
+        if checkPackageNeedInstall "${TargetPackage}"; then
+            colorEcho "${BLUE}  Installing ${TargetPackage}..."
+            sudo pacman --noconfirm -S "${TargetPackage}"
         fi
     done
 
     # tmux
     # https://github.com/tmux/tmux
     colorEcho "${BLUE}Installing ${FUCHSIA}tmux${BLUE}..."
-    if pacman -Si tmux >/dev/null 2>&1; then
+    if checkPackageNeedInstall "tmux"; then
         sudo pacman --noconfirm -S tmux
     else
         git clone https://github.com/tmux/tmux && \
@@ -161,6 +197,11 @@ if [[ -x "$(command -v pacman)" ]]; then
             sudo sh autogen.sh && \
             sudo ./configure >/dev/null && sudo make >/dev/null
     fi
+
+    ## https://github.com/man-pages-zh/manpages-zh
+    sudo localedef -i zh_CN -c -f UTF-8 -A /usr/share/locale/locale.alias zh_CN.UTF-8
+    # alias man="LC_MESSAGES=zh_CN.UTF-8 man"
+    # alias man="man -Lzh_CN"
 fi
 
 colorEcho "${BLUE}Installing ${FUCHSIA}ZSH ${BLUE}Shell..."

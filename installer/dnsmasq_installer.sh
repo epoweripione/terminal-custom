@@ -95,6 +95,6 @@ else
 fi
 
 echo "Cleaning up..."
-rm -r "$WORKDIR"
+rm -rf "$WORKDIR"
 
 # systemctl enable dnsmasq && systemctl restart dnsmasq

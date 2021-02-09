@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-trap 'rm -r "$WORKDIR"' EXIT
+trap 'rm -rf "$WORKDIR"' EXIT
 
 [[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
@@ -45,7 +45,7 @@ if [[ -x "$(command -v proxychains4)" ]]; then
 else
     colorEcho "${BLUE}Installing ${FUCHSIA}proxychains-ng${BLUE}..."
     if [[ -x "$(command -v pacman)" ]]; then
-        if pacman -Si proxychains4 >/dev/null 2>&1; then
+        if checkPackageNeedInstall "proxychains4"; then
             sudo pacman --noconfirm -S proxychains4
         fi
     fi

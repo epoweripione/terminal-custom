@@ -1555,22 +1555,43 @@ EOF
 }
 
 
-function Download_Install_Subconverter_Clash() {
-    local download_url=${1:-""}
+# Check pacakge is installed
+function checkPackageInstalled() {
+    local PackageName=${1:-""}
+    local PackageLocalFiles=""
+    local PackageInstalled="no"
 
-    if [[ -z "$download_url" ]]; then
-        echo "Download URL for subconverter & clash?"
-        read download_url
+    [[ -n "${PackageName}" ]] || return 1
+    [[ -x "$(command -v pacman)" ]] || return 1
+
+    PackageLocalFiles=$(pacman -Ql "${PackageName}" 2>&1)
+    if [[ $? -eq 0 ]]; then
+        PackageInstalled="yes"
+    else
+        if [[ "${PackageLocalFiles}" == *"unimplemented"* ]]; then
+            if pacman -Qi "${PackageName}" >/dev/null 2>&1; then
+                PackageInstalled="yes"
+            fi
+        fi
     fi
 
-    if [[ -n "$download_url" ]]; then
-        wget -c -O "/tmp/subconverter_clash.zip" "${download_url}" && \
-            unzip -qo "/tmp/subconverter_clash.zip" -d "/srv" && \
-            rm -f "/tmp/subconverter_clash.zip" && \
-            Install_systemd_Service "subconverter" "/srv/subconverter/subconverter" && \
-            Install_systemd_Service "clash" "/srv/clash/clash -d /srv/clash" && \
-            colorEcho "${GREEN}Subconverter & Clash installed!"
+    [[ "${PackageInstalled}" == "yes" ]] && return 0 || return 1
+}
+
+# Check pacakge exist and not installed
+function checkPackageNeedInstall() {
+    local PackageName=${1:-""}
+
+    [[ -n "${PackageName}" ]] || return 1
+    [[ -x "$(command -v pacman)" ]] || return 1
+
+    if pacman -Si "${PackageName}" >/dev/null 2>&1; then
+        if ! checkPackageInstalled "${PackageName}"; then
+            return 0
+        fi
     fi
+
+    return 1
 }
 
 

@@ -4,8 +4,9 @@
 ## 1. Install `curl`
 ## 2. Clone repo: source <(curl -fsSL https://git.io/fNpeJ)
 ## 3. Install zsh and oh-my-zsh: $HOME/terminal-custom/zsh/zsh_installer.sh
-## 4. Init: $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh && $HOME/terminal-custom/zsh/zsh_init.sh
-## 5. Update: source <(curl -fsSL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh
+## 4. Change default shell to zsh: chsh -s $(which zsh)
+## 5. Init: $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh && $HOME/terminal-custom/zsh/zsh_init.sh
+## 6. Update: source <(curl -fsSL https://git.io/fNpeJ) && $HOME/terminal-custom/zsh/zsh_upgrade_all_packages.sh
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
 # Colors

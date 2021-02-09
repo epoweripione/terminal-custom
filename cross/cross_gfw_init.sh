@@ -95,7 +95,7 @@ EOF
 }
 
 
-trap 'rm -r "$WORKDIR"' EXIT
+trap 'rm -rf "$WORKDIR"' EXIT
 [[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
 
 DOWNLOAD_URL=${1:-""}

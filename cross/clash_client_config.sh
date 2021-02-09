@@ -30,7 +30,7 @@
 #     # echo "-$OPTNAME=$OPTARG index=$OPTIND"
 # done
 
-trap 'rm -r "$WORKDIR"' EXIT
+trap 'rm -rf "$WORKDIR"' EXIT
 
 [[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
@@ -49,11 +49,9 @@ fi
 
 # jq
 if [[ ! -x "$(command -v jq)" ]]; then
-    if [[ -x "$(command -v pacman)" ]]; then
-        if pacman -Si jq >/dev/null 2>&1; then
-            colorEcho "${BLUE}Installing ${FUCHSIA}jq${BLUE}..."
-            sudo pacman --noconfirm -S jq
-        fi
+    if checkPackageNeedInstall "jq"; then
+        colorEcho "${BLUE}Installing ${FUCHSIA}jq${BLUE}..."
+        sudo pacman --noconfirm -S jq
     fi
 fi
 

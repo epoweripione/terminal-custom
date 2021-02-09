@@ -60,8 +60,7 @@ if [[ ! -s "$HostsFile" ]]; then
     # colorEcho "${RED}${HostsFile} not exist!"
     # exit 1
     Hosts_URL="https://raw.githubusercontent.com/googlehosts/hosts/master/hosts-files/hosts"
-    curl -fSL --connect-timeout 5 --max-time 20 \
-        -o "$HostsFile" "$Hosts_URL"
+    curl -fSL --connect-timeout 5 --max-time 20 -o "$HostsFile" "$Hosts_URL"
 fi
 
 # use dig or curl
@@ -81,18 +80,17 @@ fi
 
 # dig
 if [[ "$CHECK_METHOD" == "dig" && ! -x "$(command -v dig)" ]]; then
-    if [[ -x "$(command -v pacman)" ]]; then
-        if pacman -Si bind-tools >/dev/null 2>&1; then
-            colorEcho "${BLUE}Installing ${FUCHSIA}bind-tools${BLUE}..."
-            sudo pacman --noconfirm -S bind-tools
-        elif pacman -Si bind-utils >/dev/null 2>&1; then
-            colorEcho "${BLUE}Installing ${FUCHSIA}bind-utils${BLUE}..."
-            sudo pacman --noconfirm -S bind-utils
-        elif pacman -Si dnsutils >/dev/null 2>&1; then
-            colorEcho "${BLUE}Installing ${FUCHSIA}dnsutils${BLUE}..."
-            sudo pacman --noconfirm -S dnsutils
+    PackagesList=(
+        bind-tools
+        bind-utils
+        dnsutils
+    )
+    for TargetPackage in "${PackagesList[@]}"; do
+        if checkPackageNeedInstall "${TargetPackage}"; then
+            colorEcho "${BLUE}  Installing ${TargetPackage}..."
+            sudo pacman --noconfirm -S "${TargetPackage}"
         fi
-    fi
+    done
 fi
 
 if [[ "$CHECK_METHOD" == "dig" && ! -x "$(command -v dig)" ]]; then

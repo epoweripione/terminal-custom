@@ -4,7 +4,7 @@ GREEN="32m"
 
 pacman --noconfirm -Scc
 
-[ -d ~/.cache ] && rm -r ~/.cache
+[ -d ~/.cache ] && rm -rf ~/.cache
 [ -e ~/.wget-hsts ] && rm -f ~/.wget-hsts
 [ -e ~/.ssh/known_hosts ] && rm -f ~/.ssh/known_hosts
 [ -e ~/.local/share/lftp/rl_history ] && rm -f ~/.local/share/lftp/rl_history
