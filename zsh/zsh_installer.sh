@@ -191,7 +191,9 @@ if [[ -x "$(command -v pacman)" ]]; then
     colorEcho "${BLUE}Installing ${FUCHSIA}tmux${BLUE}..."
     if checkPackageNeedInstall "tmux"; then
         sudo pacman --noconfirm -S tmux
-    else
+    fi
+
+    if [[ ! -x "$(command -v tmux)" ]]; then
         git clone https://github.com/tmux/tmux && \
             cd tmux && \
             sudo sh autogen.sh && \
@@ -211,8 +213,22 @@ if [[ ! -x "$(command -v zsh)" ]]; then
     if [[ "${RHEL_VERSION}" == "7" ]]; then
         # install latest zsh for readhat 7 & centos 7
         # sudo dnf -y remove zsh
-        sudo dnf -y update && \
-            sudo dnf -y install ncurses-devel gcc make
+        # sudo dnf -y update && sudo dnf -y install ncurses-devel gcc make
+        if checkPackageInstalled "zsh"; then
+            sudo pacman --noconfirm -Rs zsh >/dev/null 2>&1
+        fi
+
+        PackagesList=(
+            ncurses-devel
+            gcc
+            make
+        )
+        for TargetPackage in "${PackagesList[@]}"; do
+            if checkPackageNeedInstall "${TargetPackage}"; then
+                colorEcho "${BLUE}  Installing ${TargetPackage}..."
+                sudo pacman --noconfirm -S "${TargetPackage}"
+            fi
+        done
 
         # ZSH_REPO_VERSION=$(dnf info zsh | grep -E "[Vv]ersion" | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
 
@@ -231,10 +247,8 @@ if [[ ! -x "$(command -v zsh)" ]]; then
                 sudo make install >/dev/null
         fi
 
-        if [[ ! -x "$(command -v zsh)" ]]; then
-            if [[ -s "/usr/local/bin/zsh" ]]; then
-                sudo ln -sv /usr/local/bin/zsh /bin/zsh
-            fi
+        if [[ ! -x "$(command -v zsh)" ]] && [[ -s "/usr/local/bin/zsh" ]]; then
+            sudo ln -sv /usr/local/bin/zsh /bin/zsh
         fi
 
         if [[ -x "$(command -v zsh)" ]]; then
@@ -245,7 +259,9 @@ if [[ ! -x "$(command -v zsh)" ]]; then
             command -v zsh | sudo tee -a /etc/shells
         fi
     else
-        sudo pacman --noconfirm -S zsh
+        if checkPackageNeedInstall "zsh"; then
+            sudo pacman --noconfirm -S zsh
+        fi
     fi
 fi
 
