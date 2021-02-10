@@ -47,14 +47,14 @@ fi
 
 
 ## https://gist.github.com/toryano0820/6ee3bff2474cdf13e70d972da710996a
-if [[ -n "${GLOBAL_WSL_HOST_IP}" ]]; then
-    WSL_HOST_IP="${GLOBAL_WSL_HOST_IP}"
+if [[ -n "${GLOBAL_WSL2_HOST_IP}" ]]; then
+    WSL_HOST_IP="${GLOBAL_WSL2_HOST_IP}"
 else
     WSL_HOST_IP=$(grep -m 1 nameserver /etc/resolv.conf | awk '{print $2}')
 fi
 
 if [[ -n "${WSL_HOST_IP}" ]]; then
-    if grep -q "${WSL_HOST_IP} localhost" /etc/hosts; then
+    if ! grep -q "${WSL_HOST_IP} localhost" /etc/hosts; then
         colorEcho "${GREEN}  :: Mapping ${FUCHSIA}${WSL_HOST_IP}${GREEN} to ${YELLOW}localhost${GREEN}..."
         LOCALHOST_ENTRY=$(grep -v "127.0.0.1" /etc/hosts | grep "\slocalhost$")
         if [[ -n "${LOCALHOST_ENTRY}" ]]; then
