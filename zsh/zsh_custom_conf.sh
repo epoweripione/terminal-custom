@@ -506,3 +506,12 @@ if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
     # get local weather
     get_weather_custom
 fi
+
+# Autostart Tmux/screen Session On Remote System When Logging In Via SSH
+if [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
+    if [[ "$(command -v tmux)" ]]; then
+        newTmuxSession
+    elif [[ -x "$(command -v screen)" ]]; then
+        newScreenSession
+    fi
+fi

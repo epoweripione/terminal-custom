@@ -81,7 +81,7 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         mv ${WORKDIR}/nano-* "${WORKDIR}/nano"
 
     if [[ -d "${WORKDIR}/nano" ]]; then
-        colorEcho "${BLUE}  Compiling nano..."
+        colorEcho "${BLUE}  Compiling ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
         cd "${WORKDIR}/nano" && \
         ./configure --prefix=/usr --enable-utf8 >/dev/null && \
         make >/dev/null && \

@@ -188,23 +188,46 @@ if [[ -x "$(command -v pacman)" ]]; then
 
     # tmux
     # https://github.com/tmux/tmux
-    colorEcho "${BLUE}Installing ${FUCHSIA}tmux${BLUE}..."
     if checkPackageNeedInstall "tmux"; then
+        colorEcho "${BLUE}Installing ${FUCHSIA}tmux${BLUE}..."
         sudo pacman --noconfirm -S tmux
     fi
-
-    if [[ ! -x "$(command -v tmux)" ]]; then
-        git clone https://github.com/tmux/tmux && \
-            cd tmux && \
-            sudo sh autogen.sh && \
-            sudo ./configure >/dev/null && sudo make >/dev/null
-    fi
-
-    ## https://github.com/man-pages-zh/manpages-zh
-    sudo localedef -i zh_CN -c -f UTF-8 -A /usr/share/locale/locale.alias zh_CN.UTF-8
-    # alias man="LC_MESSAGES=zh_CN.UTF-8 man"
-    # alias man="man -Lzh_CN"
 fi
+
+if [[ ! -x "$(command -v tmux)" ]]; then
+    colorEcho "${BLUE}Compiling ${FUCHSIA}tmux${BLUE}..."
+    Git_Clone_Update "tmux/tmux" "${WORKDIR}/tmux"
+    if [[ -d "${WORKDIR}/tmux" ]]; then
+        PackagesList=(
+            gcc
+            make
+            automake
+            byacc
+            pkg-config
+            libevent-dev
+            libncurses5-dev
+            libevent-devel
+            ncurses-devel
+        )
+        for TargetPackage in "${PackagesList[@]}"; do
+            if checkPackageNeedInstall "${TargetPackage}"; then
+                colorEcho "${BLUE}  Installing ${FUCHSIA}${TargetPackage}${BLUE}..."
+                sudo pacman --noconfirm -S "${TargetPackage}"
+            fi
+        done
+
+        cd "${WORKDIR}/tmux" && \
+            sudo sh autogen.sh && \
+            sudo ./configure >/dev/null && \
+            sudo make >/dev/null && \
+            sudo make install >/dev/null
+    fi
+fi
+
+## https://github.com/man-pages-zh/manpages-zh
+sudo localedef -i zh_CN -c -f UTF-8 -A /usr/share/locale/locale.alias zh_CN.UTF-8
+# alias man="LC_MESSAGES=zh_CN.UTF-8 man"
+# alias man="man -Lzh_CN"
 
 colorEcho "${BLUE}Installing ${FUCHSIA}ZSH ${BLUE}Shell..."
 # http://zsh.sourceforge.net/

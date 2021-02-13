@@ -93,6 +93,26 @@ if [[ -x "$(command -v tmux)" ]]; then
         sed -i "s/^tmux_conf_theme_left_separator_sub=.*/tmux_conf_theme_left_separator_sub='\\\uE0B5'/" $HOME/.tmux.conf.local
         sed -i "s/^tmux_conf_theme_right_separator_main=.*/tmux_conf_theme_right_separator_main='\\\uE0B6'/" $HOME/.tmux.conf.local
         sed -i "s/^tmux_conf_theme_right_separator_sub=.*/tmux_conf_theme_right_separator_sub='\\\uE0B7'/" $HOME/.tmux.conf.local
+
+        ## mouse on
+        # sed -i "s/^#set -g mouse on/set -g mouse on/" $HOME/.tmux.conf.local
+
+        # increase history size
+        sed -i "s/^#set -g history-limit 10000/set -g history-limit 10000/" $HOME/.tmux.conf.local
+
+        # move status line to top
+        sed -i "s/^#set -g status-position top/set -g status-position top/" $HOME/.tmux.conf.local
+
+#         # add blank line on top of tmux statusbar (tmux 2.9+)
+#         TMUX_VERSION=$(tmux -V | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+#         if version_ge $TMUX_VERSION "2.9"; then
+#             tee -a "$HOME/.tmux.conf.local" >/dev/null <<-EOF
+# set -gF 'status-format[1]' '#{status-format[0]}'
+# set -g 'status-format[0]' ''
+# set -g status 2
+# EOF
+#         fi
+#         unset TMUX_VERSION
     fi
 fi
 

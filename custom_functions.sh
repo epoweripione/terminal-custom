@@ -1595,6 +1595,51 @@ function checkPackageNeedInstall() {
 }
 
 
+# Start new screen session and logging to $HOME/screenlog.*
+function newScreenSession() {
+    local screenLogFile=screen_$(date '+%Y%m%d_%H%M%S').log
+
+    if [[ -x "$(command -v screen)" ]]; then
+        if [[ -z "$STY" ]]; then
+            mkdir -p "$HOME/.screen" && chmod 700 "$HOME/.screen" && export SCREENDIR="$HOME/.screen"
+            if ! grep -q "^term " "$HOME/.screenrc"; then
+                echo "term ${TERM}" >> "$HOME/.screenrc"
+            fi
+
+            if ! grep -q "^caption always " "$HOME/.screenrc"; then
+                tee -a "$HOME/.screenrc" >/dev/null <<-'EOF'
+# https://gist.github.com/onsails/1328005/dacbc9903fcea5385bb8ee2fde4e1a367d32889c
+# caption always "%?%F%{-b bc}%:%{-b bb}%?%C|%D|%M %d|%H%?%F%{+u wb}%? %L=%-Lw%45>%{+b by}%n%f* %t%{-}%+Lw%-0<"
+caption always "%{=}%{+b kR}%H %{+b kY}%M %d %{+b kG}%2c %{+b kB}%?%-Lw%?%{+b kW}%n*%f %kt%?(%u)%?%{+bkB}%?%+Lw%? | %{kR} Load: %l %{kB}"
+EOF
+            ## logging
+            # screen -L -Logfile "$HOME/.screen/${screenLogFile}" -xRR default
+            screen -xRR default
+        fi
+    else
+        colorEcho "${RED}screen is not installed!"
+        return 1
+    fi
+}
+
+# Start new tmux session
+function newTmuxSession() {
+    local tmuxLogFile=tmux_$(date '+%Y%m%d_%H%M%S').log
+
+    if [[ "$(command -v tmux)" ]]; then
+        if [[ -z "$TMUX" ]]; then
+            tmux attach -t default || tmux new -s default
+        else
+            ## logging
+            # mkdir -p "$HOME/.tmux_logs" && chmod 700 "$HOME/.tmux_logs"
+            # script -f "$HOME/.tmux_logs/${tmuxLogFile}" >/dev/null && exit
+        fi
+    else
+        colorEcho "${RED}screen is not installed!"
+        return 1
+    fi
+}
+
 # https://github.com/chubin/wttr.in
 function get_weather() {
     local wttr_city=${1:-""}
