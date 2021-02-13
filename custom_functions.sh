@@ -1612,6 +1612,8 @@ function newScreenSession() {
 # caption always "%?%F%{-b bc}%:%{-b bb}%?%C|%D|%M %d|%H%?%F%{+u wb}%? %L=%-Lw%45>%{+b by}%n%f* %t%{-}%+Lw%-0<"
 caption always "%{=}%{+b kR}%H %{+b kY}%M %d %{+b kG}%2c %{+b kB}%?%-Lw%?%{+b kW}%n*%f %kt%?(%u)%?%{+bkB}%?%+Lw%? | %{kR} Load: %l %{kB}"
 EOF
+            fi
+
             ## logging
             # screen -L -Logfile "$HOME/.screen/${screenLogFile}" -xRR default
             screen -xRR default
