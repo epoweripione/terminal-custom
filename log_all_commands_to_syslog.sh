@@ -28,7 +28,7 @@ if ! grep -q "^export PROMPT_COMMAND=" "/etc/bashrc"; then
     colorEcho "${BLUE}Enable bash commands log into ${FUCHSIA}/etc/bashrc${BLUE}..."
     sudo tee -a "/etc/bashrc" >/dev/null <<-'EOF'
 # Log commands to syslog for future reference
-export PROMPT_COMMAND='RETRN_VAL=$?;logger -p local6.debug "$(whoami) $(who | cut -d"(" -f2 | sed -e "s/[()]//g") [$$]: $(history 1 | sed "s/^[ ]*[0-9]\+[ ]*//" ) [$RETRN_VAL]"'
+export PROMPT_COMMAND='RETRN_VAL=$?;logger -p local6.debug "$(whoami) $(who | awk "{print \$NF}" | sed -e "s/[()]//g") [$$]: $(history 1 | sed "s/^[ ]*[0-9]\+[ ]*//" ) [$RETRN_VAL]"'
 EOF
 fi
 
@@ -37,7 +37,7 @@ if ! grep -q "^precmd()" "/etc/zshrc"; then
     colorEcho "${BLUE}Enable zsh commands log into ${FUCHSIA}/etc/zshrc${BLUE}..."
     sudo tee -a "/etc/zshrc" >/dev/null <<-'EOF'
 # Log commands to syslog for future reference
-precmd() { eval 'RETRN_VAL=$?;logger -p local6.debug "$(whoami) $(who | cut -d"(" -f2 | sed -e "s/[()]//g") [$$]: $(history | tail -n1 | sed "s/^[ ]*[0-9]\+[ ]*//" ) [$RETRN_VAL]"' }
+precmd() { eval 'RETRN_VAL=$?;logger -p local6.debug "$(whoami) $(who | awk "{print \$NF}" | sed -e "s/[()]//g") [$$]: $(history | tail -n1 | sed "s/^[ ]*[0-9]\+[ ]*//" ) [$RETRN_VAL]"' }
 EOF
 fi
 
