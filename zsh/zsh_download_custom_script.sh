@@ -46,7 +46,7 @@ fi
 
 MY_SHELL_SCRIPTS="${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}"
 
-colorEcho "${BLUE}Cloning custom shell scripts repository to $HOME/terminal-custom..."
+colorEcho "${BLUE}Cloning custom shell scripts repository to ${FUCHSIA}$HOME/terminal-custom${BLUE}..."
 if [[ -d "${MY_SHELL_SCRIPTS}" ]]; then
     cd "${MY_SHELL_SCRIPTS}" && \
         BRANCH=$(git symbolic-ref --short HEAD) && \
@@ -81,7 +81,7 @@ if [[ -s "$HOME/.zshrc" ]]; then
 fi
 
 if [[ -d "$ZSH/custom" ]]; then
-    colorEcho "${BLUE}copy zsh custom plugins & theme to $ZSH/custom..."
+    colorEcho "${BLUE}copy zsh custom plugins & theme to ${FUCHSIA}$ZSH/custom${BLUE}..."
     # zsh custom plugins
     [ -d "$HOME/terminal-custom/zsh/plugins" ] && cp -f $HOME/terminal-custom/zsh/plugins/* "$ZSH/custom/plugins"
 

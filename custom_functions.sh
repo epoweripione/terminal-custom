@@ -1630,22 +1630,24 @@ EOF
 
 # Start new tmux session
 function newTmuxSession() {
-    TMUX_SESSION_LOGGING=${1:-"no"}
-
     if [[ "$(command -v tmux)" ]]; then
         if [[ -z "$TMUX" ]]; then
             tmux attach -t default || tmux new -s default
-        else
-            # logging
-            if [[ "${TMUX_SESSION_LOGGING}" == "yes" ]]; then
-                unset TMUX_SESSION_LOGGING
-                mkdir -p "$HOME/.tmux_logs" && chmod 700 "$HOME/.tmux_logs"
-                script -f "$HOME/.tmux_logs/tmux_$(date '+%Y%m%d_%H%M%S').log" >/dev/null && exit
-            fi
         fi
     else
-        colorEcho "${RED}screen is not installed!"
+        colorEcho "${RED}tmux is not installed!"
         return 1
+    fi
+}
+
+function logTmuxSession() {
+    local tmuxLogFile=tmux_$(date '+%Y%m%d_%H%M%S').log
+
+    if [[ -n "$TMUX" ]]; then
+        # logging
+        colorEcho "${Blue}  :: Now logging into ${FUCHSIA}${tmuxLogFile}${Blue}!"
+        mkdir -p "$HOME/.tmux_logs" && chmod 700 "$HOME/.tmux_logs"
+        script -f "$HOME/.tmux_logs/${tmuxLogFile}" >/dev/null && exit
     fi
 }
 
