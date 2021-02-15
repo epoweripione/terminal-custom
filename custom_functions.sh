@@ -1597,6 +1597,7 @@ function checkPackageNeedInstall() {
 
 # Start new screen session and logging to $HOME/screenlog.*
 function newScreenSession() {
+    local Logging=${1:-"no"}
     local screenLogFile=screen_$(date '+%Y%m%d_%H%M%S').log
 
     if [[ -x "$(command -v screen)" ]]; then
@@ -1614,9 +1615,12 @@ caption always "%{=}%{+b kR}%H %{+b kY}%M %d %{+b kG}%2c %{+b kB}%?%-Lw%?%{+b kW
 EOF
             fi
 
-            ## logging
-            # screen -L -Logfile "$HOME/.screen/${screenLogFile}" -xRR default
-            screen -xRR default
+            # logging
+            if [[ "${Logging}" == "yes" ]]; then
+                screen -L -Logfile "$HOME/.screen/${screenLogFile}" -xRR default
+            else
+                screen -xRR default
+            fi
         fi
     else
         colorEcho "${RED}screen is not installed!"
@@ -1626,15 +1630,18 @@ EOF
 
 # Start new tmux session
 function newTmuxSession() {
+    local Logging=${1:-"no"}
     local tmuxLogFile=tmux_$(date '+%Y%m%d_%H%M%S').log
 
     if [[ "$(command -v tmux)" ]]; then
         if [[ -z "$TMUX" ]]; then
             tmux attach -t default || tmux new -s default
         else
-            ## logging
-            # mkdir -p "$HOME/.tmux_logs" && chmod 700 "$HOME/.tmux_logs"
-            # script -f "$HOME/.tmux_logs/${tmuxLogFile}" >/dev/null && exit
+            # logging
+            if [[ "${Logging}" == "yes" ]]; then
+                mkdir -p "$HOME/.tmux_logs" && chmod 700 "$HOME/.tmux_logs"
+                script -f "$HOME/.tmux_logs/${tmuxLogFile}" >/dev/null && exit
+            fi
         fi
     else
         colorEcho "${RED}screen is not installed!"

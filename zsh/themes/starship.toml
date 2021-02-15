@@ -353,7 +353,7 @@ format = "[  ](fg:white bg:#5a6374)[$symbol$output]($style)"
 disabled = false
 
 [env_var]
-variable = "OS_INFO_ICON"
+variable = "ICON_OS_SSH_SCREEN_TMUX"
 default = ""
 style = "bold fg:bright-white bg:#5a6374"
 format = "[ $env_value ]($style)"

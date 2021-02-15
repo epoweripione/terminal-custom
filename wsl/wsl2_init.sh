@@ -174,20 +174,18 @@ fi
 # Allow members of the group sudo to execute any command without password prompt
 # sudo visudo OR sudo EDITOR=nano visudo
 # sudo sed -i 's/%sudo.*/%sudo   ALL=(ALL:ALL) NOPASSWD:ALL/' /etc/sudoers
-[[ -x "$(command -v service)" ]] && \
-    echo "%sudo ALL=NOPASSWD:$(which service)" | sudo tee -a /etc/sudoers >/dev/null
-
-[[ -x "$(command -v apt-get)" ]] && \
-    echo "%sudo ALL=NOPASSWD:$(which apt-get)" | sudo tee -a /etc/sudoers >/dev/null
-
-[[ -x "$(command -v pacman)" ]] && \
-    echo "%sudo ALL=NOPASSWD:$(which pacman)" | sudo tee -a /etc/sudoers >/dev/null
-
-[[ -x "$(command -v pacapt)" ]] && \
-    echo "%sudo ALL=NOPASSWD:$(which pacapt)" | sudo tee -a /etc/sudoers >/dev/null
-
-[[ -x "$(command -v pacaptr)" ]] && \
-    echo "%sudo ALL=NOPASSWD:$(which pacaptr)" | sudo tee -a /etc/sudoers >/dev/null
+CommandList=(
+    service
+    apt
+    apt-get
+    pacman
+    pacapt
+    pacaptr
+)
+for TargetCommand in "${CommandList[@]}"; do
+    [[ -x "$(command -v ${TargetCommand})" ]] && \
+    echo "%sudo ALL=NOPASSWD:$(which ${TargetCommand})" | sudo tee "/etc/sudoers.d/nopasswd_sudo_command_${TargetCommand}" >/dev/null
+done
 
 
 colorEcho "${GREEN}WSL init done, please restart WSL!"

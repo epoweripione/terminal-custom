@@ -229,6 +229,12 @@ sudo localedef -i zh_CN -c -f UTF-8 -A /usr/share/locale/locale.alias zh_CN.UTF-
 # alias man="LC_MESSAGES=zh_CN.UTF-8 man"
 # alias man="man -Lzh_CN"
 
+## keep SSH env when using `sudo -i`
+## https://mwl.io/archives/1000
+## sudo visudo -f /etc/sudoers.d/keep_env_via_ssh
+# echo 'Defaults env_keep += "SSH_CLIENT SSH_CONNECTION SSH_TTY SSH_AUTH_SOCK"' \
+#     | sudo tee "/etc/sudoers.d/keep_env_via_ssh" >/dev/null
+
 colorEcho "${BLUE}Installing ${FUCHSIA}ZSH ${BLUE}Shell..."
 # http://zsh.sourceforge.net/
 if [[ ! -x "$(command -v zsh)" ]]; then
