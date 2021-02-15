@@ -1597,8 +1597,7 @@ function checkPackageNeedInstall() {
 
 # Start new screen session and logging to $HOME/screenlog.*
 function newScreenSession() {
-    local Logging=${1:-"no"}
-    local screenLogFile=screen_$(date '+%Y%m%d_%H%M%S').log
+    SCREEN_SESSION_LOGGING=${1:-"no"}
 
     if [[ -x "$(command -v screen)" ]]; then
         if [[ -z "$STY" ]]; then
@@ -1616,8 +1615,9 @@ EOF
             fi
 
             # logging
-            if [[ "${Logging}" == "yes" ]]; then
-                screen -L -Logfile "$HOME/.screen/${screenLogFile}" -xRR default
+            if [[ "${SCREEN_SESSION_LOGGING}" == "yes" ]]; then
+                unset SCREEN_SESSION_LOGGING
+                screen -L -Logfile "$HOME/.screen/screen_$(date '+%Y%m%d_%H%M%S').log" -xRR default
             else
                 screen -xRR default
             fi
@@ -1630,17 +1630,17 @@ EOF
 
 # Start new tmux session
 function newTmuxSession() {
-    local Logging=${1:-"no"}
-    local tmuxLogFile=tmux_$(date '+%Y%m%d_%H%M%S').log
+    TMUX_SESSION_LOGGING=${1:-"no"}
 
     if [[ "$(command -v tmux)" ]]; then
         if [[ -z "$TMUX" ]]; then
             tmux attach -t default || tmux new -s default
         else
             # logging
-            if [[ "${Logging}" == "yes" ]]; then
+            if [[ "${TMUX_SESSION_LOGGING}" == "yes" ]]; then
+                unset TMUX_SESSION_LOGGING
                 mkdir -p "$HOME/.tmux_logs" && chmod 700 "$HOME/.tmux_logs"
-                script -f "$HOME/.tmux_logs/${tmuxLogFile}" >/dev/null && exit
+                script -f "$HOME/.tmux_logs/tmux_$(date '+%Y%m%d_%H%M%S').log" >/dev/null && exit
             fi
         fi
     else
