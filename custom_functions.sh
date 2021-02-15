@@ -1597,7 +1597,7 @@ function checkPackageNeedInstall() {
 
 # Start new screen session and logging to $HOME/screenlog.*
 function newScreenSession() {
-    SCREEN_SESSION_LOGGING=${1:-"no"}
+    local SCREEN_SESSION_LOGGING=${1:-"no"}
 
     if [[ -x "$(command -v screen)" ]]; then
         if [[ -z "$STY" ]]; then
@@ -1616,7 +1616,6 @@ EOF
 
             # logging
             if [[ "${SCREEN_SESSION_LOGGING}" == "yes" ]]; then
-                unset SCREEN_SESSION_LOGGING
                 screen -L -Logfile "$HOME/.screen/screen_$(date '+%Y%m%d_%H%M%S').log" -xRR default
             else
                 screen -xRR default
@@ -1630,6 +1629,18 @@ EOF
 
 # Start new tmux session
 function newTmuxSession() {
+    ## Logging in tmux session
+    # script -f "$HOME/.tmux_logs/tmux_$(date '+%Y%m%d_%H%M%S').log" >/dev/null && exit
+
+    ## tmux-logging
+    ## https://github.com/tmux-plugins/tmux-logging
+    # if [[ -s "$HOME/.tmux.conf.local" ]]; then
+    #     if ! grep -q "tmux-logging" "$HOME/.tmux.conf.local"; then
+    #         echo "set -g @plugin 'tmux-plugins/tmux-logging'" \
+    #             | tee -a "$HOME/.tmux.conf.local" >/dev/null
+    #     fi
+    # fi
+
     if [[ "$(command -v tmux)" ]]; then
         if [[ -z "$TMUX" ]]; then
             tmux attach -t default || tmux new -s default
@@ -1640,16 +1651,6 @@ function newTmuxSession() {
     fi
 }
 
-function logTmuxSession() {
-    local tmuxLogFile=tmux_$(date '+%Y%m%d_%H%M%S').log
-
-    if [[ -n "$TMUX" ]]; then
-        # logging
-        colorEcho "${Blue}  :: Now logging into ${FUCHSIA}${tmuxLogFile}${Blue}!"
-        mkdir -p "$HOME/.tmux_logs" && chmod 700 "$HOME/.tmux_logs"
-        script -f "$HOME/.tmux_logs/${tmuxLogFile}" >/dev/null && exit
-    fi
-}
 
 # https://github.com/chubin/wttr.in
 function get_weather() {
