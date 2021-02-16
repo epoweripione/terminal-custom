@@ -1600,7 +1600,7 @@ function newScreenSession() {
     local SCREEN_SESSION_LOGGING=${1:-"no"}
 
     if [[ -x "$(command -v screen)" ]]; then
-        if [[ -z "$STY" ]]; then
+        if [[ -z "$STY" && -z "$TMUX" ]]; then
             mkdir -p "$HOME/.screen" && chmod 700 "$HOME/.screen" && export SCREENDIR="$HOME/.screen"
             if ! grep -q "^term " "$HOME/.screenrc"; then
                 echo "term ${TERM}" >> "$HOME/.screenrc"
@@ -1642,7 +1642,7 @@ function newTmuxSession() {
     # fi
 
     if [[ "$(command -v tmux)" ]]; then
-        if [[ -z "$TMUX" ]]; then
+        if [[ -z "$STY" && -z "$TMUX" ]]; then
             tmux attach -t default || tmux new -s default
         fi
     else
