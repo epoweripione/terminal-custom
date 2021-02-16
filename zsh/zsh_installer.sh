@@ -160,6 +160,7 @@ if [[ -x "$(command -v pacman)" ]]; then
         gcc
         make
         rsync
+        xsel
         geoip
         GeoIP
         geoip-bin
