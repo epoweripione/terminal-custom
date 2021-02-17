@@ -88,6 +88,8 @@ if [[ -x "$(command -v tmux)" ]]; then
     fi
     # custom settings for tmux
     if [[ -s "$HOME/.tmux.conf.local" ]]; then
+        # tmux config ref
+        # https://github.com/kaushalmodi/dotfiles/blob/master/tmux/dot-tmux.conf
         #    
         sed -i "s/^tmux_conf_theme_left_separator_main=.*/tmux_conf_theme_left_separator_main='\\\uE0B4'/" $HOME/.tmux.conf.local
         sed -i "s/^tmux_conf_theme_left_separator_sub=.*/tmux_conf_theme_left_separator_sub='\\\uE0B5'/" $HOME/.tmux.conf.local
@@ -102,6 +104,9 @@ if [[ -x "$(command -v tmux)" ]]; then
 
         # move status line to top
         sed -i "s/^#set -g status-position top/set -g status-position top/" $HOME/.tmux.conf.local
+
+        # Date Time format
+        sed -i "s/, %R , %d %b |/, %H:%M , %Y-%m-%d %a |/" $HOME/.tmux.conf.local
 
 #         # add blank line on top of tmux statusbar (tmux 2.9+)
 #         TMUX_VERSION=$(tmux -V | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
