@@ -34,7 +34,7 @@ VERSION_FILENAME="${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}.version"
 
 if [[ -x "$(command -v ${EXEC_INSTALL_NAME})" ]]; then
     IS_UPDATE="yes"
-    CURRENT_VERSION=v$(head -n1 ${VERSION_FILENAME})
+    CURRENT_VERSION=$(head -n1 ${VERSION_FILENAME})
 else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi

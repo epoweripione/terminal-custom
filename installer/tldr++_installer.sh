@@ -45,9 +45,9 @@ VERSION_FILENAME=""
 
 if [[ -x "$(command -v ${EXEC_INSTALL_NAME})" ]]; then
     IS_UPDATE="yes"
-    [[ -n "${VERSION_FILENAME}" ]] && CURRENT_VERSION=v$(head -n1 ${VERSION_FILENAME})
-    # CURRENT_VERSION=v$(${EXEC_INSTALL_NAME} --version 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-    CURRENT_VERSION=v$(${EXEC_INSTALL_NAME} --version 2>&1 | cut -d' ' -f3)
+    [[ -n "${VERSION_FILENAME}" ]] && CURRENT_VERSION=$(head -n1 ${VERSION_FILENAME})
+    # CURRENT_VERSION=$(${EXEC_INSTALL_NAME} --version 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+    CURRENT_VERSION=$(${EXEC_INSTALL_NAME} --version 2>&1 | cut -d' ' -f3)
 else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi

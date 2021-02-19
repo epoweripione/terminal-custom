@@ -179,6 +179,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "vscode"
         # "wechatdevtools"
         "wireshark"
+        # "babelmap"
         "colortool"
         # "windowsterminal"
         "clash-for-windows"

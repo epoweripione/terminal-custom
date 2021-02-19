@@ -169,8 +169,10 @@ if [[ -x "$(command -v pacman)" ]]; then
         GeoIP-data
         autojump
         autojump-zsh
+        tmux
         screen
         jq
+        recode
         connect-proxy
         netcat-openbsd
         glibc-locale-source
@@ -186,15 +188,10 @@ if [[ -x "$(command -v pacman)" ]]; then
             sudo pacman --noconfirm -S "${TargetPackage}"
         fi
     done
-
-    # tmux
-    # https://github.com/tmux/tmux
-    if checkPackageNeedInstall "tmux"; then
-        colorEcho "${BLUE}Installing ${FUCHSIA}tmux${BLUE}..."
-        sudo pacman --noconfirm -S tmux
-    fi
 fi
 
+# tmux
+# https://github.com/tmux/tmux
 if [[ ! -x "$(command -v tmux)" ]]; then
     colorEcho "${BLUE}Compiling ${FUCHSIA}tmux${BLUE}..."
     Git_Clone_Update "tmux/tmux" "${WORKDIR}/tmux"

@@ -32,19 +32,19 @@ REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'
 
 REMOTE_FILENAME=""
 case "$OS_INFO_TYPE" in
-    linux)
+    linux | bsd)
         case "$OS_INFO_VDIS" in
             32)
-                REMOTE_FILENAME=duf_${REMOTE_VERSION}_${OS_INFO_TYPE}_i386.tar.gz
+                REMOTE_FILENAME=duf_${REMOTE_VERSION}_$(uname | sed 's/.*/\L&/')_i386.tar.gz
                 ;;
             64)
-                REMOTE_FILENAME=duf_${REMOTE_VERSION}_${OS_INFO_TYPE}_x86_64.tar.gz
+                REMOTE_FILENAME=duf_${REMOTE_VERSION}_$(uname | sed 's/.*/\L&/')_x86_64.tar.gz
                 ;;
             arm)
-                REMOTE_FILENAME=duf_${REMOTE_VERSION}_${OS_INFO_TYPE}_armv7.tar.gz
+                REMOTE_FILENAME=duf_${REMOTE_VERSION}_$(uname | sed 's/.*/\L&/')_armv7.tar.gz
                 ;;
-            arm64)
-                REMOTE_FILENAME=duf_${REMOTE_VERSION}_${OS_INFO_TYPE}_arm64.tar.gz
+            *)
+                REMOTE_FILENAME=duf_${REMOTE_VERSION}_$(uname | sed 's/.*/\L&/')_${OS_INFO_VDIS}.tar.gz
                 ;;
         esac
         ;;
@@ -77,7 +77,7 @@ if [[ -x "$(command -v duf)" ]]; then
         # update by package manager
         REMOTE_FILENAME=""
     else
-        CURRENT_VERSION=v$(duf -version | cut -d' ' -f2)
+        CURRENT_VERSION=$(duf -version | cut -d' ' -f2)
         if version_le $REMOTE_VERSION $CURRENT_VERSION; then
             REMOTE_FILENAME=""
         fi

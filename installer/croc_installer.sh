@@ -37,7 +37,7 @@ if [[ -x "$(command -v croc)" ]]; then
         # update by package manager
         REMOTE_FILENAME=""
     else
-        CURRENT_VERSION=v$(croc -v | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+        CURRENT_VERSION=$(croc -v | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         if version_le $REMOTE_VERSION $CURRENT_VERSION; then
             REMOTE_FILENAME=""
         fi
