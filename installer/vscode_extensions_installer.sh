@@ -43,6 +43,7 @@ extensions=(
 	"sidthesloth.html5-boilerplate"
     ## Javascript
 	"msjsdiag.debugger-for-chrome"
+	"dbaeumer.vscode-eslint"
     ## kubernete/docker
 	"ms-azuretools.vscode-docker"
     ## nginx

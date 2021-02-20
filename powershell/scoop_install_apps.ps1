@@ -218,6 +218,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "wincdemu"
         "ventoy"
         "croc"
+        "duf"
         "treesize-free"
         ## markdown editor
         "pandoc"
