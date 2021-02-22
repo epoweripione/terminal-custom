@@ -1681,7 +1681,8 @@ function checkPackageNeedInstall() {
 
 # Start new screen session and logging to $HOME/screenlog.*
 function newScreenSession() {
-    local SCREEN_SESSION_LOGGING=${1:-"no"}
+    local SCREEN_SESSION_NAME=${1:-"default"}
+    local SCREEN_SESSION_LOGGING=${2:-"no"}
 
     if [[ -x "$(command -v screen)" ]]; then
         if [[ -z "$STY" && -z "$TMUX" ]]; then
@@ -1700,9 +1701,9 @@ EOF
 
             # logging
             if [[ "${SCREEN_SESSION_LOGGING}" == "yes" ]]; then
-                screen -L -Logfile "$HOME/.screen/screen_$(date '+%Y%m%d_%H%M%S').log" -xRR default
+                screen -L -Logfile "$HOME/.screen/screen_$(date '+%Y%m%d_%H%M%S').log" -xRR ${SCREEN_SESSION_NAME}
             else
-                screen -xRR default
+                screen -xRR ${SCREEN_SESSION_NAME}
             fi
         fi
     else
@@ -1713,6 +1714,8 @@ EOF
 
 # Start new tmux session
 function newTmuxSession() {
+    local TMUX_SESSION_NAME=${1:-"default"}
+
     ## Logging in tmux session
     # script -f "$HOME/.tmux_logs/tmux_$(date '+%Y%m%d_%H%M%S').log" >/dev/null && exit
 
@@ -1727,7 +1730,7 @@ function newTmuxSession() {
 
     if [[ "$(command -v tmux)" ]]; then
         if [[ -z "$STY" && -z "$TMUX" ]]; then
-            tmux attach -t default || tmux new -s default
+            tmux attach -t ${TMUX_SESSION_NAME} || tmux new -s ${TMUX_SESSION_NAME}
         fi
     else
         colorEcho "${RED}tmux is not installed!"

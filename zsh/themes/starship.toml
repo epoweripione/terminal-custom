@@ -221,7 +221,7 @@ disabled = false
 "dev.local.cluster.k8s" = "dev"
 
 [lua]
-symbol = "🌙 "
+symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
@@ -255,7 +255,7 @@ style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
 [openstack]
-symbol = "☁️ "
+symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$cloud(\\($project\\))]($style)"
 
@@ -306,6 +306,8 @@ format = "[  ](fg:white bg:#5a6374)[$symbol($env)]($style)"
 [status]
 style = "bold fg:bright-red bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol $status $status_common_meaning$status_signal_name$status_maybe_int]($style)"
+symbol = ""
+signal_symbol = "☇"
 map_symbol = true
 disabled = false
 
@@ -323,7 +325,7 @@ style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
 [zig]
-symbol = "⚡️ "
+symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
