@@ -177,6 +177,7 @@ if [[ -x "$(command -v pacman)" ]]; then
         netcat-openbsd
         glibc-locale-source
         glibc-langpack-en
+        rlwrap
         man
         manpages-zh
         man-pages-zh_cn

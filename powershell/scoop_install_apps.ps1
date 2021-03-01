@@ -180,6 +180,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "wechatdevtools"
         "wireshark"
         # "babelmap"
+        "nexusfont"
         "colortool"
         # "windowsterminal"
         "clash-for-windows"

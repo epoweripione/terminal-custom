@@ -81,11 +81,9 @@ if [[ -x "$(command -v tmux)" ]]; then
     # Oh My Tmux: https://github.com/gpakosz/.tmux
     Git_Clone_Update "gpakosz/.tmux" "$HOME/.tmux"
 
-    if [[ ! -s "$HOME/.tmux.conf.local" ]]; then
-        cd $HOME && \
-            ln -s -f .tmux/.tmux.conf && \
-            cp .tmux/.tmux.conf.local .
-    fi
+    [[ -d "$HOME/.tmux" ]] && \
+        cd $HOME && ln -s -f .tmux/.tmux.conf && cp -f .tmux/.tmux.conf.local .
+
     # custom settings for tmux
     if [[ -s "$HOME/.tmux.conf.local" ]]; then
         # tmux config ref
@@ -98,6 +96,10 @@ if [[ -x "$(command -v tmux)" ]]; then
 
         ## mouse on
         # sed -i "s/^#set -g mouse on/set -g mouse on/" $HOME/.tmux.conf.local
+
+        # disable secondary prefix Ctrl-a
+        sed -i "s/^# set -gu prefix2/set -gu prefix2/" $HOME/.tmux.conf.local
+        sed -i "s/^# unbind C-a/unbind C-a/" $HOME/.tmux.conf.local
 
         # increase history size
         sed -i "s/^#set -g history-limit 10000/set -g history-limit 10000/" $HOME/.tmux.conf.local

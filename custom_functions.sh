@@ -1416,20 +1416,18 @@ function reset_hosts() {
 function Git_Clone_Update() {
     local REPONAME=${1:-""}
     local REPODIR=${2:-""}
-    local BRANCH=${3:-""}
-    local REPOURL=${4:-github.com}
+    local REPOURL=${3:-"github.com"}
     local REPOREMOTE=""
+    local BRANCH=""
     local DEFAULTBRANCH=""
     local CurrentDir
 
-    if [[ -z "$REPONAME" ]]; then
+    if [[ -z "${REPONAME}" ]]; then
         colorEcho "${RED}Error! Repository name can't empty!"
         return 1
     fi
 
-    if [[ -z "${REPODIR}" ]]; then
-        REPODIR=$(echo ${REPONAME} | awk -F"/" '{print $NF}')
-    fi
+    [[ -z "${REPODIR}" ]] && REPODIR=$(echo ${REPONAME} | awk -F"/" '{print $NF}')
 
     REPOREMOTE="https://${REPOURL}/${REPONAME}.git"
     if [[ -d "${REPODIR}/.git" ]]; then
@@ -1491,11 +1489,11 @@ function Git_Clone_Update() {
 # https://stackoverflow.com/questions/3497123/run-git-pull-over-all-subdirectories
 function git_update_repo_in_subdir() {
     local SubDir=${1:-""}
-    local BRANCH=${2:-""}
-    local FindDepth=${3:-""}
+    local FindDepth=${2:-""}
     local FindDir
     local TargetDir
     local CurrentDir
+    local BRANCH
     local DIRLIST=()
 
     [[ -z "${SubDir}" ]] && exit 0
@@ -1632,9 +1630,9 @@ EOF
 
     sudo systemctl enable "$service_name" && sudo systemctl restart "$service_name"
     if [[ $(systemctl is-enabled "$service_name" 2>/dev/null) ]]; then
-        colorEcho "${GREEN}  systemd service ${service_name} installed!"
+        colorEcho "${GREEN}  systemd service ${FUCHSIA}${service_name}${GREEN} installed!"
     else
-        colorEcho "${RED}   systemd service ${service_name} install failed!"
+        colorEcho "${RED}   systemd service ${FUCHSIA}${service_name}${RED} install failed!"
     fi
 }
 

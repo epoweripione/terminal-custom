@@ -53,7 +53,6 @@ oracle.oracledevtools
 dart-code.dart-code
 dart-code.flutter
 nash.awesome-flutter-snippets
-alexisvt.flutter-snippets
 gornivv.vscode-flutter-files
 ## GO
 golang.go
@@ -62,11 +61,11 @@ thekalinga.bootstrap4-vscode
 abusaidm.html-snippets
 clinyong.vscode-css-modules
 syler.sass-indented
-wcwhitehead.bootstrap-3-snippets
 zignd.html-css-class-completion
 sidthesloth.html5-boilerplate
 stylelint.vscode-stylelint
 vincaslt.highlight-matching-tag
+formulahendry.auto-rename-tag
 ## JAVA
 redhat.java
 vscjava.vscode-java-debug
@@ -85,6 +84,7 @@ msjsdiag.vscode-react-native
 stringham.move-ts
 ## Angular
 angular.ng-template
+johnpapa.angular2
 cyrilletuzi.angular-schematics
 mikael.angular-beastcode
 metatype.copilot-vscode

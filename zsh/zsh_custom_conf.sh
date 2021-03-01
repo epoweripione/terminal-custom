@@ -69,6 +69,10 @@ alias ohmyzsh="nano ~/.oh-my-zsh"
 alias cls='clear'
 alias grep="grep --color=auto"
 
+# most used history commands
+alias histop="awk -F';' '{print $2}' ${HISTFILE} | sort | uniq -c | sort -rn"
+alias histop20="awk -F';' '{print $2}' ${HISTFILE} | sort | uniq -c | sort -rn | head -n20"
+
 # Auto files
 # alias -s html='nano'
 # alias -s php='nano'
