@@ -103,7 +103,7 @@ if [[ ! -d "$HOME/frp" ]]; then
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL="https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_linux_arm64.tar.gz"
         curl -fSL -o frp.tar.gz -C- "$DOWNLOAD_URL" && \
-            tar -xzPf frp.tar.gz -C "$HOME" && \
+            tar -xzf frp.tar.gz -C "$HOME" && \
             rm frp.tar.gz && \
             mkdir -p "$HOME/frp" && \
             cp -rf $HOME/frp_*/* "$HOME/frp" && \

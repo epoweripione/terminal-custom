@@ -64,7 +64,7 @@ jabba install zulu@1.11.0-5
 #     wget --no-check-certificate --no-cookies \
 #         --header "Cookie: oraclelicense=accept-securebackup-cookie" \
 #         https://download.oracle.com/otn/java/jdk/8u212-b10/59066701cf1a433da9770636fbc4c9aa/jdk-8u212-linux-x64.tar.gz && \
-#     tar -xzPf jdk-8u181-linux-x64.tar.gz && \
+#     tar -xzf jdk-8u181-linux-x64.tar.gz && \
 #     ln -s /usr/lib/jvm/jdk1.8.0_181/ /usr/lib/jvm/oracle-jdk8 && \
 #     rm -f jdk-8u181-linux-x64.tar.gz && cd $HOME
 
@@ -75,7 +75,7 @@ jabba install zulu@1.11.0-5
 #     wget --no-check-certificate --no-cookies \
 #         --header "Cookie: oraclelicense=accept-securebackup-cookie" \
 #         https://download.oracle.com/otn/java/jdk/11.0.3+12/37f5e150db5247ab9333b11c1dddcd30/jdk-11.0.3_linux-x64_bin.tar.gz && \
-#     tar -xzPf jdk-11_linux-x64_bin.tar.gz && \
+#     tar -xzf jdk-11_linux-x64_bin.tar.gz && \
 #     ln -s /usr/lib/jvm/jdk-11/ /usr/lib/jvm/oracle-jdk11 && \
 #     rm -f jdk-11_linux-x64_bin.tar.gz && cd $HOME
 

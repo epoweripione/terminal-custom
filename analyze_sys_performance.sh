@@ -12,7 +12,7 @@ os_check() {
         elif [ "$DEBIAN" == "Ubuntu" -o "$DEBIAN" == "ubutnu" -o "$DEBIAN" == "Debian" -o "$DEBIAN" == "debian" ]; then
             P_M=apt-get
         else
-            Operating system does not support.
+            echo "Operating system does not support."
             exit 1
         fi
 }

@@ -17,16 +17,17 @@ else
     fi
 fi
 
-# tldr++: fast and interactive tldr client written with go
-# https://github.com/isacikgoz/tldr
-APP_INSTALL_NAME="tldr++"
-GITHUB_REPO_NAME="isacikgoz/tldr"
+# git-delta
+# https://github.com/dandavison/delta
+APP_INSTALL_NAME="delta"
+GITHUB_REPO_NAME="dandavison/delta"
 
 ARCHIVE_EXT="tar.gz"
-ARCHIVE_EXEC_NAME="tldr"
+ARCHIVE_EXEC_DIR="delta-*"
+ARCHIVE_EXEC_NAME="delta"
 
 EXEC_INSTALL_PATH="/usr/local/bin"
-EXEC_INSTALL_NAME="tldr"
+EXEC_INSTALL_NAME="delta"
 
 [[ -z "${ARCHIVE_EXEC_NAME}" ]] && ARCHIVE_EXEC_NAME="${EXEC_INSTALL_NAME}"
 
@@ -46,8 +47,7 @@ VERSION_FILENAME=""
 if [[ -x "$(command -v ${EXEC_INSTALL_NAME})" ]]; then
     IS_UPDATE="yes"
     [[ -n "${VERSION_FILENAME}" ]] && CURRENT_VERSION=$(head -n1 ${VERSION_FILENAME})
-    CURRENT_VERSION=$(${EXEC_INSTALL_NAME} --version 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d. -f1-2)
-    # CURRENT_VERSION=$(${EXEC_INSTALL_NAME} --version 2>&1 | cut -d' ' -f3)
+    CURRENT_VERSION=$(${EXEC_INSTALL_NAME} --version 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
 else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi
@@ -56,7 +56,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/${GITHUB_REPO_NAME}/releases/latest"
-    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d. -f1-2)
+    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
         IS_INSTALL="no"
     fi
@@ -66,8 +66,27 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     [[ -z "${OS_INFO_TYPE}" ]] && get_os_type
     [[ -z "${OS_INFO_ARCH}" ]] && get_arch
 
-    [[ "${OS_INFO_TYPE}" == "windows" ]] && ARCHIVE_EXT="zip"
-    REMOTE_FILENAME="${EXEC_INSTALL_NAME}_${REMOTE_VERSION}_${OS_INFO_TYPE}_${OS_INFO_ARCH}.${ARCHIVE_EXT}"
+    case "$OS_INFO_TYPE" in
+        linux)
+            case "$OS_INFO_ARCH" in
+                amd64)
+                    REMOTE_FILENAME="${EXEC_INSTALL_NAME}-${REMOTE_VERSION}-x86_64-unknown-linux-gnu.${ARCHIVE_EXT}"
+                    ;;
+                arm64)
+                    REMOTE_FILENAME="${EXEC_INSTALL_NAME}-${REMOTE_VERSION}-aarch64-unknown-linux-gnu.${ARCHIVE_EXT}"
+                    ;;
+                386)
+                    REMOTE_FILENAME="${EXEC_INSTALL_NAME}-${REMOTE_VERSION}-i686-unknown-linux-gnu.${ARCHIVE_EXT}"
+                    ;;
+                arm)
+                    REMOTE_FILENAME="${EXEC_INSTALL_NAME}-${REMOTE_VERSION}-arm-unknown-linux-gnueabihf.${ARCHIVE_EXT}"
+                    ;;
+            esac
+            ;;
+        darwin)
+            REMOTE_FILENAME="${EXEC_INSTALL_NAME}-${REMOTE_VERSION}-x86_64-apple-darwin.${ARCHIVE_EXT}"
+            ;;
+    esac
 
     [[ -z "${REMOTE_FILENAME}" ]] && IS_INSTALL="no"
 fi
@@ -80,7 +99,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     fi
 
     # Download file
-    DOWNLOAD_URL="https://github.com/${GITHUB_REPO_NAME}/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
+    DOWNLOAD_URL="https://github.com/${GITHUB_REPO_NAME}/releases/download/${REMOTE_VERSION}/${REMOTE_FILENAME}"
     curl -fSL -o "${DOWNLOAD_FILENAME}" -C- "${DOWNLOAD_URL}"
 
     # Extract file
@@ -106,29 +125,15 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 
     # Install
     if [[ $? -eq 0 ]]; then
-        sudo mv -f ${WORKDIR}/${ARCHIVE_EXEC_NAME} "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
+        [[ -n "${ARCHIVE_EXEC_DIR}" ]] && \
+            ARCHIVE_EXEC_DIR=$(find ${WORKDIR} -type d -name ${ARCHIVE_EXEC_DIR})
+
+        [[ -z "${ARCHIVE_EXEC_DIR}" || ! -d "${ARCHIVE_EXEC_DIR}" ]] && ARCHIVE_EXEC_DIR=${WORKDIR}
+
+        sudo mv -f ${ARCHIVE_EXEC_DIR}/${ARCHIVE_EXEC_NAME} "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
             sudo chmod +x "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
             [[ -n "${VERSION_FILENAME}" ]] && echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null
     fi
-fi
-
-
-# Pulls the github.com/tldr-pages/tldr repository
-if [[ "${IS_INSTALL}" == "yes" || "${IS_UPDATE}" == "yes" ]]; then
-    [[ -z "$OS_INFO_TYPE" ]] && get_os_type
-    case "$OS_INFO_TYPE" in
-        darwin)
-            TLDR_PAGES="$HOME/Library/Application Support/tldr"
-            ;;
-        windows)
-            # TLDR_PAGES="$HOME/AppData/Roaming/tldr"
-            TLDR_PAGES=""
-            ;;
-        *)
-            TLDR_PAGES="$HOME/.local/share/tldr"
-            ;;
-    esac
-    [[ -n "${TLDR_PAGES}" ]] && Git_Clone_Update "tldr-pages/tldr" "${TLDR_PAGES}"
 fi
 
 

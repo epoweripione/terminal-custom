@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Terminal Colors
+# https://gist.github.com/XVilka/8346728
+
 for attr in 0 1 4 5 7 ; do
     echo "----------------------------------------------------------------"
     printf "ESC[%s;Foreground;Background - \n" $attr

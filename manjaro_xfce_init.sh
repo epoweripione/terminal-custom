@@ -175,7 +175,7 @@ fi
 # # https://github.com/wting/autojump/issues/593
 # cd ${CURRENT_DIR} && \
 #     wget https://aur.archlinux.org/cgit/aur.git/snapshot/autojump.tar.gz && \
-#     tar -xzPf autojump.tar.gz && \
+#     tar -xzf autojump.tar.gz && \
 #     cd autojump && sed -i "s/3.8/3.7/g" PKGBUILD && \
 #     makepkg && \
 #     sudo pacman -U autojump-22.5.3-5-any.pkg.tar.xz && \
@@ -293,14 +293,14 @@ sudo pacman --noconfirm -S freerdp remmina
 # # https://www.nomachine.com/DT02O00124
 # wget -c -O nomachine_x86_64.tar.gz \
 #     https://download.nomachine.com/download/6.8/Linux/nomachine_6.8.1_1_x86_64.tar.gz && \
-#     sudo tar -xzPf nomachine_x86_64.tar.gz -C /usr && \
+#     sudo tar -xzf nomachine_x86_64.tar.gz -C /usr && \
 #     sudo /usr/NX/nxserver --install
 
 # # UPDATE
 # cd /usr
 # wget -c -O nomachine_x86_64.tar.gz \
 #     https://download.nomachine.com/download/6.8/Linux/nomachine_6.8.1_1_x86_64.tar.gz && \
-#     sudo tar -xzPf nomachine_x86_64.tar.gz -C /usr && \
+#     sudo tar -xzf nomachine_x86_64.tar.gz -C /usr && \
 #     sudo /usr/NX/nxserver --update
 
 # # UNINSTALL

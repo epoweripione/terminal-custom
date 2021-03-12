@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
+
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
@@ -18,7 +20,17 @@ set_proxy_mirrors_env
 # https://brew.sh/index_zh-cn
 colorEcho "${BLUE}Installing ${FUCHSIA}homebrew${BLUE}..."
 
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+[[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+
+case "$OS_INFO_TYPE" in
+    darwin | linux)
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+        ;;
+    *)
+        colorEcho "${RED}Operating system does not support!"
+        exit 0
+        ;;
+esac
 
 # https://docs.brew.sh/Homebrew-on-Linux
 if [[ "$OS_INFO_TYPE" == "linux" && -s "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
@@ -54,3 +66,6 @@ fi
 #     echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles' >> ~/.zshrc
 #     # source ~/.zshrc
 # fi
+
+
+cd "${CURRENT_DIR}"

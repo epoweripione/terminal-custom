@@ -21,6 +21,7 @@ $extensions = @(
 	"ms-ceintl.vscode-language-pack-zh-hans"
 	"zhuangtongfa.material-theme"
 	"vscode-icons-team.vscode-icons"
+	"miguelsolorio.fluent-icons"
     # Editing
     "aaron-bond.better-comments"
 	"coenraads.bracket-pair-colorizer-2"
@@ -30,16 +31,31 @@ $extensions = @(
     ## Core
 	"doggy8088.netcore-extension-pack"
 	"doggy8088.netcore-snippets"
+	## Dart/Flutter
+	"dart-code.dart-code"
+	"dart-code.flutter"
+	"nash.awesome-flutter-snippets"
+	"gornivv.vscode-flutter-files"
+	"alexisvt.flutter-snippets"
 	## GO
 	"golang.go"
-    ## HTML/CSS
-	"zignd.html-css-class-completion"
+	## HTML/CSS
+	"ms-vscode.brackets-pack"
 	"sidthesloth.html5-boilerplate"
     ## Javascript
 	"msjsdiag.debugger-for-chrome"
 	"dbaeumer.vscode-eslint"
     ## kubernete/docker
 	"ms-azuretools.vscode-docker"
+	## Markdown
+	"yzhang.markdown-all-in-one"
+	"bierner.markdown-mermaid"
+	"bierner.markdown-emoji"
+	"bierner.markdown-footnotes"
+	"devhawk.markdown-sup"
+	"gera2ld.markmap-vscode"
+	"mushan.vscode-paste-image"
+	"shd101wyy.markdown-preview-enhanced"
     ## nginx
 	"shanoor.vscode-nginx"
     ## plsql
@@ -77,7 +93,6 @@ $extensions = @(
 	"mqycn.huile8"
 	"wscats.search"
 	"idleberg.innosetup"
-	"gera2ld.markmap-vscode"
 	"unbug.codelf"
 )
 

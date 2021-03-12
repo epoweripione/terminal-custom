@@ -29,9 +29,9 @@ sed -i 's/exec $PHP -C -n -q/exec $PHP -C -q/' /usr/bin/pecl
 
 ## Find PHP extension_dir
 ## php -ini | grep extension_dir
-PHP_VERSION=$(php --version | head -n 1 | cut -d " " -f 2 | cut -c 1-3)
+PHP_VERSION=$(php --version | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
 PHP_EXT_DIR=$(php-config --extension-dir)
-PHP_INI_DIR=$(php --ini | grep "Scan for additional .ini files in" | cut -d':' -f2 | cut -d' ' -f2)
+PHP_INI_DIR=$(php --ini | grep "Scan for additional .ini files in" | cut -d':' -f2 | cut -d' ' -f2 | head -n1)
 
 ## pecl install imagick memcached mongodb oauth xdebug
 ## use proxy: curl -v --socks5-hostname 127.0.0.1:55880
@@ -159,29 +159,46 @@ fi
 
 ORACLE_INSTANT_CLIENT="19c"
 
-if [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "19c" ]]; then
+if [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "21c" ]]; then
     mkdir -p /opt/oracle && cd /opt/oracle && \
-        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-basic-linux.x64-19.3.0.0.0dbru.zip && \
-        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sdk-linux.x64-19.3.0.0.0dbru.zip && \
-        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sqlplus-linux.x64-19.3.0.0.0dbru.zip && \
-        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-tools-linux.x64-19.3.0.0.0dbru.zip && \
+        curl -fSL -O https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-basic-linux.x64-21.1.0.0.0.zip && \
+        curl -fSL -O https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-sdk-linux.x64-21.1.0.0.0.zip && \
+        curl -fSL -O https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-sqlplus-linux.x64-21.1.0.0.0.zip && \
+        curl -fSL -O https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-tools-linux.x64-21.1.0.0.0.zip && \
         : && \
-        unzip instantclient-basic-linux.x64-19.3.0.0.0dbru.zip && \
-        unzip instantclient-sdk-linux.x64-19.3.0.0.0dbru.zip && \
-        unzip instantclient-sqlplus-linux.x64-19.3.0.0.0dbru.zip && \
-        unzip instantclient-tools-linux.x64-19.3.0.0.0dbru.zip && \
+        unzip instantclient-basic-linux.x64-21.1.0.0.0.zip && \
+        unzip instantclient-sdk-linux.x64-21.1.0.0.0.zip && \
+        unzip instantclient-sqlplus-linux.x64-21.1.0.0.0.zip && \
+        unzip instantclient-tools-linux.x64-21.1.0.0.0.zip && \
         : && \
-        echo /opt/oracle/instantclient_19_3 > /etc/ld.so.conf.d/oracle-instantclient19.3 && \
+        echo /opt/oracle/instantclient_21_1 > /etc/ld.so.conf.d/oracle-instantclient21.1 && \
+        : && \
+        ldconfig && \
+        : && \
+        rm -rf /opt/oracle/*.zip
+elif [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "19c" ]]; then
+    mkdir -p /opt/oracle && cd /opt/oracle && \
+        curl -fSL -O https://download.oracle.com/otn_software/linux/instantclient/191000/instantclient-basic-linux.x64-19.10.0.0.0dbru.zip && \
+        curl -fSL -O https://download.oracle.com/otn_software/linux/instantclient/191000/instantclient-sdk-linux.x64-19.10.0.0.0dbru.zip && \
+        curl -fSL -O https://download.oracle.com/otn_software/linux/instantclient/191000/instantclient-sqlplus-linux.x64-19.10.0.0.0dbru.zip && \
+        curl -fSL -O https://download.oracle.com/otn_software/linux/instantclient/191000/instantclient-tools-linux.x64-19.10.0.0.0dbru.zip && \
+        : && \
+        unzip instantclient-basic-linux.x64-19.10.0.0.0dbru.zip && \
+        unzip instantclient-sdk-linux.x64-19.10.0.0.0dbru.zip && \
+        unzip instantclient-sqlplus-linux.x64-19.10.0.0.0dbru.zip && \
+        unzip instantclient-tools-linux.x64-19.10.0.0.0dbru.zip && \
+        : && \
+        echo /opt/oracle/instantclient_19_10 > /etc/ld.so.conf.d/oracle-instantclient19.10 && \
         : && \
         ldconfig && \
         : && \
         rm -rf /opt/oracle/*.zip
 elif [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "18c" ]]; then
     mkdir -p /opt/oracle && cd /opt/oracle && \
-        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip && \
-        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip && \
-        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip && \
-        curl -fSL -O https://github.com/epoweripione/oracle-instantclient-18/raw/master/instantclient-tools-linux.x64-18.5.0.0.0dbru.zip && \
+        curl -fSL -O https://download.oracle.com/otn_software/linux/instantclient/185000/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip && \
+        curl -fSL -O https://download.oracle.com/otn_software/linux/instantclient/185000/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip && \
+        curl -fSL -O https://download.oracle.com/otn_software/linux/instantclient/185000/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip && \
+        curl -fSL -O https://download.oracle.com/otn_software/linux/instantclient/185000/instantclient-tools-linux.x64-18.5.0.0.0dbru.zip && \
         : && \
         unzip instantclient-basic-linux.x64-18.5.0.0.0dbru.zip && \
         unzip instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip && \
@@ -215,8 +232,10 @@ elif [[ "$ORACLE_INSTANT_EXIST" == "no" && "$ORACLE_INSTANT_CLIENT" == "12c" ]];
 fi
 
 # Oracle Instant Client
-if [[ -d "/opt/oracle/instantclient_19_3" ]]; then
-    export ORACLE_HOME="/opt/oracle/instantclient_19_3"
+if [[ -d "/opt/oracle/instantclient_21_1" ]]; then
+    export ORACLE_HOME="/opt/oracle/instantclient_21_1"
+elif [[ -d "/opt/oracle/instantclient_19_10" ]]; then
+    export ORACLE_HOME="/opt/oracle/instantclient_19_10"
 elif [[ -d "/opt/oracle/instantclient_18_5" ]]; then
     export ORACLE_HOME="/opt/oracle/instantclient_18_5"
 elif [[ -d "/opt/oracle/instantclient_18_3" ]]; then

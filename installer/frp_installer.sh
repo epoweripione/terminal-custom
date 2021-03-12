@@ -56,7 +56,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 
     DOWNLOAD_URL="https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_${OS_INFO_TYPE}_${OS_INFO_ARCH}.tar.gz"
     wget -O "${WORKDIR}/frp.tar.gz" "$DOWNLOAD_URL" && \
-        tar -xzPf "${WORKDIR}/frp.tar.gz" -C "${WORKDIR}" && \
+        tar -xzf "${WORKDIR}/frp.tar.gz" -C "${WORKDIR}" && \
         sudo mkdir -p "/srv/frp" && \
         sudo cp -rf ${WORKDIR}/frp_*/* "/srv/frp"
 

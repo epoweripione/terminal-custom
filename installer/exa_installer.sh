@@ -28,7 +28,7 @@ if [[ -n "${FILE_LIBC}" ]]; then
     else
         colorEcho "${BLUE}  Installing ${FUCHSIA}GLIBC 2.18 ${BLUE}(required by exa)..."
         curl -fSL -o "${WORKDIR}/glibc.tar.gz" "http://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz" && \
-            tar -xzPf "${WORKDIR}/glibc.tar.gz" -C "${WORKDIR}" && \
+            tar -xzf "${WORKDIR}/glibc.tar.gz" -C "${WORKDIR}" && \
                 mv ${WORKDIR}/glibc-* "${WORKDIR}/glibc" && \
                 mkdir "${WORKDIR}/glibc/build" && \
                 cd "${WORKDIR}/glibc/build" && \

@@ -77,7 +77,7 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE} from source..."
     DOWNLOAD_URL="https://www.nano-editor.org/dist/v${DIST_VERSION}/nano-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/nano.tar.gz" "$DOWNLOAD_URL" && \
-        tar -xzPf "${WORKDIR}/nano.tar.gz" -C "${WORKDIR}" && \
+        tar -xzf "${WORKDIR}/nano.tar.gz" -C "${WORKDIR}" && \
         mv ${WORKDIR}/nano-* "${WORKDIR}/nano"
 
     if [[ -d "${WORKDIR}/nano" ]]; then

@@ -96,13 +96,13 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
                 unzip -qo "${DOWNLOAD_FILENAME}" -d "${WORKDIR}"
                 ;;
             "tar.bz2")
-                tar -xjPf "${DOWNLOAD_FILENAME}" -C "${WORKDIR}"
+                tar -xjf "${DOWNLOAD_FILENAME}" -C "${WORKDIR}"
                 ;;
             "tar.gz")
-                tar -xzPf "${DOWNLOAD_FILENAME}" -C "${WORKDIR}"
+                tar -xzf "${DOWNLOAD_FILENAME}" -C "${WORKDIR}"
                 ;;
             "tar.xz")
-                tar -xJPf "${DOWNLOAD_FILENAME}" -C "${WORKDIR}"
+                tar -xJf "${DOWNLOAD_FILENAME}" -C "${WORKDIR}"
                 ;;
             "gz")
                 gzip -d -f "${DOWNLOAD_FILENAME}"

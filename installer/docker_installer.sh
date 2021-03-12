@@ -133,7 +133,7 @@ fi
 #         DOWNLOAD_URL="https://github.com/jesseduffield/lazydocker/releases/download/v$REMOTE_VERSION/lazydocker_${REMOTE_VERSION}_${DOWNLOAD_FILE_SUFFIX}"
 #         curl -fSL $DOWNLOAD_URL -o ${WORKDIR}/lazydocker.tar.gz && \
 #             mkdir -p "${WORKDIR}/lazydocker” && \
-#             tar -xzPf "${WORKDIR}/lazydocker.tar.gz" -C "${WORKDIR}/lazydocker" && \
+#             tar -xzf "${WORKDIR}/lazydocker.tar.gz" -C "${WORKDIR}/lazydocker" && \
 #             mv -f "${WORKDIR}/lazydocker/lazydocker" "/usr/local/bin/lazydocker" && \
 #             chmod +x "/usr/local/bin/lazydocker"
 #     fi

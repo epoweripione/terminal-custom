@@ -50,7 +50,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     DOWNLOAD_URL="https://github.com/mikefarah/yq/releases/download/v${REMOTE_VERSION}/yq_${OS_TYPE}_${OS_INFO_ARCH}.tar.gz"
 
     curl -fSL -o "${WORKDIR}/yq.tar.gz" -C- "$DOWNLOAD_URL" && \
-        sudo tar -xzPf "${WORKDIR}/yq.tar.gz" -C "${WORKDIR}" && \
+        sudo tar -xzf "${WORKDIR}/yq.tar.gz" -C "${WORKDIR}" && \
         sudo mv -f ${WORKDIR}/yq_* "/usr/local/bin/yq"
         sudo chmod +x "/usr/local/bin/yq"
 fi

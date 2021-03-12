@@ -52,7 +52,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 
     DOWNLOAD_URL="https://github.com/trojan-gfw/trojan/releases/download/v${REMOTE_VERSION}/trojan-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.xz"
     curl -fSL -o "${WORKDIR}/trojan.tar.xz" -C- "$DOWNLOAD_URL" && \
-        sudo tar -xJPf "${WORKDIR}/trojan.tar.xz" -C "/srv/"
+        sudo tar -xJf "${WORKDIR}/trojan.tar.xz" -C "/srv/"
 
     if [[ ! -s "/etc/systemd/system/trojan.service" ]]; then
         [[ "${IS_UPDATE}" == "no" ]] && read -p "Install trojan systemd service?[y/N]:" CHOICE

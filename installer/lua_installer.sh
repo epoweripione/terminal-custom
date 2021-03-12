@@ -44,7 +44,7 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}lua ${YELLOW}${REMOTE_VERSION} ${BLUE}from source..."
     DOWNLOAD_URL="http://www.lua.org/ftp/lua-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/lua.tar.gz" "$DOWNLOAD_URL" && \
-        tar -xzPf "${WORKDIR}/lua.tar.gz" -C "${WORKDIR}" && \
+        tar -xzf "${WORKDIR}/lua.tar.gz" -C "${WORKDIR}" && \
         mv ${WORKDIR}/lua-* "${WORKDIR}/lua" && \
         cd "${WORKDIR}/lua" && \
         make all test && \
@@ -67,7 +67,7 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}luarocks ${YELLOW}${REMOTE_VERSION} ${BLUE}from source..."
     DOWNLOAD_URL="https://luarocks.org/releases/luarocks-${REMOTE_VERSION}.tar.gz"
     wget -O "${WORKDIR}/luarocks.tar.gz" "$DOWNLOAD_URL" && \
-        tar -xzPf "${WORKDIR}/luarocks.tar.gz" -C "${WORKDIR}" && \
+        tar -xzf "${WORKDIR}/luarocks.tar.gz" -C "${WORKDIR}" && \
         mv ${WORKDIR}/luarocks-* "${WORKDIR}/luarocks" && \
         cd "${WORKDIR}/luarocks" && \
         ./configure --with-lua-include=/usr/local/include >/dev/null && \

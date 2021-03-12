@@ -95,7 +95,7 @@ if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
 
     DOWNLOAD_URL="https://github.com/sharkdp/bat/releases/download/${REMOTE_VERSION}/${REMOTE_FILENAME}"
     curl -fSL -o "${WORKDIR}/bat.tar.gz" -C- $DOWNLOAD_URL && \
-        sudo tar -xzPf "${WORKDIR}/bat.tar.gz" -C "/usr/local" && \
+        sudo tar -xzf "${WORKDIR}/bat.tar.gz" -C "/usr/local" && \
         cd "/usr/local" && \
         sudo mv bat-* bat && \
         sudo ln -sv "/usr/local/bat/bat" "/usr/bin/bat" || true

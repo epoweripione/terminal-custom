@@ -82,6 +82,11 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         scoop install git
     }
 
+    if (-Not (Get-Command "delta" -ErrorAction SilentlyContinue)) {
+        Write-Host "Installing delta..." -ForegroundColor Blue
+        scoop install delta
+    }
+
     # git global config
     if (Get-Command "git" -ErrorAction SilentlyContinue) {
         Write-Host "Setting git global config..." -ForegroundColor Blue
@@ -161,12 +166,15 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
     $Apps = @(
         "vcredist"
         "hub"
+        "less"
         "starship"
         "googlechrome-dev"
         # "chromium"
         # "chromium-dev-nosync"
         "firefox-zh-cn"
         "speedyfox"
+        # "android-studio"
+        # "flutter"
         "go"
         "nodejs-lts"
         # "dotnet-sdk"
@@ -198,6 +206,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "screentogif"
         "cpu-z"
         "diffinity"
+        "winmerge"
         "everything"
         "filezilla"
         "freedownloadmanager"
@@ -224,6 +233,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         ## markdown editor
         "pandoc"
         "marktext"
+        "typora"
         # "tightvnc"
         "vncviewer"
         ## epower
@@ -311,6 +321,17 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
 # https://github.com/lukesampson/scoop/wiki/Custom-PHP-configuration
 if (Get-Command "php" -ErrorAction SilentlyContinue) {
 
+}
+
+# flutter
+if (Get-Command "flutter" -ErrorAction SilentlyContinue) {
+    # fix: Cannot find Chrome executable at google-chrome
+    if (Test-Path "$env:USERPROFILE\scoop\apps\chromium-marmaduke-dev-sync\current") {
+        [System.Environment]::SetEnvironmentVariable("CHROME_EXECUTABLE","$env:USERPROFILE\scoop\apps\chromium-marmaduke-dev-sync\current\chrome.exe")
+    }
+    # mirror
+    [System.Environment]::SetEnvironmentVariable("FLUTTER_STORAGE_BASE_URL","https://storage.flutter-io.cn")
+    [System.Environment]::SetEnvironmentVariable("PUB_HOSTED_URL","https://pub.flutter-io.cn")
 }
 
 

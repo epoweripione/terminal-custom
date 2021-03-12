@@ -1,6 +1,7 @@
 # Look & Feel
 ms-ceintl.vscode-language-pack-zh-hans
 vscode-icons-team.vscode-icons
+miguelsolorio.fluent-icons
 idleberg.icon-fonts
 zhuangtongfa.material-theme
 # Editing
@@ -54,14 +55,15 @@ dart-code.dart-code
 dart-code.flutter
 nash.awesome-flutter-snippets
 gornivv.vscode-flutter-files
+alexisvt.flutter-snippets
 ## GO
 golang.go
 ## HTML/CSS
+ms-vscode.brackets-pack
 thekalinga.bootstrap4-vscode
 abusaidm.html-snippets
 clinyong.vscode-css-modules
 syler.sass-indented
-zignd.html-css-class-completion
 sidthesloth.html5-boilerplate
 stylelint.vscode-stylelint
 vincaslt.highlight-matching-tag
@@ -107,9 +109,15 @@ ms-azuretools.vscode-docker
 ## latex
 james-yu.latex-workshop
 ## Markdown
+yzhang.markdown-all-in-one
+bierner.markdown-mermaid
+bierner.markdown-emoji
+bierner.markdown-footnotes
+devhawk.markdown-sup
+gera2ld.markmap-vscode
+mushan.vscode-paste-image
 DavidAnson.vscode-markdownlint
 shd101wyy.markdown-preview-enhanced
-yzhang.markdown-all-in-one
 darkriszty.markdown-table-prettify
 yzane.markdown-pdf
 ## nginx
@@ -185,5 +193,4 @@ mechatroner.rainbow-csv
 mqycn.huile8
 wscats.search
 idleberg.innosetup
-gera2ld.markmap-vscode
 unbug.codelf
