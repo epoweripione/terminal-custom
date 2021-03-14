@@ -292,14 +292,13 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
             # Filter by country
             if [[ "${MATCH_TAG}" == "no" ]]; then
                 for TargetName in "${PROXY_LIST_ALL[@]}"; do
-                    if echo "${TargetName}" | grep -Eiq "${TARGET_TAG}"; then
+                    if echo "${TargetName}" | grep -Eq "${TARGET_TAG}"; then
                         [[ -n "${CONTENT_TAG}" ]] && \
                             CONTENT_TAG=$(echo -e "${CONTENT_TAG}\n      - ${TargetName}") || \
                             CONTENT_TAG="      - ${TargetName}"
                         PROXY_LIST_FILTERED+=("${TargetName}")
                     fi
                 done
-                
             fi
             ;;
     esac
