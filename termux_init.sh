@@ -33,15 +33,8 @@
 # ssh <phone>
 # rm -f .ssh/known_hosts && chmod 600 ~/.ssh/*
 
-## set apt mirror
-# sed -i 's/^deb /# deb /g' "$PREFIX/etc/apt/sources.list"
-# echo "deb https://mirrors.tuna.tsinghua.edu.cn/termux stable main" >> "$PREFIX/etc/apt/sources.list"
-
-## install packages
-# pkg up -y && pkg i -y nano curl wget git unzip unrar htop nmap screenfetch starship
-
 ## init termux
-# source <(curl -fsSL https://git.io/fNpeJ) && ./termux_init.sh
+# source <(curl -fsSL https://git.io/fNpeJ) && ${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/termux_init.sh
 
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
@@ -64,7 +57,7 @@ if [[ -z "$PREFIX" ]]; then
 fi
 
 # extra keys rows
-colorEcho "${BLUE}Setting termux.properties..."
+colorEcho "${BLUE}Setting ${FUCHSIA}termux.properties${BLUE}..."
 mkdir -p "$HOME/.termux"
 tee "$HOME/.termux/termux.properties" >/dev/null <<-'EOF'
 extra-keys = [ \
@@ -72,6 +65,16 @@ extra-keys = [ \
         ['CTRL','ALT','TAB',ENTER','LEFT','DOWN','RIGHT','PGDN','BKSP'] \
     ]
 EOF
+
+# apt mirror
+colorEcho "${BLUE}Setting ${FUCHSIA}apt mirror${BLUE}..."
+sed -i 's/^deb /# deb /g' "$PREFIX/etc/apt/sources.list"
+echo "deb https://mirrors.tuna.tsinghua.edu.cn/termux stable main" >> "$PREFIX/etc/apt/sources.list"
+
+# install packages
+colorEcho "${BLUE}Installing ${FUCHSIA}packages${BLUE}..."
+pkg up -y && \
+    pkg i -y nano curl wget git openssh unzip unrar htop nmap screenfetch starship
 
 ## reload termux settings
 # termux-reload-settings

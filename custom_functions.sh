@@ -1417,8 +1417,8 @@ function Git_Clone_Update() {
     local REPONAME=${1:-""}
     local REPODIR=${2:-""}
     local REPOURL=${3:-"github.com"}
+    local BRANCH=${4:-""}
     local REPOREMOTE=""
-    local BRANCH=""
     local DEFAULTBRANCH=""
     local CurrentDir
 
@@ -1436,7 +1436,7 @@ function Git_Clone_Update() {
         CurrentDir=$(pwd)
 
         cd "${REPODIR}"
-        BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
+        [[ -z "${BRANCH}" ]] && BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
         [[ -z "${BRANCH}" ]] && BRANCH="master"
 
         git pull --rebase --stat origin "${BRANCH}"
@@ -1470,7 +1470,8 @@ function Git_Clone_Update() {
         cd "${CurrentDir}"
     else
         colorEcho "${BLUE}  Cloning ${FUCHSIA}${REPONAME}${BLUE}..."
-        BRANCH=$(git ls-remote --symref "${REPOREMOTE}" HEAD \
+        [[ -z "${BRANCH}" ]] && \
+            BRANCH=$(git ls-remote --symref "${REPOREMOTE}" HEAD \
                     | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
         [[ -z "${BRANCH}" ]] && BRANCH="master"
 

@@ -62,15 +62,11 @@ if [[ -s "/srv/subconverter/subconverter" ]]; then
         find "/etc/clash" -type f -name "*_Rules*" -print0 | xargs -0 -I{} cp -f {} "/srv/subconverter/config"
     fi
 
-    if Git_Clone_Update "ACL4SSR/ACL4SSR" "/srv/subconverter/ACL4SSR"; then
-        cp -f /srv/subconverter/ACL4SSR/Clash/*.list \
-            /srv/subconverter/rules/ACL4SSR/Clash && \
-        cp -f /srv/subconverter/ACL4SSR/Clash/Ruleset/*.list \
-            /srv/subconverter/rules/ACL4SSR/Clash/Ruleset && \
-        cp -f /srv/subconverter/ACL4SSR/Clash/*.yml \
-            /srv/subconverter/config && \
-        cp -f /srv/subconverter/ACL4SSR/Clash/config/*.ini \
-            /srv/subconverter/config
+    if Git_Clone_Update "ACL4SSR/ACL4SSR" "/srv/subconverter/ACL4SSR" "github.com" "master"; then
+        cp -f /srv/subconverter/ACL4SSR/Clash/*.list /srv/subconverter/rules/ACL4SSR/Clash
+        cp -f /srv/subconverter/ACL4SSR/Clash/Ruleset/*.list /srv/subconverter/rules/ACL4SSR/Clash/Ruleset
+        cp -f /srv/subconverter/ACL4SSR/Clash/*.yml /srv/subconverter/config
+        cp -f /srv/subconverter/ACL4SSR/Clash/config/*.ini /srv/subconverter/config
     fi
 fi
 
@@ -93,6 +89,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
 
     TARGET_URL=$(echo ${READLINE} | cut -d' ' -f2)
     TARGET_OPTION=$(echo ${READLINE} | cut -d' ' -f3)
+    TARGET_FILTER=$(echo ${READLINE} | cut -d' ' -f4)
 
     colorEcho "${BLUE}  Getting ${FUCHSIA}${TARGET_FILE}${BLUE}..."
     DOWNLOAD_FILE="${WORKDIR}/${TARGET_FILE}.yml"
@@ -140,8 +137,17 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
             if [[ " ${PROXY_LIST_ALL[@]} " =~ " ${TargetName} " ]]; then
                 PROXY_DELETE+=("${TargetName}")
             else
-                PROXY_LIST+=("${TargetName}")
-                PROXY_LIST_ALL+=("${TargetName}")
+                if [[ -n "${TARGET_FILTER}" ]]; then
+                    if echo "${TargetName}" | grep -Eq "${TARGET_FILTER}"; then
+                        PROXY_DELETE+=("${TargetName}")
+                    else
+                        PROXY_LIST+=("${TargetName}")
+                        PROXY_LIST_ALL+=("${TargetName}")
+                    fi
+                else
+                    PROXY_LIST+=("${TargetName}")
+                    PROXY_LIST_ALL+=("${TargetName}")
+                fi
             fi
         done <<<"${TARGET_PROXIES}"
 
