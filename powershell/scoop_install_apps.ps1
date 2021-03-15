@@ -168,7 +168,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "hub"
         "less"
         "starship"
-        "googlechrome-dev"
+        # "googlechrome-dev"
         # "chromium"
         # "chromium-dev-nosync"
         "firefox-zh-cn"
@@ -326,7 +326,17 @@ if (Get-Command "php" -ErrorAction SilentlyContinue) {
 # flutter
 if (Get-Command "flutter" -ErrorAction SilentlyContinue) {
     # fix: Cannot find Chrome executable at google-chrome
-    if (Test-Path "$env:USERPROFILE\scoop\apps\chromium-marmaduke-dev-sync\current") {
+    if (Test-Path "$env:USERPROFILE\AppData\Local\Google\Chrome SxS\Application\chrome.exe") {
+        [System.Environment]::SetEnvironmentVariable("CHROME_EXECUTABLE","$env:USERPROFILE\AppData\Local\Google\Chrome SxS\Application\chrome.exe")
+    } elseif (Test-Path "$env:USERPROFILE\AppData\Local\Google\Chrome Dev\Application\chrome.exe") {
+        [System.Environment]::SetEnvironmentVariable("CHROME_EXECUTABLE","$env:USERPROFILE\AppData\Local\Google\Chrome Dev\Application\chrome.exe")
+    } elseif (Test-Path "$env:USERPROFILE\AppData\Local\Google\Chrome Beta\Application\chrome.exe") {
+        [System.Environment]::SetEnvironmentVariable("CHROME_EXECUTABLE","$env:USERPROFILE\AppData\Local\Google\Chrome Beta\Application\chrome.exe")
+    } elseif (Test-Path "$env:USERPROFILE\AppData\Local\Google\Chrome\Application\chrome.exe") {
+        [System.Environment]::SetEnvironmentVariable("CHROME_EXECUTABLE","$env:USERPROFILE\AppData\Local\Google\Chrome\Application\chrome.exe")
+    } elseif (Test-Path "$env:USERPROFILE\AppData\Local\Google\Chromium\Application\chrome.exe") {
+        [System.Environment]::SetEnvironmentVariable("CHROME_EXECUTABLE","$env:USERPROFILE\AppData\Local\Google\Chromium\Application\chrome.exe")
+    } elseif (Test-Path "$env:USERPROFILE\scoop\apps\chromium-marmaduke-dev-sync\current") {
         [System.Environment]::SetEnvironmentVariable("CHROME_EXECUTABLE","$env:USERPROFILE\scoop\apps\chromium-marmaduke-dev-sync\current\chrome.exe")
     }
     # mirror
