@@ -161,11 +161,21 @@ if [[ -s "$SUB_LIST_FILE" ]]; then
 fi
 
 
+if [[ "$(uname -r)" =~ "microsoft" ]]; then
+    # WSL2
+    PROXY_IP=$(grep -m1 nameserver /etc/resolv.conf | awk '{print $2}')
+    # PROXY_IP=$(grep -m1 nameserver /etc/resolv.conf | awk '{print $2}') && PROXY_ADDRESS="socks5h://${PROXY_IP}:7890"
+    # export {http,https,ftp,all}_proxy=${PROXY_ADDRESS} && export {HTTP,HTTPS,FTP,ALL}_PROXY=${PROXY_ADDRESS}
+    # git config --global http.proxy \"${PROXY_ADDRESS}\" && git config --global https.proxy \"${PROXY_ADDRESS}\"
+else
+    PROXY_IP="127.0.0.1"
+fi
+
 PROXY_ADDRESS=""
-if check_socks5_proxy_up "127.0.0.1:7890"; then
-    PROXY_ADDRESS="127.0.0.1:7890"
-elif check_socks5_proxy_up "127.0.0.1:7891"; then
-    PROXY_ADDRESS="127.0.0.1:7891"
+if check_socks5_proxy_up "${PROXY_IP}:7890"; then
+    PROXY_ADDRESS="${PROXY_IP}:7890"
+elif check_socks5_proxy_up "${PROXY_IP}:7891"; then
+    PROXY_ADDRESS="${PROXY_IP}:7891"
 fi
 
 if [[ -z "${PROXY_ADDRESS}" ]]; then
@@ -181,5 +191,7 @@ colorEcho "${BLUE}  export {HTTP,HTTPS,FTP,ALL}_PROXY=${PROXY_ADDRESS}"
 colorEcho "${BLUE}  git config --global http.proxy \"${PROXY_ADDRESS}\""
 colorEcho "${BLUE}  git config --global https.proxy \"${PROXY_ADDRESS}\""
 
+unset PROXY_IP
+unset PROXY_ADDRESS
 
 colorEcho "${GREEN}Done!"

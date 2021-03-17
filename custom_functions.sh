@@ -1294,9 +1294,8 @@ function check_set_global_proxy() {
         IP_LIST=$(ipconfig.exe | grep "IPv4" \
                     | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
                     | grep -Ev "^0\.|^127\.|^172\.")
-        # IP_WSL=$(grep nameserver /etc/resolv.conf | grep -v ':' | awk '{ print $2 }' | head -1)
-        # IP_LIST=$(echo -e "${IP_LIST}\n${IP_WSL}" | sort | uniq)
-        export GLOBAL_WSL2_HOST_IP=$(echo "${IP_LIST}" | head -n1)
+        IP_WSL=$(grep -m1 nameserver /etc/resolv.conf | awk '{print $2}')
+        IP_LIST=$(echo -e "${IP_WSL}\n${IP_LIST}" | uniq)
     fi
 
     unset GLOBAL_PROXY_IP

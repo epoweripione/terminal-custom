@@ -173,6 +173,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "chromium-dev-nosync"
         "firefox-zh-cn"
         "speedyfox"
+        # "android-sdk"
         # "android-studio"
         # "flutter"
         "go"
@@ -257,6 +258,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "nmap"
         "Cascadia-Code"
         ## epower
+        # "Noto-CJK"
         "FiraCode-Mono-NF"
         "Sarasa-Gothic-SC"
         ## nerd-fonts

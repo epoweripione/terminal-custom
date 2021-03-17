@@ -185,6 +185,8 @@ fi
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/bat_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/bat_installer.sh"
 
+[[ -s "${MY_SHELL_SCRIPTS}/installer/git-delta_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/git-delta_installer.sh"
+
 [[ -s "${MY_SHELL_SCRIPTS}/installer/croc_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/croc_installer.sh"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/duf_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/duf_installer.sh"
@@ -202,8 +204,6 @@ IS_UPDATE_ONLY="yes"
 [[ -s "${MY_SHELL_SCRIPTS}/installer/re-txt_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/re-txt_installer.sh"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/tldr++_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/tldr++_installer.sh"
-
-[[ -s "${MY_SHELL_SCRIPTS}/installer/git-delta_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/git-delta_installer.sh"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/pup_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/pup_installer.sh"
 

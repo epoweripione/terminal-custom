@@ -50,7 +50,7 @@ fi
 if [[ -n "${GLOBAL_WSL2_HOST_IP}" ]]; then
     WSL_HOST_IP="${GLOBAL_WSL2_HOST_IP}"
 else
-    WSL_HOST_IP=$(grep -m 1 nameserver /etc/resolv.conf | awk '{print $2}')
+    WSL_HOST_IP=$(grep -m1 nameserver /etc/resolv.conf | awk '{print $2}')
 fi
 
 if [[ -n "${WSL_HOST_IP}" ]]; then

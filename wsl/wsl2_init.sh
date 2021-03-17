@@ -97,12 +97,9 @@ fi
 # .NET Core SDK
 # https://docs.microsoft.com/zh-cn/dotnet/core/install/linux-package-manager-debian10
 if [[ ! -e "/etc/apt/sources.list.d/microsoft-prod.list" ]]; then
-    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
-    sudo mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
-    wget -q https://packages.microsoft.com/config/debian/10/prod.list
-    sudo mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
-    sudo chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg
-    sudo chown root:root /etc/apt/sources.list.d/microsoft-prod.list
+    curl -fSL -o packages-microsoft-prod.deb "https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb" && \
+        sudo dpkg -i packages-microsoft-prod.deb && \
+        rm packages-microsoft-prod.deb
 
     # echo 'Acquire::http::Proxy::packages.microsoft.com "http://127.0.0.1:7890/";' \
     #     | sudo tee -a /etc/apt/apt.conf.d/99proxy >/dev/null
