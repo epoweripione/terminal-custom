@@ -302,7 +302,7 @@ if [[ ! -x "$(command -v zsh)" ]]; then
 fi
 
 
-if [[ -x "$(command -v git)" && -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/git/git_global_config.sh" ]]; then
+if [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/git/git_global_config.sh" ]]; then
     source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/git/git_global_config.sh"
 fi
 

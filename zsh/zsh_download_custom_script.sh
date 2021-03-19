@@ -49,8 +49,8 @@ MY_SHELL_SCRIPTS="${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}"
 colorEcho "${BLUE}Cloning custom shell scripts repository to ${FUCHSIA}$HOME/terminal-custom${BLUE}..."
 if [[ -d "${MY_SHELL_SCRIPTS}" ]]; then
     cd "${MY_SHELL_SCRIPTS}" && \
-        BRANCH=$(git symbolic-ref --short HEAD) && \
-        git pull --rebase --stat origin "${BRANCH:-master}"
+        BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null) && \
+            git pull --rebase --stat origin "${BRANCH:-master}"
 else
     REPOREMOTE="https://github.com/epoweripione/terminal-custom.git"
     BRANCH=$(git ls-remote --symref "$REPOREMOTE" HEAD \

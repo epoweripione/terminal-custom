@@ -7,7 +7,7 @@ custom scripts for zsh, msys2, powershell, wsl, etc.
 [zsh install guide](https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH)  
 [oh-my-zsh](https://ohmyz.sh/)
 
-### 1. Install `curl`
+### 1. Install `curl git`
 
 ### 2. Clone repo
 `source <(curl -fsSL https://git.io/fNpeJ)`

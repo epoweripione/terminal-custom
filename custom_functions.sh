@@ -1736,6 +1736,17 @@ function newTmuxSession() {
     fi
 }
 
+# docker pull: Pull multiple images together
+# https://github.com/moby/moby/issues/16106
+function dockerPullImages() {
+    # https://www.linuxjournal.com/content/parallel-shells-xargs-utilize-all-your-cpu-cores-unix-and-windows
+    # nproc: the number of installed processors
+    # --ignore=N if possible, exclude N processing units
+    echo "$@" | xargs -P "$(nproc --ignore=1)" -n1 docker pull
+
+    # for dockerImage in "$@"; do docker pull $dockerImage; done
+}
+
 
 # https://github.com/chubin/wttr.in
 function get_weather() {

@@ -197,7 +197,6 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "frp"
         # "v2rayn"
         # "lxrunoffline"
-        "freedownloadmanager"
         "snipaste-beta"
         "ffmpeg"
         "vlc"
@@ -238,7 +237,8 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "tightvnc"
         "vncviewer"
         ## epower
-        "chromium-marmaduke-dev-sync"
+        "chromium-robrich-dev-avx2"
+        # "chromium-marmaduke-dev-sync"
         # "chromium-robrich-dev"
         # "ExplorerPlusPlus"
         # "TablacusExplorer"
@@ -338,8 +338,6 @@ if (Get-Command "flutter" -ErrorAction SilentlyContinue) {
         [System.Environment]::SetEnvironmentVariable("CHROME_EXECUTABLE","$env:USERPROFILE\AppData\Local\Google\Chrome\Application\chrome.exe")
     } elseif (Test-Path "$env:USERPROFILE\AppData\Local\Google\Chromium\Application\chrome.exe") {
         [System.Environment]::SetEnvironmentVariable("CHROME_EXECUTABLE","$env:USERPROFILE\AppData\Local\Google\Chromium\Application\chrome.exe")
-    } elseif (Test-Path "$env:USERPROFILE\scoop\apps\chromium-marmaduke-dev-sync\current") {
-        [System.Environment]::SetEnvironmentVariable("CHROME_EXECUTABLE","$env:USERPROFILE\scoop\apps\chromium-marmaduke-dev-sync\current\chrome.exe")
     }
     # mirror
     [System.Environment]::SetEnvironmentVariable("FLUTTER_STORAGE_BASE_URL","https://storage.flutter-io.cn")

@@ -29,23 +29,21 @@ if [[ -x "$(command -v pacman)" ]]; then
     #     sudo pacman --noconfirm -R nano
     # fi
 
-    if [[ ! -x "$(command -v nano)" ]]; then
-        # Pre-requisite packages
-        PackagesList=(
-            ncurses
-            ncurses-devel
-            libncurses-dev
-            libncursesw-dev
-            libncurses5-dev
-            libncursesw5-dev
-        )
-        for TargetPackage in "${PackagesList[@]}"; do
-            if checkPackageNeedInstall "${TargetPackage}"; then
-                colorEcho "${BLUE}  Installing ${FUCHSIA}${TargetPackage}${BLUE}..."
-                sudo pacman --noconfirm -S "${TargetPackage}"
-            fi
-        done
-    fi
+    # Pre-requisite packages
+    PackagesList=(
+        ncurses
+        ncurses-devel
+        libncurses-dev
+        libncursesw-dev
+        libncurses5-dev
+        libncursesw5-dev
+    )
+    for TargetPackage in "${PackagesList[@]}"; do
+        if checkPackageNeedInstall "${TargetPackage}"; then
+            colorEcho "${BLUE}  Installing ${FUCHSIA}${TargetPackage}${BLUE}..."
+            sudo pacman --noconfirm -S "${TargetPackage}"
+        fi
+    done
 fi
 
 

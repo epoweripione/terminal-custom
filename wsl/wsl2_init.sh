@@ -58,7 +58,7 @@ mountFsTab = false
 EOF
 fi
 
-colorEcho "${BLUE}map localhost to `vEthernet (WSL)` ip${BLUE}..."
+colorEcho "${BLUE}map localhost to \`vEthernet (WSL)\` ip${BLUE}..."
 source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/wsl/wsl2-map-win-localhost.sh"
 
 
@@ -157,7 +157,7 @@ sudo apt install -y git-lfs && git lfs install
 
 # SSH
 if [[ ! -d "$HOME/.ssh" ]]; then
-    mkdir -p $HOME/.ssh && chmod 700 $HOME/.ssh/ # && chmod 600 $HOME/.ssh/*
+    mkdir -p $HOME/.ssh && chmod -R 700 $HOME/.ssh/ # && chmod 600 $HOME/.ssh/*
 fi
 
 
