@@ -43,7 +43,7 @@ function colorEchoAllColor() {
 
 # no proxy lists
 NO_PROXY_LISTS="localhost,127.0.0.1,.local"
-NO_PROXY_LISTS="${NO_PROXY_LISTS},ip-api.com,ident.me,ifconfig.co,icanhazip.com,ipinfo.io"
+NO_PROXY_LISTS="${NO_PROXY_LISTS},ip.sb,ip-api.com,ident.me,ifconfig.co,icanhazip.com,ipinfo.io"
 
 # get os type: darwin, windows, linux, bsd, solaris
 function get_os_type() {
@@ -796,6 +796,7 @@ function get_network_wan_ipv4() {
     local target_host
 
     remote_host_list=(
+        "https://api-ipv4.ip.sb/ip"
         "http://ip-api.com/line/?fields=query"
         "https://v4.ident.me/"
         "http://icanhazip.com/"
@@ -819,6 +820,7 @@ function get_network_wan_ipv6() {
     local target_host
 
     remote_host_list=(
+        "https://api-ipv6.ip.sb/ip"
         "https://v6.ident.me/"
         "http://icanhazip.com/"
         "https://ifconfig.co/"
@@ -840,6 +842,11 @@ function get_network_wan_geo() {
         if [[ -n "$NETWORK_WAN_NET_IP" ]]; then
             NETWORK_WAN_NET_IP_GEO=`geoiplookup ${NETWORK_WAN_NET_IP} | head -n1 | cut -d':' -f2-`
         fi
+    fi
+
+    if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
+        NETWORK_WAN_NET_IP_GEO=`curl -fsL -4 --connect-timeout 5 --max-time 10 \
+            "https://api.ip.sb/geoip" | jq -r '.country//empty'`
     fi
 
     if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then

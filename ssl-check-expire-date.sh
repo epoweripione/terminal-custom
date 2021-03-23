@@ -13,8 +13,11 @@ filename="$1"
 [[ ! -s "${filename}" ]] && echo "${filename} not exist!" && exit 1
 
 while read -r line; do
-    if [[ -n "$line" ]]; then
-        echo -n "$line: "
-        "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/ssl-cert-info.sh" --host $line --end
-    fi
+    [[ -z "$line" ]] && continue
+
+    TARGET_HOST=$(echo $line | cut -d' ' -f1)
+    [[ "${TARGET_HOST}" == "#" ]] && continue
+
+    echo -n "$line: "
+    "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/ssl-cert-info.sh" --host $line --end
 done < "$filename"

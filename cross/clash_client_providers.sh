@@ -152,6 +152,9 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
         done <<<"${TARGET_PROXIES}"
 
         for TargetName in "${PROXY_DELETE[@]}"; do
+            TargetName=$(echo "${TargetName}" \
+                | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
+                | sed 's/]/\\&/g')
             TARGET_PROXIES=$(echo "${TARGET_PROXIES}" | sed "/name:\s*${TargetName},/d")
         done
 

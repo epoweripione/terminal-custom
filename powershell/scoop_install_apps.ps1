@@ -205,6 +205,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "quicklook"
         "screentogif"
         "cpu-z"
+        "winfetch"
         "diffinity"
         "winmerge"
         "everything"

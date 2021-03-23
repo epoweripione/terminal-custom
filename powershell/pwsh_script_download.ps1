@@ -70,6 +70,7 @@ if ($?) {
     if (-Not (Test-Path $PWSH_DIR)) {New-Item -path $PWSH_DIR -type Directory | Out-Null}
     # Copy-Item -Path ".\terminal-custom\powershell\*" -Destination $PWSH_DIR -Recurse -Force -Confirm:$false
     Copy-Item -Path ".\terminal-custom\powershell\*.ps1" -Destination $PWSH_DIR
+    Copy-Item -Path ".\terminal-custom\wsl\*.ps1" -Destination $PWSH_DIR
     Copy-Item -Path ".\terminal-custom\cross\hosts_accelerate_cn.list" -Destination $PWSH_DIR
 
     $CONFIG_DIR = "~\.config"

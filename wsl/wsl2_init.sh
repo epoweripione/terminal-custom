@@ -124,13 +124,12 @@ sudo apt install -y binutils build-essential di dnsutils g++ gcc \
     git htop iproute2 make net-tools p7zip psmisc tree unzip zip
 
 
-# Enable broadcast WINS
-colorEcho "${BLUE}Enable broadcast ${FUCHSIA}WINS${BLUE}..."
-sudo apt install -y libnss-winbind
-
-if [[ ! $(grep "wins" /etc/nsswitch.conf) ]]; then
-    sudo sed -i 's/dns/wins dns/' /etc/nsswitch.conf
-fi
+## Enable broadcast WINS
+# colorEcho "${BLUE}Enable broadcast ${FUCHSIA}WINS${BLUE}..."
+# sudo apt install -y libnss-winbind
+# if [[ ! $(grep "wins" /etc/nsswitch.conf) ]]; then
+#     sudo sed -i 's/dns/wins dns/' /etc/nsswitch.conf
+# fi
 # sudo service winbind start # /etc/init.d/winbind start
 
 
@@ -140,10 +139,11 @@ sudo chmod u+s /bin/ping
 
 ## wslu
 ## https://github.com/wslutilities/wslu
-# colorEcho "${BLUE}Install git wslu..."
-# curl -fsSL "https://packagecloud.io/install/repositories/whitewaterfoundry/wslu/script.deb.sh" \
-#         | sudo bash && \
-#     sudo apt install -y wslu
+sudo apt install gnupg2 apt-transport-https && \
+    wget -O - https://access.patrickwu.space/wslu/public.asc | sudo apt-key add - && \
+    echo "deb https://access.patrickwu.space/wslu/debian buster main" | sudo tee -a /etc/apt/sources.list && \
+    sudo apt update && \
+    sudo apt install -y wslu
 
 colorEcho "${BLUE}Install git lfs${BLUE}..."
 sudo apt install -y git-lfs && git lfs install
