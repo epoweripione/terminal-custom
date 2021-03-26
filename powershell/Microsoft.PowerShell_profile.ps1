@@ -87,7 +87,7 @@ function  SearchScoopBucket {
 
 function UpdateMyScript {
     Set-Location ~
-    if (check_socks5_proxy_up $SCOOP_PROXY_ADDR) {
+    if (check_socks5_proxy_up "127.0.0.1:7890") {
         curl -fsSL --socks5-hostname "127.0.0.1:7890" `
             -o ".\pwsh_script_download.ps1" "https://git.io/JeQ9d" && `
         .\pwsh_script_download.ps1
