@@ -1,5 +1,3 @@
-#Requires -RunAsAdministrator
-
 function check_webservice_up() {
     param($webservice_url)
 
