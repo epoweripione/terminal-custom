@@ -121,7 +121,7 @@ sudo apt update && sudo apt upgrade -y
 # Install useful packages
 colorEcho "${BLUE}Installing ${FUCHSIA}useful packages${BLUE}..."
 sudo apt install -y binutils build-essential di dnsutils g++ gcc \
-    git htop iproute2 make net-tools p7zip psmisc tree unzip zip
+    git htop iproute2 make net-tools netcat-openbsd p7zip psmisc tree unzip zip
 
 
 ## Enable broadcast WINS

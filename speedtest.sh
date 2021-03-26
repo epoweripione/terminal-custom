@@ -44,19 +44,17 @@ function colorEcho() {
 # bench.sh
 # https://teddysun.com/444.html
 function bench() {
-    curl -fsSL -o- bench.sh | bash
+    curl -Lso- bench.sh | bash
 }
 
 # Superbench.sh & SuperSpeed.sh
 # https://www.oldking.net/305.html
 function SuperBench() {
-    curl -fsSL -o- https://raw.githubusercontent.com/oooldking/script/master/superbench.sh | bash
+    curl -fsSL https://raw.githubusercontent.com/oooldking/script/master/superbench.sh | bash
 }
 
 function SuperSpeed() {
-    wget https://raw.githubusercontent.com/oooldking/script/master/superspeed.sh && \
-        chmod +x superspeed.sh && \
-        ./superspeed.sh
+    curl -fsSL https://raw.githubusercontent.com/oooldking/script/master/superspeed.sh | bash
 }
 
 function Besttrack() {
@@ -68,17 +66,15 @@ function ZBench() {
 }
 
 function LemonBenchFast() {
-    curl -fsSL https://ilemonrain.com/download/shell/LemonBench.sh | bash -s fast
+    curl -fsSL https://github.com/LemonBench/LemonBench/raw/master/LemonBench.sh | bash -s fast
 }
 
 function LemonBenchFull() {
-    curl -fsSL https://ilemonrain.com/download/shell/LemonBench.sh | bash -s full
+    curl -fsSL https://github.com/LemonBench/LemonBench/raw/master/LemonBench.sh | bash -s full
 }
 
 function UnixBench() {
-    wget --no-check-certificate https://github.com/teddysun/across/raw/master/unixbench.sh && \
-        chmod +x unixbench.sh && \
-        ./unixbench.sh
+    curl -fsSL https://github.com/teddysun/across/raw/master/unixbench.sh | bash
 }
 
 echo -e ""

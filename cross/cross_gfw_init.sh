@@ -163,8 +163,12 @@ fi
 
 if [[ "$(uname -r)" =~ "microsoft" ]]; then
     # WSL2
-    PROXY_IP=$(grep -m1 nameserver /etc/resolv.conf | awk '{print $2}')
-    # PROXY_IP=$(grep -m1 nameserver /etc/resolv.conf | awk '{print $2}') && PROXY_ADDRESS="socks5h://${PROXY_IP}:7890"
+    PROXY_IP=$(ipconfig.exe | grep "IPv4" \
+                | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
+                | grep -Ev "^0\.|^127\.|^172\." \
+                | head -n1)
+    # PROXY_IP=$(grep -m1 nameserver /etc/resolv.conf | awk '{print $2}')
+    # PROXY_ADDRESS="socks5h://${PROXY_IP}:7890"
     # export {http,https,ftp,all}_proxy=${PROXY_ADDRESS} && export {HTTP,HTTPS,FTP,ALL}_PROXY=${PROXY_ADDRESS}
     # git config --global http.proxy \"${PROXY_ADDRESS}\" && git config --global https.proxy \"${PROXY_ADDRESS}\"
 else

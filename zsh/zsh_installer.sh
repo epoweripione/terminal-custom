@@ -161,6 +161,11 @@ if [[ -x "$(command -v pacman)" ]]; then
         make
         rsync
         xsel
+        bind-utils
+        dnsutils
+        htop
+        lsof
+        strace
         geoip
         GeoIP
         geoip-bin

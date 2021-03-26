@@ -23,8 +23,8 @@ fi
 
 
 ## LemonBench
-# curl -fsSL https://ilemonrain.com/download/shell/LemonBench.sh | bash -s fast
-# curl -fsSL https://ilemonrain.com/download/shell/LemonBench.sh | bash -s full
+# curl -fsSL https://github.com/LemonBench/LemonBench/raw/master/LemonBench.sh | bash -s fast
+# curl -fsSL https://github.com/LemonBench/LemonBench/raw/master/LemonBench.sh | bash -s full
 
 
 ## bench.sh

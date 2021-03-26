@@ -15,6 +15,15 @@ fi
 
 # croc - Easily and securely send things from one computer to another
 # https://github.com/schollz/croc
+
+## Usage:
+## Self-host relay (docker)
+# docker run -d -p 9009-9013:9009-9013 -e CROC_PASS='YOURPASSWORD' schollz/croc
+## Send file(s)-or-folder 
+# croc --pass YOURPASSWORD --relay "myreal.example.com:9009" send [file(s)-or-folder]
+## Receive the file(s)-or-folder on another computer
+# croc --pass YOURPASSWORD --relay "myreal.example.com:9009" [code-phrase]
+
 APP_INSTALL_NAME="croc"
 
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."

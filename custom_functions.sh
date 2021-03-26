@@ -1293,7 +1293,7 @@ function check_set_global_proxy() {
     local PROXY_SOCKS=""
     local PROXY_HTTP=""
     local IP_LIST="127.0.0.1"
-    local IP_WSL="127.0.0.1"
+    local IP_WSL
     local PROXY_UP="NO"
 
     if [[ "$(uname -r)" =~ "microsoft" ]]; then
@@ -1302,7 +1302,8 @@ function check_set_global_proxy() {
                     | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
                     | grep -Ev "^0\.|^127\.|^172\.")
         IP_WSL=$(grep -m1 nameserver /etc/resolv.conf | awk '{print $2}')
-        IP_LIST=$(echo -e "${IP_WSL}\n${IP_LIST}" | uniq)
+        IP_LIST=$(echo -e "${IP_LIST}\n${IP_WSL}" | uniq)
+        # IP_LIST=$(echo -e "${IP_WSL}\n${IP_LIST}" | uniq)
     fi
 
     unset GLOBAL_PROXY_IP

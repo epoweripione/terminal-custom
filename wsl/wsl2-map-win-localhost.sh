@@ -28,6 +28,8 @@ function colorEcho() {
     fi
 }
 
+WSL_HOST_IP=${1:-""}
+
 
 ## https://stackoverflow.com/questions/61002681/connecting-to-wsl2-server-via-local-network
 ## https://github.com/shayne/go-wsl2-host
@@ -50,7 +52,7 @@ function colorEcho() {
 ## https://github.com/microsoft/WSL/issues/5131
 ## In the Administrative PowerShell Prompt run the following command:
 # $PhysicalAdapter = Get-NetAdapter -Name * -Physical | Where-Object Status -eq 'up' | Select-Object -ExpandProperty Name
-# $PhysicalAdapterIP=  Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -eq "$PhysicalAdapter" } | Select-Object -ExpandProperty IPv4Address
+# $PhysicalAdapterIP = Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -eq "$PhysicalAdapter" } | Select-Object -ExpandProperty IPv4Address
 
 # # $PhysicalAdapterIP = (Test-Connection -IPv4 -ComputerName $env:COMPUTERNAME -Count 1).Address.toString()
 # # $PhysicalAdapterIP = Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -match 'wsl' } | Select-Object -ExpandProperty IPv4Address
@@ -72,10 +74,12 @@ function colorEcho() {
 
 
 ## https://gist.github.com/toryano0820/6ee3bff2474cdf13e70d972da710996a
-if [[ -n "${GLOBAL_WSL2_HOST_IP}" ]]; then
-    WSL_HOST_IP="${GLOBAL_WSL2_HOST_IP}"
-else
-    WSL_HOST_IP=$(grep -m1 nameserver /etc/resolv.conf | awk '{print $2}')
+if [[ -z "${WSL_HOST_IP}" ]]; then
+    if [[ -n "${GLOBAL_WSL2_HOST_IP}" ]]; then
+        WSL_HOST_IP="${GLOBAL_WSL2_HOST_IP}"
+    else
+        WSL_HOST_IP=$(grep -m1 nameserver /etc/resolv.conf | awk '{print $2}')
+    fi
 fi
 
 if [[ -n "${WSL_HOST_IP}" ]]; then

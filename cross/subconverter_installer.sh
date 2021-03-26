@@ -55,6 +55,8 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
         echo ${REMOTE_VERSION} | sudo tee "/srv/subconverter/.version" >/dev/null
 
     if [[ "${IS_UPDATE}" == "no" ]]; then
+        [[ ! -s "/srv/subconverter/pref.yml" ]] && cp "/srv/subconverter/pref-new.yml" "/srv/subconverter/pref.yml"
+
         read -s -p "Enter api access password: " API_PASSWORD
         if [[ -n "${API_PASSWORD}" ]]; then
             sed -i "s|api_access_token:.*|api_access_token: ${API_PASSWORD}|" "/srv/subconverter/pref.yml"

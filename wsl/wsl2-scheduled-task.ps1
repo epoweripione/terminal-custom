@@ -75,10 +75,17 @@ $DefaultDistro = $DefaultDistro.Split([IO.Path]::GetInvalidPathChars()) -join ''
 $WSLUserName = wsl -d ${DefaultDistro} /bin/bash -c "whoami"
 $WSLUserName = $WSLUserName.Split([IO.Path]::GetInvalidPathChars()) -join ''
 
+
 # $BashFileName="wsl2-map-win-localhost.sh"
 # $BashFileName=$BashFileName.Split([IO.Path]::GetInvalidFileNameChars()) -join ''
 
+
+$PhysicalAdapter = Get-NetAdapter -Name * -Physical | Where-Object Status -eq 'up' | Select-Object -ExpandProperty Name
+$PhysicalAdapterIP = Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -eq "$PhysicalAdapter" } | Select-Object -ExpandProperty IPv4Address
+
+
 $BashFile = "\\wsl$\${DefaultDistro}\home\${WSLUserName}\terminal-custom\wsl\wsl2-map-win-localhost.sh"
 if (Test-Path "${BashFile}") {
-    wsl -d ${DefaultDistro} -u root /home/${WSLUserName}/terminal-custom/wsl/wsl2-map-win-localhost.sh
+    # wsl -d ${DefaultDistro} -u root /home/${WSLUserName}/terminal-custom/wsl/wsl2-map-win-localhost.sh ${PhysicalAdapterIP}
+    wsl -d ${DefaultDistro} -u root /bin/bash -c "/home/${WSLUserName}/terminal-custom/wsl/wsl2-map-win-localhost.sh ${PhysicalAdapterIP}"
 }
