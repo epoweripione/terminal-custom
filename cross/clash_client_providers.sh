@@ -136,7 +136,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
                 | sed -e "s/^\"//" -e "s/\"$//")
 
             TargetServer=$(echo "${line}" \
-                | sed -rn "s/.*[\s\{\,]+server:([^,{}]+).*/\1/ip" \
+                | sed -rn "s/.*server:([^,{}]+).*/\1/ip" \
                 | sed -e "s/^\s//" -e "s/\s$//" \
                 | sed -e "s/^\"//" -e "s/\"$//")
 
