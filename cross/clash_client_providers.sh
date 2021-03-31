@@ -78,6 +78,7 @@ PROXIES_PRIVATE=""
 PROXIES_PUBLIC=""
 
 PROXY_LIST_ALL=()
+PROXY_SERVER_ALL=()
 
 FILELIST=()
 FILEOPTION=()
@@ -134,19 +135,30 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
                 | sed -e "s/^\s//" -e "s/\s$//" \
                 | sed -e "s/^\"//" -e "s/\"$//")
 
+            TargetServer=$(echo "${line}" \
+                | sed -rn "s/.*[\s\{\,]+server:([^,{}]+).*/\1/ip" \
+                | sed -e "s/^\s//" -e "s/\s$//" \
+                | sed -e "s/^\"//" -e "s/\"$//")
+
             if [[ " ${PROXY_LIST_ALL[@]} " =~ " ${TargetName} " ]]; then
                 PROXY_DELETE+=("${TargetName}")
             else
-                if [[ -n "${TARGET_FILTER}" ]]; then
-                    if echo "${TargetName}" | grep -Eq "${TARGET_FILTER}"; then
-                        PROXY_DELETE+=("${TargetName}")
+                if [[ "${TARGET_OPTION}" == *"proxypool"* && " ${PROXY_SERVER_ALL[@]} " =~ " ${TargetServer} " ]]; then
+                    PROXY_DELETE+=("${TargetName}")
+                else
+                    if [[ -n "${TARGET_FILTER}" ]]; then
+                        if echo "${TargetName}" | grep -Eq "${TARGET_FILTER}"; then
+                            PROXY_DELETE+=("${TargetName}")
+                        else
+                            PROXY_LIST+=("${TargetName}")
+                            PROXY_LIST_ALL+=("${TargetName}")
+                            PROXY_SERVER_ALL+=("${TargetServer}")
+                        fi
                     else
                         PROXY_LIST+=("${TargetName}")
                         PROXY_LIST_ALL+=("${TargetName}")
+                        PROXY_SERVER_ALL+=("${TargetServer}")
                     fi
-                else
-                    PROXY_LIST+=("${TargetName}")
-                    PROXY_LIST_ALL+=("${TargetName}")
                 fi
             fi
         done <<<"${TARGET_PROXIES}"

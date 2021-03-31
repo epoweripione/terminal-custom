@@ -259,7 +259,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "nmap"
         "Cascadia-Code"
         ## epower
-        # "Noto-CJK"
+        "Noto-CJK"
         "FiraCode-Mono-NF"
         "Sarasa-Gothic-SC"
         ## nerd-fonts
