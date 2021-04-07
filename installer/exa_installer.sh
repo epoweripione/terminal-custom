@@ -52,12 +52,12 @@ case "$OS_INFO_TYPE" in
     linux)
         case "$OS_INFO_VDIS" in
             64)
-                REMOTE_FILENAME=exa-linux-x86_64-${REMOTE_VERSION}.zip
+                REMOTE_FILENAME=exa-linux-x86_64-v${REMOTE_VERSION}.zip
                 ;;
         esac
         ;;
     darwin)
-        REMOTE_FILENAME=exa-macos-x86_64-${REMOTE_VERSION}.zip
+        REMOTE_FILENAME=exa-macos-x86_64-v${REMOTE_VERSION}.zip
         ;;
 esac
 

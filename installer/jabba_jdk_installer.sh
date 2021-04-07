@@ -61,7 +61,7 @@ jabba install zulu@1.11.0-5
 ## http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 # colorEcho "${BLUE}Installing ${FUCHSIA}Oracle JDK 8${BLUE}..."
 # mkdir -p /usr/lib/jvm && cd /usr/lib/jvm && \
-#     wget --no-check-certificate --no-cookies \
+#     wget --no-cookies \
 #         --header "Cookie: oraclelicense=accept-securebackup-cookie" \
 #         https://download.oracle.com/otn/java/jdk/8u212-b10/59066701cf1a433da9770636fbc4c9aa/jdk-8u212-linux-x64.tar.gz && \
 #     tar -xzf jdk-8u181-linux-x64.tar.gz && \
@@ -72,7 +72,7 @@ jabba install zulu@1.11.0-5
 ## https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html
 # colorEcho "${BLUE}Installing ${FUCHSIA}Oracle JDK 11${BLUE}..."
 # mkdir -p /usr/lib/jvm && cd /usr/lib/jvm && \
-#     wget --no-check-certificate --no-cookies \
+#     wget --no-cookies \
 #         --header "Cookie: oraclelicense=accept-securebackup-cookie" \
 #         https://download.oracle.com/otn/java/jdk/11.0.3+12/37f5e150db5247ab9333b11c1dddcd30/jdk-11.0.3_linux-x64_bin.tar.gz && \
 #     tar -xzf jdk-11_linux-x64_bin.tar.gz && \

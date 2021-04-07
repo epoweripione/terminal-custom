@@ -182,24 +182,16 @@ fi
 # Custom plugins
 colorEcho "${BLUE}Oh-my-zsh custom plugins..."
 
-# zsh-navigation-tools
-# echo "Updating zsh-navigation-tools..."
-# sh -c "$(curl -fsSL https://raw.githubusercontent.com/psprint/zsh-navigation-tools/master/doc/install.sh)"
-
-## fast-syntax-highlighting
-# if [[ "$OS_INFO_TYPE" != "windows" ]]; then
-#     Git_Clone_Update "zdharma/fast-syntax-highlighting" \
-#         "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"
-# fi
-
 PluginList=(
     "zsh-users/zsh-syntax-highlighting"
-    "zsh-users/zsh-history-substring-search"
+    # "zsh-users/zsh-history-substring-search"
     "zsh-users/zsh-autosuggestions"
     "zdharma/fast-syntax-highlighting"
+    # "zdharma/history-search-multi-word"
     # "popstas/zsh-command-time"
-    "petervanderdoes/git-flow-completion"
-    "changyuheng/zsh-interactive-cd"
+    # "petervanderdoes/git-flow-completion"
+    # "changyuheng/zsh-interactive-cd"
+    "Aloxaf/fzf-tab"
 )
 
 for Target in "${PluginList[@]}"; do
@@ -211,12 +203,12 @@ done
 # Custom themes
 colorEcho "${BLUE}Oh-my-zsh custom themes..."
 ThemeList=(
-    "zakaziko99/agnosterzak-ohmyzsh-theme"
-    "denysdovhan/spaceship-prompt"
+    # "zakaziko99/agnosterzak-ohmyzsh-theme"
+    # "denysdovhan/spaceship-prompt"
     "romkatv/powerlevel10k"
-    "agkozak/agkozak-zsh-prompt"
-    "eendroroy/alien"
-    "sindresorhus/pure"
+    # "agkozak/agkozak-zsh-prompt"
+    # "eendroroy/alien"
+    # "sindresorhus/pure"
 )
 
 for Target in "${ThemeList[@]}"; do
@@ -266,7 +258,7 @@ colorEcho "${BLUE}enable plugins..."
 # plugin list
 Plugins="git"
 
-[[ "$(command -v git-flow)" ]] && Plugins="${Plugins} git-flow-completion"
+[[ "$(command -v git-flow)" ]] && Plugins="${Plugins} git-flow-avh"
 
 [[ "$OS_INFO_TYPE" == "darwin" ]] && Plugins="${Plugins} osx"
 
@@ -288,15 +280,9 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 
 [[ "$(command -v fuck)" ]] && Plugins="${Plugins} thefuck"
 
-Plugins="${Plugins} zsh-interactive-cd zsh-autosuggestions fast-syntax-highlighting history-substring-search"
+Plugins="${Plugins} fzf-tab zsh-interactive-cd zsh-autosuggestions fast-syntax-highlighting history-substring-search"
 
-# if [[ "$OS_INFO_TYPE" == "windows" ]]; then
-#     Plugins="${Plugins} zsh-syntax-highlighting"
-# else
-#     Plugins="${Plugins} fast-syntax-highlighting"
-# fi
-
-# Plugins="${Plugins} history-substring-search"
+# Plugins="${Plugins} zsh-navigation-tools history-search-multi-word"
 
 
 PluginList=($(echo ${Plugins}))

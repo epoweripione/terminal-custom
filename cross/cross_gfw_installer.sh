@@ -50,14 +50,14 @@ fi
 # fi
 
 # # https://github.com/teddysun/shadowsocks_install/tree/master
-# wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-all.sh && \
+# wget https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-all.sh && \
 #     chmod +x shadowsocks-all.sh && \
 #     ./shadowsocks-all.sh 2>&1 | tee shadowsocks-all.log
 
 
 # # Kcptun
 # # https://github.com/kuoruan/shell-scripts/
-# wget --no-check-certificate -O kcptun.sh https://github.com/kuoruan/shell-scripts/raw/master/kcptun/kcptun.sh && \
+# wget -O kcptun.sh https://github.com/kuoruan/shell-scripts/raw/master/kcptun/kcptun.sh && \
 #     sh kcptun.sh
 
 

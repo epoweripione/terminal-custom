@@ -75,7 +75,7 @@ if [[ -n "$REMOTE_FILENAME" && "${IS_INSTALL}" == "yes" ]]; then
     curl -fSL -o "${WORKDIR}/${EXEC_INSTALL_NAME}.zip" -C- "$DOWNLOAD_URL" && \
         unzip -qo "${WORKDIR}/${EXEC_INSTALL_NAME}.zip" -d "${WORKDIR}" && \
         sudo mv -f ${WORKDIR}/${EXEC_INSTALL_NAME}_* "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
-        echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null
+        echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null || true
 
 fi
 

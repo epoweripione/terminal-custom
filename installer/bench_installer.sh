@@ -53,7 +53,7 @@ curl -fSL -o "${WORKDIR}/besttrace" "https://github.com/zq/shell/raw/master/best
 
 
 # UnixBench
-# wget --no-check-certificate https://github.com/teddysun/across/raw/master/unixbench.sh && chmod +x unixbench.sh && ./unixbench.sh
+# wget https://github.com/teddysun/across/raw/master/unixbench.sh && chmod +x unixbench.sh && ./unixbench.sh
 
 
 cd "${CURRENT_DIR}"

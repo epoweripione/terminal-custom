@@ -21,14 +21,16 @@
 # net stop "LxssManager"; net start "LxssManager"
 
 
+[[ -z "$MY_SHELL_SCRIPTS" ]] && MY_SHELL_SCRIPTS="$HOME/terminal-custom"
+
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
 else
-    if [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh" ]]; then
-        source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh"
+    if [[ -s "${MY_SHELL_SCRIPTS}/custom_functions.sh" ]]; then
+        source "${MY_SHELL_SCRIPTS}/custom_functions.sh"
     else
-        echo "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/custom_functions.sh not exist!"
+        echo "${MY_SHELL_SCRIPTS}/custom_functions.sh not exist!"
         exit 0
     fi
 fi
@@ -85,14 +87,14 @@ if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
     sudo sed -i 's|http://mirrors.tuna.tsinghua.edu.cn|https://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list
 fi
 
-# git lfs
-# https://github.com/git-lfs/git-lfs/wiki/Tutorial
-if [[ ! -e "/etc/apt/sources.list.d/github_git-lfs.list" ]]; then
-    curl -fsSL "https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh" | sudo bash
+## git lfs
+## https://github.com/git-lfs/git-lfs/wiki/Tutorial
+# if [[ ! -e "/etc/apt/sources.list.d/github_git-lfs.list" ]]; then
+#     curl -fsSL "https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh" | sudo bash
 
-    # echo 'Acquire::http::Proxy::packagecloud-repositories.s3.dualstack.us-west-1.amazonaws.com "http://127.0.0.1:7890/";' \
-    #     | sudo tee -a /etc/apt/apt.conf.d/99proxy >/dev/null
-fi
+#     # echo 'Acquire::http::Proxy::packagecloud-repositories.s3.dualstack.us-west-1.amazonaws.com "http://127.0.0.1:7890/";' \
+#     #     | sudo tee -a /etc/apt/apt.conf.d/99proxy >/dev/null
+# fi
 
 # .NET Core SDK
 # https://docs.microsoft.com/zh-cn/dotnet/core/install/linux-package-manager-debian10
@@ -145,8 +147,12 @@ sudo apt install gnupg2 apt-transport-https && \
     sudo apt update && \
     sudo apt install -y wslu
 
-colorEcho "${BLUE}Install git lfs${BLUE}..."
-sudo apt install -y git-lfs && git lfs install
+# colorEcho "${BLUE}Install git lfs${BLUE}..."
+# sudo apt install -y git-lfs && git lfs install
+
+[[ -s "${MY_SHELL_SCRIPTS}/installer/git-lfs_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/git-lfs_installer.sh"
+
+[[ -s "${MY_SHELL_SCRIPTS}/installer/gitflow_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/gitflow_installer.sh"
 
 # colorEcho "${BLUE}Installing ${FUCHSIA}.NET Core SDK${BLUE}..."
 # sudo apt install -y dotnet-sdk-3.1

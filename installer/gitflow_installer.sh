@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+trap 'rm -rf "$WORKDIR"' EXIT
+
+[[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
+[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
+
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
@@ -13,13 +18,14 @@ else
 fi
 
 
-## git-flow (AVH Edition)
+# git-flow (AVH Edition)
 # https://github.com/petervanderdoes/gitflow-avh
-colorEcho "${BLUE}Installing ${FUCHSIA}git-flow (AVH Edition)${BLUE}..."
-DOWNLOAD_URL="https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh"
-wget --no-check-certificate -q "$DOWNLOAD_URL" && \
-    sudo bash gitflow-installer.sh install develop && \
-    sudo rm gitflow-installer.sh
+if [[ ! "$(command -v git-flow)" ]]; then
+    colorEcho "${BLUE}Installing ${FUCHSIA}git-flow (AVH Edition)${BLUE}..."
+    DOWNLOAD_URL="https://raw.githubusercontent.com/petervanderdoes/gitflow-avh/develop/contrib/gitflow-installer.sh"
+    wget -O "${WORKDIR}/gitflow-installer.sh" "${DOWNLOAD_URL}" && \
+        sudo bash "${WORKDIR}/gitflow-installer.sh" install develop
+fi
 
 ## How to use
 # http://danielkummer.github.io/git-flow-cheatsheet/index.zh_CN.html
@@ -33,3 +39,5 @@ wget --no-check-certificate -q "$DOWNLOAD_URL" && \
 if [[ "$(command -v node)" ]]; then
     npm install -g gitmoji-cli
 fi
+
+cd "${CURRENT_DIR}"
