@@ -54,6 +54,9 @@ case "$OS_INFO_TYPE" in
             64)
                 REMOTE_FILENAME=exa-linux-x86_64-v${REMOTE_VERSION}.zip
                 ;;
+            arm)
+                REMOTE_FILENAME=exa-linux-armv7-v${REMOTE_VERSION}.zip
+                ;;
         esac
         ;;
     darwin)
@@ -79,7 +82,9 @@ if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
     DOWNLOAD_URL="https://github.com/ogham/exa/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
     curl -fSL -o "${WORKDIR}/exa.zip" -C- "$DOWNLOAD_URL" && \
         unzip -qo "${WORKDIR}/exa.zip" -d "${WORKDIR}" && \
-        sudo mv -f ${WORKDIR}/exa-* "/usr/local/bin/exa"
+        sudo mv -f "${WORKDIR}/bin/exa" "/usr/local/bin/exa" && \
+        sudo mv -f ${WORKDIR}/man/exa* "/usr/share/man/man1" && \
+        sudo mv -f "${WORKDIR}/man/exa.zsh" "/usr/local/share/zsh/site-functions"
 fi
 
 cd "${CURRENT_DIR}"

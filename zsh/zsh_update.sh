@@ -154,7 +154,7 @@ fi
 
 # fzf
 if [[ ! -x "$(command -v fzf)" ]] && [[ -x "$(command -v pacman)" ]]; then
-    if pacman -Si fzf >/dev/null 2>&1; then
+    if checkPackageNeedInstall "fzf"; then
         colorEcho "${BLUE}Installing ${FUCHSIA}fzf${BLUE}..."
         sudo pacman --noconfirm -S fzf
     fi
@@ -268,7 +268,7 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 [[ -d "$HOME/.asdf" ]] && Plugins="${Plugins} asdf"
 
 [[ -x "$(command -v tmux)" ]] && Plugins="${Plugins} tmux"
-[[ -x "$(command -v fzf)" || -d $HOME/.fzf ]] && Plugins="${Plugins} fzf"
+[[ -x "$(command -v fzf)" || -d "$HOME/.fzf" ]] && Plugins="${Plugins} fzf fzf-tab"
 [[ -x "$(command -v autojump)" ]] && Plugins="${Plugins} autojump"
 [[ -x "$(command -v composer)" ]] && Plugins="${Plugins} composer"
 [[ -x "$(command -v docker)" ]] && Plugins="${Plugins} docker"
@@ -280,7 +280,7 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 
 [[ "$(command -v fuck)" ]] && Plugins="${Plugins} thefuck"
 
-Plugins="${Plugins} fzf-tab zsh-interactive-cd zsh-autosuggestions fast-syntax-highlighting history-substring-search"
+Plugins="${Plugins} zsh-interactive-cd zsh-autosuggestions fast-syntax-highlighting history-substring-search"
 
 # Plugins="${Plugins} zsh-navigation-tools history-search-multi-word"
 
