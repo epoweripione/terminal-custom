@@ -84,7 +84,7 @@ if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
         unzip -qo "${WORKDIR}/exa.zip" -d "${WORKDIR}" && \
         sudo mv -f "${WORKDIR}/bin/exa" "/usr/local/bin/exa" && \
         sudo mv -f ${WORKDIR}/man/exa* "/usr/share/man/man1" && \
-        sudo mv -f "${WORKDIR}/man/exa.zsh" "/usr/local/share/zsh/site-functions"
+        sudo mv -f "${WORKDIR}/completions/exa.zsh" "/usr/local/share/zsh/site-functions"
 fi
 
 cd "${CURRENT_DIR}"

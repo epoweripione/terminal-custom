@@ -191,7 +191,8 @@ PluginList=(
     # "popstas/zsh-command-time"
     # "petervanderdoes/git-flow-completion"
     # "changyuheng/zsh-interactive-cd"
-    "Aloxaf/fzf-tab"
+    # "Aloxaf/fzf-tab"
+    "lincheney/fzf-tab-completion"
 )
 
 for Target in "${PluginList[@]}"; do
@@ -268,7 +269,6 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 [[ -d "$HOME/.asdf" ]] && Plugins="${Plugins} asdf"
 
 [[ -x "$(command -v tmux)" ]] && Plugins="${Plugins} tmux"
-[[ -x "$(command -v fzf)" || -d "$HOME/.fzf" ]] && Plugins="${Plugins} fzf fzf-tab"
 [[ -x "$(command -v autojump)" ]] && Plugins="${Plugins} autojump"
 [[ -x "$(command -v composer)" ]] && Plugins="${Plugins} composer"
 [[ -x "$(command -v docker)" ]] && Plugins="${Plugins} docker"
@@ -279,6 +279,8 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 [[ -x "$(command -v redis-cli)" ]] && Plugins="${Plugins} redis-cli"
 
 [[ "$(command -v fuck)" ]] && Plugins="${Plugins} thefuck"
+
+[[ -x "$(command -v fzf)" || -d "$HOME/.fzf" ]] && Plugins="${Plugins} fzf"
 
 Plugins="${Plugins} zsh-interactive-cd zsh-autosuggestions fast-syntax-highlighting history-substring-search"
 

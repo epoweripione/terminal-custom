@@ -17,7 +17,7 @@ fi
 
 
 # compinit
-source "${MY_SHELL_SCRIPTS}/zsh/zsh_compinit.sh"
+# source "${MY_SHELL_SCRIPTS}/zsh/zsh_compinit.sh"
 
 
 # disable hosts auto completion
@@ -519,6 +519,13 @@ if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
 
     # get local weather
     get_weather_custom
+fi
+
+# fzf-tab-completion
+# https://github.com/lincheney/fzf-tab-completion
+if [[ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab-completion" ]]; then
+    source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab-completion/zsh/fzf-zsh-completion.sh"
+    bindkey '^I' fzf_completion
 fi
 
 # Autostart Tmux/screen Session On Remote System When Logging In Via SSH
