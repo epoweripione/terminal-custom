@@ -131,6 +131,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
         PROXY_DELETE=()
         while read -r line; do
             [[ -z "${line}" ]] && continue
+
             TargetName=$(echo "${line}" \
                 | sed -rn "s/.*[\s\{\,]+name:([^,{}]+).*/\1/ip" \
                 | sed -e "s/^\s//" -e "s/\s$//" \
@@ -140,6 +141,8 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
                 | sed -rn "s/.*server:([^,{}]+).*/\1/ip" \
                 | sed -e "s/^\s//" -e "s/\s$//" \
                 | sed -e "s/^\"//" -e "s/\"$//")
+
+            [[ -z "${TargetName}" || -z "${TargetServer}" ]] && continue
 
             if [[ " ${PROXY_LIST_ALL[@]} " =~ " ${TargetName} " ]]; then
                 PROXY_DELETE+=("${TargetName}")
