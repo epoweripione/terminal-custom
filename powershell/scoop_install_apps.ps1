@@ -209,6 +209,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "diffinity"
         "winmerge"
         "everything"
+        "fzf"
         "filezilla"
         "freedownloadmanager"
         "hashcheck"

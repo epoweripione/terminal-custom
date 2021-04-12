@@ -207,7 +207,7 @@ else
 fi
 
 # Delete lines with empty name
-PROXIES_ALL=$(echo -e "${PROXIES_ALL}" | sed '/name:\s*,/d')
+PROXIES_ALL=$(echo -e "${PROXIES_ALL}" | sed -e '/name:\s*,/d' -e '/,,/d')
 
 ## Add placeholder for proxy-groups
 # PROXIES_ALL=$(echo -e "${PROXIES_ALL}\n  - {name: FORBIDDEN-PLACEHOLDER, server: forbidden-placeholder.com, port: 0000, type: trojan, password: Trojan}")
@@ -276,7 +276,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
 
     LINE_END=$((${TARGET_LINE} - 1))
 
-    colorEcho "${BLUE}    Gen ${FUCHSIA}${TARGET_TAG}${BLUE}..."
+    colorEcho "${BLUE}    Generating ${FUCHSIA}${TARGET_TAG}${BLUE}..."
     CONTENT_PREFIX=$(sed -n "${LINE_START},${LINE_END} p" "${CLASH_CONFIG}")
 
     CONTENT_TAG=""
@@ -346,7 +346,7 @@ if [[ -n "${COPY_TO_DIR}" ]]; then
 
     if [[ -n "${PROXIES_PRIVATE}" ]]; then
         if [[ ! -s "${COPY_TO_FILE}.md5" ]]; then
-            colorEcho "${BLUE}  Gen md5 for ${FUCHSIA}${COPY_TO_FILE}${BLUE}..."
+            colorEcho "${BLUE}  Generating md5 for ${FUCHSIA}${COPY_TO_FILE}${BLUE}..."
             (openssl md5 -hex "${COPY_TO_FILE}" | cut -d" " -f2) > "${COPY_TO_FILE}.md5"
         fi
     fi

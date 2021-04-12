@@ -16,16 +16,17 @@
 
 
 ## PowerShell Core Command-line options
+## PowerShell Online Help: https://aka.ms/powershell-docs
 # pwsh -h
-# Usage: pwsh[.exe] [[-File] <filePath> [args]]
+# Usage: pwsh[.exe] [-Login] [[-File] <filePath> [args]]
 #                   [-Command { - | <script-block> [-args <arg-array>]
 #                                 | <string> [<CommandParameters>] } ]
 #                   [-ConfigurationName <string>] [-CustomPipeName <string>]
 #                   [-EncodedCommand <Base64EncodedCommand>]
 #                   [-ExecutionPolicy <ExecutionPolicy>] [-InputFormat {Text | XML}]
-#                   [-Interactive] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
-#                   [-OutputFormat {Text | XML}] [-Version] [-WindowStyle <style>]
-#                   [-WorkingDirectory <directoryPath>]
+#                   [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+#                   [-OutputFormat {Text | XML}] [-SettingsFile <filePath>] [-SSHServerMode] [-STA]
+#                   [-Version] [-WindowStyle <style>] [-WorkingDirectory <directoryPath>]
 # example: pwsh -Command "& {suu}"
 
 
@@ -72,14 +73,35 @@
 # Get-NetConnectionProfile -IPv4Connectivity "Internet" | Select-Object -Property Name,InterfaceIndex,InterfaceAlias
 # Get-NetConnectionProfile -IPv4Connectivity "Internet" | Select-Object -ExpandProperty InterfaceIndex
 
+
 ## Forwarding to be enabled across the two v-Switches
-# Get-NetIPInterface | Select-Object ifIndex,InterfaceAlias,AddressFamily,ConnectionState,Forwarding | Where-Object {$_.InterfaceAlias -eq 'vEthernet (WSL)' -or $_.InterfaceAlias -eq 'vEthernet (Default Switch)'} | Where-Object {$_.Forwarding -eq 'Disabled'} | Set-NetIPInterface -Forwarding 'Enabled'
+# Get-NetIPInterface | Select-Object ifIndex,InterfaceAlias,AddressFamily,ConnectionState,Forwarding |
+#     Where-Object {$_.InterfaceAlias -eq 'vEthernet (WSL)' -or $_.InterfaceAlias -eq 'vEthernet (Default Switch)'} |
+#     Where-Object {$_.Forwarding -eq 'Disabled'} |
+#     Set-NetIPInterface -Forwarding 'Enabled'
+
 
 ## Get adapter ipv4 adderss which connect to Internet
-# Get-NetIPAddress -AddressFamily IPv4 | `
-#     Where-Object { $_.InterfaceIndex -eq `
-#         (Get-NetConnectionProfile -IPv4Connectivity "Internet" | Select-Object -ExpandProperty InterfaceIndex) `
-#     } | Select-Object -ExpandProperty IPv4Address
+# Get-NetIPAddress -AddressFamily IPv4 |
+#     Where-Object { $_.InterfaceIndex -eq (Get-NetConnectionProfile -IPv4Connectivity "Internet" | Select-Object -ExpandProperty InterfaceIndex) } |
+#     Select-Object -ExpandProperty IPv4Address
+
+
+## Get TCP/UDP connections
+## https://isc.sans.edu/forums/diary/Netstat+Local+and+Remote+new+and+improved+now+with+more+PowerShell/25058/
+# netstat -an
+# Get-NetTCPConnection -State Listen,Established |
+#     Select-Object -Property LocalAddress,LocalPort,RemoteAddress,RemotePort,State,OwningProcess,
+#         @{'Name' = 'ProcessName';'Expression'={(Get-Process -Id $_.OwningProcess).Name}},
+#         @{'Name' = 'Path';'Expression'={(Get-Process -Id $_.OwningProcess).Path}} |
+#     Sort-Object -Property ProcessName,LocalPort |
+#     Format-Table
+# Get-NetTCPConnection -State Listen,Established |
+#     Select-Object -Property LocalAddress,LocalPort,OwningProcess,
+#         @{'Name' = 'ProcessName';'Expression'={(Get-Process -Id $_.OwningProcess).Name}},
+#         @{'Name' = 'Path';'Expression'={(Get-Process -Id $_.OwningProcess).Path}} |
+#     Sort-Object -Property ProcessName,LocalPort |
+#     Format-Table
 
 
 ## Gets the CIM instances of a class from a CIM server

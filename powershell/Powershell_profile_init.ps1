@@ -53,6 +53,7 @@ $InstallModules = @(
     "oh-my-posh"
     "Get-ChildItemColor"
     "PoshFunctions"
+    "PSFzf"
 )
 
 foreach ($TargetModule in $InstallModules) {

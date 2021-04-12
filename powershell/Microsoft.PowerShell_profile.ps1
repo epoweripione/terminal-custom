@@ -15,6 +15,10 @@ Import-Module Posh-git
 # Import-Module oh-my-posh
 # Set-Theme Powerlevel10k-my
 
+## PSFzf
+## https://github.com/kelleyma49/PSFzf
+# Import-Module PSFzf
+
 ## Color coding Get-ChildItem
 # Import-Module Get-ChildItemColor
 

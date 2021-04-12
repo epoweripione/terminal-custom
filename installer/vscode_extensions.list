@@ -169,6 +169,9 @@ hediet.debug-visualizer
 bukas.gbktoutf8
 steoates.autoimport
 wakatime.vscode-wakatime
+# Designer & Components
+iceworks-team.iceworks
+
 # Extra tools
 ms-toolsai.jupyter
 shan.code-settings-sync

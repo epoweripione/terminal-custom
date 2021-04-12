@@ -21,30 +21,9 @@ if [[ ! -x "$(command -v npm)" ]]; then
     exit 0
 fi
 
-# # npm config
-# colorEcho "${BLUE}Setting npm config.."
-# npm config set user 0
-# npm config set unsafe-perm true
-
-# # npm global
-# mkdir -p $HOME/.npm-global
-# npm config set prefix $HOME/.npm-global
-# export PATH=$PATH:$HOME/.npm-global/bin
-
-# # Change npm registry to taobao
-# if [[ -z "$NPM_INSTALLER_NOT_USE_MIRROR" ]]; then
-#     colorEcho "${BLUE}Change npm registry to ${FUCHSIA}taobao${BLUE}..."
-#     npm set registry https://registry.npm.taobao.org
-
-#     npm set disturl https://npm.taobao.org/dist # node-gyp
-#     npm set sass_binary_site https://npm.taobao.org/mirrors/node-sass # node-sass
-#     npm set electron_mirror https://npm.taobao.org/mirrors/electron/ # electron
-#     npm set puppeteer_download_host https://npm.taobao.org/mirrors # puppeteer
-#     npm set chromedriver_cdnurl https://npm.taobao.org/mirrors/chromedriver # chromedriver
-#     npm set operadriver_cdnurl https://npm.taobao.org/mirrors/operadriver # operadriver
-#     npm set phantomjs_cdnurl https://npm.taobao.org/mirrors/phantomjs # phantomjs
-#     npm set selenium_cdnurl https://npm.taobao.org/mirrors/selenium # selenium
-#     npm set node_inspector_cdnurl https://npm.taobao.org/mirrors/node-inspector # node-inspector
+# if [[ -x "$(command -v npm)" ]]; then
+#     [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/nodejs/npm_config.sh" ]] && \
+#         source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/nodejs/npm_config.sh"
 # fi
 
 # npm install -g nrm
@@ -54,8 +33,8 @@ fi
 colorEcho "${BLUE}Installing ${FUCHSIA}cnpm${BLUE}..."
 npm install -g cnpm
 
-colorEcho "${BLUE}Installing ${FUCHSIA}npm-check es-checker eslint tslint jslint jshint standard${BLUE}..."
-npm install -g npm-check es-checker eslint tslint jslint jshint standard
+colorEcho "${BLUE}Installing ${FUCHSIA}npm-check es-checker eslint jslint jshint standard${BLUE}..."
+npm install -g npm-check es-checker eslint jslint jshint standard
 
 colorEcho "${BLUE}Installing ${FUCHSIA}babel webpack traceur${BLUE}..."
 npm install -g @babel/core @babel/cli webpack webpack-cli traceur
@@ -116,6 +95,22 @@ npm install -g puppeteer
 
 # colorEcho "${BLUE}Installing ${FUCHSIA}echarts echarts-gl${BLUE}..."
 # npm install -g echarts echarts-gl
+
+# https://github.com/afc163/fanyi
+colorEcho "${BLUE}Installing ${FUCHSIA}fanyi${BLUE}..."
+npm install -g fanyi
+
+# https://github.com/splash-cli/splash-cli
+colorEcho "${BLUE}Installing ${FUCHSIA}splash-cli${BLUE}..."
+npm install -g splash-cli
+
+# https://github.com/sindresorhus/speed-test
+colorEcho "${BLUE}Installing ${FUCHSIA}speedtest-net${BLUE}..."
+npm install -g speedtest-net
+
+# https://github.com/riyadhalnur/weather-cli
+colorEcho "${BLUE}Installing ${FUCHSIA}weather-cli${BLUE}..."
+npm install -g weather-cli
 
 # Clean npm cache
 # npm cache clean --force
