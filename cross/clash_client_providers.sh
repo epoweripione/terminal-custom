@@ -208,7 +208,7 @@ fi
 
 # Delete lines with empty name
 PROXIES_ALL=$(echo -e "${PROXIES_ALL}" | sed '/name:\s*,/d')
-PROXIES_ALL=$(echo -e "${PROXIES_ALL}" | sed '/,,/,/g')
+PROXIES_ALL=$(echo -e "${PROXIES_ALL}" | sed 's/,,/,/g')
 
 ## Add placeholder for proxy-groups
 # PROXIES_ALL=$(echo -e "${PROXIES_ALL}\n  - {name: FORBIDDEN-PLACEHOLDER, server: forbidden-placeholder.com, port: 0000, type: trojan, password: Trojan}")
