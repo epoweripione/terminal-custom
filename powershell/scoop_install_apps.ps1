@@ -204,6 +204,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "captura"
         # "quicklook"
         "screentogif"
+        "aida64extreme"
         "cpu-z"
         "winfetch"
         "diffinity"

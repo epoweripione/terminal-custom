@@ -97,7 +97,8 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
     curl -fsL --connect-timeout 10 --max-time 30 -o "${DOWNLOAD_FILE}" "${TARGET_URL}"
     if [[ $? != 0 ]]; then
         colorEcho "${RED}    Can't get rules from ${TARGET_URL}!"
-        exit 1
+        continue
+        # exit 1
     fi
 
     [[ ! -s "${DOWNLOAD_FILE}" ]] && continue
@@ -118,7 +119,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
         # Compact proxies
         sed -i 's/^\s*-/-/g' "${DOWNLOAD_FILE}"
         sed -i -e 's/":/: /g' -e 's/:"/: /g' -e 's/",/, /g' -e 's/,"/, /g' -e 's/"//g' "${DOWNLOAD_FILE}"
-        sed -i -e 's/\[/【/g' -e 's/\]/】/g' "${DOWNLOAD_FILE}"
+        sed -i -e 's/\[/【/g' -e 's/\]/】/g' -e 's/|/｜/g' "${DOWNLOAD_FILE}"
 
         # Merge proxies
         if [[ "${TARGET_OPTION}" == *"proxypool"* ]]; then
