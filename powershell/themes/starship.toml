@@ -9,6 +9,7 @@ $time\
 $shlvl\
 $kubernetes\
 $directory\
+$vcsh\
 $git_branch\
 $git_commit\
 $git_state\
@@ -19,6 +20,7 @@ ${custom.docker}\
 $package\
 $cmake\
 $dart\
+$deno\
 $dotnet\
 $elixir\
 $elm\
@@ -36,8 +38,10 @@ $perl\
 $php\
 $purescript\
 $python\
+$red\
 $ruby\
 $rust\
+$scala\
 $swift\
 $terraform\
 $vagrant\
@@ -53,6 +57,7 @@ $cmd_duration\
 $jobs\
 $battery\
 $status\
+$shell\
 [](fg:#5a6374)\
 $line_break\
 $character"""
@@ -106,6 +111,11 @@ symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
+[deno]
+symbol = "🦕 "
+style = "bold fg:bright-cyan bg:#5a6374"
+format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
+
 [directory]
 home_symbol = " ~"
 truncation_length = 5
@@ -115,7 +125,7 @@ style = "bold fg:bright-blue bg:#5a6374"
 read_only_style = "bold fg:bright-red bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$path]($style)[$read_only]($read_only_style)"
 
-[docker]
+[docker_context]
 symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$context]($style)"
@@ -282,7 +292,10 @@ format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[${symbol}${pyenv_prefix}${version}(\\($virtualenv\\))]($style)"
-scan_for_pyfiles = false
+
+[red]
+style = "bold fg:bright-cyan bg:#5a6374"
+format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
 [ruby]
 symbol = " "
@@ -293,6 +306,17 @@ format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
+
+[scala]
+style = "bold fg:bright-cyan bg:#5a6374"
+format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
+
+[shell]
+fish_indicator = ""
+zsh_indicator = ""
+powershell_indicator = ""
+format = "[  ](fg:white bg:#5a6374)[$indicator](bold fg:bright-cyan bg:#5a6374)"
+disabled = true
 
 [shlvl]
 style = "bold fg:bright-cyan bg:#5a6374"
@@ -323,6 +347,11 @@ format = "[  ](fg:white bg:#5a6374)[$symbol$workspace]($style)"
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
+[vcsh]
+symbol = "🆅 "
+style = "bold fg:bright-cyan bg:#5a6374"
+format = "[  ](fg:white bg:#5a6374)[$symbol$repo]($style)"
+
 [zig]
 symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
@@ -338,7 +367,6 @@ disabled = false
 [username]
 style_user = "bold fg:bright-cyan bg:#5a6374"
 style_root = "bold fg:bright-red bg:#5a6374"
-style = "bold fg:bright-cyan bg:#5a6374"
 format = "[$user]($style)"
 show_always = true
 disabled = false

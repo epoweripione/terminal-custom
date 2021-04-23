@@ -56,6 +56,7 @@ $extensions = @(
 	"gera2ld.markmap-vscode"
 	"mushan.vscode-paste-image"
 	"shd101wyy.markdown-preview-enhanced"
+	"orangex4.better-markdown-latex-shortcuts"
     ## nginx
 	"shanoor.vscode-nginx"
     ## plsql

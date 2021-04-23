@@ -118,6 +118,7 @@ gera2ld.markmap-vscode
 mushan.vscode-paste-image
 DavidAnson.vscode-markdownlint
 shd101wyy.markdown-preview-enhanced
+orangex4.better-markdown-latex-shortcuts
 darkriszty.markdown-table-prettify
 yzane.markdown-pdf
 ## nginx
@@ -171,7 +172,6 @@ steoates.autoimport
 wakatime.vscode-wakatime
 # Designer & Components
 iceworks-team.iceworks
-
 # Extra tools
 ms-toolsai.jupyter
 shan.code-settings-sync
