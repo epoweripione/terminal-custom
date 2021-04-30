@@ -63,10 +63,13 @@ $shell\
 $line_break\
 $character"""
 
-# Wait 30 milliseconds for starship to check files under the current directory.
-scan_timeout = 30
+# Timeout for starship to scan files under the current directory (in milliseconds)
+scan_timeout = 50
 
-# Disable the newline at the start of the prompt
+# Timeout for commands executed by starship (in milliseconds)
+command_timeout = 2_000
+
+# Inserts blank line between shell prompts
 add_newline = true
 
 [aws]

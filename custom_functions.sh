@@ -1747,6 +1747,9 @@ function newTmuxSession() {
 # docker pull: Pull multiple images together
 # https://github.com/moby/moby/issues/16106
 function dockerPullImages() {
+    # usage: 
+    # dockerPullImages "node:lts-alpine golang:alpine"
+
     # https://www.linuxjournal.com/content/parallel-shells-xargs-utilize-all-your-cpu-cores-unix-and-windows
     # nproc: the number of installed processors
     # --ignore=N if possible, exclude N processing units

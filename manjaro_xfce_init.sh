@@ -184,11 +184,12 @@ fi
 
 # Fonts
 sudo pacman --noconfirm -S powerline-fonts ttf-symbola ttf-fira-code ttf-sarasa-gothic
+# sudo pacman --noconfirm -S adobe-source-han-sans-cn-fonts adobe-source-han-serif-cn-fonts
 
 # FiraCode Nerd Font Complete Mono
 read -p "Download URL for FiraCode-Mono?[Use github by default]" NerdFont_URL
 [[ -z "$NerdFont_URL" ]] && \
-    NerdFont_URL="https://github.com/epoweripione/terminal-custom/releases/download/v4.0.0/FiraCode-Mono.zip"
+    NerdFont_URL="https://github.com/epoweripione/terminal-custom/releases/download/v5.2.0/FiraCode-Mono.zip"
 
 mkdir -p "$HOME/patched-fonts/FiraCode-Mono" && \
     curl -fSL -o "$HOME/patched-fonts/FiraCode-Mono.zip" ${NerdFont_URL} && \
@@ -209,7 +210,7 @@ cat >> $HOME/.pam_environment <<-EOF
 # fcitx
 GTK_IM_MODULE=fcitx
 QT_IM_MODULE=fcitx
-XMODIFIERS=@im=fcitx
+XMODIFIERS="@im=fcitx"
 EOF
 
 # # Fcitx5 input methods for Chinese Pinyin
@@ -574,6 +575,9 @@ sudo pacman --noconfirm -S filelight gotop easystroke peek redshift
 
 # Terminal
 sudo pacman --noconfirm -S konsole
+
+# WPS
+sudo pacman --noconfirm -S wps-office ttf-wps-fonts wps-office-mui-zh-cn
 
 # # eDEX-UI
 # # https://github.com/GitSquared/edex-ui
