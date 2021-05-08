@@ -119,7 +119,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
         # Compact proxies
         sed -i 's/^\s*-/-/g' "${DOWNLOAD_FILE}"
         sed -i -e 's/":/: /g' -e 's/:"/: /g' -e 's/",/, /g' -e 's/,"/, /g' -e 's/"//g' "${DOWNLOAD_FILE}"
-        sed -i -e 's/\[/【/g' -e 's/\]/】/g' -e 's/|/｜/g' "${DOWNLOAD_FILE}"
+        sed -i -e 's/\[/【/g' -e 's/\]/】/g' -e 's/|/｜/g' -e 's/\?/？/g' -e 's/\&/δ/g' "${DOWNLOAD_FILE}"
 
         # Merge proxies
         if [[ "${TARGET_OPTION}" == *"proxypool"* ]]; then
