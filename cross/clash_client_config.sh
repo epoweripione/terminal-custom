@@ -98,7 +98,7 @@ if [[ -s "$SUB_LIST_FILE" ]]; then
     for TargetURL in "${SUB_LIST[@]}"; do
         [[ -z "$TargetURL" ]] && continue
         colorEcho "${BLUE}Downloading clash client connfig from ${FUCHSIA}${TargetURL}${BLUE}..."
-        curl -fSL --connect-timeout 10 --max-time 60 \
+        curl -fSL --noproxy "*" --connect-timeout 10 --max-time 60 \
             -o "$SUB_DOWNLOAD_FILE" "$TargetURL"
         if [[ $? -eq 0 ]]; then
             sed -i "s/^allow-lan:.*/allow-lan: false/" "$SUB_DOWNLOAD_FILE"
@@ -575,5 +575,6 @@ if [[ -n "$COPY_TO_FILE" ]]; then
     fi
 fi
 
+cd "${CURRENT_DIR}"
 
 colorEcho "${BLUE}  Done!"

@@ -368,30 +368,39 @@ function use_clash() {
             }
 
         if [[ $(systemctl is-enabled clash 2>/dev/null) ]]; then
-            ## get clash config
-            # [[ ! -s "$last_update" ]] && \
-            #     date -d "1 day ago" +"%F" > "$last_update"
-
-            ## only update config one time per day
+            # # get clash config
+            # [[ ! -s "$last_update" ]] && date -d "1 day ago" +"%F" > "$last_update"
+            # # only update config one time per day
             # if [[ $(date -d $(date +"%F") +"%s") -gt $(date -d $(head -n1 "$last_update") +"%s") ]]; then
             #     [[ -s "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh" ]] && \
             #         bash "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh"
-            #     # restart clash and sleep 3s wait for clash ready
             #     sudo systemctl restart clash && sleep 3
-
             #     date +"%F" > "$last_update"
             # fi
 
-            if check_socks5_proxy_up "${PROXY_URL}:${MIXED_PORT}"; then
+            if check_socks5_proxy_up "${PROXY_URL}:${SOCKS_PORT}"; then
                 return 0
+            else
+                if [[ -s "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh" ]]; then
+                    bash "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh"
+                    sudo systemctl restart clash && sleep 3
+                fi
             fi
 
             if check_socks5_proxy_up "${PROXY_URL}:${SOCKS_PORT}"; then
                 return 0
             else
-                [[ -s "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh" ]] && \
-                    bash "${MY_SHELL_SCRIPTS}/cross/clash_client_config.sh"
-                sudo systemctl restart clash && sleep 3
+                if [[ -s "${MY_SHELL_SCRIPTS}/cross/clash_client_subscribe.sh" ]]; then
+                    # random subscription from list file
+                    bash "${MY_SHELL_SCRIPTS}/cross/clash_client_subscribe.sh" 0
+                    sudo systemctl restart clash && sleep 3
+                fi
+            fi
+
+            if check_socks5_proxy_up "${PROXY_URL}:${SOCKS_PORT}"; then
+                return 0
+            else
+                return 1
             fi
         fi
     fi
@@ -429,5 +438,4 @@ function main() {
 }
 
 
-CURL_SPECIAL_CONFIG=${CURL_SPECIAL_CONFIG:-"$HOME/.curl_socks5"}
 main

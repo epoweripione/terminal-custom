@@ -28,8 +28,6 @@ if [[ "$(uname -r)" =~ "microsoft" ]]; then
         source "$HOME/terminal-custom/wsl/wsl2-map-win-localhost.sh"
 fi
 
-CURL_SPECIAL_CONFIG=${CURL_SPECIAL_CONFIG:-"$HOME/.curl_socks5"}
-
 # OS Type: darwin, windows, linux, bsd, solaris
 # Arch(spruce_type): amd64, 386, arm, arm64, mips64le, mips64, mipsle, mips, s390x, ppc64le, ppc64, riscv64
 # VDIS: 64, 32, arm, arm64, mips64le, mips64, mipsle, mips, s390x, ppc64le, ppc64, riscv64

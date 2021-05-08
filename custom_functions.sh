@@ -631,9 +631,83 @@ function set_proxy() {
     export NO_PROXY="${NO_PROXY_LISTS}"
 }
 
+function get_proxy() {
+    local proxy_output1 proxy_output2
+
+    [[ -n "${http_proxy}" ]] && colorEcho "${BLUE}http_proxy=${FUCHSIA}${http_proxy}"
+    [[ -n "${https_proxy}" ]] && colorEcho "${BLUE}https_proxy=${FUCHSIA}${https_proxy}"
+    [[ -n "${ftp_proxy}" ]] && colorEcho "${BLUE}ftp_proxy=${FUCHSIA}${ftp_proxy}"
+    [[ -n "${all_proxy}" ]] && colorEcho "${BLUE}all_proxy=${FUCHSIA}${all_proxy}"
+    [[ -n "${HTTP_PROXY}" ]] && colorEcho "${BLUE}HTTP_PROXY=${FUCHSIA}${HTTP_PROXY}"
+    [[ -n "${HTTPS_PROXY}" ]] && colorEcho "${BLUE}HTTPS_PROXY=${FUCHSIA}${HTTPS_PROXY}"
+    [[ -n "${FTP_PROXY}" ]] && colorEcho "${BLUE}FTP_PROXY=${FUCHSIA}${FTP_PROXY}"
+    [[ -n "${ALL_PROXY}" ]] && colorEcho "${BLUE}ALL_PROXY=${FUCHSIA}${ALL_PROXY}"
+
+    if [[ -x "$(command -v git)" ]]; then
+        proxy_output1=$(git config --global --list | grep -E "http\.|https\.")
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}git proxy:\n${FUCHSIA}${proxy_output1}"
+    fi
+
+    if [[ -x "$(command -v npm)" ]]; then
+        proxy_output1=$(npm config get proxy | grep -v "null")
+        proxy_output2=$(npm config get https-proxy | grep -v "null")
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}npm proxy:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output2}" ]] && colorEcho "${FUCHSIA}${proxy_output2}"
+    fi
+
+    if [[ -x "$(command -v yarn)" ]]; then
+        proxy_output1=$(yarn config get proxy | grep -v "null")
+        proxy_output2=$(yarn config get https-proxy | grep -v "null")
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}yarn proxy:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output2}" ]] && colorEcho "${FUCHSIA}${proxy_output2}"
+    fi
+
+    if [[ -s "/etc/apt/apt.conf.d/80proxy" ]]; then
+        proxy_output1=$(cat "/etc/apt/apt.conf.d/80proxy")
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}apt proxy:\n${FUCHSIA}${proxy_output1}"
+    fi
+
+    if [[ -s "/etc/yum.conf" ]]; then
+        proxy_output1=$(grep "proxy=" "/etc/yum.conf")
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}yum proxy:\n${FUCHSIA}${proxy_output1}"
+    fi
+
+    if [[ -s "$HOME/.wgetrc" ]]; then
+        proxy_output1=$(cat "$HOME/.wgetrc")
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}wget proxy:\n${FUCHSIA}${proxy_output1}"
+    fi
+
+    if [[ -s "$HOME/.curlrc" ]]; then
+        proxy_output1=$(cat "$HOME/.curlrc")
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}curl proxy:\n${FUCHSIA}${proxy_output1}"
+    fi
+
+    if [[ -s "$HOME/.curl_socks5" ]]; then
+        proxy_output1=$(cat "$HOME/.curl_socks5")
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}curl proxy:\n${FUCHSIA}${proxy_output1}"
+    fi
+
+    if [[ -s "$HOME/.gradle/gradle.properties" ]]; then
+        proxy_output1=$(grep "systemProp.http" "$HOME/.gradle/gradle.properties")
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}gradle proxy:\n${FUCHSIA}${proxy_output1}"
+    fi
+
+    if [[ -s "$HOME/.gemrc" ]]; then
+        proxy_output1=$(grep "http_proxy: " "$HOME/.gemrc")
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}gem proxy:\n${FUCHSIA}${proxy_output1}"
+    fi
+}
+
 function clear_proxy() {
     unset {http,https,ftp,all}_proxy
     unset {HTTP,HTTPS,FTP,ALL}_PROXY
+}
+
+function clear_all_proxy() {
+    clear_proxy
+    set_git_proxy
+    set_curl_proxy
+    set_wget_proxy
 }
 
 function proxy_cmd() {
@@ -1275,10 +1349,7 @@ function set_global_proxy() {
 
         return 0
     else
-        clear_proxy
-        set_git_proxy
-        set_curl_proxy
-        set_wget_proxy
+        clear_all_proxy
 
         return 1
     fi
