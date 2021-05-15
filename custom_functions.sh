@@ -645,56 +645,56 @@ function get_proxy() {
 
     if [[ -x "$(command -v git)" ]]; then
         proxy_output1=$(git config --global --list | grep -E "http\.|https\.")
-        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}git proxy:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}git proxies:\n${FUCHSIA}${proxy_output1}"
     fi
 
-    if [[ -x "$(command -v npm)" ]]; then
+    if [[ -x "$(command -v node)" && -x "$(command -v npm)" ]]; then
         proxy_output1=$(npm config get proxy | grep -v "null")
         proxy_output2=$(npm config get https-proxy | grep -v "null")
-        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}npm proxy:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}npm proxies:\n${FUCHSIA}${proxy_output1}"
         [[ -n "${proxy_output2}" ]] && colorEcho "${FUCHSIA}${proxy_output2}"
     fi
 
     if [[ -x "$(command -v yarn)" ]]; then
         proxy_output1=$(yarn config get proxy | grep -v "null")
         proxy_output2=$(yarn config get https-proxy | grep -v "null")
-        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}yarn proxy:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}yarn proxies:\n${FUCHSIA}${proxy_output1}"
         [[ -n "${proxy_output2}" ]] && colorEcho "${FUCHSIA}${proxy_output2}"
     fi
 
     if [[ -s "/etc/apt/apt.conf.d/80proxy" ]]; then
         proxy_output1=$(cat "/etc/apt/apt.conf.d/80proxy")
-        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}apt proxy:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}apt proxies:\n${FUCHSIA}${proxy_output1}"
     fi
 
     if [[ -s "/etc/yum.conf" ]]; then
         proxy_output1=$(grep "proxy=" "/etc/yum.conf")
-        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}yum proxy:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}yum proxies:\n${FUCHSIA}${proxy_output1}"
     fi
 
     if [[ -s "$HOME/.wgetrc" ]]; then
         proxy_output1=$(cat "$HOME/.wgetrc")
-        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}wget proxy:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}wget proxies:\n${FUCHSIA}${proxy_output1}"
     fi
 
     if [[ -s "$HOME/.curlrc" ]]; then
         proxy_output1=$(cat "$HOME/.curlrc")
-        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}curl proxy:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}curl proxies:\n${FUCHSIA}${proxy_output1}"
     fi
 
     if [[ -s "$HOME/.curl_socks5" ]]; then
         proxy_output1=$(cat "$HOME/.curl_socks5")
-        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}curl proxy:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}curl proxies:\n${FUCHSIA}${proxy_output1}"
     fi
 
     if [[ -s "$HOME/.gradle/gradle.properties" ]]; then
         proxy_output1=$(grep "systemProp.http" "$HOME/.gradle/gradle.properties")
-        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}gradle proxy:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}gradle proxies:\n${FUCHSIA}${proxy_output1}"
     fi
 
     if [[ -s "$HOME/.gemrc" ]]; then
         proxy_output1=$(grep "http_proxy: " "$HOME/.gemrc")
-        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}gem proxy:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}gem proxies:\n${FUCHSIA}${proxy_output1}"
     fi
 }
 
