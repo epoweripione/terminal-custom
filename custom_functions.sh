@@ -1742,11 +1742,20 @@ function checkPackageInstalled() {
 # Check pacakge exist and not installed
 function checkPackageNeedInstall() {
     local PackageName=${1:-""}
+    local PackageInfo=""
+    local PackageExist="yes"
 
     [[ -n "${PackageName}" ]] || return 1
     [[ -x "$(command -v pacman)" ]] || return 1
 
-    if pacman -Si "${PackageName}" >/dev/null 2>&1; then
+    PackageInfo=$(pacman -Si "${PackageName}" 2>&1)
+    if [[ $? -eq 0 ]]; then
+        [[ "${PackageInfo}" =~ "Error:" ]] && PackageExist="no"
+    else
+        PackageExist="no"
+    fi
+
+    if [[ "${PackageExist}" == "yes" ]]; then
         if ! checkPackageInstalled "${PackageName}"; then
             return 0
         fi
