@@ -21,17 +21,22 @@ fi
 set_proxy_mirrors_env
 
 
-# python3 & pip
-# bash <(curl -fsSL https://python3.netlify.com/install.sh)
+## python3
+# sudo pacman -S python3
+
+## pip
+# python3 -m pip install --upgrade pip --user
+
+## Install and use pip in a local directory without root/sudo access
+## https://gist.github.com/saurabhshri/46e4069164b87a708b39d947e4527298
+# .local/bin/pip install <package_name> --user
+
 
 # fix `pip list` warning
 if [[ ! $(grep "format=columns" "$HOME/.pip/pip.conf") ]]; then
     mkdir -p $HOME/.pip && \
         echo -e "[global]\nformat=columns" >> "$HOME/.pip/pip.conf"
 fi
-
-# pip upgrade
-# python -m pip install --upgrade pip
 
 # pip mirror
 # alias pip="pip --proxy 127.0.0.1:8080"

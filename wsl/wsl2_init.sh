@@ -65,13 +65,16 @@ source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/wsl/wsl2-map-win-localhost.sh
 
 
 # Install packages
-# Use USTC mirror & Install pre-requisite packages
+# Use apt mirror & Install pre-requisite packages
 if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
     colorEcho "${BLUE}Setting apt mirror..."
+    # mirrors.tuna.tsinghua.edu.cn
+    # mirrors.ustc.edu.cn
+    APT_MIRROR_URL="mirrors.sjtug.sjtu.edu.cn"
     sudo sed -i \
-        -e 's|ftp.debian.org|mirrors.tuna.tsinghua.edu.cn|g' \
-        -e 's|deb.debian.org|mirrors.tuna.tsinghua.edu.cn|g' \
-        -e's|security.debian.org|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list
+        -e "s|ftp.debian.org|${APT_MIRROR_URL}|g" \
+        -e "s|deb.debian.org|${APT_MIRROR_URL}|g" \
+        -e "s|security.debian.org|${APT_MIRROR_URL}|g" /etc/apt/sources.list
 fi
 
 colorEcho "${BLUE}Installing ${FUCHSIA}pre-requisite packages${BLUE}..."
@@ -84,7 +87,7 @@ sudo apt update && \
 colorEcho "${BLUE}Add ${FUCHSIA}custom repositories${BLUE}..."
 if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
     # Use https mirror
-    sudo sed -i 's|http://mirrors.tuna.tsinghua.edu.cn|https://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list
+    sudo sed -i "s|http://${APT_MIRROR_URL}|https://${APT_MIRROR_URL}|g" /etc/apt/sources.list
 fi
 
 ## git lfs

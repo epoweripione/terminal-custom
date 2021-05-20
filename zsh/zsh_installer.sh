@@ -169,6 +169,7 @@ if [[ -x "$(command -v pacman)" ]]; then
         gcc
         make
         rsync
+        python3
         xsel
         bind-utils
         dnsutils

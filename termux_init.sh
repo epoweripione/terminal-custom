@@ -66,10 +66,13 @@ extra-keys = [ \
     ]
 EOF
 
-# apt mirror
-colorEcho "${BLUE}Setting ${FUCHSIA}apt mirror${BLUE}..."
-sed -i 's/^deb /# deb /g' "$PREFIX/etc/apt/sources.list"
-echo "deb https://mirrors.tuna.tsinghua.edu.cn/termux stable main" >> "$PREFIX/etc/apt/sources.list"
+## apt mirror
+# apt edit-sources
+# termux-change-repo
+
+# colorEcho "${BLUE}Setting ${FUCHSIA}apt mirror${BLUE}..."
+# sed -i 's/^deb /# deb /g' "$PREFIX/etc/apt/sources.list"
+# echo "deb https://mirrors.tuna.tsinghua.edu.cn/termux stable main" >> "$PREFIX/etc/apt/sources.list"
 
 # install packages
 colorEcho "${BLUE}Installing ${FUCHSIA}packages${BLUE}..."

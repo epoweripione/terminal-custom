@@ -377,6 +377,11 @@ fi
 #     # source $HOME/miniconda3/bin/activate
 # fi
 
+# pip local install
+if [[ -d "$HOME/.local/bin" ]]; then
+    export PATH=$PATH:$HOME/.local/bin
+fi
+
 # nvs
 if [[ -d "$HOME/.nvs" ]]; then
     if type 'nvs' 2>/dev/null | grep -q 'function'; then
@@ -446,22 +451,6 @@ if [[ -d "$HOME/.sdkman" ]]; then
         export SDKMAN_DIR="$HOME/.sdkman"
         [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
     fi
-fi
-
-# proxychains4 aliases
-# if [[ -x "$(command -v proxychains4)" ]]; then
-#     alias proxywan='proxychains4'
-#     alias proxylan='proxychains4 -f /etc/proxychains/proxychains_lan.conf'
-# fi
-
-# multi-v2ray
-if [[ -d "/usr/local/multi-v2ray" ]]; then
-    if [[ -z "$PYTHONPATH" ]]; then
-        export PYTHONPATH=/usr/local/multi-v2ray
-    else
-        export PYTHONPATH=$PYTHONPATH:/usr/local/multi-v2ray
-    fi
-    export PYTHONIOENCODING=utf-8
 fi
 
 # lazydocker aliases
