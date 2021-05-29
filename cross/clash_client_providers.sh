@@ -91,14 +91,39 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
     TARGET_URL=$(echo ${READLINE} | cut -d' ' -f2)
     TARGET_OPTION=$(echo ${READLINE} | cut -d' ' -f3)
     TARGET_FILTER=$(echo ${READLINE} | cut -d' ' -f4)
+    TARGET_TYPE_FILTER=$(echo ${READLINE} | cut -d' ' -f5)
 
     colorEcho "${BLUE}  Getting ${FUCHSIA}${TARGET_FILE}${BLUE}..."
     DOWNLOAD_FILE="${WORKDIR}/${TARGET_FILE}.yml"
+
     curl -fsL --connect-timeout 10 --max-time 30 -o "${DOWNLOAD_FILE}" "${TARGET_URL}"
     if [[ $? != 0 ]]; then
-        colorEcho "${RED}    Can't get rules from ${TARGET_URL}!"
-        continue
-        # exit 1
+        colorEcho "${RED}    Error when downloading from ${TARGET_URL}!"
+        [[ "${TARGET_OPTION}" == "rules" ]] && exit 1 || continue
+    fi
+
+    if [[ "${TARGET_OPTION}" =~ "scrap" ]]; then
+        SCRAP_PATTERN=(`echo "${TARGET_OPTION}" | sed 's/→/\n/g'`)
+        SCRAP_SUCCESS="no"
+        SCRAP_INDEX=0
+        for TargetPattern in "${SCRAP_PATTERN[@]}"; do
+            SCRAP_INDEX=$((${SCRAP_INDEX} + 1))
+            [[ ${SCRAP_INDEX} -eq 1 ]] && continue
+
+            sed -i -e 's/\&amp;/\&/g' -e 's/\&\&/\&/g' "${DOWNLOAD_FILE}"
+            TARGET_URL=$(cat "${DOWNLOAD_FILE}" | grep -o -P "${TargetPattern}" | head -n1)
+
+            TARGET_URL=$(echo "${TARGET_URL}" | grep -o -P "(((ht|f)tps?):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?")
+            [[ -z "${TARGET_URL}" ]] && SCRAP_SUCCESS="no" && break
+
+            colorEcho "${BLUE}  Scraping from ${FUCHSIA}${TARGET_URL}${BLUE}..."
+            curl -fsL --connect-timeout 10 --max-time 30 -o "${DOWNLOAD_FILE}" "${TARGET_URL}"
+            [[ $? != 0 ]] && SCRAP_SUCCESS="no" && break
+
+            SCRAP_SUCCESS="yes"
+        done
+
+        [[ "${SCRAP_SUCCESS}" == "no" ]] && exit 1 || continue
     fi
 
     [[ ! -s "${DOWNLOAD_FILE}" ]] && continue
@@ -122,10 +147,23 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
         sed -i -e 's/\[/【/g' -e 's/\]/】/g' -e 's/|/｜/g' -e 's/\?/？/g' -e 's/\&/δ/g' "${DOWNLOAD_FILE}"
 
         # Merge proxies
-        if [[ "${TARGET_OPTION}" == *"proxypool"* ]]; then
+        TARGET_PROXIES=""
+        if [[ "${TARGET_OPTION}" == *"full"* ]]; then
+            PROXY_START_LINE=$(grep -E -n "^proxies:" "${DOWNLOAD_FILE}" | cut -d: -f1)
+            GROUP_START_LINE=$(grep -E -n "^proxy-groups:" "${DOWNLOAD_FILE}" | cut -d: -f1)
+            if [[ ${PROXY_START_LINE} -gt 0 && ${GROUP_START_LINE} -gt 0 && ${GROUP_START_LINE} -gt ${PROXY_START_LINE} ]]; then
+                PROXY_START_LINE=$((${PROXY_START_LINE} + 1))
+                PROXY_END_LINE=$((${GROUP_START_LINE} - 1))
+                TARGET_PROXIES=$(sed -n "${PROXY_START_LINE},${PROXY_END_LINE} p" "${DOWNLOAD_FILE}")
+            fi
+        elif [[ "${TARGET_OPTION}" == *"proxypool"* ]]; then
             TARGET_PROXIES=$(cat "${DOWNLOAD_FILE}" | sed -e '1d' -e '$d')
         else
             TARGET_PROXIES=$(cat "${DOWNLOAD_FILE}" | sed '1d')
+        fi
+
+        if [[ -n "${TARGET_TYPE_FILTER}" ]]; then
+            TARGET_PROXIES=$(echo "${TARGET_PROXIES}" | grep -E "type:\s*(${TARGET_TYPE_FILTER}),")
         fi
 
         PROXY_LIST=()
