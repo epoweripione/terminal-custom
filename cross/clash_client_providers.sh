@@ -98,14 +98,16 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
 
     curl -fsL --connect-timeout 10 --max-time 30 -o "${DOWNLOAD_FILE}" "${TARGET_URL}"
     if [[ $? != 0 ]]; then
-        colorEcho "${RED}    Error when downloading from ${TARGET_URL}!"
+        colorEcho "${RED}    Error when downloading from ${FUCHSIA}${TARGET_URL}${RED}!"
         [[ "${TARGET_OPTION}" == "rules" ]] && exit 1 || continue
     fi
 
     if [[ "${TARGET_OPTION}" =~ "scrap" ]]; then
-        SCRAP_PATTERN=(`echo "${TARGET_OPTION}" | sed 's/→/\n/g'`)
+        SCRAP_PATTERN=()
         SCRAP_SUCCESS="no"
         SCRAP_INDEX=0
+
+        SCRAP_PATTERN=(`echo "${TARGET_OPTION}" | sed 's/→/\n/g'`)
         for TargetPattern in "${SCRAP_PATTERN[@]}"; do
             SCRAP_INDEX=$((${SCRAP_INDEX} + 1))
             [[ ${SCRAP_INDEX} -eq 1 ]] && continue
@@ -116,14 +118,14 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
             TARGET_URL=$(echo "${TARGET_URL}" | grep -o -P "(((ht|f)tps?):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?")
             [[ -z "${TARGET_URL}" ]] && SCRAP_SUCCESS="no" && break
 
-            colorEcho "${BLUE}  Scraping from ${FUCHSIA}${TARGET_URL}${BLUE}..."
+            colorEcho "${BLUE}    Scraping from ${FUCHSIA}${TARGET_URL}${BLUE}..."
             curl -fsL --connect-timeout 10 --max-time 30 -o "${DOWNLOAD_FILE}" "${TARGET_URL}"
             [[ $? != 0 ]] && SCRAP_SUCCESS="no" && break
 
             SCRAP_SUCCESS="yes"
         done
 
-        [[ "${SCRAP_SUCCESS}" == "no" ]] && exit 1 || continue
+        [[ "${SCRAP_SUCCESS}" == "no" ]] && continue
     fi
 
     [[ ! -s "${DOWNLOAD_FILE}" ]] && continue
@@ -145,6 +147,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
         sed -i 's/^\s*-/-/g' "${DOWNLOAD_FILE}"
         sed -i -e 's/":/: /g' -e 's/:"/: /g' -e 's/",/, /g' -e 's/,"/, /g' -e 's/"//g' "${DOWNLOAD_FILE}"
         sed -i -e 's/\[/【/g' -e 's/\]/】/g' -e 's/|/｜/g' -e 's/\?/？/g' -e 's/\&/δ/g' "${DOWNLOAD_FILE}"
+        sed -i -e 's/ @/ /g' "${DOWNLOAD_FILE}"
 
         # Merge proxies
         TARGET_PROXIES=""
