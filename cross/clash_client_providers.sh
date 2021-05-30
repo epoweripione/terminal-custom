@@ -259,10 +259,25 @@ PROXIES_ALL=$(echo -e "${PROXIES_ALL}" | sed 's/,,/,/g')
 sort_array PROXY_LIST_ALL
 
 PROXY_USE_ALL=""
+PROXY_TYPE_ALL=()
 for TargetName in "${PROXY_LIST_ALL[@]}"; do
     [[ -n "${PROXY_USE_ALL}" ]] && \
         PROXY_USE_ALL=$(echo -e "${PROXY_USE_ALL}\n      - ${TargetName}") || \
         PROXY_USE_ALL="      - ${TargetName}"
+
+    TargetName=$(echo "${TargetName}" \
+        | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
+        | sed 's/]/\\&/g')
+
+    TargetLine=$(echo "${PROXIES_ALL}" | grep -E "name: ${TargetName},")
+
+    TargetType=$(echo "${TargetLine}" \
+        | sed -rn "s/.*type:([^,{}]+).*/\1/ip" \
+        | sed -e "s/^\s//" -e "s/\s$//" \
+        | sed -e "s/^\"//" -e "s/\"$//")
+
+    [[ "${TargetType}" == "ss" || "${TargetType}" == "ssr" ]] && TargetType="shadowsocks"
+    PROXY_TYPE_ALL+=("${TargetType}")
 done
 
 ## Add proxies to all
@@ -316,12 +331,14 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
     TARGET_LINE=$(echo ${READLINE} | cut -d':' -f1)
     TARGET_TAG=$(echo ${READLINE} | cut -d'-' -f2)
     TARGET_GROUP=$(echo ${READLINE} | cut -d'-' -f3)
+    TARGET_FILTER=$(echo ${READLINE} | cut -d'-' -f4)
 
     LINE_END=$((${TARGET_LINE} - 1))
 
-    colorEcho "${BLUE}    Generating ${FUCHSIA}${TARGET_TAG}${BLUE}..."
-    CONTENT_PREFIX=$(sed -n "${LINE_START},${LINE_END} p" "${CLASH_CONFIG}")
+    [[ -n "${TARGET_FILTER}" ]] && MSG_INFO="${TARGET_FILTER}" || MSG_INFO="${TARGET_TAG}"
+    colorEcho "${BLUE}    Generating ${FUCHSIA}${MSG_INFO}${BLUE}..."
 
+    CONTENT_PREFIX=$(sed -n "${LINE_START},${LINE_END} p" "${CLASH_CONFIG}")
     CONTENT_TAG=""
     [[ -n "${TARGET_GROUP}" ]] && CONTENT_IS_GROUP="yes" || CONTENT_IS_GROUP="no"
     case "${TARGET_TAG}" in
@@ -333,6 +350,19 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
             ;;
         "rules")
             CONTENT_TAG="${RULES}"
+            ;;
+        "type")
+            # filter by protocol type
+            PROXY_INDEX=-1
+            for TargetName in "${PROXY_LIST_ALL[@]}"; do
+                PROXY_INDEX=$((${PROXY_INDEX} + 1))
+
+                if echo "${PROXY_TYPE_ALL[$PROXY_INDEX]}" | grep -Eq "${TARGET_FILTER}"; then
+                    [[ -n "${CONTENT_TAG}" ]] && \
+                        CONTENT_TAG=$(echo -e "${CONTENT_TAG}\n      - ${TargetName}") || \
+                        CONTENT_TAG="      - ${TargetName}"
+                fi
+            done
             ;;
         "OTHERS")
             for TargetName in "${PROXY_LIST_ALL[@]}"; do

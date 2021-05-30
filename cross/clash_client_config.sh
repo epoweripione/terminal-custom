@@ -372,10 +372,7 @@ if [[ "$OPTIMIZE_OPTION" == "yes" && -n "$PROXY" && -n "$PROXY_GROUP" ]]; then
         done
     fi
 
-    PROXY_INDEX=-1
     for TargetName in "${PROXY_NAME[@]}"; do
-        PROXY_INDEX=$((${PROXY_INDEX} + 1))
-
         [[ -z "$TargetName" ]] && continue
 
         TargetName=$(echo "${TargetName}" \

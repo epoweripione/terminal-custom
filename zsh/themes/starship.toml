@@ -67,7 +67,7 @@ $character"""
 scan_timeout = 50
 
 # Timeout for commands executed by starship (in milliseconds)
-command_timeout = 2_000
+command_timeout = 3_000
 
 # Inserts blank line between shell prompts
 add_newline = true
