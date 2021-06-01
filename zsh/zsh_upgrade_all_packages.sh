@@ -191,6 +191,10 @@ fi
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/exa_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/exa_installer.sh"
 
+[[ -s "${MY_SHELL_SCRIPTS}/installer/fd_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/fd_installer.sh"
+
+[[ -s "${MY_SHELL_SCRIPTS}/installer/as-tree_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/as-tree_installer.sh"
+
 
 # Update only(manual install)
 IS_UPDATE_ONLY="yes"

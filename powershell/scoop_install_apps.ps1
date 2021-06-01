@@ -233,6 +233,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "ventoy"
         "croc"
         "duf"
+        "fd"
         "treesize-free"
         ## markdown editor
         "pandoc"

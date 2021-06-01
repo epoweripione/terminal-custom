@@ -523,6 +523,14 @@ if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
     get_weather_custom
 fi
 
+# use fd to generate input for the command-line fuzzy finder fzf
+if [[ -x "$(command -v fzf)" && -x "$(command -v fd)" ]]; then
+    # export FZF_DEFAULT_COMMAND='fd --type file'
+    export FZF_DEFAULT_COMMAND="fd --type file --color=always"
+    export FZF_DEFAULT_OPTS="--ansi"
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+fi
+
 # fzf-tab-completion
 # https://github.com/lincheney/fzf-tab-completion
 if [[ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab-completion" ]]; then

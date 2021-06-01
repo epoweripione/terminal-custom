@@ -141,8 +141,6 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
         FILELIST+=("${TARGET_FILE}")
         FILEOPTION+=("${TARGET_OPTION}")
 
-        TARGET_LIST_FILE="${WORKDIR}/${TARGET_FILE}.list"
-
         # Compact proxies
         sed -i 's/^\s*-/-/g' "${DOWNLOAD_FILE}"
         sed -i -e 's/":/: /g' -e 's/:"/: /g' -e 's/",/, /g' -e 's/,"/, /g' -e 's/"//g' "${DOWNLOAD_FILE}"
@@ -169,7 +167,8 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
             TARGET_PROXIES=$(echo "${TARGET_PROXIES}" | grep -E "type:\s*(${TARGET_TYPE_FILTER}),")
         fi
 
-        PROXY_LIST=()
+        PROXY_NAME=()
+        PROXY_NEW_NAME=()
         PROXY_DELETE=()
         while read -r line; do
             [[ -z "${line}" ]] && continue
@@ -186,7 +185,14 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
 
             [[ -z "${TargetName}" || -z "${TargetServer}" ]] && continue
 
-            if [[ " ${PROXY_LIST_ALL[@]} " =~ " ${TargetName} " ]]; then
+            # Rename node name contains only numbers & spaces & special characters
+            if echo "${TargetName}" | grep -Eq "^[[:digit:][:space:][:punct:]]+$"; then
+                TargetNewName="💤${TargetName}"
+            else
+                TargetNewName="${TargetName}"
+            fi
+
+            if [[ " ${PROXY_LIST_ALL[@]} " =~ " ${TargetNewName} " ]]; then
                 PROXY_DELETE+=("${TargetName}")
             else
                 if [[ "${TARGET_OPTION}" == *"proxypool"* && " ${PROXY_SERVER_ALL[@]} " =~ " ${TargetServer} " ]]; then
@@ -196,13 +202,15 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
                         if echo "${TargetName}" | grep -Eq "${TARGET_FILTER}"; then
                             PROXY_DELETE+=("${TargetName}")
                         else
-                            PROXY_LIST+=("${TargetName}")
-                            PROXY_LIST_ALL+=("${TargetName}")
+                            PROXY_NAME+=("${TargetName}")
+                            PROXY_NEW_NAME+=("${TargetNewName}")
+                            PROXY_LIST_ALL+=("${TargetNewName}")
                             PROXY_SERVER_ALL+=("${TargetServer}")
                         fi
                     else
-                        PROXY_LIST+=("${TargetName}")
-                        PROXY_LIST_ALL+=("${TargetName}")
+                        PROXY_NAME+=("${TargetName}")
+                        PROXY_NEW_NAME+=("${TargetNewName}")
+                        PROXY_LIST_ALL+=("${TargetNewName}")
                         PROXY_SERVER_ALL+=("${TargetServer}")
                     fi
                 fi
@@ -216,9 +224,21 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
             TARGET_PROXIES=$(echo "${TARGET_PROXIES}" | sed "/name:\s*${TargetName},/d")
         done
 
-        # Proxy name list
-        for TargetName in "${PROXY_LIST[@]}"; do
-            echo "      - ${TargetName}" >> "${TARGET_LIST_FILE}"
+        # Rename node name contains only numbers & spaces & special characters
+        PROXY_INDEX=-1
+        for TargetName in "${PROXY_NAME[@]}"; do
+            PROXY_INDEX=$((${PROXY_INDEX} + 1))
+
+            TargetNewName="${PROXY_NEW_NAME[$PROXY_INDEX]}"
+            if [[ "${TargetName}" != "${TargetNewName}" ]]; then
+                TargetName=$(echo "${TargetName}" \
+                    | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
+                    | sed 's/]/\\&/g')
+                TargetNewName=$(echo "${TargetNewName}" \
+                    | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
+                    | sed 's/]/\\&/g')
+                TARGET_PROXIES=$(echo "${TARGET_PROXIES}" | sed "s/name:\s*${TargetName},/name: ${TargetNewName},/")
+            fi
         done
 
         case "${TARGET_OPTION}" in
