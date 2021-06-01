@@ -240,9 +240,10 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
         for TargetName in "${PROXY_NAME[@]}"; do
             PROXY_INDEX=$((${PROXY_INDEX} + 1))
 
-            echo "      - ${TargetName}" >> "${TARGET_LIST_FILE}"
-
             TargetNewName="${PROXY_NEW_NAME[$PROXY_INDEX]}"
+
+            echo "      - ${TargetNewName}" >> "${TARGET_LIST_FILE}"
+
             if [[ "${TargetName}" != "${TargetNewName}" ]]; then
                 TargetName=$(echo "${TargetName}" \
                     | sed 's/[\\\/\:\*\?\|\$\&\#\[\^\+\.\=\!\"]/\\&/g' \
