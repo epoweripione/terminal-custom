@@ -153,12 +153,12 @@ fi
 
 
 # fzf
-if [[ ! -x "$(command -v fzf)" ]] && [[ -x "$(command -v pacman)" ]]; then
-    if checkPackageNeedInstall "fzf"; then
-        colorEcho "${BLUE}Installing ${FUCHSIA}fzf${BLUE}..."
-        sudo pacman --noconfirm -S fzf
-    fi
-fi
+# if [[ ! -x "$(command -v fzf)" ]] && [[ -x "$(command -v pacman)" ]]; then
+#     if checkPackageNeedInstall "fzf"; then
+#         colorEcho "${BLUE}Installing ${FUCHSIA}fzf${BLUE}..."
+#         sudo pacman --noconfirm -S fzf
+#     fi
+# fi
 
 if [[ ! -x "$(command -v fzf)" ]]; then
     Git_Clone_Update "junegunn/fzf" "$HOME/.fzf"
@@ -193,6 +193,7 @@ PluginList=(
     # "changyuheng/zsh-interactive-cd"
     # "Aloxaf/fzf-tab"
     "lincheney/fzf-tab-completion"
+    "wfxr/forgit"
 )
 
 for Target in "${PluginList[@]}"; do

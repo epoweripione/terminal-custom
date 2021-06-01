@@ -113,16 +113,25 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
             [[ ${SCRAP_INDEX} -eq 1 ]] && continue
 
             sed -i -e 's/\&amp;/\&/g' -e 's/\&\&/\&/g' "${DOWNLOAD_FILE}"
-            TARGET_URL=$(cat "${DOWNLOAD_FILE}" | grep -o -P "${TargetPattern}" | head -n1)
 
-            TARGET_URL=$(echo "${TARGET_URL}" | grep -o -P "(((ht|f)tps?):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?")
-            [[ -z "${TARGET_URL}" ]] && SCRAP_SUCCESS="no" && break
+            MATCH_URL=$(cat "${DOWNLOAD_FILE}" | grep -o -P "${TargetPattern}" | uniq)
+            while read -r TARGET_URL; do
+                [[ -z "${TARGET_URL}" ]] && continue
 
-            colorEcho "${BLUE}    Scraping from ${FUCHSIA}${TARGET_URL}${BLUE}..."
-            curl -fsL --connect-timeout 10 --max-time 30 -o "${DOWNLOAD_FILE}" "${TARGET_URL}"
-            [[ $? != 0 ]] && SCRAP_SUCCESS="no" && break
+                TARGET_URL=$(echo "${TARGET_URL}" | grep -o -P "(((ht|f)tps?):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?")
+                [[ -z "${TARGET_URL}" ]] && continue
 
-            SCRAP_SUCCESS="yes"
+                colorEcho "${BLUE}    Scraping from ${FUCHSIA}${TARGET_URL}${BLUE}..."
+                curl -fsL --connect-timeout 10 --max-time 30 -o "${DOWNLOAD_FILE}" "${TARGET_URL}"
+                [[ $? != 0 ]] && continue
+
+                if [[ ${SCRAP_INDEX} -eq ${#SCRAP_PATTERN[@]} ]]; then
+                    SCRAP_SUCCESS="yes"
+                else
+                    MATCH_NEXT=$(cat "${DOWNLOAD_FILE}" | grep -o -P "${SCRAP_PATTERN[$SCRAP_INDEX]}")
+                    [[ -n "${MATCH_NEXT}" ]] && break
+                fi
+            done <<<"${MATCH_URL}"
         done
 
         [[ "${SCRAP_SUCCESS}" == "no" ]] && continue
@@ -140,6 +149,8 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
     else
         FILELIST+=("${TARGET_FILE}")
         FILEOPTION+=("${TARGET_OPTION}")
+
+        TARGET_LIST_FILE="${WORKDIR}/${TARGET_FILE}.list"
 
         # Compact proxies
         sed -i 's/^\s*-/-/g' "${DOWNLOAD_FILE}"
@@ -187,7 +198,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
 
             # Rename node name contains only numbers & spaces & special characters
             if echo "${TargetName}" | grep -Eq "^[[:digit:][:space:][:punct:]]+$"; then
-                TargetNewName="💤${TargetName}"
+                TargetNewName="ZZ💤${TargetName}"
             else
                 TargetNewName="${TargetName}"
             fi
@@ -228,6 +239,8 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
         PROXY_INDEX=-1
         for TargetName in "${PROXY_NAME[@]}"; do
             PROXY_INDEX=$((${PROXY_INDEX} + 1))
+
+            echo "      - ${TargetName}" >> "${TARGET_LIST_FILE}"
 
             TargetNewName="${PROXY_NEW_NAME[$PROXY_INDEX]}"
             if [[ "${TargetName}" != "${TargetNewName}" ]]; then
@@ -276,7 +289,7 @@ PROXIES_ALL=$(echo -e "${PROXIES_ALL}" | sed 's/,,/,/g')
 # PROXIES_ALL=$(echo -e "${PROXIES_ALL}\n  - {name: FORBIDDEN-PLACEHOLDER, server: forbidden-placeholder.com, port: 0000, type: trojan, password: Trojan}")
 
 # sort proxy list
-sort_array_lc PROXY_LIST_ALL
+sort_array PROXY_LIST_ALL
 
 PROXY_USE_ALL=""
 PROXY_TYPE_ALL=()

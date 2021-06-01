@@ -523,19 +523,67 @@ if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
     get_weather_custom
 fi
 
-# use fd to generate input for the command-line fuzzy finder fzf
-if [[ -x "$(command -v fzf)" && -x "$(command -v fd)" ]]; then
-    # export FZF_DEFAULT_COMMAND='fd --type file'
-    export FZF_DEFAULT_COMMAND="fd --type file --color=always"
-    export FZF_DEFAULT_OPTS="--ansi"
-    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-fi
+# fzf
+if [[ -x "$(command -v fzf)" ]]; then
+    # use fd to generate input for fzf
+    if [[ -x "$(command -v fd)" ]]; then
+        # export FZF_DEFAULT_COMMAND='fd --type file'
+        export FZF_DEFAULT_COMMAND="fd --type file --color=always"
+        export FZF_DEFAULT_OPTS="--ansi"
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    fi
 
-# fzf-tab-completion
-# https://github.com/lincheney/fzf-tab-completion
-if [[ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab-completion" ]]; then
-    source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab-completion/zsh/fzf-zsh-completion.sh"
-    bindkey '^I' fzf_completion
+    # fzf-tab-completion
+    # https://github.com/lincheney/fzf-tab-completion
+    if [[ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab-completion" ]]; then
+        source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab-completion/zsh/fzf-zsh-completion.sh"
+        bindkey '^I' fzf_completion
+    fi
+
+    # Utility tool for using git interactively
+    # https://github.com/wfxr/forgit
+    if [[ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/forgit" ]]; then
+        forgit_log=fzf-glo
+        forgit_diff=fzf-gd
+        forgit_add=fzf-ga
+        forgit_reset_head=fzf-grh
+        forgit_ignore=fzf-gi
+        forgit_checkout_file=fzf-gcf
+        forgit_checkout_branch=fzf-gcb
+        forgit_checkout_commit=fzf-gco
+        forgit_clean=fzf-gclean
+        forgit_stash_show=fzf-gss
+        forgit_cherry_pick=fzf-gcp
+        forgit_rebase=fzf-grb
+        forgit_fixup=fzf-gfu
+
+        source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/forgit/forgit.plugin.zsh"
+    fi
+
+    # Better git diffs with FZF
+    # https://medium.com/@GroundControl/better-git-diffs-with-fzf-89083739a9cb
+    function fzf-git-diff() {
+        ## only work from the root of your git project
+        ## comparing your current branch to master
+        # fzf-git-diff master...
+        ## comparing the changes between two commits
+        #fzf-git-diff 4c674950..6d88a7bfd8
+        local preview="git diff $@ --color=always -- {-1}"
+        git diff $@ --name-only | fzf -m --preview $preview
+    }
+
+    # fzf alias
+    alias fzf-cat='fzf --height 50% --layout=reverse --preview-window=right,70% --preview "cat {}"'
+
+    alias fzf-file='fzf --height 50% --layout reverse --info inline --border \
+                    --preview "file {}" --preview-window up,1,border-horizontal \
+                    --color "fg:#bbccdd,fg+:#ddeeff,bg:#334455,preview-bg:#223344,border:#778899"'
+
+    if [[ -x "$(command -v bat)" ]]; then
+        alias bat-themes='bat --list-themes | fzf --preview="bat --theme={} --color=always ${ZSH}/oh-my-zsh.sh"'
+        alias fzf-bat='fzf --height 50% --layout=reverse --preview-window=right,70% \
+                        --preview "bat --theme=TwoDark --style=numbers --color=always --line-range :500 {}"'
+    fi
 fi
 
 # Autostart Tmux/screen Session On Remote System When Logging In Via SSH
