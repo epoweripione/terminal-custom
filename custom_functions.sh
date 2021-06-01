@@ -1944,6 +1944,16 @@ function sort_array() {
     fi
 }
 
+# https://askubuntu.com/questions/597924/wrong-behavior-of-sort-command
+function sort_array_lc() {
+    if [[ -n "$1" ]]; then
+        local IFS=$'\n'
+        eval "local arr=( \${$1[*]} )"
+        arr=( $( LC_ALL=C sort <<<"${arr[*]}" ) )
+        eval "$1=( \${arr[*]} )"
+    fi
+}
+
 
 ## ProgressBar
 # bar=''

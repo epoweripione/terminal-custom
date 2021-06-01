@@ -276,7 +276,7 @@ PROXIES_ALL=$(echo -e "${PROXIES_ALL}" | sed 's/,,/,/g')
 # PROXIES_ALL=$(echo -e "${PROXIES_ALL}\n  - {name: FORBIDDEN-PLACEHOLDER, server: forbidden-placeholder.com, port: 0000, type: trojan, password: Trojan}")
 
 # sort proxy list
-sort_array PROXY_LIST_ALL
+sort_array_lc PROXY_LIST_ALL
 
 PROXY_USE_ALL=""
 PROXY_TYPE_ALL=()

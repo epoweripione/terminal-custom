@@ -131,6 +131,8 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
             sudo chmod +x "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
             sudo mv -f ${ARCHIVE_EXEC_DIR}/${ARCHIVE_EXEC_NAME}.1 "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}.1"
             sudo mv -f "${ARCHIVE_EXEC_DIR}/autocomplete/_fd" "/usr/local/share/zsh/site-functions" && \
+            sudo chmod 644 "/usr/local/share/zsh/site-functions/_fd" && \
+            sudo chown $(id -u):$(id -g) "/usr/local/share/zsh/site-functions/_fd" && \
             [[ -n "${VERSION_FILENAME}" ]] && echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null || true
     fi
 fi
