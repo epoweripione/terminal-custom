@@ -1978,26 +1978,27 @@ function load_ssh_keys() {
         for TargetFile in "${IdentityFiles[@]}"; do
             /usr/bin/keychain ${TargetFile}
         done
-
-        /usr/bin/keychain --list
     fi
 
     [[ -z "$HOSTNAME" ]] && HOSTNAME=`uname -n`
-    [[ -s "$HOME/.keychain/$HOSTNAME-sh" ]] && source "$HOME/.keychain/$HOSTNAME-sh"
-
-    # Improve the security of keychain, need to re-enter any passphrases when log in
-    if ! grep -q '/usr/bin/keychain --clear' ~/.zshrc; then
-        echo '' >> ~/.zshrc
-        echo '# Improve the security of keychain,' >> ~/.zshrc
-        echo '# User need to re-enter any passphrases when log in' >> ~/.zshrc
-        echo '[[ -x "$(command -v keychain)" ]] && /usr/bin/keychain --clear' >> ~/.zshrc
+    if [[ -s "$HOME/.keychain/$HOSTNAME-sh" ]]; then
+        source "$HOME/.keychain/$HOSTNAME-sh"
+        /usr/bin/keychain --list
     fi
 
-    if ! grep -q '/usr/bin/keychain --clear' ~/.bash_profile; then
+    # Improve the security of keychain, need to re-enter any passphrases when log in
+    if ! grep -q '/usr/bin/keychain --clear' ~/.zshrc >/dev/null 2>&1; then
+        echo '' >> ~/.zshrc
+        echo '# Improve the security of keychain' >> ~/.zshrc
+        echo '# User need to re-enter any passphrases when log in' >> ~/.zshrc
+        echo '[[ -x "$(command -v keychain)" ]] && /usr/bin/keychain --clear >/dev/null 2>&1' >> ~/.zshrc
+    fi
+
+    if ! grep -q '/usr/bin/keychain --clear' ~/.bash_profile >/dev/null 2>&1; then
         echo '' >> ~/.bash_profile
-        echo '# Improve the security of keychain,' >> ~/.bash_profile
+        echo '# Improve the security of keychain' >> ~/.bash_profile
         echo '# User need to re-enter any passphrases when log in' >> ~/.bash_profile
-        echo '[[ -x "$(command -v keychain)" ]] && /usr/bin/keychain --clear' >> ~/.bash_profile
+        echo '[[ -x "$(command -v keychain)" ]] && /usr/bin/keychain --clear >/dev/null 2>&1' >> ~/.bash_profile
     fi
 }
 
