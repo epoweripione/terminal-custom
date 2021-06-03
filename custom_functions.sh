@@ -1955,6 +1955,53 @@ function sort_array_lc() {
 }
 
 
+## load SSH keys with Passphrase Protected
+## https://www.funtoo.org/Keychain
+## http://unix.stackexchange.com/questions/90853/how-can-i-run-ssh-add-automatically-without-password-prompt
+## https://www.cyberciti.biz/faq/ssh-passwordless-login-with-keychain-for-scripts/
+function load_ssh_keys() {
+    local IdentityFiles
+
+    if [[ ! "$(command -v keychain)" ]]; then
+        # sudo pacman --noconfirm -S keychain
+        colorEcho "${RED}keychain is not installed!"
+        return 1
+    fi
+
+    # /usr/bin/keychain --list
+    # /usr/bin/keychain --clear
+
+    if [[ -s "$HOME/.ssh/config" ]]; then
+        IdentityFiles=$(cat "$HOME/.ssh/config" | grep 'IdentityFile' \
+                            | sed -e 's/IdentityFile//' -e "s/^\s*//" -e "s/\s$//" -e "s|~|$HOME|" \
+                            | sort | uniq)
+        for TargetFile in "${IdentityFiles[@]}"; do
+            /usr/bin/keychain ${TargetFile}
+        done
+
+        /usr/bin/keychain --list
+    fi
+
+    [[ -z "$HOSTNAME" ]] && HOSTNAME=`uname -n`
+    [[ -s "$HOME/.keychain/$HOSTNAME-sh" ]] && source "$HOME/.keychain/$HOSTNAME-sh"
+
+    # Improve the security of keychain, need to re-enter any passphrases when log in
+    if ! grep -q '/usr/bin/keychain --clear' ~/.zshrc; then
+        echo '' >> ~/.zshrc
+        echo '# Improve the security of keychain,' >> ~/.zshrc
+        echo '# User need to re-enter any passphrases when log in' >> ~/.zshrc
+        echo '[[ -x "$(command -v keychain)" ]] && /usr/bin/keychain --clear' >> ~/.zshrc
+    fi
+
+    if ! grep -q '/usr/bin/keychain --clear' ~/.bash_profile; then
+        echo '' >> ~/.bash_profile
+        echo '# Improve the security of keychain,' >> ~/.bash_profile
+        echo '# User need to re-enter any passphrases when log in' >> ~/.bash_profile
+        echo '[[ -x "$(command -v keychain)" ]] && /usr/bin/keychain --clear' >> ~/.bash_profile
+    fi
+}
+
+
 ## ProgressBar
 # bar=''
 # for ((i=0;$i<=100;i++)); do

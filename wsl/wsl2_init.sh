@@ -129,6 +129,32 @@ sudo apt install -y binutils build-essential di dnsutils g++ gcc \
     git htop iproute2 make net-tools netcat-openbsd p7zip psmisc tree unzip zip
 
 
+# python3
+sudo apt install -y python3
+
+# pip
+sudo apt install -y build-essential pkg-config python3-dev python3-distutils
+sudo apt install -y libssl-dev libcurl4-openssl-dev libcairo2-dev libjpeg-dev libgif-dev libgirepository1.0-dev
+
+python3 -m pip install -U pip --user
+python3 -m pip install -U setuptools wheel --user
+
+pip list -o | grep -Ev "^-|^Package" | cut -d" " -f1 | xargs -n1 pip install -U
+
+
+# Parallel SSH Tools
+# https://github.com/lilydjwg/pssh
+# https://www.escapelife.site/posts/8c0f83d.html
+pip install git+https://github.com/lilydjwg/pssh
+
+## Login with SSH Key
+# pssh -i -H "host01 host02" -l root \
+#     -x "-o StrictHostKeyChecking=no -i $HOME/.ssh/id_ecdsa" \
+#     "hostname -i && uname -a"
+## Login with Passphrase Protected SSH Key ( all hosts in ~/.ssh/config )
+# pssh -i -H "host01 host02" -A -l root "hostname -i && uname -a"
+
+
 ## Enable broadcast WINS
 # colorEcho "${BLUE}Enable broadcast ${FUCHSIA}WINS${BLUE}..."
 # sudo apt install -y libnss-winbind
@@ -149,6 +175,10 @@ sudo apt install gnupg2 apt-transport-https && \
     echo "deb https://access.patrickwu.space/wslu/debian buster main" | sudo tee -a /etc/apt/sources.list && \
     sudo apt update && \
     sudo apt install -y wslu
+
+## translate from a Windows path to a WSL path
+# wslpath 'c:\users'
+
 
 # colorEcho "${BLUE}Install git lfs${BLUE}..."
 # sudo apt install -y git-lfs && git lfs install

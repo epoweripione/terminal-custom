@@ -100,15 +100,6 @@ alias histop20="awk -F';' '{print $2}' ${HISTFILE} | sort | uniq -c | sort -rn |
 # alias -s zip='unzip'
 # alias -s bz2='tar -xjvf'
 
-# pip aliases
-if [[ -x "$(command -v pip)" ]]; then
-    alias pipupdateall='pip list -o | grep -Ev '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f1 | xargs -n1 pip install -U'
-fi
-
-# if [[ -x "$(command -v pip3)" ]]; then
-#     alias pip3updateall='pip3 list -o | grep -Ev '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f1 | xargs -n1 pip3 install -U'
-# fi
-
 # docker aliases
 if [[ -x "$(command -v docker)" ]]; then
     alias dockerpullall='docker images | grep -Ev "REPOSITORY|<none>" | awk '"'"'{print $1,$2}'"'"' OFS='"'"':'"'"' | xargs -L1 docker pull'
@@ -380,6 +371,12 @@ fi
 # pip local install
 if [[ -d "$HOME/.local/bin" ]]; then
     export PATH=$PATH:$HOME/.local/bin
+fi
+
+# pip aliases
+if [[ -x "$(command -v pip)" ]]; then
+    alias pipupdateall='pip list -o | grep -Ev "^-|^Package" | cut -d" " -f1 | xargs -n1 pip install -U'
+    # alias pipupdateall='pip list -o | grep -Ev '"'"'^-|^Package '"'"' | cut -d '"'"' '"'"' -f1 | xargs -n1 pip install -U'
 fi
 
 # nvs

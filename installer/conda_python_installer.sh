@@ -25,39 +25,15 @@ set_proxy_mirrors_env
 # sudo pacman -S python3
 
 ## pip
+# sudo pacman -S build-essential pkg-config python3-dev python3-distutils
+# sudo pacman -S libssl-dev libcurl4-openssl-dev libcairo2-dev libjpeg-dev libgif-dev libgirepository1.0-dev
 # python3 -m pip install --upgrade pip --user
+# python3 -m pip install -U setuptools wheel --user
+# pip list -o | grep -Ev "^-|^Package" | cut -d" " -f1 | xargs -n1 pip install -U
 
 ## Install and use pip in a local directory without root/sudo access
 ## https://gist.github.com/saurabhshri/46e4069164b87a708b39d947e4527298
 # .local/bin/pip install <package_name> --user
-
-
-# fix `pip list` warning
-if [[ ! $(grep "format=columns" "$HOME/.pip/pip.conf") ]]; then
-    mkdir -p $HOME/.pip && \
-        echo -e "[global]\nformat=columns" >> "$HOME/.pip/pip.conf"
-fi
-
-# pip mirror
-# alias pip="pip --proxy 127.0.0.1:8080"
-# alias pipinstall='pip install -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com'
-PIP_MIRROR_URL=https://mirrors.aliyun.com/pypi/simple/
-PIP_MIRROR_HOST=mirrors.aliyun.com
-if [[ -z "$PIP_NOT_USE_MIRROR" && ! $(grep "${PIP_MIRROR_HOST}" "$HOME/.pip/pip.conf") ]]; then
-    if [[ $(grep "index-url=" "$HOME/.pip/pip.conf") ]]; then
-        sed -i "s|index-url=.*|index-url=${PIP_MIRROR_URL}|" "$HOME/.pip/pip.conf"
-    else
-        sed -i "/^\[global\]/a\index-url=${PIP_MIRROR_URL}" "$HOME/.pip/pip.conf"
-    fi
-
-    if [[ $(grep "trusted-host=" "$HOME/.pip/pip.conf") ]]; then
-        sed -i "s|trusted-host=.*|trusted-host=${PIP_MIRROR_HOST}|" "$HOME/.pip/pip.conf"
-    else
-        [[ ! $(grep "[install]" "$HOME/.pip/pip.conf") ]] && \
-            echo -e "\n[install]" | tee -a "$HOME/.pip/pip.conf" >/dev/null
-        sed -i "/^\[install\]/a\trusted-host=${PIP_MIRROR_HOST}" "$HOME/.pip/pip.conf"
-    fi
-fi
 
 
 # Miniconda
@@ -149,3 +125,7 @@ EOF
     ## which files belong to it which would lead to only a partial uninstall.
     # pip install -U --ignore-installed xxx
 fi
+
+
+[[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/python_pip_config.sh" ]] && \
+    source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/python_pip_config.sh"
