@@ -315,11 +315,9 @@ if [[ -d "$HOME/.gvm" ]]; then
     # fix (maybe) break PATH
     ENV_PATH_GO=$PATH
     export PATH=${ENV_PATH_OLD}
-    if [[ "$ENV_PATH_GO" != "$ENV_PATH_OLD" ]]; then
+    if [[ ":$ENV_PATH_GO:" != *":$ENV_PATH_OLD:"* ]]; then
         ENV_PATH_GO=$(echo "$ENV_PATH_GO" | sed 's/:$//')
-        [[ -n "${ENV_PATH_GO}" ]] && \
-            export PATH=${ENV_PATH_GO}:${ENV_PATH_OLD} || \
-            export PATH=${ENV_PATH_OLD}
+        [[ -n "${ENV_PATH_GO}" ]] && export PATH=${ENV_PATH_GO}:${ENV_PATH_OLD}
     fi
 
     # GOBIN

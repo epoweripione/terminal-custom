@@ -231,9 +231,11 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         # "cdburnerxp"
         # "wincdemu"
         "ventoy"
+        "bat"
         "croc"
         "duf"
         "fd"
+        "file"
         "treesize-free"
         ## markdown editor
         "pandoc"
