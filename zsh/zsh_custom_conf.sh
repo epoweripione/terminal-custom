@@ -308,14 +308,45 @@ if [[ -d "$HOME/.gvm" ]]; then
         gvm use go1.4 >/dev/null 2>&1
         export GOROOT_BOOTSTRAP=$GOROOT
 
-        # fix (maybe) break PATH
-        export PATH=${ENV_PATH_OLD}
-
         # Set default go version
         [[ -n "$CURRENT_VERSION" ]] && gvm use $CURRENT_VERSION --default >/dev/null 2>&1
     fi
 
+    # fix (maybe) break PATH
+    ENV_PATH_GO=$PATH
+    export PATH=${ENV_PATH_OLD}
+    if [[ "$ENV_PATH_GO" != "$ENV_PATH_OLD" ]]; then
+        ENV_PATH_GO=$(echo "$ENV_PATH_GO" | sed 's/:$//')
+        [[ -n "${ENV_PATH_GO}" ]] && \
+            export PATH=${ENV_PATH_GO}:${ENV_PATH_OLD} || \
+            export PATH=${ENV_PATH_OLD}
+    fi
+
+    # GOBIN
+    [[ -z "$GOBIN" && -n "$GOROOT" ]] && export GOBIN=$GOROOT/bin
+
+    unset ENV_PATH_GO
     unset ENV_PATH_OLD
+fi
+
+# goup
+if [[ -d "$HOME/.go" ]]; then
+    if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" ]]; then
+        export GOUP_GO_HOST=golang.google.cn
+        alias goupInstall='http_proxy=${http_proxy/socks5h/socks5} \
+                            https_proxy=${https_proxy/socks5h/socks5} \
+                            ftp_proxy=${ftp_proxy/socks5h/socks5} \
+                            all_proxy=${all_proxy/socks5h/socks5} \
+                            HTTP_PROXY=${HTTP_PROXY/socks5h/socks5} \
+                            HTTPS_PROXY=${HTTPS_PROXY/socks5h/socks5} \
+                            FTP_PROXY=${FTP_PROXY/socks5h/socks5} \
+                            ALL_PROXY=${ALL_PROXY/socks5h/socks5} \
+                            goup install'
+    else
+        alias goupInstall='goup install'
+    fi
+
+    [[ ":$PATH:" != *":$HOME/.go/bin:"* ]] && export PATH=$PATH:$HOME/.go/bin:$HOME/.go/current/bin
 fi
 
 # go

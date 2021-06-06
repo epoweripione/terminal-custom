@@ -679,12 +679,12 @@ function get_proxy() {
 
     if [[ -s "$HOME/.curlrc" ]]; then
         proxy_output1=$(cat "$HOME/.curlrc")
-        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}curl proxies:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}curl proxies(.curlrc):\n${FUCHSIA}${proxy_output1}"
     fi
 
     if [[ -s "$HOME/.curl_socks5" ]]; then
         proxy_output1=$(cat "$HOME/.curl_socks5")
-        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}curl proxies:\n${FUCHSIA}${proxy_output1}"
+        [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}curl proxies(.curl_socks5):\n${FUCHSIA}${proxy_output1}"
     fi
 
     if [[ -s "$HOME/.gradle/gradle.properties" ]]; then
@@ -707,6 +707,8 @@ function clear_all_proxy() {
     clear_proxy
     set_git_proxy
     set_curl_proxy
+    # [[ -s "$HOME/.curl_socks5" ]] && set_curl_proxy "" "$HOME/.curl_socks5"
+    set_special_socks5_proxy
     set_wget_proxy
 }
 

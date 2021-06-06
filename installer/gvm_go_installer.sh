@@ -175,32 +175,41 @@ if [[ -d "$HOME/.gvm" ]]; then
         gvm use go1.4 >/dev/null 2>&1
         export GOROOT_BOOTSTRAP=$GOROOT
 
-        # fix (maybe) break PATH
-        export PATH=${ENV_PATH_OLD}
-
         # Set default go version
         [[ -n "$CURRENT_VERSION" ]] && gvm use $CURRENT_VERSION --default >/dev/null 2>&1
     fi
 
-    unset ENV_PATH_OLD
+    # fix (maybe) break PATH
+    ENV_PATH_GO=$PATH
+    export PATH=${ENV_PATH_OLD}
+    if [[ ":$ENV_PATH_GO:" != *":$ENV_PATH_OLD:"* ]]; then
+        ENV_PATH_GO=$(echo "$ENV_PATH_GO" | sed 's/:$//')
+        [[ -n "${ENV_PATH_GO}" ]] && \
+            export PATH=${ENV_PATH_GO}:${ENV_PATH_OLD} || \
+            export PATH=${ENV_PATH_OLD}
+    fi
 
     # GOBIN
     [[ -z "$GOBIN" && -n "$GOROOT" ]] && export GOBIN=$GOROOT/bin
 
-    # Go module proxy for china
-    if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
-        GO_VERSION=$(go version | cut -d' ' -f3)
-        if version_ge $GO_VERSION 'go1.13'; then
-            go env -w GO111MODULE=on
-            go env -w GOPROXY="https://goproxy.io,direct"
-            # go env -w GOPROXY="https://goproxy.cn,direct"
-            # go env -w GOPROXY="https://proxy.golang.org,direct"
-            ## https://goproxy.io/zh/docs/goproxyio-private.html
-            # go env -w GOPRIVATE="*.corp.example.com"
-        else
-            export GO111MODULE=on
-            export GOPROXY="https://goproxy.io"
-        fi
+    unset ENV_PATH_GO
+    unset ENV_PATH_OLD
+fi
+
+
+# Go module proxy
+if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
+    GO_VERSION=$(go version | cut -d' ' -f3)
+    if version_ge $GO_VERSION 'go1.13'; then
+        go env -w GO111MODULE=on
+        go env -w GOPROXY="https://goproxy.io,direct"
+        # go env -w GOPROXY="https://goproxy.cn,direct"
+        # go env -w GOPROXY="https://proxy.golang.org,direct"
+        ## https://goproxy.io/zh/docs/goproxyio-private.html
+        # go env -w GOPRIVATE="*.corp.example.com"
+    else
+        export GO111MODULE=on
+        export GOPROXY="https://goproxy.io"
     fi
 fi
 
