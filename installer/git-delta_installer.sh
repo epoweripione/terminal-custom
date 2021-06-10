@@ -102,8 +102,8 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     DOWNLOAD_URL="https://github.com/${GITHUB_REPO_NAME}/releases/download/${REMOTE_VERSION}/${REMOTE_FILENAME}"
     curl -fSL -o "${DOWNLOAD_FILENAME}" -C- "${DOWNLOAD_URL}"
 
-    # Extract file
     if [[ $? -eq 0 ]]; then
+        # Extract file
         case "${ARCHIVE_EXT}" in
             "zip")
                 unzip -qo "${DOWNLOAD_FILENAME}" -d "${WORKDIR}"
@@ -121,18 +121,18 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
                 gzip -d -f "${DOWNLOAD_FILENAME}"
                 ;;
         esac
-    fi
 
-    # Install
-    if [[ $? -eq 0 ]]; then
-        [[ -n "${ARCHIVE_EXEC_DIR}" ]] && \
-            ARCHIVE_EXEC_DIR=$(find ${WORKDIR} -type d -name ${ARCHIVE_EXEC_DIR})
+        # Install
+        if [[ $? -eq 0 ]]; then
+            [[ -n "${ARCHIVE_EXEC_DIR}" ]] && \
+                ARCHIVE_EXEC_DIR=$(find ${WORKDIR} -type d -name ${ARCHIVE_EXEC_DIR})
 
-        [[ -z "${ARCHIVE_EXEC_DIR}" || ! -d "${ARCHIVE_EXEC_DIR}" ]] && ARCHIVE_EXEC_DIR=${WORKDIR}
+            [[ -z "${ARCHIVE_EXEC_DIR}" || ! -d "${ARCHIVE_EXEC_DIR}" ]] && ARCHIVE_EXEC_DIR=${WORKDIR}
 
-        sudo mv -f ${ARCHIVE_EXEC_DIR}/${ARCHIVE_EXEC_NAME} "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
-            sudo chmod +x "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
-            [[ -n "${VERSION_FILENAME}" ]] && echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null || true
+            sudo mv -f ${ARCHIVE_EXEC_DIR}/${ARCHIVE_EXEC_NAME} "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
+                sudo chmod +x "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
+                [[ -n "${VERSION_FILENAME}" ]] && echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null || true
+        fi
     fi
 fi
 
