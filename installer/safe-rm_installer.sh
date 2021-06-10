@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+trap 'rm -rf "$WORKDIR"' EXIT
+
+[[ -z "$WORKDIR" ]] && WORKDIR="$(mktemp -d)"
+[[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
+
 # Load custom functions
 if type 'colorEcho' 2>/dev/null | grep -q 'function'; then
     :
@@ -68,6 +73,7 @@ function install_shell-safe-rm() {
 # Git_Clone_Update "safe-rm" "$HOME/safe-rm" "git://git.launchpad.net/safe-rm"
 
 ## fork: https://github.com/epoweripione/safe-rm
+## config & enviroment variable support for real `rm` binary
 ## /etc/safe-rm.toml
 ## SAFE_RM_REAL_RM_BINARY
 APP_INSTALL_NAME="safe-rm"
