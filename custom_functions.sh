@@ -989,7 +989,7 @@ function set_proxy_mirrors_env() {
     #     unset APT_NOT_USE_MIRRORS
     #     unset CONDA_NOT_USE_MIRROR
     #     unset DOCKER_INSTALLER_NOT_USE_MIRROR
-    #     unset GVM_INSTALLER_NOT_USE_PROXY
+    #     unset GO_INSTALLER_NOT_USE_PROXY
     #     unset NVM_INSTALLER_NOT_USE_MIRROR
     #     unset NVS_INSTALLER_NOT_USE_MIRROR
     #     unset NPM_INSTALLER_NOT_USE_MIRROR
@@ -997,7 +997,7 @@ function set_proxy_mirrors_env() {
     #     APT_NOT_USE_MIRRORS=true
     #     CONDA_NOT_USE_MIRROR=true
     #     DOCKER_INSTALLER_NOT_USE_MIRROR=true
-    #     GVM_INSTALLER_NOT_USE_PROXY=true
+    #     GO_INSTALLER_NOT_USE_PROXY=true
     #     NVM_INSTALLER_NOT_USE_MIRROR=true
     #     NVS_INSTALLER_NOT_USE_MIRROR=true
     #     NPM_INSTALLER_NOT_USE_MIRROR=true
@@ -1008,25 +1008,27 @@ function set_proxy_mirrors_env() {
         CONDA_NOT_USE_MIRROR=true
         PIP_NOT_USE_MIRROR=true
         DOCKER_INSTALLER_NOT_USE_MIRROR=true
-        GVM_INSTALLER_NOT_USE_PROXY=true
+        GO_INSTALLER_NOT_USE_PROXY=true
         NVM_INSTALLER_NOT_USE_MIRROR=true
         NVS_INSTALLER_NOT_USE_MIRROR=true
         NPM_INSTALLER_NOT_USE_MIRROR=true
         GITHUB_NOT_USE_PROXY=true
         SDKMAN_NOT_USE_PROXY=true
         BREW_NOT_USE_PROXY=true
+        RUST_NOT_USE_PROXY=true
     else
         unset APT_NOT_USE_MIRRORS
         unset CONDA_NOT_USE_MIRROR
         unset PIP_NOT_USE_MIRROR
         unset DOCKER_INSTALLER_NOT_USE_MIRROR
-        unset GVM_INSTALLER_NOT_USE_PROXY
+        unset GO_INSTALLER_NOT_USE_PROXY
         unset NVM_INSTALLER_NOT_USE_MIRROR
         unset NVS_INSTALLER_NOT_USE_MIRROR
         unset NPM_INSTALLER_NOT_USE_MIRROR
         unset GITHUB_NOT_USE_PROXY
         unset SDKMAN_NOT_USE_PROXY
         unset BREW_NOT_USE_PROXY
+        unset RUST_NOT_USE_PROXY
     fi
 }
 
@@ -1509,7 +1511,12 @@ function Git_Clone_Update() {
 
     [[ -z "${REPODIR}" ]] && REPODIR=$(echo ${REPONAME} | awk -F"/" '{print $NF}')
 
-    REPOREMOTE="https://${REPOURL}/${REPONAME}.git"
+    if [[ "${REPOURL}" == "github.com" ]]; then
+        REPOREMOTE="https://${REPOURL}/${REPONAME}.git"
+    else
+        REPOREMOTE="${REPOURL}/${REPONAME}"
+    fi
+
     if [[ -d "${REPODIR}/.git" ]]; then
         colorEcho "${BLUE}  Updating ${FUCHSIA}${REPONAME}${BLUE}..."
 

@@ -83,7 +83,7 @@ if [[ "${IS_INSTALL}" == "yes" && "${IS_UPDATE}" == "no" ]]; then
 fi
 
 
-# if [[ "${IS_INSTALL}" == "yes" && -z "$GVM_INSTALLER_NOT_USE_PROXY" ]]; then
+# if [[ "${IS_INSTALL}" == "yes" && -z "$GO_INSTALLER_NOT_USE_PROXY" ]]; then
 #     if [[ ! -x "$(command -v proxychains4)" ]]; then
 #         [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/proxychains_installer.sh" ]] && \
 #             source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/proxychains_installer.sh"
@@ -109,7 +109,7 @@ if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
 
     ## In order to compile Go 1.5+, make sure Go 1.4 is installed first.
     if [[ ! "$(gvm list | grep 'go1.4')" ]]; then
-        # if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+        # if [[ -z "$GO_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
         #     proxychains4 gvm install go1.4 -B
         # else
         #     gvm install go1.4 -B
@@ -133,7 +133,7 @@ if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
         # REMOTE_VERSION=${REMOTE_VERSION%.}
 
         if [[ -n "$REMOTE_VERSION" ]] && [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
-            # if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
+            # if [[ -z "$GO_INSTALLER_NOT_USE_PROXY" && -x "$(command -v proxychains4)" ]]; then
             #     proxychains4 gvm install $REMOTE_VERSION
             # else
             #     gvm install $REMOTE_VERSION
@@ -196,7 +196,7 @@ fi
 
 
 # Go module proxy
-if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
+if [[ -z "$GO_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
     GO_VERSION=$(go version | cut -d' ' -f3)
     if version_ge $GO_VERSION 'go1.13'; then
         go env -w GO111MODULE=on

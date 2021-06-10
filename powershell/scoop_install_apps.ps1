@@ -236,6 +236,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "duf"
         "fd"
         "file"
+        "lsd"
         "treesize-free"
         ## markdown editor
         "pandoc"

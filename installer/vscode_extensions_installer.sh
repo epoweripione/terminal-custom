@@ -74,6 +74,7 @@ extensions=(
 	## rust
 	"rust-lang.rust"
 	"bungcip.better-toml"
+	"serayuzgur.crates"
     ## XML/JSON/GraphQL/YAML
     "eriklynd.json-tools"
 	"mohsen1.prettify-json"

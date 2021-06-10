@@ -329,7 +329,7 @@ fi
 
 # goup
 if [[ -d "$HOME/.go" ]]; then
-    if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" ]]; then
+    if [[ -z "$GO_INSTALLER_NOT_USE_PROXY" ]]; then
         export GOUP_GO_HOST=golang.google.cn
         alias goupInstall='http_proxy=${http_proxy/socks5h/socks5} \
                             https_proxy=${https_proxy/socks5h/socks5} \
@@ -354,11 +354,16 @@ if [[ -x "$(command -v go)" ]]; then
     GO_VERSION=$(go version | cut -d' ' -f3)
     if version_ge $GO_VERSION 'go1.13'; then
         go env -w GO111MODULE=on
-        [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" ]] && go env -w GOPROXY="https://goproxy.io,direct"
+        [[ -z "$GO_INSTALLER_NOT_USE_PROXY" ]] && go env -w GOPROXY="https://goproxy.io,direct"
     else
         export GO111MODULE=on
-        [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" ]] && export GOPROXY="https://goproxy.io"
+        [[ -z "$GO_INSTALLER_NOT_USE_PROXY" ]] && export GOPROXY="https://goproxy.io"
     fi
+fi
+
+# rustup
+if [[ -z "$RUST_NOT_USE_PROXY" && -x "$(command -v rustup)" ]]; then
+    export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup
 fi
 
 # jabba

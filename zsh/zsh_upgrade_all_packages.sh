@@ -201,6 +201,8 @@ IS_UPDATE_ONLY="yes"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/asdf_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/asdf_installer.sh"
 
+[[ -s "${MY_SHELL_SCRIPTS}/installer/lsd_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/lsd_installer.sh"
+
 [[ -s "${MY_SHELL_SCRIPTS}/installer/starship_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/starship_installer.sh"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/git-lfs_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/git-lfs_installer.sh"

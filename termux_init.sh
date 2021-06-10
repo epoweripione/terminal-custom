@@ -77,7 +77,7 @@ EOF
 # install packages
 colorEcho "${BLUE}Installing ${FUCHSIA}packages${BLUE}..."
 pkg up -y && \
-    pkg i -y nano curl wget git openssh unzip unrar htop nmap screenfetch starship
+    pkg i -y nano curl wget git openssh unzip unrar htop nmap screenfetch starship lsd tree
 
 ## reload termux settings
 # termux-reload-settings
@@ -99,6 +99,21 @@ set functioncolor magenta
 
 include "$HOME/.local/share/nano/*.nanorc"
 EOF
+
+# Remove Welcome screen Text
+# cat $PREFIX/etc/motd
+# touch ~/.hushlogin
+mv "$PREFIX/etc/motd" "$PREFIX/etc/motd.bak" && echo -e "\nWelcome to Termux\!" > "$PREFIX/etc/motd"
+
+# font: Fira Code Regular Nerd Font Complete Mono
+NerdFont_URL="https://github.com/epoweripione/terminal-custom/releases/download/v5.2.0/FiraCode-Mono.zip"
+curl -fSL "${NerdFont_URL}" -o "$HOME/FiraCode-Mono.zip" && \
+    mkdir -p "$HOME/FiraCode-Mono" && \
+	unzip -q "$HOME/FiraCode-Mono.zip" -d "$HOME/FiraCode-Mono" && \
+    mv "$HOME/.termux/font.ttf" "$HOME/.termux/font.ttf.bak" && \
+    mv "$HOME/FiraCode-Mono/Fira Code Regular Nerd Font Complete Mono.ttf" "$HOME/.termux/font.ttf" && \
+	rm -f "$HOME/FiraCode-Mono.zip" && \
+    rm -rf "$HOME/FiraCode-Mono"
 
 # frp
 if [[ ! -d "$HOME/frp" ]]; then

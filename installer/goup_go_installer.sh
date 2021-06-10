@@ -17,7 +17,7 @@ set_proxy_mirrors_env
 
 ## goup (pronounced Go Up) is an elegant Go version manager
 ## https://github.com/owenthereal/goup
-[[ -z "$GVM_INSTALLER_NOT_USE_PROXY" ]] && export GOUP_GO_HOST=golang.google.cn
+[[ -z "$GO_INSTALLER_NOT_USE_PROXY" ]] && export GOUP_GO_HOST=golang.google.cn
 
 curl -sSf https://raw.githubusercontent.com/owenthereal/goup/master/install.sh | sh -s -- '--skip-prompt'
 
@@ -34,7 +34,7 @@ curl -sSf https://raw.githubusercontent.com/owenthereal/goup/master/install.sh |
 
 
 # Go module proxy
-if [[ -z "$GVM_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
+if [[ -z "$GO_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
     GO_VERSION=$(go version | cut -d' ' -f3)
     if version_ge $GO_VERSION 'go1.13'; then
         go env -w GO111MODULE=on
