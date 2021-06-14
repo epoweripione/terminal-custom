@@ -340,8 +340,18 @@ if [[ -d "$HOME/.go" ]]; then
                             FTP_PROXY=${FTP_PROXY/socks5h/socks5} \
                             ALL_PROXY=${ALL_PROXY/socks5h/socks5} \
                             goup install'
+        alias goupUpgrade='http_proxy=${http_proxy/socks5h/socks5} \
+                            https_proxy=${https_proxy/socks5h/socks5} \
+                            ftp_proxy=${ftp_proxy/socks5h/socks5} \
+                            all_proxy=${all_proxy/socks5h/socks5} \
+                            HTTP_PROXY=${HTTP_PROXY/socks5h/socks5} \
+                            HTTPS_PROXY=${HTTPS_PROXY/socks5h/socks5} \
+                            FTP_PROXY=${FTP_PROXY/socks5h/socks5} \
+                            ALL_PROXY=${ALL_PROXY/socks5h/socks5} \
+                            goup upgrade'
     else
         alias goupInstall='goup install'
+        alias goupUpgrade='goup upgrade'
     fi
 
     [[ ":$PATH:" != *":$HOME/.go/bin:"* ]] && export PATH=$PATH:$HOME/.go/bin:$HOME/.go/current/bin

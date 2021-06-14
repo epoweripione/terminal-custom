@@ -50,36 +50,34 @@ if [[ -d "$HOME/miniconda3" ]]; then
 
     ## Use mirror channels
     if [[ -z "$CONDA_NOT_USE_MIRROR" ]]; then
+        # https://mirrors.bfsu.edu.cn/help/anaconda/
         # https://mirrors.tuna.tsinghua.edu.cn/help/anaconda/
-        tee -a "$HOME/.condarc" >/dev/null <<-'EOF'
+        # https://mirrors.sjtug.sjtu.edu.cn/docs/anaconda
+        CONDA_MIRROR="https://mirrors.bfsu.edu.cn"
+
+        # conda config --add channels ${CONDA_MIRROR}/anaconda/pkgs/main/
+        # conda config --add channels ${CONDA_MIRROR}/anaconda/cloud/pytorch/
+        tee -a "$HOME/.condarc" >/dev/null <<-EOF
 channels:
   - defaults
 show_channel_urls: true
 default_channels:
-  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
-  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r
-  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2
+  - ${CONDA_MIRROR}/anaconda/pkgs/main
+  - ${CONDA_MIRROR}/anaconda/pkgs/r
+  - ${CONDA_MIRROR}/anaconda/pkgs/msys2
 custom_channels:
-  conda-forge: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
-  msys2: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
-  bioconda: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
-  menpo: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
-  pytorch: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
-  simpleitk: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  conda-forge: ${CONDA_MIRROR}/anaconda/cloud
+  msys2: ${CONDA_MIRROR}/anaconda/cloud
+  bioconda: ${CONDA_MIRROR}/anaconda/cloud
+  menpo: ${CONDA_MIRROR}/anaconda/cloud
+  pytorch: ${CONDA_MIRROR}/anaconda/cloud
+  simpleitk: ${CONDA_MIRROR}/anaconda/cloud
 EOF
-        # conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/ && \
-        #     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ && \
-        #     conda config --set show_channel_urls yes
-
-        # conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/ && \
-        #     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/msys2/ && \
-        #     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/bioconda/ && \
-        #     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/menpo/ && \
-        #     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/
     fi
 
     ## Use default channels
     # conda config --remove-key channels
+    # rm "$HOME/.condarc"
 
     ## clean channels cache
     # conda clean -i
@@ -98,6 +96,7 @@ EOF
     # conda clean --tarballs
     # conda clean --all
 
+    # conda config --set show_channel_urls yes
     conda config --set auto_activate_base false
 
     DEFALUT_SHELL=$(basename $SHELL)
