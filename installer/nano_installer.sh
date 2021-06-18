@@ -37,6 +37,8 @@ if [[ -x "$(command -v pacman)" ]]; then
         libncursesw-dev
         libncurses5-dev
         libncursesw5-dev
+        # http://support.moonpoint.com/os/unix/linux/ubuntu/groff_invalid_device.php
+        groff
     )
     for TargetPackage in "${PackagesList[@]}"; do
         if checkPackageNeedInstall "${TargetPackage}"; then

@@ -101,17 +101,36 @@ function UpdateMyScript {
     }
 }
 
-function DockerPullAllImages{
+function DockerPullAllImages {
     docker images --format "{{.Repository}}:{{.Tag}}" | Where-Object {$_ -NotMatch "<none>"} | %{docker pull $_}
 }
 
-function DockerList{
+function DockerList {
     docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}"
 }
 
-function DockerListAll{
+function DockerListAll {
     docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}\t{{.Ports}}\t{{.Networks}}\t{{.Command}}\t{{.Size}}"
 }
+
+function GetTCPConnections {
+    Get-NetTCPConnection -State Listen,Established |
+        Select-Object -Property LocalAddress,LocalPort,RemoteAddress,RemotePort,State,OwningProcess,
+            @{'Name' = 'ProcessName';'Expression'={(Get-Process -Id $_.OwningProcess).Name}},
+            @{'Name' = 'Path';'Expression'={(Get-Process -Id $_.OwningProcess).Path}} |
+        Sort-Object -Property ProcessName,LocalPort
+}
+
+function GetUDPConnections {
+    Get-NetUDPEndpoint |
+        Select-Object -Property LocalAddress,LocalPort,RemoteAddress,RemotePort,State,OwningProcess,
+            @{'Name' = 'ProcessName';'Expression'={(Get-Process -Id $_.OwningProcess).Name}},
+            @{'Name' = 'Path';'Expression'={(Get-Process -Id $_.OwningProcess).Path}} |
+        Sort-Object -Property ProcessName,LocalPort
+}
+
+function GetTCPAll {GetTCPConnections | Format-Table}
+function GetUDPAll {GetUDPConnections | Format-Table}
 
 function PrettyLS {colorls --light -A}
 function GitStat {git status}
@@ -121,21 +140,24 @@ function EditHosts {sudo notepad $env:windir\System32\drivers\etc\hosts}
 function EditHistory {notepad (Get-PSReadlineOption).HistorySavePath}
 
 ## Other alias
-Set-Alias open Invoke-Item
-Set-Alias .. GoBack
-Set-Alias glola GitLogPretty
-Set-Alias gst GitStat
-Set-Alias myip GetMyIp
-Set-Alias pls PrettyLS
-Set-Alias suu UpdateScoop
-Set-Alias ssb SearchScoopBucket
-Set-Alias ums UpdateMyScript
-Set-Alias hosts EditHosts
-Set-Alias history EditHistory
+Set-Alias open Invoke-Item -option AllScope
+Set-Alias .. GoBack -option AllScope
+Set-Alias glola GitLogPretty -option AllScope
+Set-Alias gst GitStat -option AllScope
+Set-Alias myip GetMyIp -option AllScope
+Set-Alias pls PrettyLS -option AllScope
+Set-Alias suu UpdateScoop -option AllScope
+Set-Alias ssb SearchScoopBucket -option AllScope
+Set-Alias ums UpdateMyScript -option AllScope
+Set-Alias hosts EditHosts -option AllScope
+Set-Alias history EditHistory -option AllScope
 
-Set-Alias dockerpullall DockerPullAllImages
-Set-Alias dockerps DockerList
-Set-Alias dockerpsall DockerListAll
+Set-Alias dockerpullall DockerPullAllImages -option AllScope
+Set-Alias dockerps DockerList -option AllScope
+Set-Alias dockerpsall DockerListAll -option AllScope
+
+Set-Alias gettcp GetTCPAll -option AllScope
+Set-Alias getudp GetUDPAll -option AllScope
 
 ## https://starship.rs/
 if (Get-Command "starship" -ErrorAction SilentlyContinue) {

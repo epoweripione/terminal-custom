@@ -237,6 +237,8 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "fd"
         "file"
         "lsd"
+        "mkcert"
+        "wget"
         "treesize-free"
         ## markdown editor
         "pandoc"

@@ -96,7 +96,7 @@
 #         @{'Name' = 'Path';'Expression'={(Get-Process -Id $_.OwningProcess).Path}} |
 #     Sort-Object -Property ProcessName,LocalPort |
 #     Format-Table
-# Get-NetTCPConnection -State Listen,Established |
+# Get-NetUDPEndpoint |
 #     Select-Object -Property LocalAddress,LocalPort,OwningProcess,
 #         @{'Name' = 'ProcessName';'Expression'={(Get-Process -Id $_.OwningProcess).Name}},
 #         @{'Name' = 'Path';'Expression'={(Get-Process -Id $_.OwningProcess).Path}} |

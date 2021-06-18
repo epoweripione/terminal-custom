@@ -614,16 +614,19 @@ if [[ -x "$(command -v fzf)" ]]; then
     }
 
     # fzf alias
-    alias fzf-cat='fzf --height 50% --layout=reverse --preview-window=right,70% --preview "cat {}"'
+    alias fzf-cat='fzf --height 50% --layout=reverse --preview-window=right,70%,wrap \
+            --bind "ctrl-j:preview-page-down,ctrl-k:preview-page-up,alt-j:preview-bottom,alt-k:preview-top" \
+            --preview "cat {}"'
 
     alias fzf-file='fzf --height 50% --layout reverse --info inline --border \
-                    --preview "file {}" --preview-window up,1,border-horizontal \
-                    --color "fg:#bbccdd,fg+:#ddeeff,bg:#334455,preview-bg:#223344,border:#778899"'
+        --preview "file {}" --preview-window up,1,border-horizontal \
+        --color "fg:#bbccdd,fg+:#ddeeff,bg:#334455,preview-bg:#223344,border:#778899"'
 
     if [[ -x "$(command -v bat)" ]]; then
         alias bat-themes='bat --list-themes | fzf --preview="bat --theme={} --color=always ${ZSH}/oh-my-zsh.sh"'
-        alias fzf-bat='fzf --height 50% --layout=reverse --preview-window=right,70% \
-                        --preview "bat --theme=TwoDark --style=numbers --color=always --line-range :500 {}"'
+        alias fzf-bat='fzf --height 50% --layout=reverse --preview-window=right,70%,wrap \
+            --bind "ctrl-j:preview-page-down,ctrl-k:preview-page-up,alt-j:preview-bottom,alt-k:preview-top" \
+            --preview "bat --theme=TwoDark --style=numbers,changes --color=always --line-range :500 {}"'
     fi
 fi
 
