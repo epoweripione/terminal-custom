@@ -199,14 +199,14 @@ fi
 if [[ -z "$GO_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
     GO_VERSION=$(go version | cut -d' ' -f3)
     if version_ge $GO_VERSION 'go1.13'; then
-        go env -w GO111MODULE=on
+        go env -w GO111MODULE=auto
         go env -w GOPROXY="https://goproxy.io,direct"
         # go env -w GOPROXY="https://goproxy.cn,direct"
         # go env -w GOPROXY="https://proxy.golang.org,direct"
         ## https://goproxy.io/zh/docs/goproxyio-private.html
         # go env -w GOPRIVATE="*.corp.example.com"
     else
-        export GO111MODULE=on
+        export GO111MODULE=auto
         export GOPROXY="https://goproxy.io"
     fi
 fi

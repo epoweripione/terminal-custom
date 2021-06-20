@@ -25,16 +25,17 @@ curl https://sh.rustup.rs -sSf | sh
 # scoop install rustup
 
 
-# rustup mirror
-if [[ -z "$RUST_NOT_USE_PROXY" && -x "$(command -v rustup)" ]]; then
+# rustup & cargo mirror
+if [[ -z "$RUST_NOT_USE_PROXY" ]]; then
+    # rustup mirror
     export RUSTUP_DIST_SERVER=https://mirrors.sjtug.sjtu.edu.cn/rust-static/
     # export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup
     # export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
-fi
 
-# cargo mirror
-if [[ -z "$RUST_NOT_USE_PROXY" && -x "$(command -v cargo)" ]]; then
-    tee "$HOME/.cargo/config" >/dev/null <<-'EOF'
+    # cargo mirror
+    if [[ ! -s "$HOME/.cargo/config" ]]; then
+        mkdir -p "$HOME/.cargo"
+        tee "$HOME/.cargo/config" >/dev/null <<-'EOF'
 [source.crates-io]
 registry = "https://github.com/rust-lang/crates.io-index"
 
@@ -52,4 +53,5 @@ registry = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index"
 [source.rustcc]
 registry = "git://crates.rustcc.cn/crates.io-index"
 EOF
+    fi
 fi

@@ -196,6 +196,11 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
 
             [[ -z "${TargetName}" || -z "${TargetServer}" ]] && continue
 
+            TargetUUID=$(echo "${line}" \
+                | sed -rn "s/.*uuid:([^,{}]+).*/\1/ip" \
+                | sed -e "s/^\s//" -e "s/\s$//" \
+                | sed -e "s/^\"//" -e "s/\"$//")
+
             # Rename node name contains only numbers & spaces & special characters
             if echo "${TargetName}" | grep -Eq "^[[:digit:][:space:][:punct:]]+$"; then
                 TargetNewName="ZZ💤${TargetName}"
@@ -203,28 +208,30 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
                 TargetNewName="${TargetName}"
             fi
 
+            PROXY_IS_DELETE="N"
             if [[ " ${PROXY_LIST_ALL[@]} " =~ " ${TargetNewName} " ]]; then
-                PROXY_DELETE+=("${TargetName}")
+                PROXY_IS_DELETE="Y"
             else
                 if [[ "${TARGET_OPTION}" == *"proxypool"* && " ${PROXY_SERVER_ALL[@]} " =~ " ${TargetServer} " ]]; then
-                    PROXY_DELETE+=("${TargetName}")
-                else
-                    if [[ -n "${TARGET_FILTER}" ]]; then
-                        if echo "${TargetName}" | grep -Eq "${TARGET_FILTER}"; then
-                            PROXY_DELETE+=("${TargetName}")
-                        else
-                            PROXY_NAME+=("${TargetName}")
-                            PROXY_NEW_NAME+=("${TargetNewName}")
-                            PROXY_LIST_ALL+=("${TargetNewName}")
-                            PROXY_SERVER_ALL+=("${TargetServer}")
-                        fi
-                    else
-                        PROXY_NAME+=("${TargetName}")
-                        PROXY_NEW_NAME+=("${TargetNewName}")
-                        PROXY_LIST_ALL+=("${TargetNewName}")
-                        PROXY_SERVER_ALL+=("${TargetServer}")
+                    PROXY_IS_DELETE="Y"
+                elif [[ -n "${TARGET_FILTER}" ]]; then
+                    if echo "${TargetName}" | grep -Eq "${TARGET_FILTER}"; then
+                        PROXY_IS_DELETE="Y"
                     fi
                 fi
+
+                if [[ -n "${TargetUUID}" ]]; then
+                    [[ "${TargetUUID//-/}" =~ "^[[:xdigit:]]{32}$" ]] || PROXY_IS_DELETE="Y"
+                fi
+            fi
+
+            if [[ "${PROXY_IS_DELETE}" == "Y" ]]; then
+                PROXY_DELETE+=("${TargetName}")
+            else
+                PROXY_NAME+=("${TargetName}")
+                PROXY_NEW_NAME+=("${TargetNewName}")
+                PROXY_LIST_ALL+=("${TargetNewName}")
+                PROXY_SERVER_ALL+=("${TargetServer}")
             fi
         done <<<"${TARGET_PROXIES}"
 

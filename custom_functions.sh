@@ -612,6 +612,253 @@ function ver_compare_le() {
 }
 
 
+## Query IP address
+# Get local machine network interfaces
+function get_network_interface_list() {
+    unset NETWORK_INTERFACE_LIST
+    if [[ -x "$(command -v ip)" ]]; then
+        NETWORK_INTERFACE_LIST=$(ip link | awk -F: '$0 !~ "lo|vir|^[^0-9]" {print $2;getline}')
+        # Without wireless
+        # NETWORK_INTERFACE_LIST=$(ip link | awk -F: '$0 !~ "lo|vir|wl|^[^0-9]" {print $2;getline}')
+    else
+        NETWORK_INTERFACE_LIST=$(ls /sys/class/net | tr "\t" "\n" | grep -Ev "lo|vir|^[0-9]")
+    fi
+}
+
+function get_network_interface_default() {
+    unset NETWORK_INTERFACE_DEFAULT
+    if [[ -x "$(command -v ip)" ]]; then
+        NETWORK_INTERFACE_DEFAULT=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//" -e "s/[ \t]//g")
+    elif [[ -x "$(command -v netstat)" ]]; then
+        NETWORK_INTERFACE_DEFAULT=$(netstat -rn | awk '/^0.0.0.0/ {thif=substr($0,74,10); print thif;} /^default.*UG/ {thif=substr($0,65,10); print thif;}')
+    fi
+}
+
+# get local machine ip list
+function get_network_local_ip_list() {
+    unset NETWORK_LOCAL_IP_LIST
+
+    get_network_interface_list
+    [[ -z "$NETWORK_INTERFACE_LIST" ]] && return 0
+
+    local net_interface_list
+    local net_interface
+    local net_ip
+
+    net_interface_list=(`echo $NETWORK_INTERFACE_LIST | tr '\n' ' '`)
+    for net_interface in ${net_interface_list[@]}; do
+        if [[ -z "$NETWORK_LOCAL_IP_LIST" ]]; then
+            NETWORK_LOCAL_IP_LIST="${net_interface}:"
+        else
+            NETWORK_LOCAL_IP_LIST="${NETWORK_LOCAL_IP_LIST}\n\n${net_interface}:"
+        fi
+
+        if [[ -x "$(command -v ip)" ]]; then
+            net_ip=$(ip addr show ${net_interface} | grep "inet\|inet6" | awk '{print $2}' | cut -d'/' -f1)
+        elif [[ -x "$(command -v ifconfig)" ]]; then
+            net_ip=$(ifconfig ${net_interface} | grep "inet\|inet6" |awk -F' ' '{print $2}' | awk '{print $1}')
+        fi
+
+        net_ip=$(echo ${net_ip} | grep -v "127.0.0.1" | grep -v "^::1" | grep -v "^fe80")
+
+        NETWORK_LOCAL_IP_LIST="${NETWORK_LOCAL_IP_LIST}\n${net_ip}"
+    done
+}
+
+function get_network_local_ipv4_list() {
+    unset NETWORK_LOCAL_IPV4_LIST
+
+    get_network_local_ip_list
+    [[ -z "$NETWORK_LOCAL_IP_LIST" ]] && return 0
+
+    NETWORK_LOCAL_IPV4_LIST=$(echo $NETWORK_LOCAL_IP_LIST | grep -B1 "\.")
+
+    NETWORK_LOCAL_IPV4_LIST=${NETWORK_LOCAL_IPV4_LIST//-/}
+}
+
+function get_network_local_ipv6_list() {
+    unset NETWORK_LOCAL_IPV6_LIST
+
+    get_network_local_ip_list
+    [[ -z "$NETWORK_LOCAL_IP_LIST" ]] && return 0
+
+    NETWORK_LOCAL_IPV6_LIST=$(echo $NETWORK_LOCAL_IP_LIST | grep -v "\.")
+}
+
+
+# get local machine default interface ip
+function get_network_local_ip_default() {
+    unset NETWORK_LOCAL_IP_DEFAULT
+
+    get_network_interface_default
+    [[ -z "$NETWORK_INTERFACE_DEFAULT" ]] && return 0
+
+    local net_ip
+
+    if [[ -x "$(command -v ip)" ]]; then
+        net_ip=$(ip addr show ${NETWORK_INTERFACE_DEFAULT} | grep "inet\|inet6" | awk '{print $2}' | cut -d'/' -f1)
+    elif [[ -x "$(command -v ifconfig)" ]]; then
+        net_ip=$(ifconfig ${NETWORK_INTERFACE_DEFAULT} | grep "inet\|inet6" |awk -F' ' '{print $2}' | awk '{print $1}')
+    fi
+
+    NETWORK_LOCAL_IP_DEFAULT="${NETWORK_INTERFACE_DEFAULT}:\n${net_ip}"
+}
+
+function get_network_local_ipv4_default() {
+    # https://stackoverflow.com/questions/13322485/how-to-get-the-primary-ip-address-of-the-local-machine-on-linux-and-os-x
+    # LOCAL_NET_IF=`netstat -rn | awk '/^0.0.0.0/ {thif=substr($0,74,10); print thif;} /^default.*UG/ {thif=substr($0,65,10); print thif;}'`
+    # LOCAL_NET_IP=`ifconfig ${LOCAL_NET_IF} | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
+
+    unset NETWORK_LOCAL_IPV4_DEFAULT
+
+    get_network_local_ip_default
+    [[ -z "$NETWORK_LOCAL_IP_DEFAULT" ]] && return 0
+
+    NETWORK_LOCAL_IPV4_DEFAULT=$(echo $NETWORK_LOCAL_IP_DEFAULT | grep "\." | head -n1)
+}
+
+function get_network_local_ipv6_default() {
+    unset NETWORK_LOCAL_IPV6_DEFAULT
+
+    get_network_local_ip_default
+    [[ -z "$NETWORK_LOCAL_IP_DEFAULT" ]] && return 0
+
+    NETWORK_LOCAL_IPV6_DEFAULT=$(echo $NETWORK_LOCAL_IP_DEFAULT | grep ":" | sed '1d' | head -n1)
+}
+
+# get wan ip
+function get_network_wan_ipv4() {
+    # https://guoyu841020.oschina.io/2017/02/23/linux%E8%8E%B7%E5%8F%96%E5%85%AC%E7%BD%91IP%E7%9A%84%E6%96%B9%E6%B3%95/
+    # nginx:
+    # https://www.jianshu.com/p/14320f300223
+    # location /ip {
+    #         default_type text/plain;
+    #         return 200 "$remote_addr";
+    # }
+
+    # location /ipinfo {
+    #         default_type application/json;
+    #         return 200  '{"IP":"$remote_addr","PORT":"$remote_port","X-Forwarded-For":"$proxy_add_x_forwarded_for"}';
+    # }
+    # php:
+    # <?php echo $_SERVER["REMOTE_ADDR"]; ?>
+    # pacman -S --noconfirm html2text
+    # curl -fsSL http://yourdomainname/getip.php | html2text
+    # nodejs:
+    # https://github.com/alsotang/externalip
+    # https://github.com/sindresorhus/public-ip
+    unset NETWORK_WAN_NET_IP
+
+    local remote_host_list
+    local target_host
+
+    remote_host_list=(
+        "https://api-ipv4.ip.sb/ip"
+        "http://ip-api.com/line/?fields=query"
+        "https://v4.ident.me/"
+        "http://icanhazip.com/"
+        "http://ipinfo.io/ip"
+        "https://ifconfig.co/"
+    )
+
+    for target_host in ${remote_host_list[@]}; do
+        NETWORK_WAN_NET_IP=$(curl -fsL -4 --connect-timeout 5 --max-time 10 "${target_host}" \
+                        | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
+                        | head -n1)
+        [[ -n "$NETWORK_WAN_NET_IP" ]] && break
+    done
+    # NETWORK_WAN_NET_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
+}
+
+function get_network_wan_ipv6() {
+    unset NETWORK_WAN_NET_IPV6
+
+    local remote_host_list
+    local target_host
+
+    remote_host_list=(
+        "https://api-ipv6.ip.sb/ip"
+        "https://v6.ident.me/"
+        "http://icanhazip.com/"
+        "https://ifconfig.co/"
+    )
+
+    for target_host in ${remote_host_list[@]}; do
+        NETWORK_WAN_NET_IPV6=$(curl -fsL -6 --connect-timeout 5 --max-time 10 "${target_host}" \
+                        | grep -Eo '^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$' \
+                        | head -n1)
+        [[ -n "$NETWORK_WAN_NET_IPV6" ]] && break
+    done
+}
+
+function get_network_wan_geo() {
+    unset NETWORK_WAN_NET_IP_GEO
+
+    if [[ -x "$(command -v geoiplookup)" ]]; then
+        get_network_wan_ipv4
+        if [[ -n "$NETWORK_WAN_NET_IP" ]]; then
+            NETWORK_WAN_NET_IP_GEO=`geoiplookup ${NETWORK_WAN_NET_IP} | head -n1 | cut -d':' -f2-`
+        fi
+    fi
+
+    if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
+        NETWORK_WAN_NET_IP_GEO=`curl -fsL -4 --connect-timeout 5 --max-time 10 \
+            "https://api.ip.sb/geoip" | jq -r '.country//empty'`
+    fi
+
+    if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
+        # Country lookup: China
+        NETWORK_WAN_NET_IP_GEO=`curl -fsL -4 --connect-timeout 5 --max-time 10 \
+            "http://ip-api.com/line/?fields=country"`
+        if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
+            # Country lookup: CN
+            NETWORK_WAN_NET_IP_GEO=`curl -fsL -4 --connect-timeout 5 --max-time 10 \
+                "http://ip-api.com/line/?fields=countryCode"`
+        fi
+    fi
+}
+
+# display local machine ip info
+function myip_lan_wan() {
+    get_network_local_ipv4_default
+    get_network_local_ipv6_default
+    get_network_wan_ipv4
+    get_network_wan_ipv6
+
+    [[ -n "$NETWORK_LOCAL_IPV4_DEFAULT" ]] && echo -e "Local IP: ${NETWORK_LOCAL_IPV4_DEFAULT}"
+    [[ -n "$NETWORK_LOCAL_IPV6_DEFAULT" ]] && echo -e "Local IPV6: ${NETWORK_LOCAL_IPV6_DEFAULT}"
+    [[ -n "$NETWORK_WAN_NET_IP" ]] && echo -e "Public IP: ${NETWORK_WAN_NET_IP}"
+    [[ -n "$NETWORK_WAN_NET_IPV6" ]] && echo -e "Public IPV6: ${NETWORK_WAN_NET_IPV6}"
+}
+
+function myip_lan() {
+    get_network_local_ipv4_default
+    get_network_local_ipv6_default
+
+    [[ -n "$NETWORK_LOCAL_IPV4_DEFAULT" ]] && echo -e "Local IP: ${NETWORK_LOCAL_IPV4_DEFAULT}"
+    [[ -n "$NETWORK_LOCAL_IPV6_DEFAULT" ]] && echo -e "Local IPV6: ${NETWORK_LOCAL_IPV6_DEFAULT}"
+}
+
+function myip_wan() {
+    get_network_wan_ipv4
+    get_network_wan_ipv6
+
+    [[ -n "$NETWORK_WAN_NET_IP" ]] && echo -e "Public IP: ${NETWORK_WAN_NET_IP}"
+    [[ -n "$NETWORK_WAN_NET_IPV6" ]] && echo -e "Public IPV6: ${NETWORK_WAN_NET_IPV6}"
+}
+
+function myip_wan_geo() {
+    get_network_wan_ipv4
+    get_network_wan_geo
+
+    if [[ -n "$NETWORK_WAN_NET_IP_GEO" ]]; then
+        echo -e "Public IP: ${NETWORK_WAN_NET_IP}\n${NETWORK_WAN_NET_IP_GEO}"
+    else
+        echo "Can't get GEO by WAN IP!"
+    fi
+}
+
+
 ## Proxy functions
 function set_proxy() {
     # PROTOCOL://USERNAME:PASSWORD@HOST:PORT
@@ -713,273 +960,67 @@ function clear_all_proxy() {
 }
 
 function proxy_cmd() {
-    if [[ -n $* ]]; then
-        local COLOR='\033[0;35m'
-        local NOCOLOR='\033[0m'
-        set_proxy && echo -e "${COLOR}[proxy] set${NOCOLOR}"
+    [[ -z $* ]] && colorEcho "${GREEN}Set proxy for specific command." && return 0
+
+    if [[ -n "${all_proxy}" ]]; then
+        colorEcho "${GREEN}Using proxy: ${FUCHSIA}${all_proxy}"
         $*
-        clear_proxy && echo -e "${COLOR}[proxy] clear${NOCOLOR}"
     else
-        echo "Set proxy for specific command."
+        if [[ -n "${GLOBAL_PROXY_IP}" ]]; then
+            if [[ -n "${GLOBAL_PROXY_SOCKS_PORT}" ]]; then
+                set_proxy "socks5h://${GLOBAL_PROXY_IP}:${GLOBAL_PROXY_SOCKS_PORT}"
+            elif [[ -n "${GLOBAL_PROXY_HTTP_PORT}" ]]; then
+                set_proxy "http://${GLOBAL_PROXY_IP}:${GLOBAL_PROXY_HTTP_PORT}"
+            fi
+        fi
+
+        [[ -n "${all_proxy}" ]] && colorEcho "${GREEN}Using proxy: ${FUCHSIA}${all_proxy}"
+        $*
+        [[ -n "${all_proxy}" ]] && clear_proxy && colorEcho "${GREEN}Proxy clear."
+    fi
+}
+
+function noproxy_cmd() {
+    [[ -z $* ]] && colorEcho "${GREEN}No proxy for specific command." && return 0
+
+    if [[ -n "${all_proxy}" ]]; then
+        http_proxy="" https_proxy="" ftp_proxy="" all_proxy="" \
+            HTTP_PROXY="" HTTPS_PROXY="" FTP_PROXY="" ALL_PROXY="" \
+            $*
+    else
+        $*
+    fi
+}
+
+function proxy_socks5h_to_socks5() {
+    # fix: golang - proxyconnect tcp: dial tcp: lookup socks5h: no such host
+    # https://github.com/golang/go/issues/13454
+    # https://github.com/golang/go/issues/24135
+    [[ -z $* ]] && colorEcho "${GREEN}Use ${FUCHSIA}socks5${GREEN} proxy instead of ${BLUE}socks5h${GREEN} for specific command." && return 0
+
+    if echo "${all_proxy}" | grep -q 'socks5h'; then
+        colorEcho "${GREEN}Using proxy: ${FUCHSIA}${all_proxy/socks5h/socks5}"
+        http_proxy=${http_proxy/socks5h/socks5} \
+            https_proxy=${https_proxy/socks5h/socks5} \
+            ftp_proxy=${ftp_proxy/socks5h/socks5} \
+            all_proxy=${all_proxy/socks5h/socks5} \
+            HTTP_PROXY=${HTTP_PROXY/socks5h/socks5} \
+            HTTPS_PROXY=${HTTPS_PROXY/socks5h/socks5} \
+            FTP_PROXY=${FTP_PROXY/socks5h/socks5} \
+            ALL_PROXY=${ALL_PROXY/socks5h/socks5} \
+            $*
+    else
+        [[ -n "${all_proxy}" ]] && colorEcho "${GREEN}Using proxy: ${FUCHSIA}${all_proxy}"
+        $*
     fi
 }
 
 # SET_PROXY_FOR=('brew' 'git' 'apm')
 # for cmd in $SET_PROXY_FOR; do
-#     hash ${cmd} > /dev/null 2>&1 && alias ${cmd}="proxy ${cmd}"
+#     hash ${cmd} > /dev/null 2>&1 && alias ${cmd}="proxy_cmd ${cmd}"
 # done
 
-## Query IP address
-# Get local machine network interfaces
-function get_network_interface_list() {
-    unset NETWORK_INTERFACE_LIST
-    if [[ -x "$(command -v ip)" ]]; then
-        NETWORK_INTERFACE_LIST=$(ip link | awk -F: '$0 !~ "lo|vir|^[^0-9]" {print $2;getline}')
-        # Without wireless
-        # NETWORK_INTERFACE_LIST=$(ip link | awk -F: '$0 !~ "lo|vir|wl|^[^0-9]" {print $2;getline}')
-    else
-        NETWORK_INTERFACE_LIST=$(ls /sys/class/net | tr "\t" "\n" | grep -Ev "lo|vir|^[0-9]")
-    fi
-}
-
-function get_network_interface_default() {
-    unset NETWORK_INTERFACE_DEFAULT
-    if [[ -x "$(command -v ip)" ]]; then
-        NETWORK_INTERFACE_DEFAULT=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//" -e "s/[ \t]//g")
-    elif [[ -x "$(command -v netstat)" ]]; then
-        NETWORK_INTERFACE_DEFAULT=$(netstat -rn | awk '/^0.0.0.0/ {thif=substr($0,74,10); print thif;} /^default.*UG/ {thif=substr($0,65,10); print thif;}')
-    fi
-}
-
-
-# get local machine ip list
-function get_network_local_ip_list() {
-    unset NETWORK_LOCAL_IP_LIST
-
-    get_network_interface_list
-    [[ -z "$NETWORK_INTERFACE_LIST" ]] && return 0
-
-    local net_interface_list
-    local net_interface
-    local net_ip
-
-    net_interface_list=(`echo $NETWORK_INTERFACE_LIST | tr '\n' ' '`)
-    for net_interface in ${net_interface_list[@]}; do
-        if [[ -z "$NETWORK_LOCAL_IP_LIST" ]]; then
-            NETWORK_LOCAL_IP_LIST="${net_interface}:"
-        else
-            NETWORK_LOCAL_IP_LIST="${NETWORK_LOCAL_IP_LIST}\n\n${net_interface}:"
-        fi
-
-        if [[ -x "$(command -v ip)" ]]; then
-            net_ip=$(ip addr show ${net_interface} | grep "inet\|inet6" | awk '{print $2}' | cut -d'/' -f1)
-        elif [[ -x "$(command -v ifconfig)" ]]; then
-            net_ip=$(ifconfig ${net_interface} | grep "inet\|inet6" |awk -F' ' '{print $2}' | awk '{print $1}')
-        fi
-
-        net_ip=$(echo ${net_ip} | grep -v "127.0.0.1" | grep -v "^::1" | grep -v "^fe80")
-
-        NETWORK_LOCAL_IP_LIST="${NETWORK_LOCAL_IP_LIST}\n${net_ip}"
-    done
-}
-
-function get_network_local_ipv4_list() {
-    unset NETWORK_LOCAL_IPV4_LIST
-
-    get_network_local_ip_list
-    [[ -z "$NETWORK_LOCAL_IP_LIST" ]] && return 0
-
-    NETWORK_LOCAL_IPV4_LIST=$(echo $NETWORK_LOCAL_IP_LIST | grep -B1 "\.")
-
-    NETWORK_LOCAL_IPV4_LIST=${NETWORK_LOCAL_IPV4_LIST//-/}
-}
-
-function get_network_local_ipv6_list() {
-    unset NETWORK_LOCAL_IPV6_LIST
-
-    get_network_local_ip_list
-    [[ -z "$NETWORK_LOCAL_IP_LIST" ]] && return 0
-
-    NETWORK_LOCAL_IPV6_LIST=$(echo $NETWORK_LOCAL_IP_LIST | grep -v "\.")
-}
-
-
-# get local machine default interface ip
-function get_network_local_ip_default() {
-    unset NETWORK_LOCAL_IP_DEFAULT
-
-    get_network_interface_default
-    [[ -z "$NETWORK_INTERFACE_DEFAULT" ]] && return 0
-
-    local net_ip
-
-    if [[ -x "$(command -v ip)" ]]; then
-        net_ip=$(ip addr show ${NETWORK_INTERFACE_DEFAULT} | grep "inet\|inet6" | awk '{print $2}' | cut -d'/' -f1)
-    elif [[ -x "$(command -v ifconfig)" ]]; then
-        net_ip=$(ifconfig ${NETWORK_INTERFACE_DEFAULT} | grep "inet\|inet6" |awk -F' ' '{print $2}' | awk '{print $1}')
-    fi
-
-    NETWORK_LOCAL_IP_DEFAULT="${NETWORK_INTERFACE_DEFAULT}:\n${net_ip}"
-}
-
-function get_network_local_ipv4_default() {
-    # https://stackoverflow.com/questions/13322485/how-to-get-the-primary-ip-address-of-the-local-machine-on-linux-and-os-x
-    # LOCAL_NET_IF=`netstat -rn | awk '/^0.0.0.0/ {thif=substr($0,74,10); print thif;} /^default.*UG/ {thif=substr($0,65,10); print thif;}'`
-    # LOCAL_NET_IP=`ifconfig ${LOCAL_NET_IF} | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
-
-    unset NETWORK_LOCAL_IPV4_DEFAULT
-
-    get_network_local_ip_default
-    [[ -z "$NETWORK_LOCAL_IP_DEFAULT" ]] && return 0
-
-    NETWORK_LOCAL_IPV4_DEFAULT=$(echo $NETWORK_LOCAL_IP_DEFAULT | grep "\." | head -n1)
-}
-
-function get_network_local_ipv6_default() {
-    unset NETWORK_LOCAL_IPV6_DEFAULT
-
-    get_network_local_ip_default
-    [[ -z "$NETWORK_LOCAL_IP_DEFAULT" ]] && return 0
-
-    NETWORK_LOCAL_IPV6_DEFAULT=$(echo $NETWORK_LOCAL_IP_DEFAULT | grep ":" | sed '1d' | head -n1)
-}
-
-
-# get wan ip
-function get_network_wan_ipv4() {
-    # https://guoyu841020.oschina.io/2017/02/23/linux%E8%8E%B7%E5%8F%96%E5%85%AC%E7%BD%91IP%E7%9A%84%E6%96%B9%E6%B3%95/
-    # nginx:
-    # https://www.jianshu.com/p/14320f300223
-    # location /ip {
-    #         default_type text/plain;
-    #         return 200 "$remote_addr";
-    # }
-
-    # location /ipinfo {
-    #         default_type application/json;
-    #         return 200  '{"IP":"$remote_addr","PORT":"$remote_port","X-Forwarded-For":"$proxy_add_x_forwarded_for"}';
-    # }
-    # php:
-    # <?php echo $_SERVER["REMOTE_ADDR"]; ?>
-    # pacman -S --noconfirm html2text
-    # curl -fsSL http://yourdomainname/getip.php | html2text
-    # nodejs:
-    # https://github.com/alsotang/externalip
-    # https://github.com/sindresorhus/public-ip
-    unset NETWORK_WAN_NET_IP
-
-    local remote_host_list
-    local target_host
-
-    remote_host_list=(
-        "https://api-ipv4.ip.sb/ip"
-        "http://ip-api.com/line/?fields=query"
-        "https://v4.ident.me/"
-        "http://icanhazip.com/"
-        "http://ipinfo.io/ip"
-        "https://ifconfig.co/"
-    )
-
-    for target_host in ${remote_host_list[@]}; do
-        NETWORK_WAN_NET_IP=$(curl -fsL -4 --connect-timeout 5 --max-time 10 "${target_host}" \
-                        | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}' \
-                        | head -n1)
-        [[ -n "$NETWORK_WAN_NET_IP" ]] && break
-    done
-    # NETWORK_WAN_NET_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
-}
-
-function get_network_wan_ipv6() {
-    unset NETWORK_WAN_NET_IPV6
-
-    local remote_host_list
-    local target_host
-
-    remote_host_list=(
-        "https://api-ipv6.ip.sb/ip"
-        "https://v6.ident.me/"
-        "http://icanhazip.com/"
-        "https://ifconfig.co/"
-    )
-
-    for target_host in ${remote_host_list[@]}; do
-        NETWORK_WAN_NET_IPV6=$(curl -fsL -6 --connect-timeout 5 --max-time 10 "${target_host}" \
-                        | grep -Eo '^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$' \
-                        | head -n1)
-        [[ -n "$NETWORK_WAN_NET_IPV6" ]] && break
-    done
-}
-
-function get_network_wan_geo() {
-    unset NETWORK_WAN_NET_IP_GEO
-
-    if [[ -x "$(command -v geoiplookup)" ]]; then
-        get_network_wan_ipv4
-        if [[ -n "$NETWORK_WAN_NET_IP" ]]; then
-            NETWORK_WAN_NET_IP_GEO=`geoiplookup ${NETWORK_WAN_NET_IP} | head -n1 | cut -d':' -f2-`
-        fi
-    fi
-
-    if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
-        NETWORK_WAN_NET_IP_GEO=`curl -fsL -4 --connect-timeout 5 --max-time 10 \
-            "https://api.ip.sb/geoip" | jq -r '.country//empty'`
-    fi
-
-    if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
-        # Country lookup: China
-        NETWORK_WAN_NET_IP_GEO=`curl -fsL -4 --connect-timeout 5 --max-time 10 \
-            "http://ip-api.com/line/?fields=country"`
-        if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
-            # Country lookup: CN
-            NETWORK_WAN_NET_IP_GEO=`curl -fsL -4 --connect-timeout 5 --max-time 10 \
-                "http://ip-api.com/line/?fields=countryCode"`
-        fi
-    fi
-}
-
-
-# display local machine ip info
-function myip_lan_wan() {
-    get_network_local_ipv4_default
-    get_network_local_ipv6_default
-    get_network_wan_ipv4
-    get_network_wan_ipv6
-
-    [[ -n "$NETWORK_LOCAL_IPV4_DEFAULT" ]] && echo -e "Local IP: ${NETWORK_LOCAL_IPV4_DEFAULT}"
-    [[ -n "$NETWORK_LOCAL_IPV6_DEFAULT" ]] && echo -e "Local IPV6: ${NETWORK_LOCAL_IPV6_DEFAULT}"
-    [[ -n "$NETWORK_WAN_NET_IP" ]] && echo -e "Public IP: ${NETWORK_WAN_NET_IP}"
-    [[ -n "$NETWORK_WAN_NET_IPV6" ]] && echo -e "Public IPV6: ${NETWORK_WAN_NET_IPV6}"
-}
-
-function myip_lan() {
-    get_network_local_ipv4_default
-    get_network_local_ipv6_default
-
-    [[ -n "$NETWORK_LOCAL_IPV4_DEFAULT" ]] && echo -e "Local IP: ${NETWORK_LOCAL_IPV4_DEFAULT}"
-    [[ -n "$NETWORK_LOCAL_IPV6_DEFAULT" ]] && echo -e "Local IPV6: ${NETWORK_LOCAL_IPV6_DEFAULT}"
-}
-
-function myip_wan() {
-    get_network_wan_ipv4
-    get_network_wan_ipv6
-
-    [[ -n "$NETWORK_WAN_NET_IP" ]] && echo -e "Public IP: ${NETWORK_WAN_NET_IP}"
-    [[ -n "$NETWORK_WAN_NET_IPV6" ]] && echo -e "Public IPV6: ${NETWORK_WAN_NET_IPV6}"
-}
-
-function myip_wan_geo() {
-    get_network_wan_ipv4
-    get_network_wan_geo
-
-    if [[ -n "$NETWORK_WAN_NET_IP_GEO" ]]; then
-        echo -e "Public IP: ${NETWORK_WAN_NET_IP}\n${NETWORK_WAN_NET_IP_GEO}"
-    else
-        echo "Can't get GEO by WAN IP!"
-    fi
-}
-
-
-## Use proxy or mirror when some sites were blocked or low speed
+# Use proxy or mirror when some sites were blocked or low speed
 function set_proxy_mirrors_env() {
     # if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
     #     get_network_wan_geo
@@ -1031,7 +1072,6 @@ function set_proxy_mirrors_env() {
         unset RUST_NOT_USE_PROXY
     fi
 }
-
 
 ## curl to check webservice is up
 # https://stackoverflow.com/questions/12747929/linux-script-with-curl-to-check-webservice-is-up
@@ -1094,7 +1134,7 @@ function check_webservice_timeout() {
     echo "time_connect + time_starttransfer: $http_timeout"
 }
 
-## test the availability of a socks5 proxy
+# test the availability of a socks5 proxy
 function check_socks5_proxy_up() {
     # How to use:
     # if check_socks5_proxy_up 127.0.0.1:1080 www.google.com; then echo "ok"; else echo "something wrong"; fi
@@ -1113,7 +1153,7 @@ function check_socks5_proxy_up() {
     fi
 }
 
-## test the availability of a http proxy
+# test the availability of a http proxy
 function check_http_proxy_up() {
     # How to use:
     # if check_http_proxy_up 127.0.0.1:1080 www.google.com; then echo "ok"; else echo "something wrong"; fi
@@ -1132,8 +1172,7 @@ function check_http_proxy_up() {
     fi
 }
 
-
-## Setting global git proxy
+# Set global git proxy
 function set_git_proxy() {
     local PROXY_ADDRESS=$1
 
@@ -1146,8 +1185,7 @@ function set_git_proxy() {
     fi
 }
 
-
-## Setting socks5 proxy for certain git repos
+# Set socks5 proxy for certain git repos
 function set_git_special_proxy() {
     # Usage: set_git_special_proxy github.com,gitlab.com 127.0.0.1:55880
     local GIT_REPO_LIST=$1
@@ -1170,8 +1208,7 @@ function set_git_special_proxy() {
     done
 }
 
-
-## Setting apt proxy
+# Set apt proxy
 function set_apt_proxy() {
     local PROXY_ADDRESS=$1
     local APT_PROXY_CONFIG=${2:-"/etc/apt/apt.conf.d/80proxy"}
@@ -1191,8 +1228,7 @@ function set_apt_proxy() {
     fi
 }
 
-
-## Setting yum proxy
+# Set yum proxy
 function set_yum_proxy() {
     local PROXY_ADDRESS=${1:-"_none_"}
     local YUM_PROXY_CONFIG=${2:-"/etc/yum.conf"}
@@ -1204,8 +1240,7 @@ function set_yum_proxy() {
     echo "proxy=socks5://${PROXY_ADDRESS}" | sudo tee -a "$YUM_PROXY_CONFIG" >/dev/null
 }
 
-
-## Setting wget proxy
+# Set wget proxy
 function set_wget_proxy() {
     local PROXY_ADDRESS=$1
     local WGET_CONFIG=${2:-"$HOME/.wgetrc"}
@@ -1229,8 +1264,7 @@ function set_wget_proxy() {
     fi
 }
 
-
-## Setting curl proxy
+# Set curl proxy
 function set_curl_proxy() {
     local PROXY_ADDRESS=$1
     local CURL_CONFIG=${2:-"$HOME/.curlrc"}
@@ -1248,8 +1282,7 @@ function set_curl_proxy() {
     fi
 }
 
-
-## Setting npm http proxy
+# Set npm http proxy
 function set_npm_proxy() {
     local PROXY_ADDRESS=$1
 
@@ -1264,8 +1297,7 @@ function set_npm_proxy() {
     fi
 }
 
-
-## Setting yarn http proxy
+# Set yarn http proxy
 function set_yarn_proxy() {
     local PROXY_ADDRESS=$1
 
@@ -1280,8 +1312,7 @@ function set_yarn_proxy() {
     fi
 }
 
-
-## Setting gradle http proxy
+# Set gradle http proxy
 function set_gradle_proxy() {
     local PROXY_HOST=$1
     local PROXY_PORT=$2
@@ -1304,8 +1335,7 @@ function set_gradle_proxy() {
     fi
 }
 
-
-## Setting ruby gem proxy
+# Set ruby gem proxy
 function set_gem_proxy() {
     local PROXY_ADDRESS=$1
     local GEM_CONFIG=${2:-"$HOME/.gemrc"}
@@ -1321,8 +1351,7 @@ function set_gem_proxy() {
     fi
 }
 
-
-## Setting global proxy
+# Set global proxy
 function set_global_proxy() {
     local SOCKS_ADDRESS=${1:-""}
     local HTTP_ADDRESS=${2:-""}
@@ -1359,8 +1388,7 @@ function set_global_proxy() {
     fi
 }
 
-
-## Check & set global proxy
+# Check & set global proxy
 function check_set_global_proxy() {
     local SOCKS_PORT=${1:-"1080"}
     local MIXED_PORT=${2:-"8080"}
@@ -1385,7 +1413,7 @@ function check_set_global_proxy() {
     unset GLOBAL_PROXY_SOCKS_PORT
     unset GLOBAL_PROXY_HTTP_PORT
 
-    # Setting global proxy
+    # Set global proxy
     while read -r PROXY_IP; do
         if check_socks5_proxy_up "${PROXY_IP}:${MIXED_PORT}"; then
             SOCKS_PORT=${MIXED_PORT}
@@ -1422,8 +1450,7 @@ function check_set_global_proxy() {
     fi
 }
 
-
-## setting special app socks5 proxy (curl...)
+# Set special app socks5 proxy (curl...)
 function set_special_socks5_proxy() {
     local SOCKS5_PROXY=${1:-""}
 

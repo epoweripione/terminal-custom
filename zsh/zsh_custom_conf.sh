@@ -329,51 +329,75 @@ fi
 
 # goup
 if [[ -d "$HOME/.go" ]]; then
+    [[ ":$PATH:" != *":$HOME/.go/bin:"* ]] && export PATH=$PATH:$HOME/.go/bin:$HOME/.go/current/bin
+
     if [[ -z "$GO_INSTALLER_NOT_USE_PROXY" ]]; then
         export GOUP_GO_HOST=golang.google.cn
-        alias goupInstall='http_proxy=${http_proxy/socks5h/socks5} \
-                            https_proxy=${https_proxy/socks5h/socks5} \
-                            ftp_proxy=${ftp_proxy/socks5h/socks5} \
-                            all_proxy=${all_proxy/socks5h/socks5} \
-                            HTTP_PROXY=${HTTP_PROXY/socks5h/socks5} \
-                            HTTPS_PROXY=${HTTPS_PROXY/socks5h/socks5} \
-                            FTP_PROXY=${FTP_PROXY/socks5h/socks5} \
-                            ALL_PROXY=${ALL_PROXY/socks5h/socks5} \
-                            goup install'
-        alias goupUpgrade='http_proxy=${http_proxy/socks5h/socks5} \
-                            https_proxy=${https_proxy/socks5h/socks5} \
-                            ftp_proxy=${ftp_proxy/socks5h/socks5} \
-                            all_proxy=${all_proxy/socks5h/socks5} \
-                            HTTP_PROXY=${HTTP_PROXY/socks5h/socks5} \
-                            HTTPS_PROXY=${HTTPS_PROXY/socks5h/socks5} \
-                            FTP_PROXY=${FTP_PROXY/socks5h/socks5} \
-                            ALL_PROXY=${ALL_PROXY/socks5h/socks5} \
-                            goup upgrade'
-    else
-        alias goupInstall='goup install'
-        alias goupUpgrade='goup upgrade'
-    fi
 
-    [[ ":$PATH:" != *":$HOME/.go/bin:"* ]] && export PATH=$PATH:$HOME/.go/bin:$HOME/.go/current/bin
+        [[ -n "${all_proxy}" ]] && alias goup='noproxy_cmd goup'
+
+        ## fix: proxyconnect tcp: dial tcp: lookup socks5h: no such host
+        # if echo "${all_proxy}" | grep -q 'socks5h'; then
+        #     alias goupInstall='proxy_socks5h_to_socks5 goup install'
+        #     alias goupUpgrade='proxy_socks5h_to_socks5 goup upgrade'
+        # fi
+    fi
 fi
 
 # go
 if [[ -x "$(command -v go)" ]]; then
     [[ -z "$GOBIN" && -n "$GOROOT" ]] && export GOBIN=$GOROOT/bin
+
     # go module
     GO_VERSION=$(go version | cut -d' ' -f3)
     if version_ge $GO_VERSION 'go1.13'; then
-        go env -w GO111MODULE=on
+        go env -w GO111MODULE=auto
         [[ -z "$GO_INSTALLER_NOT_USE_PROXY" ]] && go env -w GOPROXY="https://goproxy.io,direct"
     else
-        export GO111MODULE=on
+        export GO111MODULE=auto
         [[ -z "$GO_INSTALLER_NOT_USE_PROXY" ]] && export GOPROXY="https://goproxy.io"
+    fi
+
+    if [[ -z "$GO_INSTALLER_NOT_USE_PROXY" ]]; then
+        [[ -n "${all_proxy}" ]] && alias go='noproxy_cmd go'
+
+        ## fix: proxyconnect tcp: dial tcp: lookup socks5h: no such host
+        # if echo "${all_proxy}" | grep -q 'socks5h'; then
+        #     alias goGet='proxy_socks5h_to_socks5 go get'
+        #     alias goInstall='proxy_socks5h_to_socks5 go install'
+        # fi
     fi
 fi
 
-# rustup
+# rustup & cargo
 if [[ -z "$RUST_NOT_USE_PROXY" && -x "$(command -v rustup)" ]]; then
-    export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup
+    # rustup mirror
+    export RUSTUP_DIST_SERVER=https://mirrors.sjtug.sjtu.edu.cn/rust-static/
+    # export RUSTUP_DIST_SERVER=https://mirrors.tuna.tsinghua.edu.cn/rustup
+    # export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
+
+    # cargo mirror
+    if [[ ! -s "$HOME/.cargo/config" ]]; then
+        mkdir -p "$HOME/.cargo"
+        tee "$HOME/.cargo/config" >/dev/null <<-'EOF'
+[source.crates-io]
+registry = "https://github.com/rust-lang/crates.io-index"
+
+replace-with = 'rustcc'
+
+[source.tuna]
+registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git"
+
+[source.ustc]
+registry = "git://mirrors.ustc.edu.cn/crates.io-index"
+
+[source.sjtu]
+registry = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index"
+
+[source.rustcc]
+registry = "git://crates.rustcc.cn/crates.io-index"
+EOF
+    fi
 fi
 
 # jabba
