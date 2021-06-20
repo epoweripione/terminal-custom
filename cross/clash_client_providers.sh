@@ -221,7 +221,7 @@ while read -r READLINE || [[ "${READLINE}" ]]; do
                 fi
 
                 if [[ -n "${TargetUUID}" ]]; then
-                    [[ "${TargetUUID//-/}" =~ "^[[:xdigit:]]{32}$" ]] || PROXY_IS_DELETE="Y"
+                    [[ ${TargetUUID//-/} =~ ^[[:xdigit:]]{32}$ ]] || PROXY_IS_DELETE="Y"
                 fi
             fi
 
