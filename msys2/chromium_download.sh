@@ -12,14 +12,17 @@ fi
 [[ -z "$OS_INFO_ARCH" ]] && get_arch
 
 
-if [[ ! "$(command -v curl)" ]]; then
-    if check_release_package_manager packageManager yum; then
-        yum update -y && yum -y -q install curl wget
-    elif check_release_package_manager packageManager apt; then
-        apt update && apt -y install curl wget
-    elif check_release_package_manager packageManager pacman; then
-        pacman -Sy && pacman --noconfirm -S curl wget
-    fi
+if [[ -x "$(command -v pacman)" ]]; then
+    PackagesList=(
+        curl
+        wget
+    )
+    for TargetPackage in "${PackagesList[@]}"; do
+        if checkPackageNeedInstall "${TargetPackage}"; then
+            colorEcho "${BLUE}  Installing ${FUCHSIA}${TargetPackage}${BLUE}..."
+            sudo pacman --noconfirm -S "${TargetPackage}"
+        fi
+    done
 fi
 
 if [[ ! "$(command -v wget)" ]]; then

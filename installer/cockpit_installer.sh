@@ -21,22 +21,26 @@ fi
 
 # Setting up the primary Cockpit server
 colorEcho "${BLUE}Installing ${FUCHSIA}Cockpit${BLUE}..."
-if check_release_package_manager release centos; then
-    sudo yum install -y -q cockpit cockpit-docker
-    # sudo yum install -y -q cockpit-doc cockpit-machines
+if [[ -x "$(command -v pacman)" ]]; then
+    PackagesList=(
+        cockpit
+        cockpit-docker
+        # cockpit-doc
+        # cockpit-machines
+    )
+    for TargetPackage in "${PackagesList[@]}"; do
+        if checkPackageNeedInstall "${TargetPackage}"; then
+            colorEcho "${BLUE}  Installing ${FUCHSIA}${TargetPackage}${BLUE}..."
+            sudo pacman --noconfirm -S "${TargetPackage}"
+        fi
+    done
+fi
 
+if check_release_package_manager release centos; then
     sudo systemctl enable --now cockpit.socket
 
     sudo firewall-cmd --permanent --zone=public --add-service=cockpit
     sudo firewall-cmd --reload
-elif check_release_package_manager release debian; then
-    # echo 'deb http://deb.debian.org/debian stretch-backports main' > \
-    #     /etc/apt/sources.list.d/stretch-backports.list
-    sudo apt update && sudo apt -y install cockpit cockpit-docker
-    # apt -y install cockpit-doc cockpit-machines
-elif check_release_package_manager packageManager pacman; then
-    sudo pacman -Sy && sudo pacman -S cockpit cockpit-docker
-    # sudo pacman -S cockpit-doc cockpit-machines
 fi
 
 # If you already have Cockpit on your server, 

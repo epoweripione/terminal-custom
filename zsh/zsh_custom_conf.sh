@@ -48,7 +48,7 @@ bindkey -M emacs '^N' history-substring-search-down
 # not confirm a rm *
 setopt localoptions rmstarsilent
 
-# # Colors
+## Colors
 # autoload -U colors && colors
 # export CLICOLOR=1
 # export LSCOLORS='gxfxcxdxbxegedabagacad'
@@ -83,8 +83,11 @@ alias cls='clear'
 alias grep="grep --color=auto"
 
 # most used history commands
-alias histop="awk -F';' '{print $2}' ${HISTFILE} | sort | uniq -c | sort -rn"
-alias histop20="awk -F';' '{print $2}' ${HISTFILE} | sort | uniq -c | sort -rn | head -n20"
+alias histop='fc -l -n 1 | grep -v "^\.\/" | sort | uniq -c | sort -rn'
+alias histop20='fc -l -n 1 | grep -v "^\.\/" | sort | uniq -c | sort -rn | head -n20'
+
+# alias histop="awk -F';' '{print $2}' ${HISTFILE} | sort | uniq -c | sort -rn"
+# alias histop20="awk -F';' '{print $2}' ${HISTFILE} | sort | uniq -c | sort -rn | head -n20"
 
 # Auto files
 # alias -s html='nano'
@@ -133,18 +136,10 @@ fi
 
 
 # rlwarp alias
-if [[ -x "$(command -v telnet)" && -x "$(command -v rlwrap)" ]]; then
-    alias telnet="rlwrap telnet"
-fi
-
+[[ -x "$(command -v telnet)" && -x "$(command -v rlwrap)" ]] && alias telnet="rlwrap telnet"
 
 # macOS
-if [[ "$OS_TYPE" == "Darwin" ]]; then
-    if [[ -x "$(command -v greadlink)" ]]; then
-        alias readlink=greadlink
-    fi
-fi
-
+[[ "$OS_TYPE" == "Darwin" && -x "$(command -v greadlink)" ]] && alias readlink=greadlink
 
 # Extend variable in MSYS2 to use node,npm,php,composer... with winpty
 if [[ "$OS_TYPE" =~ "MSYS_NT" || "$OS_TYPE" =~ "MINGW" || "$OS_TYPE" =~ "CYGWIN_NT" ]]; then

@@ -45,6 +45,8 @@ function colorEchoAllColor() {
 NO_PROXY_LISTS="localhost,127.0.0.1,.local"
 NO_PROXY_LISTS="${NO_PROXY_LISTS},ip.sb,ip-api.com,ident.me,ifconfig.co,icanhazip.com,ipinfo.io"
 
+
+## Get OS type, architecture etc.
 # get os type: darwin, windows, linux, bsd, solaris
 function get_os_type() {
     local osname=$(uname)
@@ -83,75 +85,6 @@ function get_os_desktop() {
     fi
 
     OS_INFO_DESKTOP=$osdesktop
-}
-
-function check_release_package_manager() {
-    local checkType=$1
-    local value=$2
-
-    local release=''
-    local systemPackage=''
-
-    local osname=$(uname)
-    if [[ -f /etc/redhat-release ]]; then
-        if [[ $(cat /etc/redhat-release | grep Fedora) ]]; then
-            release="fedora"
-            systemPackage="dnf"
-        # elif [[ $(cat /etc/redhat-release |grep "CentOS Linux release 8") ]]; then
-        #     release="centos8"
-        #     systemPackage="dnf"
-        else
-            release="centos"
-            systemPackage="yum"
-        fi
-    elif [[ -f /etc/alpine-release ]]; then
-        release="alpine"
-        systemPackage="apk"
-    elif [[ -f /etc/arch-release ]]; then
-        release="arch"
-        systemPackage="pacman"
-    elif [[ $osname =~ "MSYS_NT" || $osname =~ "MINGW" ]]; then
-        release="MSYS"
-        systemPackage="pacman"
-    elif [[ $osname =~ "CYGWIN_NT" ]]; then
-        release="CYGWIN"
-        systemPackage="apt-cyg"
-    elif cat /etc/issue | grep -Eqi "debian"; then
-        release="debian"
-        systemPackage="apt"
-    elif cat /etc/issue | grep -Eqi "ubuntu"; then
-        release="ubuntu"
-        systemPackage="apt"
-    elif cat /etc/issue | grep -Eqi "raspbian"; then
-        release="raspbian"
-        systemPackage="apt"
-    elif cat /etc/issue | grep -Eqi "centos|red hat|redhat"; then
-        release="centos"
-        systemPackage="yum"
-    elif cat /proc/version | grep -Eqi "debian"; then
-        release="debian"
-        systemPackage="apt"
-    elif cat /proc/version | grep -Eqi "ubuntu"; then
-        release="ubuntu"
-        systemPackage="apt"
-    elif cat /proc/version | grep -Eqi "centos|red hat|redhat"; then
-        release="centos"
-        systemPackage="yum"
-    fi
-
-    if [[ ${checkType} == "sysRelease" ]]; then
-        if [[ "$value" == "$release" ]]; then
-            return 0
-        else
-            return 1
-        fi
-    elif [[ ${checkType} == "packageManager" ]]; then
-        if [[ "$value" == "$systemPackage" ]]; then
-            return 0
-        else
-            return 1
-        fi
-    fi
 }
 
 function get_arch() {
@@ -295,6 +228,23 @@ function get_os() {
     OS_INFO_RELEASE_TYPE=$OS
 }
 
+function get_arch_float() {
+    # https://raspberrypi.stackexchange.com/questions/4677/how-can-i-tell-if-i-am-using-the-hard-float-or-the-soft-float-version-of-debian
+    [[ -z "$OS_INFO_ARCH" ]] && get_arch
+
+    unset OS_INFO_FLOAT
+    case "$OS_INFO_ARCH" in
+        mips | mipsle)
+            if [[ -x "$(command -v dpkg)" ]]; then
+                local dpkg_arch=$(dpkg --print-architecture 2>/dev/null)
+                [[ "${dpkg_arch}" == "armhf" ]] && OS_INFO_FLOAT="hardfloat" || OS_INFO_FLOAT="softfloat"
+            else
+                [[ -d "/lib/arm-linux-gnueabihf" ]] && OS_INFO_FLOAT="hardfloat" || OS_INFO_FLOAT="softfloat"
+            fi
+            ;;
+    esac
+}
+
 function get_os_release() {
     local OS_RELEASE
 
@@ -345,64 +295,6 @@ function get_os_release() {
     OS_INFO_RELEASE=$OS_RELEASE
 }
 
-function check_os_package_manager() {
-    # ref to: https://github.com/icy/pacapt/blob/ng/pacapt
-    local _pacman
-
-    _pacman="$1"; shift
-
-    [[ "$(uname)" == "SunOS" ]] && OS_PACKAGE_MANAGER="$_pacman" && return
-    grep -qis "$@" /etc/issue && OS_PACKAGE_MANAGER="$_pacman" && return
-    grep -qis "$@" /etc/os-release && OS_PACKAGE_MANAGER="$_pacman" && return
-}
-
-function get_os_package_manager() {
-    unset OS_PACKAGE_MANAGER
-
-    # ref to: https://github.com/icy/pacapt/blob/ng/pacapt
-    check_os_package_manager sun_tools "SunOS" && return
-    check_os_package_manager pacman "Arch Linux" && return
-    check_os_package_manager dpkg "Debian GNU/Linux" && return
-    check_os_package_manager dpkg "Ubuntu" && return
-    check_os_package_manager cave "Exherbo Linux" && return
-    # check_os_package_manager dnf "CentOS Linux 8" && return
-    # check_os_package_manager dnf "CentOS-8" && return
-    # check_os_package_manager yum "CentOS" && return
-    # check_os_package_manager yum "Red Hat" && return
-    check_os_package_manager zypper "SUSE" && return
-    check_os_package_manager pkg_tools "OpenBSD" && return
-    check_os_package_manager pkg_tools "Bitrig" && return
-    check_os_package_manager apk "Alpine Linux" && return
-
-    [[ -z "$OS_PACKAGE_MANAGER" ]] || return
-
-    # Prevent a loop when this script is installed on non-standard system
-    if [[ -x "/usr/bin/pacman" ]]; then
-        grep -q "pacapt" '/usr/bin/pacman' >/dev/null 2>&1
-        [[ $? -ge 1 ]] && OS_PACKAGE_MANAGER="pacman" && return
-    fi
-
-    [[ -x "/usr/bin/apt-get" ]] && OS_PACKAGE_MANAGER="dpkg" && return
-    [[ -x "/data/data/com.termux/files/usr/bin/apt-get" ]] && OS_PACKAGE_MANAGER="dpkg" && return
-    [[ -x "/usr/bin/cave" ]] && OS_PACKAGE_MANAGER="cave" && return
-    [[ -x "/usr/bin/dnf" ]] && OS_PACKAGE_MANAGER="dnf" && return
-    [[ -x "/usr/bin/yum" ]] && OS_PACKAGE_MANAGER="yum" && return
-    [[ -x "/opt/local/bin/port" ]] && OS_PACKAGE_MANAGER="macports" && return
-    [[ -x "/usr/bin/emerge" ]] && OS_PACKAGE_MANAGER="portage" && return
-    [[ -x "/usr/bin/zypper" ]] && OS_PACKAGE_MANAGER="zypper" && return
-    [[ -x "/usr/sbin/pkg" ]] && OS_PACKAGE_MANAGER="pkgng" && return
-    # make sure pkg_add is after pkgng, FreeBSD base comes with it until converted
-    [[ -x "/usr/sbin/pkg_add" ]] && OS_PACKAGE_MANAGER="pkg_tools" && return
-    [[ -x "/usr/sbin/pkgadd" ]] && OS_PACKAGE_MANAGER="sun_tools" && return
-    [[ -x "/sbin/apk" ]] && OS_PACKAGE_MANAGER="apk" && return
-    [[ -x "/usr/bin/tazpkg" ]] && OS_PACKAGE_MANAGER="tazpkg" && return
-    [[ -x "/usr/bin/swupd" ]] && OS_PACKAGE_MANAGER="swupd" && return
-
-    command -v brew >/dev/null && OS_PACKAGE_MANAGER="homebrew" && return
-
-    return 1
-}
-
 function get_os_icon() {
     local OS_ICON
 
@@ -417,7 +309,7 @@ function get_os_icon() {
             OS_ICON=$'\uF30C'
             ;;
         Linux)
-            local os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release | cut -d '=' -f 2)"
+            local os_release_id="$(grep -E '^ID=([a-zA-Z]*)' /etc/os-release 2>/dev/null | cut -d '=' -f2)"
             case "$os_release_id" in
                 *arch*)
                     OS_ICON=$'\uF303'
@@ -501,7 +393,139 @@ function get_os_icon() {
     OS_INFO_ICON=$OS_ICON
 }
 
-# version compare functions
+
+## Get OS package manager
+function check_os_package_manager() {
+    # ref to: https://github.com/icy/pacapt/blob/ng/pacapt
+    local _pacman
+
+    _pacman="$1"; shift
+
+    [[ "$(uname)" == "SunOS" ]] && OS_PACKAGE_MANAGER="$_pacman" && return
+    grep -qis "$@" /etc/issue && OS_PACKAGE_MANAGER="$_pacman" && return
+    grep -qis "$@" /etc/os-release && OS_PACKAGE_MANAGER="$_pacman" && return
+}
+
+function get_os_package_manager() {
+    unset OS_PACKAGE_MANAGER
+
+    # ref to: https://github.com/icy/pacapt/blob/ng/pacapt
+    check_os_package_manager sun_tools "SunOS" && return
+    check_os_package_manager pacman "Arch Linux" && return
+    check_os_package_manager dpkg "Debian GNU/Linux" && return
+    check_os_package_manager dpkg "Ubuntu" && return
+    check_os_package_manager cave "Exherbo Linux" && return
+    # check_os_package_manager dnf "CentOS Linux 8" && return
+    # check_os_package_manager dnf "CentOS-8" && return
+    # check_os_package_manager yum "CentOS" && return
+    # check_os_package_manager yum "Red Hat" && return
+    check_os_package_manager zypper "SUSE" && return
+    check_os_package_manager pkg_tools "OpenBSD" && return
+    check_os_package_manager pkg_tools "Bitrig" && return
+    check_os_package_manager apk "Alpine Linux" && return
+    check_os_package_manager opkg "OpenWrt" && return
+
+    [[ -z "$OS_PACKAGE_MANAGER" ]] || return
+
+    # Prevent a loop when this script is installed on non-standard system
+    if [[ -x "/usr/bin/pacman" ]]; then
+        grep -q "pacapt" '/usr/bin/pacman' >/dev/null 2>&1
+        [[ $? -ge 1 ]] && OS_PACKAGE_MANAGER="pacman" && return
+    fi
+
+    [[ -x "/usr/bin/apt-get" ]] && OS_PACKAGE_MANAGER="dpkg" && return
+    [[ -x "/data/data/com.termux/files/usr/bin/apt-get" ]] && OS_PACKAGE_MANAGER="dpkg" && return
+    [[ -x "/usr/bin/cave" ]] && OS_PACKAGE_MANAGER="cave" && return
+    [[ -x "/usr/bin/dnf" ]] && OS_PACKAGE_MANAGER="dnf" && return
+    [[ -x "/usr/bin/yum" ]] && OS_PACKAGE_MANAGER="yum" && return
+    [[ -x "/opt/local/bin/port" ]] && OS_PACKAGE_MANAGER="macports" && return
+    [[ -x "/usr/bin/emerge" ]] && OS_PACKAGE_MANAGER="portage" && return
+    [[ -x "/usr/bin/zypper" ]] && OS_PACKAGE_MANAGER="zypper" && return
+    [[ -x "/usr/sbin/pkg" ]] && OS_PACKAGE_MANAGER="pkgng" && return
+    # make sure pkg_add is after pkgng, FreeBSD base comes with it until converted
+    [[ -x "/usr/sbin/pkg_add" ]] && OS_PACKAGE_MANAGER="pkg_tools" && return
+    [[ -x "/usr/sbin/pkgadd" ]] && OS_PACKAGE_MANAGER="sun_tools" && return
+    [[ -x "/sbin/apk" ]] && OS_PACKAGE_MANAGER="apk" && return
+    [[ -x "/bin/opkg" ]] && OS_PACKAGE_MANAGER="opkg" && return
+    [[ -x "/usr/bin/tazpkg" ]] && OS_PACKAGE_MANAGER="tazpkg" && return
+    [[ -x "/usr/bin/swupd" ]] && OS_PACKAGE_MANAGER="swupd" && return
+
+    command -v brew >/dev/null && OS_PACKAGE_MANAGER="homebrew" && return
+
+    return 1
+}
+
+function check_release_package_manager() {
+    local checkType=$1
+    local value=$2
+
+    local release=''
+    local systemPackage=''
+
+    local osname=$(uname)
+    if [[ -f /etc/redhat-release ]]; then
+        if [[ $(cat /etc/redhat-release | grep Fedora) ]]; then
+            release="fedora"
+            systemPackage="dnf"
+        # elif [[ $(cat /etc/redhat-release |grep "CentOS Linux release 8") ]]; then
+        #     release="centos8"
+        #     systemPackage="dnf"
+        else
+            release="centos"
+            systemPackage="yum"
+        fi
+    elif [[ -f /etc/alpine-release ]]; then
+        release="alpine"
+        systemPackage="apk"
+    elif [[ -f /etc/arch-release ]]; then
+        release="arch"
+        systemPackage="pacman"
+    elif [[ $osname =~ "MSYS_NT" || $osname =~ "MINGW" ]]; then
+        release="MSYS"
+        systemPackage="pacman"
+    elif [[ $osname =~ "CYGWIN_NT" ]]; then
+        release="CYGWIN"
+        systemPackage="apt-cyg"
+    elif cat /etc/issue | grep -Eqi "debian"; then
+        release="debian"
+        systemPackage="apt"
+    elif cat /etc/issue | grep -Eqi "ubuntu"; then
+        release="ubuntu"
+        systemPackage="apt"
+    elif cat /etc/issue | grep -Eqi "raspbian"; then
+        release="raspbian"
+        systemPackage="apt"
+    elif cat /etc/issue | grep -Eqi "centos|red hat|redhat"; then
+        release="centos"
+        systemPackage="yum"
+    elif cat /proc/version | grep -Eqi "debian"; then
+        release="debian"
+        systemPackage="apt"
+    elif cat /proc/version | grep -Eqi "ubuntu"; then
+        release="ubuntu"
+        systemPackage="apt"
+    elif cat /proc/version | grep -Eqi "centos|red hat|redhat"; then
+        release="centos"
+        systemPackage="yum"
+    fi
+
+    if [[ ${checkType} == "sysRelease" ]]; then
+        if [[ "$value" == "$release" ]]; then
+            return 0
+        else
+            return 1
+        fi
+    elif [[ ${checkType} == "packageManager" ]]; then
+        if [[ "$value" == "$systemPackage" ]]; then
+            return 0
+        else
+            return 1
+        fi
+    fi
+}
+
+
+## version compare functions
 function version_gt() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" != "$1"; } # >
 function version_ge() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)" = "$1"; } # >=
 function version_lt() { test "$(echo "$@" | tr " " "\n" | sort -rV | head -n 1)" != "$1"; } # <
@@ -526,7 +550,6 @@ function version_compare() {
         echo "$VERSION1 is greater than or equal to $VERSION2"
     fi
 }
-
 
 # https://stackoverflow.com/questions/4023830/how-to-compare-two-strings-in-dot-separated-version-format-in-bash/49351294#49351294
 function ver_compare() {
@@ -612,7 +635,7 @@ function ver_compare_le() {
 }
 
 
-## Query IP address
+## Get network interface, ipv4/ipv6 address
 # Get local machine network interfaces
 function get_network_interface_list() {
     unset NETWORK_INTERFACE_LIST
@@ -628,7 +651,10 @@ function get_network_interface_list() {
 function get_network_interface_default() {
     unset NETWORK_INTERFACE_DEFAULT
     if [[ -x "$(command -v ip)" ]]; then
-        NETWORK_INTERFACE_DEFAULT=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//" -e "s/[ \t]//g")
+        NETWORK_INTERFACE_DEFAULT=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//" -e "s/[ \t]//g" | head -n1)
+        if [[ -z "${NETWORK_INTERFACE_DEFAULT}" ]]; then
+            NETWORK_INTERFACE_DEFAULT=$(ip route | grep -Ev "^0\.|^127\.|^172\." | sed -e "s/^.*dev.//" -e "s/.proto.*//" -e "s/[ \t]//g" | head -n1)
+        fi
     elif [[ -x "$(command -v netstat)" ]]; then
         NETWORK_INTERFACE_DEFAULT=$(netstat -rn | awk '/^0.0.0.0/ {thif=substr($0,74,10); print thif;} /^default.*UG/ {thif=substr($0,65,10); print thif;}')
     fi
@@ -858,6 +884,15 @@ function myip_wan_geo() {
     fi
 }
 
+# Get Opened Port on Android Device(No Root)
+# https://null-byte.wonderhowto.com/forum/see-your-opened-port-your-android-device-no-root-0200475/
+function nmap_scan_opened_port() {
+    local ip_address=${1:-""}
+
+    [[ -z "${ip_address}" ]] && get_network_local_ipv4_default && ip_address=${NETWORK_LOCAL_IPV4_DEFAULT}
+    [[ -n "${ip_address}" ]] && nmap -Pn ${ip_address}
+}
+
 
 ## Proxy functions
 function set_proxy() {
@@ -867,14 +902,24 @@ function set_proxy() {
     # PASSWORD has special characters:
     # [@ %40] [: %3A] [! %21] [# %23] [$ %24]
     # F@o:o!B#ar$ -> F%40o%3Ao%21B%23ar%24
-    local proxy_url=${1:-"http://127.0.0.1:8080"}
+    local PROXY_ADDRESS=${1:-""}
 
-    export {http,https,ftp,all}_proxy=${proxy_url}
+    if [[ -z "${PROXY_ADDRESS}" && -n "${GLOBAL_PROXY_IP}" ]]; then
+        if [[ -n "${GLOBAL_PROXY_SOCKS_PORT}" ]]; then
+            PROXY_ADDRESS="socks5h://${GLOBAL_PROXY_IP}:${GLOBAL_PROXY_SOCKS_PORT}"
+        elif [[ -n "${GLOBAL_PROXY_HTTP_PORT}" ]]; then
+            PROXY_ADDRESS="http://${GLOBAL_PROXY_IP}:${GLOBAL_PROXY_HTTP_PORT}"
+        fi
+    fi
+
+    [[ -z "${PROXY_ADDRESS}" ]] && PROXY_ADDRESS="http://127.0.0.1:8080"
+
+    export {http,https,ftp,all}_proxy=${PROXY_ADDRESS}
     export no_proxy="${NO_PROXY_LISTS}"
     # export no_proxy="localhost,127.0.0.0/8,*.local"
 
     # for curl
-    export {HTTP,HTTPS,FTP,ALL}_PROXY=${proxy_url}
+    export {HTTP,HTTPS,FTP,ALL}_PROXY=${PROXY_ADDRESS}
     export NO_PROXY="${NO_PROXY_LISTS}"
 }
 
@@ -891,7 +936,7 @@ function get_proxy() {
     [[ -n "${ALL_PROXY}" ]] && colorEcho "${BLUE}ALL_PROXY=${FUCHSIA}${ALL_PROXY}"
 
     if [[ -x "$(command -v git)" ]]; then
-        proxy_output1=$(git config --global --list | grep -E "http\.|https\.")
+        proxy_output1=$(git config --global --list 2>/dev/null | grep -E "http\.|https\.")
         [[ -n "${proxy_output1}" ]] && colorEcho "\n${BLUE}git proxies:\n${FUCHSIA}${proxy_output1}"
     fi
 
@@ -1022,28 +1067,6 @@ function proxy_socks5h_to_socks5() {
 
 # Use proxy or mirror when some sites were blocked or low speed
 function set_proxy_mirrors_env() {
-    # if [[ -z "$NETWORK_WAN_NET_IP_GEO" ]]; then
-    #     get_network_wan_geo
-    # fi
-
-    # if [[ "${NETWORK_WAN_NET_IP_GEO}" =~ 'China' || "${NETWORK_WAN_NET_IP_GEO}" =~ 'CN' ]]; then
-    #     unset APT_NOT_USE_MIRRORS
-    #     unset CONDA_NOT_USE_MIRROR
-    #     unset DOCKER_INSTALLER_NOT_USE_MIRROR
-    #     unset GO_INSTALLER_NOT_USE_PROXY
-    #     unset NVM_INSTALLER_NOT_USE_MIRROR
-    #     unset NVS_INSTALLER_NOT_USE_MIRROR
-    #     unset NPM_INSTALLER_NOT_USE_MIRROR
-    # else
-    #     APT_NOT_USE_MIRRORS=true
-    #     CONDA_NOT_USE_MIRROR=true
-    #     DOCKER_INSTALLER_NOT_USE_MIRROR=true
-    #     GO_INSTALLER_NOT_USE_PROXY=true
-    #     NVM_INSTALLER_NOT_USE_MIRROR=true
-    #     NVS_INSTALLER_NOT_USE_MIRROR=true
-    #     NPM_INSTALLER_NOT_USE_MIRROR=true
-    # fi
-
     if check_webservice_up www.google.com; then
         APT_NOT_USE_MIRRORS=true
         CONDA_NOT_USE_MIRROR=true
@@ -1138,12 +1161,18 @@ function check_webservice_timeout() {
 function check_socks5_proxy_up() {
     # How to use:
     # if check_socks5_proxy_up 127.0.0.1:1080 www.google.com; then echo "ok"; else echo "something wrong"; fi
-    local socks_proxy_url=${1:-"127.0.0.1:1080"}
+    local PROXY_ADDRESS=${1:-""}
     local webservice_url=${2:-"www.google.com"}
     local exitStatus=0
 
+    if [[ -z "${PROXY_ADDRESS}" && -n "${GLOBAL_PROXY_IP}" && -n "${GLOBAL_PROXY_SOCKS_PORT}" ]]; then
+        PROXY_ADDRESS="${GLOBAL_PROXY_IP}:${GLOBAL_PROXY_SOCKS_PORT}"
+    fi
+
+    [[ -z "${PROXY_ADDRESS}" ]] && PROXY_ADDRESS="127.0.0.1:1080"
+
     curl -fsL -I --connect-timeout 3 --max-time 5 \
-        --socks5-hostname "${socks_proxy_url}" \
+        --socks5-hostname "${PROXY_ADDRESS}" \
         "${webservice_url}" >/dev/null 2>&1 || exitStatus=$?
 
     if [[ "$exitStatus" -eq "0" ]]; then
@@ -1156,13 +1185,19 @@ function check_socks5_proxy_up() {
 # test the availability of a http proxy
 function check_http_proxy_up() {
     # How to use:
-    # if check_http_proxy_up 127.0.0.1:1080 www.google.com; then echo "ok"; else echo "something wrong"; fi
-    local socks_proxy_url=${1:-"127.0.0.1:1080"}
+    # if check_http_proxy_up 127.0.0.1:8080 www.google.com; then echo "ok"; else echo "something wrong"; fi
+    local PROXY_ADDRESS=${1:-""}
     local webservice_url=${2:-"www.google.com"}
     local exitStatus=0
 
+    if [[ -z "${PROXY_ADDRESS}" && -n "${GLOBAL_PROXY_IP}" && -n "${GLOBAL_PROXY_HTTP_PORT}" ]]; then
+        PROXY_ADDRESS="${GLOBAL_PROXY_IP}:${GLOBAL_PROXY_HTTP_PORT}"
+    fi
+
+    [[ -z "${PROXY_ADDRESS}" ]] && PROXY_ADDRESS="127.0.0.1:8080"
+
     curl -fsL -I --connect-timeout 3 --max-time 5 \
-        --proxy "${socks_proxy_url}" \
+        --proxy "${PROXY_ADDRESS}" \
         "${webservice_url}" >/dev/null 2>&1 || exitStatus=$?
 
     if [[ "$exitStatus" -eq "0" ]]; then
@@ -1604,14 +1639,18 @@ function Git_Clone_Update() {
 # https://stackoverflow.com/questions/3497123/run-git-pull-over-all-subdirectories
 function git_update_repo_in_subdir() {
     local SubDir=${1:-""}
-    local FindDepth=${2:-""}
     local FindDir
     local TargetDir
     local CurrentDir
+    local REPOREMOTE
+    local REPODIR
     local BRANCH
+    local DEFAULTBRANCH
     local DIRLIST=()
 
-    [[ -z "${SubDir}" ]] && exit 0
+    CurrentDir=$(pwd)
+
+    [[ -z "${SubDir}" ]] && SubDir=${CurrentDir}
     [[ ! -d "${SubDir}" ]] && exit 0
 
     # find . -type d -name ".git" -execdir git pull --rebase --stat origin master \;
@@ -1621,27 +1660,31 @@ function git_update_repo_in_subdir() {
         DIRLIST+=("${FindDir%/*}")
     done
 
-    # while read -r FindDir; do
-    #     FindDir="$(realpath "${FindDir}")"
-    #     DIRLIST+=("${FindDir%/*}")
-    # done <<< "$(find ${subdir} -type d -name .git)"
-
-    CurrentDir=$(pwd)
     for TargetDir in "${DIRLIST[@]}"; do
-        cd "${TargetDir}"
+        REPODIR="${TargetDir}"
+        cd "${REPODIR}"
+
         BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
         [[ -z "${BRANCH}" ]] && BRANCH="master"
-        git pull --rebase --stat origin "${BRANCH}"
-    done
-    cd "${CurrentDir}"
 
-    # if [[ -z "${FindDepth}" ]]; then
-    #     find "${SubDir}" -type d -name ".git" \
-    #         -execdir git pull --rebase --stat origin "${BRANCH}" \;
-    # else
-    #     find "${SubDir}" -maxdepth ${FindDepth} -type d -name ".git" \
-    #         -execdir git pull --rebase --stat origin "${BRANCH}" \;
-    # fi
+        git pull --rebase --stat origin "${BRANCH}"
+        # pull error: fallback to default branch
+        if [[ $? != 0 ]]; then
+            REPOREMOTE=$(git config --get remote.origin.url)
+            DEFAULTBRANCH=$(git ls-remote --symref "${REPOREMOTE}" HEAD \
+                        | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
+            if [[ -n "${DEFAULTBRANCH}" && "${DEFAULTBRANCH}" != "${BRANCH}" ]]; then
+                git branch -m "${BRANCH}" "${DEFAULTBRANCH}"
+
+                [[ -s "${REPODIR}/.git/config" ]] && \
+                    sed -i "s|${BRANCH}|${DEFAULTBRANCH}|g" "${REPODIR}/.git/config"
+
+                git pull --rebase --stat origin "${DEFAULTBRANCH}"
+            fi
+        fi
+    done
+
+    cd "${CurrentDir}"
 }
 
 function git_update_repo_in_subdir_parallel() {

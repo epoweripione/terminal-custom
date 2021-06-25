@@ -241,6 +241,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "wget"
         "treesize-free"
         ## markdown editor
+        "anki"
         "pandoc"
         "marktext"
         "typora"

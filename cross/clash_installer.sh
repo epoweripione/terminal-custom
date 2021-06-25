@@ -64,12 +64,53 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-
     [[ -z "$OS_INFO_TYPE" ]] && get_os_type
     [[ -z "$OS_INFO_ARCH" ]] && get_arch
+    [[ -z "$OS_INFO_FLOAT" ]] && get_arch_float
 
-    DOWNLOAD_URL="https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}-v${REMOTE_VERSION}.gz"
+    REMOTE_FILENAME=""
+    case "$OS_INFO_TYPE" in
+        linux)
+            case "$OS_INFO_ARCH" in
+                arm64)
+                    REMOTE_FILENAME=${APP_INSTALL_NAME}-${OS_INFO_TYPE}-armv8-v${REMOTE_VERSION}.gz
+                    ;;
+                arm)
+                    REMOTE_FILENAME=${APP_INSTALL_NAME}-${OS_INFO_TYPE}-armv7-v${REMOTE_VERSION}.gz
+                    ;;
+                mips | mipsle)
+                    REMOTE_FILENAME=${APP_INSTALL_NAME}-${OS_INFO_TYPE}-${OS_INFO_ARCH}-${OS_INFO_FLOAT}-v${REMOTE_VERSION}.gz
+                    ;;
+                *)
+                    REMOTE_FILENAME=${APP_INSTALL_NAME}-${OS_INFO_TYPE}-${OS_INFO_ARCH}-v${REMOTE_VERSION}.gz
+                    ;;
+            esac
+            ;;
+        darwin)
+            REMOTE_FILENAME=${APP_INSTALL_NAME}-${OS_INFO_TYPE}-${OS_INFO_ARCH}-v${REMOTE_VERSION}.gz
+            ;;
+        bsd)
+            REMOTE_FILENAME=${APP_INSTALL_NAME}-freebsd-${OS_INFO_ARCH}-v${REMOTE_VERSION}.gz
+            ;;
+        windows)
+            case "$OS_INFO_ARCH" in
+                arm)
+                    REMOTE_FILENAME=${APP_INSTALL_NAME}-${OS_INFO_TYPE}-arm32v7-v${REMOTE_VERSION}.gz
+                    ;;
+                *)
+                    REMOTE_FILENAME=${APP_INSTALL_NAME}-${OS_INFO_TYPE}-${OS_INFO_ARCH}-v${REMOTE_VERSION}.gz
+                    ;;
+            esac
+            ;;
+    esac
+
+    [[ -z "${REMOTE_FILENAME}" ]] && IS_INSTALL="no"
+fi
+
+if [[ "${IS_INSTALL}" == "yes" ]]; then
+    colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
+
+    DOWNLOAD_URL="https://github.com/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
 
     curl -fSL -o "${WORKDIR}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" -C- "$DOWNLOAD_URL" && \
         sudo mkdir -p "/srv/clash" && \

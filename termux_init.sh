@@ -77,7 +77,14 @@ EOF
 # install packages
 colorEcho "${BLUE}Installing ${FUCHSIA}packages${BLUE}..."
 pkg up -y && \
-    pkg i -y nano curl wget git openssh unzip unrar htop nmap screenfetch starship lsd tree
+    pkg i -y binutils curl wget git nano openssh unzip unrar htop nmap rsync \
+        bat fzf lsd lsof screenfetch starship tree
+
+# pacapt
+if [[ ! -x "$(command -v pacapt)" ]]; then
+    [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/pacapt_installer.sh" ]] && \
+        source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/pacapt_installer.sh"
+fi
 
 ## reload termux settings
 # termux-reload-settings
@@ -153,18 +160,31 @@ if [[ -s "$HOME/.zshrc" ]]; then
     sed -i "s/[#]*[ ]*DISABLE_AUTO_UPDATE.*/DISABLE_AUTO_UPDATE=\"true\"/" "$HOME/.zshrc"
 
     # zsh plugins
+    colorEcho "${BLUE}Oh-my-zsh custom plugins..."
     sed -i '/zsh-syntax-highlighting.zsh/d' "$HOME/.zshrc"
 
-    git clone --depth=1 "https://github.com/zdharma/fast-syntax-highlighting" \
-        "$ZSH_CUSTOM/plugins/fast-syntax-highlighting"
+    PluginList=(
+        "zsh-users/zsh-history-substring-search"
+        "zsh-users/zsh-autosuggestions"
+        "zdharma/fast-syntax-highlighting"
+        "lincheney/fzf-tab-completion"
+        "wfxr/forgit"
+    )
 
-    git clone --depth=1 "https://github.com/zsh-users/zsh-history-substring-search" \
-        "$ZSH_CUSTOM/plugins/zsh-history-substring-search"
+    for Target in "${PluginList[@]}"; do
+        TargetName=$(echo ${Target} | awk -F"/" '{print $NF}')
+        Git_Clone_Update "$Target" "${ZSH_CUSTOM}/plugins/${TargetName}"
+    done
 
-    git clone --depth=1 "https://github.com/zsh-users/zsh-autosuggestions" \
-        "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+    # Enable plugins
+    colorEcho "${BLUE}enable plugins..."
+    Plugins=" cp git rsync"
 
-    Plugins="zsh-autosuggestions fast-syntax-highlighting history-substring-search"
+    [[ "$(command -v git-flow)" ]] && Plugins="${Plugins} git-flow-avh"
+    [[ -x "$(command -v tmux)" ]] && Plugins="${Plugins} tmux"
+    [[ -x "$(command -v fzf)" || -d "$HOME/.fzf" ]] && Plugins="${Plugins} fzf"
+
+    Plugins="${Plugins} zsh-interactive-cd zsh-autosuggestions fast-syntax-highlighting history-substring-search"
 
     PluginList=($(echo ${Plugins}))
 
@@ -193,6 +213,12 @@ if [[ -s "$HOME/.zshrc" ]]; then
     fi
 
     sed -i "${LineBegin}a\\${Plugins}" "$HOME/.zshrc"
+fi
+
+# custom configuration
+colorEcho "${BLUE}Custom ZSH configuration ${FUCHSIA}~/terminal-custom/zsh/zsh_custom_conf.sh${BLUE}..."
+if [[ ! $(grep "zsh_custom_conf.sh" $HOME/.zshrc) ]]; then
+    echo -e "\n# Custom configuration\nsource ~/terminal-custom/zsh/zsh_custom_conf.sh" >> $HOME/.zshrc
 fi
 
 ## webui-aria2

@@ -13,15 +13,17 @@ else
 fi
 
 
-if [[ ! -x "$(command -v pacaptr)" ]]; then
-    [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/pacaptr_installer.sh" ]] && \
-        source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/pacaptr_installer.sh"
-fi
-
-
 # dnsmasq
-if pacman -Si dnsmasq >/dev/null 2>&1; then
-    sudo pacman -S --noconfirm dnsmasq
+if [[ -x "$(command -v pacman)" ]]; then
+    PackagesList=(
+        dnsmasq
+    )
+    for TargetPackage in "${PackagesList[@]}"; do
+        if checkPackageNeedInstall "${TargetPackage}"; then
+            colorEcho "${BLUE}  Installing ${FUCHSIA}${TargetPackage}${BLUE}..."
+            sudo pacman --noconfirm -S "${TargetPackage}"
+        fi
+    done
 fi
 
 # /etc/dnsmasq.conf

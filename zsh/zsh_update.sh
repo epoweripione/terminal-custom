@@ -198,7 +198,7 @@ PluginList=(
 
 for Target in "${PluginList[@]}"; do
     TargetName=$(echo ${Target} | awk -F"/" '{print $NF}')
-    Git_Clone_Update "$Target" "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/${TargetName}"
+    Git_Clone_Update "$Target" "${ZSH_CUSTOM}/plugins/${TargetName}"
 done
 
 
@@ -215,7 +215,7 @@ ThemeList=(
 
 for Target in "${ThemeList[@]}"; do
     TargetName=$(echo ${Target} | awk -F"/" '{print $NF}')
-    Git_Clone_Update "$Target" "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/${TargetName}"
+    Git_Clone_Update "$Target" "${ZSH_CUSTOM}/themes/${TargetName}"
 done
 
 # agnosterzak

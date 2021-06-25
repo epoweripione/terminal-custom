@@ -31,26 +31,20 @@ get_os_type
 
 # Install Nerd fonts
 # https://github.com/ryanoasis/nerd-fonts
-if [[ ! -x "$(command -v fontforge)" ]]; then
-	## http://designwithfontforge.com/en-US/Installing_Fontforge.html
-	colorEcho "${BLUE}Installing ${FUCHSIA}fontforge${BLUE}..."
-	# if check_release_package_manager packageManager apt; then
-	# 	sudo apt-get install -y software-properties-common && \
-	# 		sudo add-apt-repository ppa:fontforge/fontforge && \
-	# 		sudo apt-get update
-	# fi
 
-	if [[ -x "$(command -v pacman)" ]]; then
-		sudo pacman --noconfirm -S unzip python-pip fontforge
-	else
-		if check_release_package_manager packageManager yum; then
-			sudo yum update -y && sudo yum -y -q install unzip python-pip fontforge
-		elif check_release_package_manager packageManager apt; then
-			sudo apt-get -y install unzip python-pip fontforge
-		elif check_release_package_manager packageManager pacman; then
-			sudo pacman -Sy && pacman --noconfirm -S unzip fontforge
-		fi
-	fi
+# http://designwithfontforge.com/en-US/Installing_Fontforge.html
+if [[ -x "$(command -v pacman)" ]]; then
+    PackagesList=(
+        unzip
+		python-pip
+		fontforge
+    )
+    for TargetPackage in "${PackagesList[@]}"; do
+        if checkPackageNeedInstall "${TargetPackage}"; then
+            colorEcho "${BLUE}  Installing ${FUCHSIA}${TargetPackage}${BLUE}..."
+            sudo pacman --noconfirm -S "${TargetPackage}"
+        fi
+    done
 fi
 
 colorEcho "${BLUE}Downloading ${FUCHSIA}nerd-fonts & font-patcher${BLUE}..."

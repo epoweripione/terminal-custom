@@ -40,11 +40,13 @@ $php\
 $purescript\
 $python\
 $red\
+$rlang\
 $ruby\
 $rust\
 $scala\
 $swift\
 $terraform\
+$vlang\
 $vagrant\
 $zig\
 $nix_shell\
@@ -301,6 +303,10 @@ format = "[  ](fg:white bg:#5a6374)[${symbol}${pyenv_prefix}${version}(\\($vi
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
+[rlang]
+style = "bold fg:bright-cyan bg:#5a6374"
+format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
+
 [ruby]
 symbol = " "
 style = "bold fg:bright-cyan bg:#5a6374"
@@ -355,6 +361,10 @@ format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 symbol = "🆅 "
 style = "bold fg:bright-cyan bg:#5a6374"
 format = "[  ](fg:white bg:#5a6374)[$symbol$repo]($style)"
+
+[vlang]
+style = "bold fg:bright-cyan bg:#5a6374"
+format = "[  ](fg:white bg:#5a6374)[$symbol$version]($style)"
 
 [zig]
 symbol = " "

@@ -18,24 +18,20 @@ else
 fi
 
 
-if [[ ! -x "$(command -v pacaptr)" ]]; then
-    [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/pacaptr_installer.sh" ]] && \
-        source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/installer/pacaptr_installer.sh"
-fi
-
-
 colorEcho "${BLUE}Installing ${FUCHSIA}vnstat${BLUE}..."
-PackagesList=(
-    sqlite
-    sqlite-devel
-    libsqlite3-dev
-)
-for TargetPackage in "${PackagesList[@]}"; do
-    if checkPackageNeedInstall "${TargetPackage}"; then
-        colorEcho "${BLUE}  Installing ${FUCHSIA}${TargetPackage}${BLUE}..."
-        sudo pacman --noconfirm -S "${TargetPackage}"
-    fi
-done
+if [[ -x "$(command -v pacman)" ]]; then
+    PackagesList=(
+        sqlite
+        sqlite-devel
+        libsqlite3-dev
+    )
+    for TargetPackage in "${PackagesList[@]}"; do
+        if checkPackageNeedInstall "${TargetPackage}"; then
+            colorEcho "${BLUE}  Installing ${FUCHSIA}${TargetPackage}${BLUE}..."
+            sudo pacman --noconfirm -S "${TargetPackage}"
+        fi
+    done
+fi
 
 
 cd "${WORKDIR}" && \

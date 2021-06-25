@@ -165,38 +165,41 @@ if [[ -x "$(command -v pacman)" ]]; then
 
     # Pre-requisite packages
     PackagesList=(
-        g++
-        gcc
-        make
-        rsync
-        python3
-        xsel
-        bind-utils
-        dnsutils
-        htop
-        lsof
-        strace
-        geoip
-        GeoIP
-        geoip-bin
-        geoip-database
-        geoip-data
-        GeoIP-data
         autojump
         autojump-zsh
-        tmux
-        screen
-        jq
-        recode
+        bind-utils
+        binutils
+        build-essential
         connect-proxy
-        netcat-openbsd
-        glibc-locale-source
+        dnsutils
+        g++
+        gcc
+        geoip
+        geoip-bin
+        geoip-data
+        geoip-database
+        GeoIP
+        GeoIP-data
         glibc-langpack-en
-        rlwrap
+        glibc-locale-source
+        htop
+        jq
+        lsof
+        make
         man
-        manpages-zh
-        man-pages-zh_cn
         man-pages-zh-CN
+        man-pages-zh_cn
+        manpages-zh
+        netcat-openbsd
+        nmap
+        python3
+        recode
+        rlwrap
+        rsync
+        screen
+        strace
+        tmux
+        xsel
     )
     for TargetPackage in "${PackagesList[@]}"; do
         if checkPackageNeedInstall "${TargetPackage}"; then
@@ -213,15 +216,15 @@ if [[ ! -x "$(command -v tmux)" ]]; then
     Git_Clone_Update "tmux/tmux" "${WORKDIR}/tmux"
     if [[ -d "${WORKDIR}/tmux" ]]; then
         PackagesList=(
-            gcc
-            make
             automake
             byacc
-            pkg-config
+            gcc
+            make
             libevent-dev
             libncurses5-dev
             libevent-devel
             ncurses-devel
+            pkg-config
         )
         for TargetPackage in "${PackagesList[@]}"; do
             if checkPackageNeedInstall "${TargetPackage}"; then

@@ -43,12 +43,46 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-
     [[ -z "$OS_INFO_TYPE" ]] && get_os_type
     [[ -z "$OS_INFO_VDIS" ]] && get_sysArch
 
-    DOWNLOAD_URL="https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/subconverter_${OS_INFO_TYPE}${OS_INFO_VDIS}.tar.gz"
+    REMOTE_FILENAME=""
+    case "$OS_INFO_TYPE" in
+        linux)
+            case "$OS_INFO_VDIS" in
+                arm64)
+                    REMOTE_FILENAME=${APP_INSTALL_NAME}_aarch64.tar.gz
+                    ;;
+                arm)
+                    REMOTE_FILENAME=${APP_INSTALL_NAME}_armhf.tar.gz
+                    ;;
+                *)
+                    REMOTE_FILENAME=${APP_INSTALL_NAME}_${OS_INFO_TYPE}${OS_INFO_VDIS}.tar.gz
+                    ;;
+            esac
+            ;;
+        darwin)
+            REMOTE_FILENAME=${APP_INSTALL_NAME}_darwin64.tar.gz
+            ;;
+        windows)
+            case "$OS_INFO_VDIS" in
+                32)
+                    REMOTE_FILENAME=${APP_INSTALL_NAME}_win32.zip
+                    ;;
+                64)
+                    REMOTE_FILENAME=${APP_INSTALL_NAME}_win64.zip
+                    ;;
+            esac
+            ;;
+    esac
+
+    [[ -z "${REMOTE_FILENAME}" ]] && IS_INSTALL="no"
+fi
+
+if [[ "${IS_INSTALL}" == "yes" ]]; then
+    colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
+
+    DOWNLOAD_URL="https://github.com/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
 
     curl -fSL -o "${WORKDIR}/subconverter.tar.gz" -C- "$DOWNLOAD_URL" && \
         sudo tar -xzf "${WORKDIR}/subconverter.tar.gz" -C "/srv" && \

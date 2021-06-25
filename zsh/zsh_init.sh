@@ -38,7 +38,7 @@ fi
 
 
 # custom configuration
-colorEcho "${BLUE}custom configuration..."
+colorEcho "${BLUE}Custom ZSH configuration ${FUCHSIA}~/terminal-custom/zsh/zsh_custom_conf.sh${BLUE}..."
 if [[ ! $(grep "zsh_custom_conf.sh" $HOME/.zshrc) ]]; then
     echo -e "\n# Custom configuration\nsource ~/terminal-custom/zsh/zsh_custom_conf.sh" >> $HOME/.zshrc
 fi

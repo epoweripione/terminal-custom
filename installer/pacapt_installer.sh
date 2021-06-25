@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/local/bin/env bash
 
 trap 'rm -rf "$WORKDIR"' EXIT
 
@@ -33,10 +33,22 @@ else
     ECHO_TYPE="Installing"
 fi
 
+# termux: PREFIX="/data/data/com.termux/files/usr"
+if [[ -z "${PREFIX}" ]]; then
+    PREFIX="/usr/local"
+    INSTALL_PACMAN_TO="/usr/bin"
+else
+    INSTALL_PACMAN_TO="${PREFIX}/bin"
+fi
+
+[[ "$(readlink -f /usr/bin/pacman)" == "/usr/bin/pacapt" ]] && \
+    sudo rm -f "/usr/bin/pacman" && sudo rm -f "/usr/bin/pacapt"
+
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     colorEcho "${BLUE}  ${ECHO_TYPE} ${FUCHSIA}pacapt ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-    sudo curl -fSL -o "${WORKDIR}/pacapt" https://github.com/icy/pacapt/raw/ng/pacapt && \
-        sudo mv -f "${WORKDIR}/pacapt" "/usr/bin/pacapt" && \
-        sudo chmod 755 "/usr/bin/pacapt" && \
-        sudo ln -sv "/usr/bin/pacapt" "/usr/bin/pacman" || true
+    DOWNLOAD_URL="https://github.com/icy/pacapt/raw/ng/pacapt"
+    sudo curl -fSL -o "${WORKDIR}/pacapt" "$DOWNLOAD_URL" && \
+        sudo mv -f "${WORKDIR}/pacapt" "${PREFIX}/bin/pacapt" && \
+        sudo chmod 755 "${PREFIX}/bin/pacapt" && \
+        sudo ln -sv "${PREFIX}/bin/pacapt" "${INSTALL_PACMAN_TO}/pacman" || true
 fi
