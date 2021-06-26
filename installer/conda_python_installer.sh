@@ -27,13 +27,17 @@ set_proxy_mirrors_env
 ## pip
 # sudo pacman -S build-essential pkg-config python3-dev python3-distutils
 # sudo pacman -S libssl-dev libcurl4-openssl-dev libcairo2-dev libjpeg-dev libgif-dev libgirepository1.0-dev
-# python3 -m pip install --upgrade pip --user
-# python3 -m pip install -U setuptools wheel --user
+## https://pip.pypa.io/en/stable/installing/
+# curl "https://bootstrap.pypa.io/get-pip.py" -o get-pip.py && python3 get-pip.py && rm get-pip.py
+## fix: ERROR: Could not install packages due to an OSError: Missing dependencies for SOCKS support.
+# python3 -m pip install --user -U pysocks
+# python3 -m pip install --user -U pip
+# python3 -m pip install --user -U setuptools wheel
 # pip list -o | grep -Ev "^-|^Package" | cut -d" " -f1 | xargs -n1 pip install -U
 
 ## Install and use pip in a local directory without root/sudo access
 ## https://gist.github.com/saurabhshri/46e4069164b87a708b39d947e4527298
-# .local/bin/pip install <package_name> --user
+# .local/bin/pip install --user <package_name>
 
 
 # Miniconda

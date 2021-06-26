@@ -88,7 +88,11 @@ if ($null -eq $PhysicalAdapterIP) {
 }
 
 $BashFile = "\\wsl$\${DefaultDistro}\home\${WSLUserName}\terminal-custom\wsl\wsl2-map-win-localhost.sh"
-if (($null -ne $PhysicalAdapterIP) -and (Test-Path "${BashFile}")) {
-    # wsl -d ${DefaultDistro} -u root /home/${WSLUserName}/terminal-custom/wsl/wsl2-map-win-localhost.sh ${PhysicalAdapterIP}
-    wsl -d ${DefaultDistro} -u root /bin/bash -c "/home/${WSLUserName}/terminal-custom/wsl/wsl2-map-win-localhost.sh ${PhysicalAdapterIP}"
+if ($null -ne $PhysicalAdapterIP) {
+    if (Test-Path "${BashFile}") {
+        # wsl -d ${DefaultDistro} -u root /home/${WSLUserName}/terminal-custom/wsl/wsl2-map-win-localhost.sh ${PhysicalAdapterIP}
+        wsl -d ${DefaultDistro} -u root /bin/bash -c "/home/${WSLUserName}/terminal-custom/wsl/wsl2-map-win-localhost.sh ${PhysicalAdapterIP}"
+    } else {
+        wsl -d ${DefaultDistro} -u root /bin/bash -c "echo """"${PhysicalAdapterIP} localhost"""" >>/etc/hosts"
+    }
 }

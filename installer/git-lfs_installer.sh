@@ -119,7 +119,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     fi
 
     # Run git lfs install to perform required global configuration changes
-    [[ -x "$(command -v git-lfs)" ]] && git lfs install
+    [[ -x "$(command -v git-lfs)" ]] && noproxy_cmd git lfs install
 fi
 
 cd "${CURRENT_DIR}"

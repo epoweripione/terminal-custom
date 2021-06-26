@@ -22,12 +22,16 @@ fi
 # http://mybookworld.wikidot.com/compile-nano-from-source
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}nano${BLUE}..."
 if [[ -x "$(command -v pacman)" ]]; then
-    ## Remove old version nano
-    # if checkPackageInstalled "nano"; then
-    #     CURRENT_VERSION=$(nano -V | grep -Eo -m1 '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-    #     colorEcho "${BLUE}  Removing ${FUCHSIA}nano ${YELLOW}${CURRENT_VERSION}${BLUE}..."
-    #     sudo pacman --noconfirm -R nano
-    # fi
+    # Remove old version nano
+    if checkPackageInstalled "nano"; then
+        CURRENT_VERSION=$(nano -V | grep -Eo -m1 '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+        colorEcho "${BLUE}  Removing ${FUCHSIA}nano ${YELLOW}${CURRENT_VERSION}${BLUE}..."
+        if check_release_package_manager packageManager apt; then
+            sudo apt purge -y nano
+        else
+            sudo pacman --noconfirm -R nano
+        fi
+    fi
 
     # Pre-requisite packages
     PackagesList=(
@@ -48,14 +52,6 @@ if [[ -x "$(command -v pacman)" ]]; then
     done
 fi
 
-
-# ncurses
-# cd "${WORKDIR}" && \
-#     curl -fSL http://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz -o ncurses.tar.gz && \
-#     sudo tar zxvf ncurses.tar.gz && \
-#     sudo mv ncurses-* ncurses && cd ncurses && \
-#     sudo ./configure --prefix=/opt/ncurses >/dev/null && \
-#     sudo make >/dev/null && sudo make install >/dev/null
 
 APP_INSTALL_NAME="nano"
 IS_INSTALL="yes"

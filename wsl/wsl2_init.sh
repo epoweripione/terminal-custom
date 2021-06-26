@@ -1,24 +1,49 @@
 #!/usr/bin/env bash
 
-# https://docs.microsoft.com/zh-cn/windows/wsl/wsl2-index
-# https://docs.microsoft.com/zh-cn/windows/wsl/wsl2-install
-# Please make sure that virtualization is enabled inside BIOS
-# 1. run PowerShell as Admin
+## https://docs.microsoft.com/zh-cn/windows/wsl/
+## https://docs.microsoft.com/zh-cn/windows/wsl/install-win10
+## https://docs.microsoft.com/zh-cn/windows/wsl/wsl-config
+## Please make sure that virtualization is enabled inside BIOS
+## 1. run PowerShell as Admin
 # Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart
 # Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
-# 2. restart computer
-# 3. make WSL 2 as default architecture
+## or:
+# dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+# dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+## 2. restart computer
+## 3. make WSL 2 as default architecture
 # wsl --set-default-version 2
-# 4. install distro from Microsoft Store (https://docs.microsoft.com/en-us/windows/wsl/install-win10)
-# 5. list installed distro
+## 4. install distro from Microsoft Store (https://aka.ms/wslstore)
+## 5. list installed distro
 # wsl -l
-# 6. set a distro to be backed by WSL 2
-# wsl --set-version debian 2
-# 5. verify what versions of WSL each distro is using
+## 6. set a distro to be backed by WSL 2
+# wsl --set-version Debian 2
+## 5. verify what versions of WSL each distro is using
 # wsl -l -v
-# restart wsl in PowerShell
+## set default distro
+# wsl --set-default Debian
+## restart wsl in PowerShell
 # Restart-Service -Name LxssManager
 # net stop "LxssManager"; net start "LxssManager"
+
+## Sharing your WSL2 environment with Linux
+## https://www.nmelnick.com/2020/07/sharing-your-wsl2-environment-with-linux/
+# sudo apt install -y libguestfs-tools
+# sudo yum install -y libguestfs libguestfs-tools
+## `WSL2` also need a kernel
+# sudo apt install -y linux-image-generic
+## Virtual machine disk image file:
+## Ubuntu distro: /mnt/c/Users/<username>/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/ext4.vhdx
+## Debian distro: /mnt/c/Users/<username>/AppData/Local/Packages/TheDebianProject.DebianGNULinux_76v4gfsz19hv4/LocalState/ext4.vhdx
+## list distro filesystems
+# sudo virt-filesystems -a <image file>
+## mount Debian distro
+# sudo mkdir -p /mnt/wslDebian
+# sudo guestmount -o allow_other \
+#     -a /mnt/c/Users/<username>/AppData/Local/Packages/TheDebianProject.DebianGNULinux_76v4gfsz19hv4/LocalState/ext4.vhdx \
+#     -i /mnt/wslDebian
+## unmount Debian distro
+# sudo guestunmount /mnt/wslDebian
 
 
 [[ -z "$MY_SHELL_SCRIPTS" ]] && MY_SHELL_SCRIPTS="$HOME/terminal-custom"
@@ -38,6 +63,9 @@ fi
 # Use proxy or mirror when some sites were blocked or low speed
 set_proxy_mirrors_env
 
+# Check & set global proxy
+[[ -z "$GITHUB_NOT_USE_PROXY" ]] && check_set_global_proxy 7891 7890
+
 
 [[ $(uname -r) =~ "Microsoft" ]] && WSL_VERSION=1
 [[ $(uname -r) =~ "microsoft" ]] && WSL_VERSION=2
@@ -50,7 +78,7 @@ fi
 # Custom WSL settings
 colorEcho "${BLUE}Custom WSL settings..."
 # make drives mounted at /c or /e instead of /mnt/c and /mnt/e.
-if [[ ! $(grep "automount" /etc/wsl.conf) ]]; then
+if [[ ! $(grep -q "automount" /etc/wsl.conf) ]]; then
     sudo tee /etc/wsl.conf >/dev/null <<-'EOF'
 [automount]
 enabled = true
@@ -60,11 +88,16 @@ mountFsTab = false
 EOF
 fi
 
-colorEcho "${BLUE}map localhost to \`vEthernet (WSL)\` ip${BLUE}..."
-source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/wsl/wsl2-map-win-localhost.sh"
+# colorEcho "${BLUE}map localhost to \`vEthernet (WSL)\` ip${BLUE}..."
+# source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/wsl/wsl2-map-win-localhost.sh"
 
 
 # Install packages
+colorEcho "${BLUE}Installing ${FUCHSIA}pre-requisite packages${BLUE}..."
+sudo apt update && \
+    sudo apt install -y apt-transport-https apt-utils ca-certificates \
+        lsb-release software-properties-common curl wget
+
 # Use apt mirror & Install pre-requisite packages
 if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
     colorEcho "${BLUE}Setting apt mirror..."
@@ -76,12 +109,6 @@ if [[ -z "$APT_NOT_USE_MIRRORS" ]]; then
         -e "s|deb.debian.org|${APT_MIRROR_URL}|g" \
         -e "s|security.debian.org|${APT_MIRROR_URL}|g" /etc/apt/sources.list
 fi
-
-colorEcho "${BLUE}Installing ${FUCHSIA}pre-requisite packages${BLUE}..."
-sudo apt update && \
-    sudo apt install -y apt-transport-https apt-utils ca-certificates \
-        lsb-release software-properties-common curl wget
-
 
 # Add custom repositories
 colorEcho "${BLUE}Add ${FUCHSIA}custom repositories${BLUE}..."
@@ -136,16 +163,24 @@ sudo apt install -y python3
 sudo apt install -y build-essential pkg-config python3-dev python3-distutils
 sudo apt install -y libssl-dev libcurl4-openssl-dev libcairo2-dev libjpeg-dev libgif-dev libgirepository1.0-dev
 
-python3 -m pip install -U pip --user
-python3 -m pip install -U setuptools wheel --user
+# https://pip.pypa.io/en/stable/installing/
+curl "https://bootstrap.pypa.io/get-pip.py" -o get-pip.py && \
+    noproxy_cmd python3 get-pip.py && \
+    rm get-pip.py
 
-pip list -o | grep -Ev "^-|^Package" | cut -d" " -f1 | xargs -n1 pip install -U
+# fix: ERROR: Could not install packages due to an OSError: Missing dependencies for SOCKS support.
+noproxy_cmd python3 -m pip install --user -U pysocks
+
+# noproxy_cmd python3 -m pip install --user -U pip
+# noproxy_cmd python3 -m pip install --user -U setuptools wheel
+
+# pip list -o | grep -Ev "^-|^Package" | cut -d" " -f1 | xargs -n1 pip install -U
 
 
 # Parallel SSH Tools
 # https://github.com/lilydjwg/pssh
 # https://www.escapelife.site/posts/8c0f83d.html
-pip install git+https://github.com/lilydjwg/pssh
+python3 -m pip install --user git+https://github.com/lilydjwg/pssh
 
 ## Login with SSH Key
 # pssh -i -H "host01 host02" -l root \
@@ -170,7 +205,7 @@ sudo chmod u+s /bin/ping
 
 ## wslu
 ## https://github.com/wslutilities/wslu
-sudo apt install gnupg2 apt-transport-https && \
+sudo apt install -y gnupg2 apt-transport-https && \
     wget -O - https://access.patrickwu.space/wslu/public.asc | sudo apt-key add - && \
     echo "deb https://access.patrickwu.space/wslu/debian buster main" | sudo tee -a /etc/apt/sources.list && \
     sudo apt update && \
@@ -222,6 +257,10 @@ for TargetCommand in "${CommandList[@]}"; do
     [[ -x "$(command -v ${TargetCommand})" ]] && \
     echo "%sudo ALL=NOPASSWD:$(which ${TargetCommand})" | sudo tee "/etc/sudoers.d/nopasswd_sudo_command_${TargetCommand}" >/dev/null
 done
+
+
+# Clear bash history
+cat /dev/null > "$HOME/.bash_history"
 
 
 colorEcho "${GREEN}WSL init done, please restart WSL!"

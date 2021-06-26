@@ -2041,9 +2041,13 @@ function sort_array_lc() {
 function load_ssh_keys() {
     local IdentityFiles
 
-    if [[ ! "$(command -v keychain)" ]]; then
-        # sudo pacman --noconfirm -S keychain
-        colorEcho "${RED}keychain is not installed!"
+    if checkPackageNeedInstall "keychain"; then
+        colorEcho "${BLUE}  Installing ${FUCHSIA}${TargetPackage}${BLUE}..."
+        sudo pacman --noconfirm -S keychain
+    fi
+
+    if [[ ! -x "$(command -v keychain)" ]]; then
+        colorEcho "${FUCHSIA}keychain${RED} is not installed!"
         return 1
     fi
 

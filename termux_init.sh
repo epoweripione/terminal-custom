@@ -78,7 +78,7 @@ EOF
 colorEcho "${BLUE}Installing ${FUCHSIA}packages${BLUE}..."
 pkg up -y && \
     pkg i -y binutils curl wget git nano openssh unzip unrar htop nmap rsync \
-        bat fzf lsd lsof screenfetch starship tree
+        bat fd fzf lsd lsof screenfetch starship tree
 
 # pacapt
 if [[ ! -x "$(command -v pacapt)" ]]; then
@@ -178,7 +178,7 @@ if [[ -s "$HOME/.zshrc" ]]; then
 
     # Enable plugins
     colorEcho "${BLUE}enable plugins..."
-    Plugins=" cp git rsync"
+    Plugins="git cp rsync"
 
     [[ "$(command -v git-flow)" ]] && Plugins="${Plugins} git-flow-avh"
     [[ -x "$(command -v tmux)" ]] && Plugins="${Plugins} tmux"

@@ -83,11 +83,13 @@ alias cls='clear'
 alias grep="grep --color=auto"
 
 # most used history commands
-alias histop='fc -l -n 1 | grep -v "^\.\/" | sort | uniq -c | sort -rn'
-alias histop20='fc -l -n 1 | grep -v "^\.\/" | sort | uniq -c | sort -rn | head -n20'
+alias histop='fc -l -n 1 | grep -v "^\.\/" | sort | uniq -c | sort -rn | sed "s/^[ ]*[0-9]\+[ ]*//"'
+alias hisrate='fc -l -n 1 | grep -v "^\.\/" | sort | uniq -c | sort -rn | sed "s/^[ ]*//" \
+        | awk '"'"'BEGIN{i=0;total=0} \
+            {CMD[i]=$0;RATE[i]=$1;i++;total=total+$1} \
+            END{for (i=0; i in RATE; i++)print RATE[i]/total*100 "% " CMD[i];}'"'"''
 
 # alias histop="awk -F';' '{print $2}' ${HISTFILE} | sort | uniq -c | sort -rn"
-# alias histop20="awk -F';' '{print $2}' ${HISTFILE} | sort | uniq -c | sort -rn | head -n20"
 
 # Auto files
 # alias -s html='nano'
@@ -566,6 +568,9 @@ fi
 
 # WSL1 & WSL2
 if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
+    # https://gist.github.com/wmeng223/60b51b30eb758bd7a2a648436da1e562
+    export COLORTERM="truecolor"
+
     ## start services upon WSL launch: libnss-winbind
     # if (( $(ps -ef | grep -v grep | grep winbind | wc -l) == 0 )); then
     #     [[ $(systemctl is-enabled winbind 2>/dev/null) ]] && \
@@ -646,6 +651,10 @@ if [[ -x "$(command -v fzf)" ]]; then
         alias fzf-bat='fzf --height 50% --layout=reverse --preview-window=right,70%,wrap \
             --bind "ctrl-j:preview-page-down,ctrl-k:preview-page-up,alt-j:preview-bottom,alt-k:preview-top" \
             --preview "bat --theme=TwoDark --style=numbers,changes --color=always --line-range :500 {}"'
+    fi
+
+    if [[ -x "$(command -v viu)" ]]; then
+        alias fzf-viu='fzf --height 50% --layout=reverse --preview-window=right,70% --preview "viu {}"'
     fi
 fi
 
