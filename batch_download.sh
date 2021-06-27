@@ -58,7 +58,7 @@ function get_timestamp() {
 read -p "Please input download DIR?[/tmp]:" DOWNLOAD_DIR
 [[ -z "$DOWNLOAD_DIR" ]] && DOWNLOAD_DIR="/tmp"
 if [[ ! -d "$DOWNLOAD_DIR" ]]; then
-    colorEcho "${RED}${DOWNLOAD_DIR} is not exist or not a valid directory!"
+    colorEcho "${FUCHSIA}${DOWNLOAD_DIR}${RED} is not exist or not a valid directory!"
     exit 1
 fi
 

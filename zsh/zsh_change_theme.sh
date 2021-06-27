@@ -34,7 +34,7 @@ changeTheme() {
     local custom_theme="zsh_custom_theme_${theme}"
 
     if [[ ! -s "$ZSH/themes/${theme}.zsh-theme" && ! -s "$ZSH_CUSTOM/themes/${theme}.zsh-theme" ]]; then
-        colorEcho "${RED}Theme ${theme} not exist!"
+        colorEcho "${RED}Theme ${FUCHSIA}${theme}${RED} not exist!"
         exit
     fi
 
@@ -90,7 +90,7 @@ changeTheme() {
 
 
 if [[ -z "$ZSH" ]]; then
-    colorEcho "${RED}Please install ZSH & Oh-my-zsh first!"
+    colorEcho "${RED}Please install ${FUCHSIA}ZSH & Oh-my-zsh${RED} first!"
     exit 0
 else
     [[ -z "$ZSH_CUSTOM" ]] && ZSH_CUSTOM=$ZSH/custom

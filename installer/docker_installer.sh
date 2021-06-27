@@ -73,7 +73,7 @@ if [[ ! -x "$(command -v docker)" ]]; then
 fi
 
 if [[ ! -x "$(command -v docker)" ]]; then
-    colorEcho "${RED}Docker is not installed! Please manual install docker-ce or docker-engine!"
+    colorEcho "${FUCHSIA}Docker${RED} is not installed! Please manual install ${FUCHSIA}docker-ce${RED} or ${FUCHSIA}docker-engine${RED}!"
     exit 1
 fi
 

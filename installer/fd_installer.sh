@@ -70,13 +70,13 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
         linux)
             case "$OS_INFO_ARCH" in
                 amd64)
-                    REMOTE_FILENAME="${EXEC_INSTALL_NAME}-v${REMOTE_VERSION}-x86_64-unknown-linux-gnu.${ARCHIVE_EXT}"
+                    REMOTE_FILENAME="${EXEC_INSTALL_NAME}-v${REMOTE_VERSION}-x86_64-unknown-linux-musl.${ARCHIVE_EXT}"
                     ;;
                 386)
-                    REMOTE_FILENAME="${EXEC_INSTALL_NAME}-v${REMOTE_VERSION}-i686-unknown-linux-gnu.${ARCHIVE_EXT}"
+                    REMOTE_FILENAME="${EXEC_INSTALL_NAME}-v${REMOTE_VERSION}-i686-unknown-linux-musl.${ARCHIVE_EXT}"
                     ;;
                 arm | arm64)
-                    REMOTE_FILENAME="${EXEC_INSTALL_NAME}-v${REMOTE_VERSION}-arm-unknown-linux-gnueabihf.${ARCHIVE_EXT}"
+                    REMOTE_FILENAME="${EXEC_INSTALL_NAME}-v${REMOTE_VERSION}-arm-unknown-linux-musleabihf.${ARCHIVE_EXT}"
                     ;;
             esac
             ;;

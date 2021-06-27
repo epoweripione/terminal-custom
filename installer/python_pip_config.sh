@@ -35,7 +35,7 @@ fi
 # alias pipinstall='pip install -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com'
 PIP_MIRROR_URL=https://mirrors.aliyun.com/pypi/simple/
 PIP_MIRROR_HOST=mirrors.aliyun.com
-if [[ -z "$PIP_NOT_USE_MIRROR" && ! $(grep "${PIP_MIRROR_HOST}" "${PIP_CONFIG}") ]]; then
+if [[ -z "$PIP_NOT_USE_MIRROR" && ! $(grep -q "${PIP_MIRROR_HOST}" "${PIP_CONFIG}") ]]; then
     if [[ $(grep "index-url=" "${PIP_CONFIG}") ]]; then
         sed -i "s|index-url=.*|index-url=${PIP_MIRROR_URL}|" "${PIP_CONFIG}"
     else
@@ -45,7 +45,7 @@ if [[ -z "$PIP_NOT_USE_MIRROR" && ! $(grep "${PIP_MIRROR_HOST}" "${PIP_CONFIG}")
     if [[ $(grep "trusted-host=" "${PIP_CONFIG}") ]]; then
         sed -i "s|trusted-host=.*|trusted-host=${PIP_MIRROR_HOST}|" "${PIP_CONFIG}"
     else
-        [[ ! $(grep "[install]" "${PIP_CONFIG}") ]] && \
+        [[ ! $(grep "\[install\]" "${PIP_CONFIG}") ]] && \
             echo -e "\n[install]" | tee -a "${PIP_CONFIG}" >/dev/null
         sed -i "/^\[install\]/a\trusted-host=${PIP_MIRROR_HOST}" "${PIP_CONFIG}"
     fi
@@ -53,4 +53,4 @@ fi
 
 cat "${PIP_CONFIG}"
 
-colorEcho "${BLUE}  Done!"
+# colorEcho "${BLUE}Done!"

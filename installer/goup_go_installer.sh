@@ -48,3 +48,33 @@ if [[ -z "$GO_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
         export GOPROXY="https://goproxy.io"
     fi
 fi
+
+
+## Cross-compiling with Golang
+# go tool dist list
+
+## Handling all architectures
+# SUPPORT_PLATFORM=$(go tool dist list)
+# APP_NAME=""
+# APP_VERSION="1.0.0"
+# while read -r PLATFORM; do
+#     [[ -z "${PLATFORM}" ]] && continue
+#     PLATFORM_OS=$(echo "${PLATFORM}" | cut -d'/' -f1)
+#     PLATFORM_ARCH=$(echo "${PLATFORM}" | cut -d'/' -f2)
+#     # Cross compilation does not support CGO, so disable it
+#     CGO_ENABLED=0 GOOS=${PLATFORM_OS} GOARCH=${PLATFORM_ARCH} \
+#         go build -o ${APP_NAME}_${PLATFORM_OS}_${PLATFORM_ARCH}_${APP_VERSION}
+# done <<<"${SUPPORT_PLATFORM}"
+
+## Cross-compiling with cgo
+## https://imwnk.cn/archives/cgo-compile/
+## https://zhuanlan.zhihu.com/p/338891206
+## https://zhuanlan.zhihu.com/p/349197066
+## https://johng.cn/cgo-enabled-affect-go-static-compile/
+## https://musl.cc/
+## https://github.com/FiloSottile/homebrew-musl-cross
+# CGO_ENABLED=1 GOOS=linux GOARCH=amd64 CC="x86_64-linux-musl-gcc" CXX="x86_64-linux-musl-g++" CGO_LDFLAGS="-static" go build -a -v
+
+## golang 1.17+
+## https://dev.to/kristoff/zig-makes-go-cross-compilation-just-work-29ho
+# CGO_ENABLED=1 GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux" CXX="zig c++ -target x86_64-linux" go build

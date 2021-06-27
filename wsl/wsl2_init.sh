@@ -70,7 +70,7 @@ set_proxy_mirrors_env
 [[ $(uname -r) =~ "Microsoft" ]] && WSL_VERSION=1
 [[ $(uname -r) =~ "microsoft" ]] && WSL_VERSION=2
 if [[ -z "$WSL_VERSION" ]]; then
-    colorEcho "${RED}Please run this script in WSL(Windows Subsystem for Linux)!"
+    colorEcho "${RED}Please run this script in ${FUCHSIA}WSL(Windows Subsystem for Linux)${RED}!"
     exit 0
 fi
 
@@ -160,8 +160,8 @@ sudo apt install -y binutils build-essential di dnsutils g++ gcc \
 sudo apt install -y python3
 
 # pip
-sudo apt install -y build-essential pkg-config python3-dev python3-distutils
-sudo apt install -y libssl-dev libcurl4-openssl-dev libcairo2-dev libjpeg-dev libgif-dev libgirepository1.0-dev
+sudo apt install -y build-essential pkg-config python3-dev python3-distutils \
+    libssl-dev libcurl4-openssl-dev libcairo2-dev libjpeg-dev libgif-dev libgirepository1.0-dev
 
 # https://pip.pypa.io/en/stable/installing/
 curl "https://bootstrap.pypa.io/get-pip.py" -o get-pip.py && \

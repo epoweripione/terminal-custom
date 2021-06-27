@@ -14,7 +14,7 @@ fi
 
 
 if [[ ! -x "$(command -v code)" ]]; then
-    colorEcho "${RED}Please install visual studio code first!"
+    colorEcho "${RED}Please install ${FUCHSIA}visual studio code${RED} first!"
     exit 0
 fi
 
@@ -110,7 +110,7 @@ extensions=(
 
 if [[ $PARAMS_NUM > 0 ]]; then
     if [[ ! -s "${ExtFile}" ]]; then
-        colorEcho "${RED}${ExtFile} is not exist or empty!"
+        colorEcho "${FUCHSIA}${ExtFile}${RED} is not exist or empty!"
         exit 0
     fi
 

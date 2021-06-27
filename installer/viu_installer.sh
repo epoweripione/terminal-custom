@@ -18,10 +18,10 @@ else
 fi
 
 
-if [[ ! -x "$(command -v rustup)" && ! -x "$(command -v cargo)" ]]; then
-    colorEcho "${FUCHSIA}rustup & cargo${RED} not installed!"
-    exit 1
-fi
+# if [[ ! -x "$(command -v rustup)" && ! -x "$(command -v cargo)" ]]; then
+#     colorEcho "${FUCHSIA}rustup & cargo${RED} not installed!"
+#     exit 1
+# fi
 
 # fix: /lib64/libc.so.6: version `GLIBC_2.32' not found (required by viu)
 # ldd $(which viu)
@@ -58,7 +58,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     fi
 fi
 
-if [[ "${IS_INSTALL}" == "yes" ]]; then
+if [[ "${IS_INSTALL}" == "yes" && -x "$(command -v rustup)" && -x "$(command -v cargo)" ]]; then
     Git_Clone_Update "${GITHUB_REPO_NAME}" "${WORKDIR}/${APP_INSTALL_NAME}"
     if [[ -d "${WORKDIR}/${APP_INSTALL_NAME}" ]]; then
         [[ -z "$OS_INFO_TYPE" ]] && get_os_type

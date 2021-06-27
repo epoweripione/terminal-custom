@@ -32,7 +32,7 @@ if [[ ! -x "$(command -v jq)" ]]; then
 fi
 
 if [[ ! -x "$(command -v jq)" ]]; then
-    colorEcho "${RED}jq is not installed!"
+    colorEcho "${FUCHSIA}jq${RED} is not installed!"
     exit 1
 fi
 
@@ -57,7 +57,7 @@ function get_v2ray_config_from_subscription() {
     curl -fsL -4 --connect-timeout 10 --max-time 30 \
         -o "${VMESS_FILENAME}" "${SUBSCRIBE_URL}"
     if [[ $? != 0 ]]; then
-        colorEcho "${RED}  Can't get the subscriptions from ${SUBSCRIBE_URL}!"
+        colorEcho "${RED}  Can't get the subscriptions from ${FUCHSIA}${SUBSCRIBE_URL}${RED}!"
         return 1
     fi
 
@@ -69,7 +69,7 @@ function get_v2ray_config_from_subscription() {
     fi
 
     if [[ ! -s "${DECODE_FILENAME}" ]]; then
-        colorEcho "${RED}  Can't get the subscriptions from ${SUBSCRIBE_URL}!"
+        colorEcho "${RED}  Can't get the subscriptions from ${FUCHSIA}${SUBSCRIBE_URL}${RED}!"
         return 1
     fi
 
@@ -306,7 +306,7 @@ function use_v2ray() {
                 done
 
                 if [[ "$SubError" == "yes" ]]; then
-                    colorEcho "${RED}  Something wrong when setup proxy ${PROXY_URL}!"
+                    colorEcho "${RED}  Something wrong when setup proxy ${FUCHSIA}${PROXY_URL}${RED}!"
                     return 1
                 else
                     return 0
@@ -349,7 +349,7 @@ function use_clash() {
 
         [[ -s "/srv/subconverter/subconverter" ]] || install_update_subconverter
         [[ -s "/srv/subconverter/subconverter" ]] || {
-                colorEcho "${RED}  Please install and run subconverter first!"
+                colorEcho "${RED}  Please install and run ${FUCHSIA}subconverter${RED} first!"
                 return 1
             }
 
@@ -359,7 +359,7 @@ function use_clash() {
 
         [[ -s "/srv/clash/clash" ]] || install_update_clash
         [[ -s "/srv/clash/clash" ]] || {
-                colorEcho "${RED}  Please install and run clash first!"
+                colorEcho "${RED}  Please install and run ${FUCHSIA}clash${RED} first!"
                 return 1
             }
 

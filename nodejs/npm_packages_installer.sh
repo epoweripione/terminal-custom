@@ -17,7 +17,7 @@ set_proxy_mirrors_env
 
 
 if [[ ! -x "$(command -v npm)" ]]; then
-    colorEcho "${RED}npm is not installed! Please install node & npm first!"
+    colorEcho "${FUCHSIA}npm${RED} is not installed!"
     exit 0
 fi
 

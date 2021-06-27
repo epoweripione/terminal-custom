@@ -57,7 +57,7 @@ else
 fi
 
 if [[ ! -s "$HostsFile" ]]; then
-    # colorEcho "${RED}${HostsFile} not exist!"
+    # colorEcho "${FUCHSIA}${HostsFile}${RED} not exist!"
     # exit 1
     Hosts_URL="https://raw.githubusercontent.com/googlehosts/hosts/master/hosts-files/hosts"
     curl -fSL --connect-timeout 5 --max-time 20 -o "$HostsFile" "$Hosts_URL"
@@ -94,7 +94,7 @@ if [[ "$CHECK_METHOD" == "dig" && ! -x "$(command -v dig)" ]]; then
 fi
 
 if [[ "$CHECK_METHOD" == "dig" && ! -x "$(command -v dig)" ]]; then
-    colorEcho "${RED}dig is not installed!"
+    colorEcho "${FUCHSIA}dig${RED} is not installed!"
     exit 1
 fi
 
@@ -253,8 +253,6 @@ for TargetHost in "${HostsList[@]}"; do
         else
             IP_HOSTS="${IP_HOSTS}\n${TargetIP} ${TargetHost}"
         fi
-    else
-        colorEcho "${RED} error!"
     fi
 done
 

@@ -1790,7 +1790,7 @@ EOF
     if [[ $(systemctl is-enabled "$service_name" 2>/dev/null) ]]; then
         colorEcho "${GREEN}  systemd service ${FUCHSIA}${service_name}${GREEN} installed!"
     else
-        colorEcho "${RED}   systemd service ${FUCHSIA}${service_name}${RED} install failed!"
+        colorEcho "${RED}  systemd service ${FUCHSIA}${service_name}${RED} install failed!"
     fi
 }
 
@@ -1872,7 +1872,7 @@ EOF
             fi
         fi
     else
-        colorEcho "${RED}screen is not installed!"
+        colorEcho "${FUCHSIA}screen${RED} is not installed!"
         return 1
     fi
 }
@@ -1898,7 +1898,7 @@ function newTmuxSession() {
             tmux attach -t ${TMUX_SESSION_NAME} || tmux new -s ${TMUX_SESSION_NAME}
         fi
     else
-        colorEcho "${RED}tmux is not installed!"
+        colorEcho "${FUCHSIA}tmux${RED} is not installed!"
         return 1
     fi
 }

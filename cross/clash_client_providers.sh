@@ -27,13 +27,13 @@ TARGET_CONFIG_FILE=${2:-"/etc/clash/clash_provider.yml"}
 
 SUB_URL_LIST=${3:-"/etc/clash/My_Clash_Sub_Providers.txt"}
 if [[ ! -s "${SUB_URL_LIST}" ]]; then
-    colorEcho "${RED}    ${SUB_URL_LIST} not exist!"
+    colorEcho "${FUCHSIA}    ${SUB_URL_LIST}${RED} not exist!"
     exit 1
 fi
 
 CLASH_CONFIG=${4:-"/etc/clash/clash_client_providers.yml"}
 if [[ ! -s "${CLASH_CONFIG}" ]]; then
-    colorEcho "${RED}    ${CLASH_CONFIG} not exist!"
+    colorEcho "${FUCHSIA}    ${CLASH_CONFIG}${RED} not exist!"
     exit 1
 fi
 
@@ -46,7 +46,7 @@ if ! pgrep -f "subconverter" >/dev/null 2>&1; then
 fi
 
 if ! pgrep -f "subconverter" >/dev/null 2>&1; then
-    colorEcho "${RED}Please install and run subconverter first!"
+    colorEcho "${RED}Please install and run ${FUCHSIA}subconverter${RED} first!"
     exit 1
 fi
 

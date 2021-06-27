@@ -56,7 +56,7 @@ if [[ ! -x "$(command -v jq)" ]]; then
 fi
 
 if [[ ! -x "$(command -v jq)" ]]; then
-    colorEcho "${RED}jq is not installed!"
+    colorEcho "${FUCHSIA}jq${RED} is not installed!"
     exit 1
 fi
 
@@ -80,7 +80,7 @@ CLASH_CONFIG=${6:-"/etc/clash/clash_client_config.yml"}
 [[ ! -s "$CLASH_CONFIG" ]] && CLASH_CONFIG="$HOME/clash_client_config.yml"
 [[ ! -s "$CLASH_CONFIG" ]] && CLASH_CONFIG="${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/clash_client_config.yml"
 if [[ ! -s "$CLASH_CONFIG" ]]; then
-    colorEcho "${RED}    ${CLASH_CONFIG} not exist!"
+    colorEcho "${FUCHSIA}    ${CLASH_CONFIG}${RED} not exist!"
     exit 1
 fi
 
@@ -118,7 +118,7 @@ if ! pgrep -f "subconverter" >/dev/null 2>&1; then
 fi
 
 if ! pgrep -f "subconverter" >/dev/null 2>&1; then
-    colorEcho "${RED}Please install and run subconverter first!"
+    colorEcho "${RED}Please install and run ${FUCHSIA}subconverter${RED} first!"
     exit 1
 fi
 
@@ -173,7 +173,7 @@ if [[ -n "$RULES_URL" ]]; then
     curl -fsL --connect-timeout 10 --max-time 30 \
         -o "${WORKDIR}/rules.yml" "${RULES_URL}"
     if [[ $? != 0 ]]; then
-        colorEcho "${RED}    Can't get rules from ${RULES_URL}!"
+        colorEcho "${RED}    Can't get rules from ${FUCHSIA}${RULES_URL}${RED}!"
         exit 1
     fi
 fi
@@ -231,7 +231,7 @@ if [[ ${PROXY_MERGE_LINE} -gt 0 ]]; then
         curl -fsL --connect-timeout 10 --max-time 30 \
             -o "${WORKDIR}/merge.yml" "${MERGE_URL}"
         if [[ $? != 0 ]]; then
-            colorEcho "${RED}    Can't get merge proxies from ${MERGE_URL}!"
+            colorEcho "${RED}    Can't get merge proxies from ${FUCHSIA}${MERGE_URL}${RED}!"
             exit 1
         fi
     fi
@@ -253,7 +253,7 @@ if [[ ${CFW_BYPASS_LINE} -gt 0 ]]; then
             curl -fsL --connect-timeout 10 --max-time 30 \
                 -o "${CFW_BYPASS_FILE}" "${CFW_BYPASS_URL}"
             if [[ $? != 0  ]]; then
-                colorEcho "${RED}    Can't get cfw bypass rules from ${CFW_BYPASS_URL}!"
+                colorEcho "${RED}    Can't get cfw bypass rules from ${FUCHSIA}${CFW_BYPASS_URL}${RED}!"
                 exit 1
             fi
         fi

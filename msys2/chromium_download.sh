@@ -26,12 +26,12 @@ if [[ -x "$(command -v pacman)" ]]; then
 fi
 
 if [[ ! "$(command -v wget)" ]]; then
-    colorEcho "${RED}wget is not installed! Please install wget first!"
+    colorEcho "${FUCHSIA}wget${RED} is not installed!"
     exit
 fi
 
 if [[ ! "$(command -v curl)" ]]; then
-    colorEcho "${RED}curl is not installed! Please install curl first!"
+    colorEcho "${FUCHSIA}curl${RED} is not installed!"
     exit
 fi
 

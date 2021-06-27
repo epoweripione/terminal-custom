@@ -138,7 +138,7 @@ if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; the
 fi
 
 if [[ ! -x "$(command -v pacaptr)" ]]; then
-    colorEcho "${RED}pacaptr is not installed!"
+    colorEcho "${FUCHSIA}pacaptr${RED} is not installed!"
     exit 1
 fi
 
@@ -315,7 +315,7 @@ fi
 
 
 if [[ ! -x "$(command -v zsh)" ]]; then
-    colorEcho "${RED}ZSH is not installed! Please manual install ZSH!"
+    colorEcho "${FUCHSIA}ZSH${RED} is not installed! Please manual install ${FUCHSIA}ZSH${RED}!"
     exit
 fi
 

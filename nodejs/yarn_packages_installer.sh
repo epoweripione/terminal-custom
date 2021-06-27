@@ -17,7 +17,7 @@ set_proxy_mirrors_env
 
 
 if [[ ! -x "$(command -v yarn)" ]]; then
-    colorEcho "${RED}yarn is not installed! Please install yarn first!"
+    colorEcho "${FUCHSIA}yarn${RED} is not installed!"
     exit 0
 fi
 

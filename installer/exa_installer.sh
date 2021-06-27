@@ -20,24 +20,25 @@ fi
 [[ -z "$OS_INFO_TYPE" ]] && get_os_type
 [[ -z "$OS_INFO_VDIS" ]] && get_sysArch
 
-# fix: /lib64/libc.so.6: version `GLIBC_2.18' not found (required by exa)
-# ldd $(which exa)
-FILE_LIBC=$(find /usr /lib -name "libc.so.6" | head -n1)
-if [[ -n "${FILE_LIBC}" ]]; then
-    if strings "${FILE_LIBC}" | grep GLIBC_2.18 >/dev/null; then
-        :
-    else
-        colorEcho "${BLUE}  Installing ${FUCHSIA}GLIBC 2.18 ${BLUE}(required by exa)..."
-        curl -fSL -o "${WORKDIR}/glibc.tar.gz" "http://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz" && \
-            tar -xzf "${WORKDIR}/glibc.tar.gz" -C "${WORKDIR}" && \
-                mv ${WORKDIR}/glibc-* "${WORKDIR}/glibc" && \
-                mkdir "${WORKDIR}/glibc/build" && \
-                cd "${WORKDIR}/glibc/build" && \
-                ../configure --prefix=/usr >/dev/null && \
-                make -j$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) >/dev/null && \
-                sudo make install >/dev/null
-    fi
-fi
+## fix: /lib64/libc.so.6: version `GLIBC_2.18' not found (required by exa)
+## ldd $(which exa)
+## https://github.com/japaric/rust-cross#how-do-i-compile-a-fully-statically-linked-rust-binaries
+# FILE_LIBC=$(find /usr /lib -name "libc.so.6" | head -n1)
+# if [[ -n "${FILE_LIBC}" ]]; then
+#     if strings "${FILE_LIBC}" | grep GLIBC_2.18 >/dev/null; then
+#         :
+#     else
+#         colorEcho "${BLUE}  Installing ${FUCHSIA}GLIBC 2.18 ${BLUE}(required by exa)..."
+#         curl -fSL -o "${WORKDIR}/glibc.tar.gz" "http://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz" && \
+#             tar -xzf "${WORKDIR}/glibc.tar.gz" -C "${WORKDIR}" && \
+#                 mv ${WORKDIR}/glibc-* "${WORKDIR}/glibc" && \
+#                 mkdir "${WORKDIR}/glibc/build" && \
+#                 cd "${WORKDIR}/glibc/build" && \
+#                 ../configure --prefix=/usr >/dev/null && \
+#                 make -j$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) >/dev/null && \
+#                 sudo make install >/dev/null
+#     fi
+# fi
 
 # exa
 # https://github.com/ogham/exa
@@ -53,7 +54,7 @@ case "$OS_INFO_TYPE" in
     linux)
         case "$OS_INFO_VDIS" in
             64)
-                REMOTE_FILENAME=exa-linux-x86_64-v${REMOTE_VERSION}.zip
+                REMOTE_FILENAME=exa-linux-x86_64-musl-v${REMOTE_VERSION}.zip
                 ;;
             arm)
                 REMOTE_FILENAME=exa-linux-armv7-v${REMOTE_VERSION}.zip

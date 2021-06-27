@@ -29,7 +29,7 @@ if [[ ! -x "$(command -v jq)" ]]; then
 fi
 
 if [[ ! -x "$(command -v jq)" ]]; then
-    colorEcho "${RED}jq is not installed!"
+    colorEcho "${FUCHSIA}jq${RED} is not installed!"
     exit 1
 fi
 

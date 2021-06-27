@@ -6,7 +6,7 @@ trap 'rm -rf "$WORKDIR"' EXIT
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
 if [[ -z "$ZSH" ]]; then
-    colorEcho "${RED}Please install ZSH & Oh-my-zsh first!"
+    colorEcho "${RED}Please install ${FUCHSIA}ZSH & Oh-my-zsh${RED} first!"
     exit 0
 else
     [[ -z "$ZSH_CUSTOM" ]] && ZSH_CUSTOM="$ZSH/custom"

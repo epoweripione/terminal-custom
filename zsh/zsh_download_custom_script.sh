@@ -39,7 +39,7 @@ function colorEcho() {
 
 
 if [[ ! "$(command -v git)" ]]; then
-    colorEcho "${RED}git is not installed! Please install git first!"
+    colorEcho "${FUCHSIA}git${RED} is not installed! Please install git first!"
     exit
 fi
 
