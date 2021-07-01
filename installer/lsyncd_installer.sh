@@ -124,6 +124,7 @@ SSH_PRIVATE_FILE=${SSH_PRIVATE_FILE:-"$HOME/.ssh/id_rsa"}
 if [[ "${SYNC_TYPE}" == "rsyncd" ]]; then
     # rsyncd daemon
     # rsync config: /etc/rsyncd.conf
+    # https://download.samba.org/pub/rsync/rsyncd.conf.html
     sudo tee "/etc/rsyncd.conf" >/dev/null <<-EOF
 uid = root
 gid = root
@@ -132,9 +133,13 @@ max connections = 0
 log file=/var/log/rsyncd/rsyncd.log
 pid file=/var/run/rsyncd.pid
 lock file=/var/run/rsyncd.lock
+transfer logging = yes
+timeout = 900
+ignore nonreadable = yes
 
 [${RSYNC_MODULE}]
 path = ${RSYNC_PATH}
+ignore errors
 read only = no
 list = yes
 auth users = ${RSYNC_USER}
@@ -142,11 +147,17 @@ secrets file = ${RSYNC_PASS_FILE}
 EOF
 
     # start rsyncd daemon
-    /usr/bin/rsync --port=873 --daemon
+    # /usr/bin/rsync --port=873 --daemon
     # ps -ef | grep rsync
+
+    [[ $(systemctl is-enabled rsyncd_${RSYNC_MODULE} 2>/dev/null) ]] || {
+        Install_systemd_Service "rsyncd_${RSYNC_MODULE}" "/usr/bin/rsync --port=873 --daemon"
+    }
+    [[ $(systemctl is-enabled rsyncd_${RSYNC_MODULE} 2>/dev/null) ]] && sudo systemctl restart rsyncd_${RSYNC_MODULE}
 else
     # lsyncd
     # lsyncd config: /etc/lsyncd.conf
+    # https://axkibe.github.io/lsyncd/manual/config/file/
     sudo tee "/etc/lsyncd.conf" >/dev/null <<-EOF
 settings {
     logfile     = "/var/log/lsyncd/lsyncd.log",
@@ -216,6 +227,7 @@ EOF
     esac
 
     # start lsyncd service
-    sudo systemctl enable lsyncd && sudo systemctl start lsyncd
+    sudo systemctl enable lsyncd
+    sudo systemctl restart lsyncd
     # sudo systemctl status -l lsyncd
 fi

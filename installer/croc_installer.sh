@@ -33,31 +33,12 @@ REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'
 
 REMOTE_FILENAME="croc"
 
-
-PM_INSTALL=""
-if [[ -x "$(command -v pacman)" ]]; then
-    if pacman -Si croc >/dev/null 2>&1; then
-        PM_INSTALL="pacman"
-    fi
-fi
-
 if [[ -x "$(command -v croc)" ]]; then
-    if [[ -n "${PM_INSTALL}" ]]; then
-        # update by package manager
-        REMOTE_FILENAME=""
-    else
-        CURRENT_VERSION=$(croc -v | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-        if version_le $REMOTE_VERSION $CURRENT_VERSION; then
-            REMOTE_FILENAME=""
-        fi
-    fi
-else
-    if [[ -n "${PM_INSTALL}" ]]; then
-        sudo pacman --noconfirm -S croc
+    CURRENT_VERSION=$(croc -v | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+    if version_le $REMOTE_VERSION $CURRENT_VERSION; then
         REMOTE_FILENAME=""
     fi
 fi
-
 
 if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."

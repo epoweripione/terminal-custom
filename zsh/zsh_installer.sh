@@ -148,8 +148,6 @@ if [[ -x "$(command -v pacman)" ]]; then
     sudo pacman --noconfirm -Syu
 
     colorEcho "${BLUE}Installing ${FUCHSIA}pre-requisite packages${BLUE}..."
-    sudo pacman --noconfirm -S git curl wget zip unzip
-
     ## Install Latest Git ( Git 2.x ) on CentOS 7
     ## https://computingforgeeks.com/how-to-install-latest-version-of-git-git-2-x-on-centos-7/
     # sudo dnf -y remove git
@@ -165,6 +163,11 @@ if [[ -x "$(command -v pacman)" ]]; then
 
     # Pre-requisite packages
     PackagesList=(
+        curl
+        wget
+        git
+        zip
+        unzip
         autojump
         autojump-zsh
         bind-utils

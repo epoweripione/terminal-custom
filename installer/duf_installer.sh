@@ -63,32 +63,12 @@ case "$OS_INFO_TYPE" in
         ;;
 esac
 
-
-PM_INSTALL=""
-if [[ -x "$(command -v pacman)" ]]; then
-    if pacman -Si duf >/dev/null 2>&1; then
-        PM_INSTALL="pacman"
-    fi
-fi
-
-
 if [[ -x "$(command -v duf)" ]]; then
-    if [[ -n "${PM_INSTALL}" ]]; then
-        # update by package manager
-        REMOTE_FILENAME=""
-    else
-        CURRENT_VERSION=$(duf -version | cut -d' ' -f2)
-        if version_le $REMOTE_VERSION $CURRENT_VERSION; then
-            REMOTE_FILENAME=""
-        fi
-    fi
-else
-    if [[ -n "${PM_INSTALL}" ]]; then
-        sudo pacman --noconfirm -S duf
+    CURRENT_VERSION=$(duf -version | cut -d' ' -f2)
+    if version_le $REMOTE_VERSION $CURRENT_VERSION; then
         REMOTE_FILENAME=""
     fi
 fi
-
 
 if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
     colorEcho "${BLUE} Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
