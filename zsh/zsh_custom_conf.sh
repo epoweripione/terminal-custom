@@ -82,6 +82,11 @@ alias ohmyzsh="nano ~/.oh-my-zsh"
 alias cls='clear'
 alias grep="grep --color=auto"
 
+alias servicelist='systemctl list-unit-files --type=service | grep enabled'
+
+[[ -x "$(command -v nc)" && -n "${GLOBAL_PROXY_IP}" && -n "${GLOBAL_PROXY_SOCKS_PORT}" ]] && 
+    alias sshproxy='ssh -o ProxyCommand='"'"'nc -x ${GLOBAL_PROXY_IP}:${GLOBAL_PROXY_SOCKS_PORT} %h %p'"'"''
+
 # most used history commands
 alias histop='fc -l -n 1 | grep -v "^\.\/" | sort | uniq -c | sort -rn | sed "s/^[ ]*[0-9]\+[ ]*//"'
 alias hisrate='fc -l -n 1 | grep -v "^\.\/" | sort | uniq -c | sort -rn | sed "s/^[ ]*//" \
@@ -110,6 +115,7 @@ if [[ -x "$(command -v docker)" ]]; then
     alias dockerpullall='docker images | grep -Ev "REPOSITORY|<none>" | awk '"'"'{print $1,$2}'"'"' OFS='"'"':'"'"' | xargs -L1 docker pull'
     alias dockerps='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}"'
     alias dockerpsall='docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Status}}\t{{.Names}}\t{{.Ports}}\t{{.Networks}}\t{{.Command}}\t{{.Size}}"'
+    alias dockerlazy='docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/.config/lazydocker:/.config/jesseduffield/lazydocker lazyteam/lazydocker'
 fi
 
 
@@ -590,20 +596,21 @@ fi
 
 # fzf
 if [[ -x "$(command -v fzf)" ]]; then
+    # A --preview=.... generator that is based on the shell's current dimensions
+    # https://github.com/bigH/auto-sized-fzf
+    if [[ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/auto-sized-fzf" ]]; then
+        source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/auto-sized-fzf/auto-sized-fzf.sh"
+    fi
+
     # use fd to generate input for fzf
     if [[ -x "$(command -v fd)" ]]; then
-        # export FZF_DEFAULT_COMMAND='fd --type file'
+        # export FZF_DEFAULT_COMMAND='fd --type file --follow --hidden --exclude .git'
         export FZF_DEFAULT_COMMAND="fd --type file --color=always"
-        export FZF_DEFAULT_OPTS="--ansi"
         export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
     fi
 
-    # fzf-tab-completion
-    # https://github.com/lincheney/fzf-tab-completion
-    if [[ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab-completion" ]]; then
-        source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab-completion/zsh/fzf-zsh-completion.sh"
-        bindkey '^I' fzf_completion
-    fi
+    # export FZF_DEFAULT_OPTS="--ansi --multi $(fzf_sizer_preview_window_settings)"
+    export FZF_DEFAULT_OPTS="--ansi --multi"
 
     # Utility tool for using git interactively
     # https://github.com/wfxr/forgit
@@ -623,6 +630,45 @@ if [[ -x "$(command -v fzf)" ]]; then
         forgit_fixup=fzf-gfu
 
         source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/forgit/forgit.plugin.zsh"
+    fi
+
+    # Utility for using systemctl interactively
+    # https://github.com/NullSense/fuzzy-sys
+    if [[ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fuzzy-sys" ]]; then
+        source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fuzzy-sys/fuzzy-sys.plugin.zsh"
+    fi
+
+    # tab completion
+    if [[ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab" ]]; then
+        # fzf-tab
+        # https://github.com/Aloxaf/fzf-tab
+        # set list-colors to enable filename colorizing
+        [[ ! -s "${ZSH_CUSTOM}/plugins/fzf-tab/modules/Src/aloxaf/fzftab.so" ]] && \
+            zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+        # [kill/ps] preview of full commandline arguments
+        zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
+        zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
+            '[[ $group == "[process ID]" ]] && ps --pid=$word -o cmd --no-headers -w -w'
+        zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags '--preview-window=down:3:wrap'
+
+        # custom keybindings
+        zstyle ':fzf-tab:*' fzf-bindings 'tab:toggle+down' 'btab:toggle+up' 'shift-tab:toggle+up' 'enter:accept' 'ctrl-a:toggle-all'
+
+        # preview directory's content with exa when completing cd
+        zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+
+        if [[ -n "$TMUX" ]]; then
+            zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+            zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0
+        fi
+    else
+        # fzf-tab-completion
+        # https://github.com/lincheney/fzf-tab-completion
+        if [[ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab-completion" ]]; then
+            source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab-completion/zsh/fzf-zsh-completion.sh"
+            bindkey '^I' fzf_completion
+        fi
     fi
 
     # Better git diffs with FZF

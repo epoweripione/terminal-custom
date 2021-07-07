@@ -6,10 +6,10 @@ if [[ -x "$(command -v git)" ]]; then
     git config --global core.filemode false
 
     git config --global color.ui true
-    git config --global color.status auto
-    git config --global color.diff auto
-    git config --global color.branch auto
-    git config --global color.interactive auto
+    git config --global color.status true
+    git config --global color.diff true
+    git config --global color.branch true
+    git config --global color.interactive true
 
     git config --global alias.st status
     git config --global alias.co checkout

@@ -28,6 +28,8 @@ set_proxy_mirrors_env
 # Get os release name
 get_os_release
 
+[[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+[[ -z "${OS_INFO_ARCH}" ]] && get_arch
 
 ## Docker
 colorEcho "${BLUE}Installing ${FUCHSIA}Docker${BLUE}..."
@@ -35,9 +37,9 @@ colorEcho "${BLUE}Installing ${FUCHSIA}Docker${BLUE}..."
 # https://github.com/docker/docker-install
 if [[ ! -x "$(command -v docker)" ]]; then
     if [[ -z "$DOCKER_INSTALLER_NOT_USE_MIRROR" ]]; then
-        # curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+        # curl -fsSL https://get.docker.com | bash -s docker --mirror AzureChinaCloud
         curl -fsSL https://get.docker.com -o get-docker.sh && \
-            bash get-docker.sh --mirror AzureChinaCloud
+            bash get-docker.sh --mirror Aliyun
     else
         curl -fsSL https://get.docker.com -o get-docker.sh && \
             bash get-docker.sh
@@ -86,10 +88,15 @@ if [[ ! -x "$(command -v docker-compose)" ]]; then
     REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL="https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
-        curl -fSL -o "${WORKDIR}/docker-compose" -C- $DOWNLOAD_URL && \
+        curl -fSL -o "${WORKDIR}/docker-compose" "$DOWNLOAD_URL" && \
             mv -f "${WORKDIR}/docker-compose" "/usr/local/bin/docker-compose" && \
             chmod +x "/usr/local/bin/docker-compose"
     fi
+
+    ## Compose V2
+    ## https://docs.docker.com/compose/cli-command/#installing-compose-v2
+    # curl -fsSL -o docker-compose-v2.sh "https://raw.githubusercontent.com/docker/compose-cli/main/scripts/install/install_linux.sh" && \
+    #     bash docker-compose-v2.sh
 fi
 
 # Allow your user to access the Docker CLI without needing root.
@@ -99,17 +106,12 @@ fi
 ## ctop
 if [[ ! -x "$(command -v ctop)" ]]; then
     colorEcho "${BLUE}Installing ${FUCHSIA}ctop${BLUE}..."
-    if uname -m | grep -Eqi "amd64|x86_64"; then
-        DOWNLOAD_FILE_SUFFIX='linux-amd64'
-    else
-        DOWNLOAD_FILE_SUFFIX='linux-386'
-    fi
 
     CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
-    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
+    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if [[ -n "$REMOTE_VERSION" ]]; then
-        DOWNLOAD_URL="https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}"
-        curl -fSL -o "${WORKDIR}/ctop" -C- $DOWNLOAD_URL && \
+        DOWNLOAD_URL="https://github.com/bcicen/ctop/releases/download/$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}"
+        curl -fSL -o "${WORKDIR}/ctop" "$DOWNLOAD_URL" && \
             mv -f "${WORKDIR}/ctop" "/usr/local/bin/ctop" && \
             chmod +x "/usr/local/bin/ctop"
     fi
@@ -117,27 +119,11 @@ fi
 
 
 ## lazydocker
-# https://github.com/jesseduffield/lazydocker
-# https://github.com/jesseduffield/lazydocker/blob/master/docs/keybindings/Keybindings_en.md
-# if [[ ! -x "$(command -v lazydocker)" ]]; then
-#     colorEcho "${BLUE}Installing ${FUCHSIA}lazydocker${BLUE}..."
-#     if uname -m | grep -Eqi "amd64|x86_64"; then
-#         DOWNLOAD_FILE_SUFFIX='Linux_x86_64.tar.gz'
-#     else
-#         DOWNLOAD_FILE_SUFFIX='Linux_32-bit.tar.gz'
-#     fi
-
-#     CHECK_URL="https://api.github.com/repos/jesseduffield/lazydocker/releases/latest"
-#     REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
-#     if [[ -n "$REMOTE_VERSION" ]]; then
-#         DOWNLOAD_URL="https://github.com/jesseduffield/lazydocker/releases/download/v$REMOTE_VERSION/lazydocker_${REMOTE_VERSION}_${DOWNLOAD_FILE_SUFFIX}"
-#         curl -fSL $DOWNLOAD_URL -o ${WORKDIR}/lazydocker.tar.gz && \
-#             mkdir -p "${WORKDIR}/lazydocker” && \
-#             tar -xzf "${WORKDIR}/lazydocker.tar.gz" -C "${WORKDIR}/lazydocker" && \
-#             mv -f "${WORKDIR}/lazydocker/lazydocker" "/usr/local/bin/lazydocker" && \
-#             chmod +x "/usr/local/bin/lazydocker"
-#     fi
-# fi
+## https://github.com/jesseduffield/lazydocker
+# docker run --rm -it -v \
+#     /var/run/docker.sock:/var/run/docker.sock \
+#     -v $HOME/.config/lazydocker:/.config/jesseduffield/lazydocker \
+#     lazyteam/lazydocker
 
 
 ## docker mirror in china

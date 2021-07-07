@@ -162,10 +162,10 @@ fi
 
 if [[ ! -x "$(command -v fzf)" ]]; then
     Git_Clone_Update "junegunn/fzf" "$HOME/.fzf"
-    $HOME/.fzf/install
+    [[ -s "$HOME/.fzf/install" ]] && $HOME/.fzf/install
 elif [[ -d "$HOME/.fzf" ]]; then
     Git_Clone_Update "junegunn/fzf" "$HOME/.fzf"
-    $HOME/.fzf/install --bin
+    [[ -s "$HOME/.fzf/install" ]] && $HOME/.fzf/install --bin
 fi
 
 
@@ -191,9 +191,11 @@ PluginList=(
     # "popstas/zsh-command-time"
     # "petervanderdoes/git-flow-completion"
     # "changyuheng/zsh-interactive-cd"
-    # "Aloxaf/fzf-tab"
+    "Aloxaf/fzf-tab"
     "lincheney/fzf-tab-completion"
     "wfxr/forgit"
+    "NullSense/fuzzy-sys"
+    "bigH/auto-sized-fzf"
 )
 
 for Target in "${PluginList[@]}"; do
@@ -201,6 +203,13 @@ for Target in "${PluginList[@]}"; do
     Git_Clone_Update "$Target" "${ZSH_CUSTOM}/plugins/${TargetName}"
 done
 
+# fzf-tab: speed up parse and apply filename colorizing
+if [[ ! -s "${ZSH_CUSTOM}/plugins/fzf-tab/modules/Src/aloxaf/fzftab.so" ]]; then
+    if [[ "$(command -v build-fzf-tab-module)" ]]; then
+        colorEcho "${BLUE}Building fzf-tab modules..."
+        build-fzf-tab-module >/dev/null
+    fi
+fi
 
 # Custom themes
 colorEcho "${BLUE}Oh-my-zsh custom themes..."
@@ -281,9 +290,14 @@ Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
 
 [[ "$(command -v fuck)" ]] && Plugins="${Plugins} thefuck"
 
-[[ -x "$(command -v fzf)" || -d "$HOME/.fzf" ]] && Plugins="${Plugins} fzf"
+if [[ -x "$(command -v fzf)" || -d "$HOME/.fzf" ]]; then
+    Plugins="${Plugins} fzf"
+    [[ -d "${ZSH_CUSTOM}/plugins/fzf-tab" ]] && Plugins="${Plugins} fzf-tab"
+else
+    Plugins="${Plugins} zsh-interactive-cd"
+fi
 
-Plugins="${Plugins} zsh-interactive-cd zsh-autosuggestions fast-syntax-highlighting history-substring-search"
+Plugins="${Plugins} zsh-autosuggestions fast-syntax-highlighting history-substring-search"
 
 # Plugins="${Plugins} zsh-navigation-tools history-search-multi-word"
 

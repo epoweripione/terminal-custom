@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# rsync daemon: lsyncd_installer.sh -t rsyncd -m backup -d $HOME/backup -u rsyncuser -w PassW0rd
-# lsyncd + rsyncssh: lsyncd_installer.sh -t rsyncssh -s /opt/oracle/backup -d $HOME/backup -h 172.10.1.1 -u root -i $HOME/.ssh/id_rsa
+# rsync daemon: ${MY_SHELL_SCRIPTS}/installer/lsyncd_installer.sh -t rsyncd -m backup -d /data/backup -u rsyncuser -w PassW0rd
+# lsyncd + rsyncssh: ${MY_SHELL_SCRIPTS}/installer/lsyncd_installer.sh -t rsyncssh -s /opt/oracle/backup -d /data/backup -h 172.10.1.1 -u root -i $HOME/.ssh/id_rsa
 while getopts ":t:s:d:h:p:u:i:m:w:f:e" OPTNAME; do
     case "${OPTNAME}" in
         t)
@@ -154,6 +154,12 @@ EOF
         Install_systemd_Service "rsyncd_${RSYNC_MODULE}" "/usr/bin/rsync --port=873 --daemon"
     }
     [[ $(systemctl is-enabled rsyncd_${RSYNC_MODULE} 2>/dev/null) ]] && sudo systemctl restart rsyncd_${RSYNC_MODULE}
+
+    colorEcho "${FUCHSIA}rsyncd${GREEN} service successfully installed!"
+    colorEcho "${FUCHSIA}rsyncd config file: ${GREEN}/etc/rsyncd.conf"
+    colorEcho "${FUCHSIA}rsyncd log file: ${GREEN}/var/log/rsyncd/rsyncd.log"
+
+    cat "/etc/rsyncd.conf"
 else
     # lsyncd
     # lsyncd config: /etc/lsyncd.conf
@@ -221,7 +227,7 @@ sync {
         rsh = "/usr/bin/ssh -p ${SSH_PORT} -l ${SSH_USER} -i ${SSH_PRIVATE_FILE} -o StrictHostKeyChecking=no"
         --_extra = {"--bwlimit=200", "--omit-link-times"}
     }
-} 
+}
 EOF
             ;;
     esac
@@ -229,5 +235,15 @@ EOF
     # start lsyncd service
     sudo systemctl enable lsyncd
     sudo systemctl restart lsyncd
+
+    colorEcho "${FUCHSIA}lsyncd${GREEN} service successfully installed!"
+    colorEcho "${FUCHSIA}lsyncd config file: ${GREEN}/etc/lsyncd.conf"
+    colorEcho "${FUCHSIA}lsyncd log file: ${GREEN}/var/log/lsyncd/lsyncd.log"
+
+    cat "/etc/lsyncd.conf"
     # sudo systemctl status -l lsyncd
+    # tail -f /var/log/lsyncd/lsyncd.log /var/log/rsyncd/rsyncd.log
 fi
+
+
+cd "${CURRENT_DIR}"

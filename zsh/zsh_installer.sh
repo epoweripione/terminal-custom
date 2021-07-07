@@ -331,6 +331,7 @@ fi
 # change default shell to zsh
 # chsh -s $(which zsh)
 
+sudo mkdir -p "/usr/local/share/zsh/site-functions"
 
 # Launch ZSH in BASH
 OS_WSL=$(uname -r)

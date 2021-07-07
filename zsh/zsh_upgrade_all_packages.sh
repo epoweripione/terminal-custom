@@ -67,12 +67,12 @@ if [[ -x "$(command -v docker-compose)" ]]; then
 
     CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
 
-    CURRENT_VERSION=$(docker-compose -v | cut -d',' -f1 | cut -d' ' -f3)
+    CURRENT_VERSION=$(docker-compose -v 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
     REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}  Installing ${FUCHSIA}docker-compose ${YELLOW}${REMOTE_VERSION}${BLUE}..."
         DOWNLOAD_URL="https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
-        curl -fSL -o "${WORKDIR}/docker-compose" -C- $DOWNLOAD_URL && \
+        curl -fSL -o "${WORKDIR}/docker-compose" "$DOWNLOAD_URL" && \
             sudo mv -f "${WORKDIR}/docker-compose" "/usr/local/bin/docker-compose" && \
             sudo chmod +x "/usr/local/bin/docker-compose"
     fi
@@ -81,20 +81,14 @@ fi
 
 if [[ -x "$(command -v ctop)" ]]; then
     colorEcho "${BLUE}Checking latest version for ${FUCHSIA}ctop${BLUE}..."
-    if uname -m | grep -Eqi "amd64|x86_64"; then
-        DOWNLOAD_FILE_SUFFIX='linux-amd64'
-    else
-        DOWNLOAD_FILE_SUFFIX='linux-386'
-    fi
 
     CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
-
-    CURRENT_VERSION=$(ctop -v | cut -d',' -f1 | cut -d' ' -f3)
-    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -c2-)
+    CURRENT_VERSION=$(ctop -v 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}  Installing ${FUCHSIA}ctop ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-        DOWNLOAD_URL="https://github.com/bcicen/ctop/releases/download/v$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${DOWNLOAD_FILE_SUFFIX}"
-        curl -fSL -o "${WORKDIR}/ctop" -C- $DOWNLOAD_URL && \
+        DOWNLOAD_URL="https://github.com/bcicen/ctop/releases/download/$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}"
+        curl -fSL -o "${WORKDIR}/ctop" "$DOWNLOAD_URL" && \
             sudo mv -f "${WORKDIR}/ctop" "/usr/local/bin/ctop" && \
             sudo chmod +x "/usr/local/bin/ctop"
     fi

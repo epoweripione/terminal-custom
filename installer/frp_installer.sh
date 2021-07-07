@@ -62,9 +62,15 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 
     [[ -d "/srv/backup_frp" ]] && sudo cp -f /srv/backup_frp/*.ini "/srv/frp"
 
-    if [[ -s "/srv/frp/frps.ini" ]]; then
-        nohup /srv/frp/frps -c /srv/frp/frps.ini >/dev/null 2>&1 & disown
-    fi
+    # if [[ -s "/srv/frp/frps.ini" ]]; then
+    #     nohup /srv/frp/frps -c /srv/frp/frps.ini >/dev/null 2>&1 & disown
+    # fi
+
+    # [[ $(systemctl is-enabled frp-server 2>/dev/null) ]] || {
+    #         Install_systemd_Service "frp-server" "/srv/frp/frps -c /srv/frp/frps-server.ini"
+    #     }
+
+    [[ $(systemctl is-enabled frp-server 2>/dev/null) ]] && sudo systemctl restart frp-server
 fi
 
 
