@@ -185,6 +185,7 @@ if [[ -x "$(command -v pacman)" ]]; then
         GeoIP-data
         glibc-langpack-en
         glibc-locale-source
+        bc
         htop
         jq
         lsof

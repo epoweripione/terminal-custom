@@ -35,7 +35,7 @@ curl -sSf https://raw.githubusercontent.com/owenthereal/goup/master/install.sh |
 
 # Go module proxy
 if [[ -z "$GO_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
-    GO_VERSION=$(go version | cut -d' ' -f3)
+    GO_VERSION=$(go version 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
     if version_ge $GO_VERSION 'go1.13'; then
         go env -w GO111MODULE=auto
         go env -w GOPROXY="https://goproxy.io,direct"
@@ -47,6 +47,7 @@ if [[ -z "$GO_INSTALLER_NOT_USE_PROXY" && -x "$(command -v go)" ]]; then
         export GO111MODULE=auto
         export GOPROXY="https://goproxy.io"
     fi
+    unset GO_VERSION
 fi
 
 

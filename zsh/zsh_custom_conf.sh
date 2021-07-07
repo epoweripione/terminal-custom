@@ -76,8 +76,26 @@ fi
 
 
 # aliases
-alias zshconfig="nano ~/.zshrc"
-alias ohmyzsh="nano ~/.oh-my-zsh"
+if [[ -x "$(command -v nano)" ]]; then
+    export VISUAL="nano"
+
+    alias zshconfig="nano ~/.zshrc"
+    alias ohmyzsh="nano ~/.oh-my-zsh"
+
+    # Auto files
+    # alias -s html='nano'
+    # alias -s php='nano'
+    # alias -s rb='nano'
+    # alias -s py='nano'
+    # alias -s js='nano'
+    # alias -s c='nano'
+    # alias -s java='nano'
+    # alias -s txt='nano'
+    # alias -s gz='tar -xzvf'
+    # alias -s tgz='tar -xzvf'
+    # alias -s zip='unzip'
+    # alias -s bz2='tar -xjvf'
+fi
 
 alias cls='clear'
 alias grep="grep --color=auto"
@@ -95,20 +113,6 @@ alias hisrate='fc -l -n 1 | grep -v "^\.\/" | sort | uniq -c | sort -rn | sed "s
             END{for (i=0; i in RATE; i++)print RATE[i]/total*100 "% " CMD[i];}'"'"''
 
 # alias histop="awk -F';' '{print $2}' ${HISTFILE} | sort | uniq -c | sort -rn"
-
-# Auto files
-# alias -s html='nano'
-# alias -s php='nano'
-# alias -s rb='nano'
-# alias -s py='nano'
-# alias -s js='nano'
-# alias -s c='nano'
-# alias -s java='nano'
-# alias -s txt='nano'
-# alias -s gz='tar -xzvf'
-# alias -s tgz='tar -xzvf'
-# alias -s zip='unzip'
-# alias -s bz2='tar -xjvf'
 
 # docker aliases
 if [[ -x "$(command -v docker)" ]]; then
@@ -370,6 +374,7 @@ if [[ -x "$(command -v go)" ]]; then
         #     alias goInstall='proxy_socks5h_to_socks5 go install'
         # fi
     fi
+    unset GO_VERSION
 fi
 
 # rustup & cargo
@@ -521,11 +526,6 @@ if [[ -d "$HOME/.sdkman" ]]; then
     fi
 fi
 
-# lazydocker aliases
-if [[ -x "$(command -v lazydocker)" ]]; then
-    alias lzd='lazydocker' 
-fi
-
 # navi
 if [[ -x "$(command -v navi)" ]]; then
     source "$(navi widget zsh)"
@@ -659,8 +659,12 @@ if [[ -x "$(command -v fzf)" ]]; then
         zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
 
         if [[ -n "$TMUX" ]]; then
-            zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-            zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0
+            TMUX_VERSION=$(tmux -V 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+            if version_ge $TMUX_VERSION '3.2'; then
+                zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+                zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0
+            fi
+            unset TMUX_VERSION
         fi
     else
         # fzf-tab-completion
