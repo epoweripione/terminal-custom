@@ -175,6 +175,7 @@ if [[ -x "$(command -v pacman)" ]]; then
         build-essential
         connect-proxy
         dnsutils
+        autoconf
         g++
         gcc
         geoip

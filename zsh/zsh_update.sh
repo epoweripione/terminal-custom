@@ -111,6 +111,10 @@ if [[ -x "$(command -v tmux)" ]]; then
         # Date Time format
         sed -i "s/, %R , %d %b |/, %H:%M , %Y-%m-%d %a |/" $HOME/.tmux.conf.local
 
+        # https://github.com/tmux-plugins/tmux-sidebar
+        # echo "" >> $HOME/.tmux.conf.local
+        # echo "set -g @plugin 'tmux-plugins/tmux-sidebar'" >> $HOME/.tmux.conf.local
+
 #         # add blank line on top of tmux statusbar (tmux 2.9+)
 #         TMUX_VERSION=$(tmux -V | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
 #         if version_ge $TMUX_VERSION "2.9"; then
@@ -196,6 +200,7 @@ PluginList=(
     "wfxr/forgit"
     "NullSense/fuzzy-sys"
     "bigH/auto-sized-fzf"
+    # "kevinhwang91/fzf-tmux-script"
 )
 
 for Target in "${PluginList[@]}"; do

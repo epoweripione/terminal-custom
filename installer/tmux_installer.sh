@@ -18,19 +18,20 @@ else
 fi
 
 
-# https://www.nano-editor.org/dist/latest/faq.html
-APP_INSTALL_NAME="nano"
-EXEC_INSTALL_NAME="nano"
+# https://github.com/tmux/tmux
+APP_INSTALL_NAME="tmux"
+GITHUB_REPO_NAME="tmux/tmux"
+
+EXEC_INSTALL_NAME="tmux"
 
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
-REMOTE_VERSION=$(curl -fsL -N https://www.nano-editor.org/download.php \
-    | grep -Eo -m1 'nano-([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d'-' -f2)
-DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
+CHECK_URL="https://api.github.com/repos/${GITHUB_REPO_NAME}/releases/latest"
+REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
 
 if [[ -x "$(command -v pacman)" ]]; then
     # Remove installed old version
     if checkPackageInstalled "${APP_INSTALL_NAME}"; then
-        CURRENT_VERSION=$(${EXEC_INSTALL_NAME} -V | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+        CURRENT_VERSION=$(${EXEC_INSTALL_NAME} -V | grep -Eo '([0-9]{1,}\.)+[0-9a-zA-Z]{1,}' | head -n1)
         if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
             colorEcho "${BLUE}  Removing ${FUCHSIA}${APP_INSTALL_NAME}${YELLOW}${CURRENT_VERSION}${BLUE}..."
             sudo pacman --noconfirm -Rn "${APP_INSTALL_NAME}"
@@ -39,14 +40,20 @@ if [[ -x "$(command -v pacman)" ]]; then
 
     # Pre-requisite packages
     PackagesList=(
+        build-essential
+        gcc
+        make
+        bison
+        pkg-config
+        libevent
+        libevent-dev
+        libevent-devel
         ncurses
         libncurses-dev
         libncursesw-dev
         libncurses5-dev
         libncursesw5-dev
         ncurses-devel
-        # http://support.moonpoint.com/os/unix/linux/ubuntu/groff_invalid_device.php
-        groff
     )
     for TargetPackage in "${PackagesList[@]}"; do
         if checkPackageNeedInstall "${TargetPackage}"; then
@@ -60,10 +67,10 @@ IS_INSTALL="yes"
 IS_UPDATE="no"
 CURRENT_VERSION="0.0"
 
-# http://mybookworld.wikidot.com/compile-nano-from-source
+# http://mybookworld.wikidot.com/compile-tmux-from-source
 if [[ -x "$(command -v ${EXEC_INSTALL_NAME})" ]]; then
     IS_UPDATE="yes"
-    CURRENT_VERSION=$(${EXEC_INSTALL_NAME} -V | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+    CURRENT_VERSION=$(${EXEC_INSTALL_NAME} -V | grep -Eo '([0-9]{1,}\.)+[0-90-9a-zA-Z]{1,}' | head -n1)
 fi
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
@@ -72,35 +79,20 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     REMOTE_FILENAME="${APP_INSTALL_NAME}-${REMOTE_VERSION}.tar.gz"
     DOWNLOAD_FILENAME="${WORKDIR}/${APP_INSTALL_NAME}.tar.gz"
 
-    DOWNLOAD_URL="https://www.nano-editor.org/dist/v${DIST_VERSION}/${REMOTE_FILENAME}"
+    DOWNLOAD_URL="https://github.com/${GITHUB_REPO_NAME}/releases/download/${REMOTE_VERSION}/${REMOTE_FILENAME}"
 
-    wget -O "${DOWNLOAD_FILENAME}" "$DOWNLOAD_URL" && \
+    curl -fSL -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}" && \
         tar -xzf "${DOWNLOAD_FILENAME}" -C "${WORKDIR}" && \
         mv ${WORKDIR}/${APP_INSTALL_NAME}-* "${WORKDIR}/${APP_INSTALL_NAME}"
 
     if [[ -d "${WORKDIR}/${APP_INSTALL_NAME}" ]]; then
         colorEcho "${BLUE}  Compiling ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
         cd "${WORKDIR}/${APP_INSTALL_NAME}" && \
-        ./configure --prefix=/usr --enable-utf8 >/dev/null && \
+        ./configure --prefix=/usr >/dev/null && \
         make >/dev/null && \
         sudo make install >/dev/null
     fi
 fi
 
-# Change default editor to nano
-if [[ "${IS_UPDATE}" == "no" && -x "$(command -v nano)" ]]; then
-    if [[ -x "$(command -v update-alternatives)" ]]; then
-        sudo update-alternatives --install /usr/bin/editor editor $(which nano) 100
-        sudo update-alternatives --config editor
-    fi
-
-    # select default sensible-editor from all installed editors
-    [[ -x "$(command -v select-editor)" ]] && select-editor
-
-    # What About Distros That Don’t Provide select-editor?
-    # export VISUAL="nano"
-    # echo 'export VISUAL="nano"' >> "$HOME/.bashrc"
-    # echo 'export VISUAL="nano"' >> "$HOME/.zshrc"
-fi
 
 cd "${CURRENT_DIR}"

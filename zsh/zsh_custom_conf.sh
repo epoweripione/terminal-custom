@@ -594,6 +594,15 @@ if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
     get_weather_custom
 fi
 
+# tmux session
+if [[ -n "$TMUX" ]]; then
+    TMUX_VERSION=$(tmux -V 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+    if version_ge "${TMUX_VERSION}" "3.2"; then
+        TMUX_VERSION_320="true"
+    fi
+    unset TMUX_VERSION
+fi
+
 # fzf
 if [[ -x "$(command -v fzf)" ]]; then
     # A --preview=.... generator that is based on the shell's current dimensions
@@ -604,7 +613,7 @@ if [[ -x "$(command -v fzf)" ]]; then
 
     # use fd to generate input for fzf
     if [[ -x "$(command -v fd)" ]]; then
-        # export FZF_DEFAULT_COMMAND='fd --type file --follow --hidden --exclude .git'
+        # export FZF_DEFAULT_COMMAND='fd --type file --follow --hidden --no-ignore --exclude .git'
         export FZF_DEFAULT_COMMAND="fd --type file --color=always"
         export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
     fi
@@ -658,13 +667,9 @@ if [[ -x "$(command -v fzf)" ]]; then
         # preview directory's content with exa when completing cd
         zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
 
-        if [[ -n "$TMUX" ]]; then
-            TMUX_VERSION=$(tmux -V 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-            if version_ge $TMUX_VERSION '3.2'; then
-                zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-                zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0
-            fi
-            unset TMUX_VERSION
+        if [[ -n "$TMUX" && -n "${TMUX_VERSION_320}" ]]; then
+            zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+            zstyle ':fzf-tab:complete:cd:*' popup-pad 30 0
         fi
     else
         # fzf-tab-completion
@@ -674,6 +679,41 @@ if [[ -x "$(command -v fzf)" ]]; then
             bindkey '^I' fzf_completion
         fi
     fi
+
+    # fzf-tmux-pane & fzf-tmux-popup
+    # https://github.com/kevinhwang91/fzf-tmux-script
+#     if [[ -n "${TMUX_VERSION_320}" && -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tmux-script" ]]; then
+#         if ! grep -q "fzf-tmux-pane" "$HOME/.tmux.conf.local"; then
+#             tee -a "$HOME/.tmux.conf.local" >/dev/null <<-'EOF'
+# ## fzf-tmux-pane
+# set -s focus-events on
+# if-shell '[ -f ~/.oh-my-zsh/custom/plugins/fzf-tmux-script/panes/fzf-panes.tmux ]' {
+# #   if you want to exclude specified session, please set @fzf_panes_ex_session_pat
+# #   for example, value equal to '^(floating)$', will exclude panes in session named 'floating':
+# #   set -g '@fzf_panes_ex_session_pat' '^(floating)$'
+#     set-hook -g pane-focus-in[10] \
+#     "run -b 'bash ~/.oh-my-zsh/custom/plugins/fzf-tmux-script/panes/fzf-panes.tmux update_mru_pane_ids'"
+#     bind w run -b 'bash ~/.oh-my-zsh/custom/plugins/fzf-tmux-script/panes/fzf-panes.tmux new_window'
+#     bind \; run -b 'bash ~/.oh-my-zsh/custom/plugins/fzf-tmux-script/panes/fzf-panes.tmux select_last_pane'
+# } {
+#     set-hook -ug pane-focus-in[10]
+#     bind w choose-tree -Z
+# }
+# EOF
+
+#         # fzfp
+#         # ls --color=always | fzfp --ansi --width=50% --height=50%
+#         if [[ ! "$(command -v fzfp)" ]]; then
+#             sudo cp -f "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tmux-script/popup/fzfp" "/usr/local/bin/fzfp" && \
+#                 sudo chmod 755 "/usr/local/bin/fzfp"
+#         fi
+#         # Setup fzfp in zsh
+#         if [[ -n $TMUX_PANE ]] && (( $+commands[tmux] )) && (( $+commands[fzfp] )); then
+#             # fallback to normal fzf if current session name is `floating`
+#             export TMUX_POPUP_NESTED_FB='test $(tmux display -pF "#{==:#S,floating}") == 1'
+#             export TMUX_POPUP_WIDTH=80%
+#         fi
+#     fi
 
     # Better git diffs with FZF
     # https://medium.com/@GroundControl/better-git-diffs-with-fzf-89083739a9cb
