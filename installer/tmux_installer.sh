@@ -17,6 +17,10 @@ else
     fi
 fi
 
+if [[ -n "$TMUX" ]]; then
+    colorEcho "${RED}Can't build & install ${FUCHSIA}tmux${RED} in a ${YELLOW}tmux${RED} session!"
+    exit 1
+fi
 
 # https://github.com/tmux/tmux
 APP_INSTALL_NAME="tmux"
@@ -34,7 +38,8 @@ if [[ -x "$(command -v pacman)" ]]; then
         CURRENT_VERSION=$(${EXEC_INSTALL_NAME} -V | grep -Eo '([0-9]{1,}\.)+[0-9a-zA-Z]{1,}' | head -n1)
         if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
             colorEcho "${BLUE}  Removing ${FUCHSIA}${APP_INSTALL_NAME}${YELLOW}${CURRENT_VERSION}${BLUE}..."
-            sudo pacman --noconfirm -Rn "${APP_INSTALL_NAME}"
+            sudo pacman --noconfirm -R "${APP_INSTALL_NAME}"
+            sudo pacman --noconfirm -Rn "${APP_INSTALL_NAME}" || true
         fi
     fi
 

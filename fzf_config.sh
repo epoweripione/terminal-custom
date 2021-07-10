@@ -1,5 +1,5 @@
 function fzf-tmux-popup() {
-    fzf-tmux -p 80%,60% $@
+    fzf-tmux -p ${TMUX_POPUP_DIMENSION:-"80%,80%"} $@
 }
 
 # tmux session
@@ -16,6 +16,7 @@ if [[ -n "$TMUX" ]]; then
     [[ -n "${TMUX_VERSION_320}" ]] && FZF_REAL_COMMAND="fzf-tmux-popup" || FZF_REAL_COMMAND="fzf-tmux"
 fi
 export FZF_REAL_COMMAND="${FZF_REAL_COMMAND}"
+export TMUX_POPUP_DIMENSION="80%,80%"
 
 # A --preview=.... generator that is based on the shell's current dimensions
 # https://github.com/bigH/auto-sized-fzf
@@ -78,7 +79,7 @@ if [[ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab" ]]; then
 
     # preview directory's content with exa when completing cd
     # zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
-    zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa --tree --icons -L1 $realpath'
+    zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -T --git-ignore --icons -L1 $realpath'
     zstyle ':fzf-tab:complete:cd:*' fzf-flags '--height=50%'
 
     if [[ -n "$TMUX" && -n "${TMUX_VERSION_320}" ]]; then
@@ -150,6 +151,14 @@ alias fzf-cat='${FZF_REAL_COMMAND:-fzf} --layout=reverse --preview-window=right,
 alias fzf-file='${FZF_REAL_COMMAND:-fzf} --layout=reverse --info=inline --border \
     --preview="file {}" --preview-window=up,1,border-horizontal \
     --color="fg:#bbccdd,fg+:#ddeeff,bg:#334455,preview-bg:#223344,border:#778899"'
+
+alias fzf-tree='echo "$PWD" | ${FZF_REAL_COMMAND:-fzf} --layout=reverse --preview-window=right,70%,wrap \
+    --bind="ctrl-j:preview-page-down,ctrl-k:preview-page-up,alt-j:preview-bottom,alt-k:preview-top" \
+    --preview="exa -T --git-ignore --icons {}"'
+
+alias fzf-tree-dir='echo "$PWD" | ${FZF_REAL_COMMAND:-fzf} --layout=reverse --preview-window=right,70%,wrap \
+    --bind="ctrl-j:preview-page-down,ctrl-k:preview-page-up,alt-j:preview-bottom,alt-k:preview-top" \
+    --preview="exa -T -D --git-ignore --icons {}"'
 
 if [[ -x "$(command -v bat)" ]]; then
     alias bat-themes='bat --list-themes | ${FZF_REAL_COMMAND:-fzf} --preview="bat --theme={} --color=always ${ZSH}/oh-my-zsh.sh"'

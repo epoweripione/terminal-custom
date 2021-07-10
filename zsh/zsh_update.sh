@@ -199,7 +199,7 @@ PluginList=(
     "lincheney/fzf-tab-completion"
     "wfxr/forgit"
     "NullSense/fuzzy-sys"
-    "bigH/auto-sized-fzf"
+    # "bigH/auto-sized-fzf"
     # "kevinhwang91/fzf-tmux-script"
 )
 
