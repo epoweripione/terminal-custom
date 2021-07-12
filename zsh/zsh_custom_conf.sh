@@ -77,6 +77,7 @@ fi
 
 # aliases
 if [[ -x "$(command -v nano)" ]]; then
+    export EDITOR="nano"
     export VISUAL="nano"
 
     alias zshconfig="nano ~/.zshrc"

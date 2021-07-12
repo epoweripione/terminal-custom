@@ -95,6 +95,10 @@ if [[ -x "$(command -v tmux)" ]]; then
         sed -i "s/^tmux_conf_theme_right_separator_main=.*/tmux_conf_theme_right_separator_main='\\\uE0B6'/" $HOME/.tmux.conf.local
         sed -i "s/^tmux_conf_theme_right_separator_sub=.*/tmux_conf_theme_right_separator_sub='\\\uE0B7'/" $HOME/.tmux.conf.local
 
+        # disable update tpm and all plugins on launch or reload
+        sed -i "s/^tmux_conf_update_plugins_on_launch=.*/tmux_conf_update_plugins_on_launch=false/" $HOME/.tmux.conf.local
+        sed -i "s/^tmux_conf_update_plugins_on_reload=.*/tmux_conf_update_plugins_on_reload=false/" $HOME/.tmux.conf.local
+
         ## mouse on
         # sed -i "s/^#set -g mouse on/set -g mouse on/" $HOME/.tmux.conf.local
 
@@ -110,6 +114,17 @@ if [[ -x "$(command -v tmux)" ]]; then
 
         # Date Time format
         sed -i "s/, %R , %d %b |/, %H:%M , %Y-%m-%d %a |/" $HOME/.tmux.conf.local
+
+        # bind key | for split current window vertically
+        echo -e "unbind _\nbind | split-window -h" >> $HOME/.tmux.conf.local
+
+        # Add true color support
+        # echo "" >> $HOME/.tmux.conf.local
+        # echo '# if-shell "infocmp xterm-256color" "set-option -g default-terminal xterm-256color"' >> $HOME/.tmux.conf.local
+        # echo '# if-shell "infocmp screen-256color" "set-option -g default-terminal screen-256color"' >> $HOME/.tmux.conf.local
+        # echo '# if-shell "infocmp tmux-256color" "set-option -g default-terminal tmux-256color"' >> $HOME/.tmux.conf.local
+        # echo 'set -g default-terminal "screen-256color"' >> $HOME/.tmux.conf.local
+        # echo 'set -ga terminal-overrides ",*256col*:Tc"' >> $HOME/.tmux.conf.local
 
         # https://github.com/tmux-plugins/tmux-sidebar
         # echo "" >> $HOME/.tmux.conf.local
@@ -180,6 +195,14 @@ fi
 #     cd /opt/navi && sudo make install
 # elif [[ -d "/opt/navi" ]]; then
 #     cd /opt/navi && sudo make update
+# fi
+
+
+## PathPicker
+## https://github.com/facebook/pathpicker/
+# Git_Clone_Update "facebook/pathpicker" "$HOME/.pathpicker"
+# if [[ ! -x "$(command -v fpp)" ]] ; then
+#     [[ -s "$HOME/.pathpicker/fpp" ]] && sudo ln -s "$HOME/.pathpicker/fpp" "/usr/local/bin/fpp"
 # fi
 
 
