@@ -25,28 +25,6 @@ fi
 [[ -z "$CURRENT_DIR" ]] && CURRENT_DIR=$(pwd)
 
 
-## socks5 proxy
-## git
-# read -p "Use socks5 proxy for github,gitlab?[y/N]:" GIT_PROXY_CHOICE
-# if [[ "$GIT_PROXY_CHOICE" == 'y' || "$GIT_PROXY_CHOICE" == 'Y' ]]; then
-#     read -p "Socks5 proxy address?[127.0.0.1:55880]:" Sock5Address
-#     [[ -z "$Sock5Address" ]] && Sock5Address=127.0.0.1:55880
-#     # [[ -s "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/cross_gfw_config.sh" ]] && \
-#     #     source "${MY_SHELL_SCRIPTS:-$HOME/terminal-custom}/cross/cross_gfw_config.sh"
-#     set_git_special_proxy github.com,gitlab.com ${Sock5Address}
-# fi
-
-## curl
-# read -p "Use socks5 proxy for curl?[y/N]:" CURL_PROXY_CHOICE
-# if [[ "$CURL_PROXY_CHOICE" == 'y' || "$CURL_PROXY_CHOICE" == 'Y' ]]; then
-#     read -p "Socks5 proxy address?[127.0.0.1:55880]:" Sock5Address
-#     [[ -z "$Sock5Address" ]] && Sock5Address=127.0.0.1:55880
-#     echo "--socks5-hostname \"${Sock5Address}\"" >> $HOME/.curlrc
-# else
-#     sed -i "/^--socks5-hostname.*/d" $HOME/.curlrc
-# fi
-
-
 # # snap
 # read -p "Use socks5 proxy for snap?[y/N]:" SNAP_PROXY_CHOICE
 # if [[ "$SNAP_PROXY_CHOICE" == 'y' || "$SNAP_PROXY_CHOICE" == 'Y' ]]; then

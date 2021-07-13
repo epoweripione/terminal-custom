@@ -426,7 +426,7 @@ function main() {
                 SOCKS_ADDRESS="127.0.0.1:55880"
                 if use_v2ray "${SOCKS_ADDRESS}"; then
                     set_special_socks5_proxy "${SOCKS_ADDRESS}"
-                    set_git_special_proxy "github.com,gitlab.com" "${SOCKS_ADDRESS}"
+                    set_git_special_proxy "github.com,gitlab.com" "socks5h://${SOCKS_ADDRESS}"
                     colorEcho "${GREEN}  Socks5 proxy address: ${FUCHSIA}${SOCKS_ADDRESS}"
                 else
                     set_special_socks5_proxy

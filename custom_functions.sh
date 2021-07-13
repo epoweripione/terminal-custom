@@ -906,7 +906,7 @@ function set_proxy() {
 
     if [[ -z "${PROXY_ADDRESS}" && -n "${GLOBAL_PROXY_IP}" ]]; then
         if [[ -n "${GLOBAL_PROXY_SOCKS_PORT}" ]]; then
-            PROXY_ADDRESS="socks5h://${GLOBAL_PROXY_IP}:${GLOBAL_PROXY_SOCKS_PORT}"
+            PROXY_ADDRESS="${GLOBAL_PROXY_SOCKS_PROTOCOL}://${GLOBAL_PROXY_IP}:${GLOBAL_PROXY_SOCKS_PORT}"
         elif [[ -n "${GLOBAL_PROXY_HTTP_PORT}" ]]; then
             PROXY_ADDRESS="http://${GLOBAL_PROXY_IP}:${GLOBAL_PROXY_HTTP_PORT}"
         fi
@@ -1215,8 +1215,8 @@ function set_git_proxy() {
         git config --global --unset http.proxy
         git config --global --unset https.proxy
     else
-        git config --global http.proxy "socks5://${PROXY_ADDRESS}"
-        git config --global https.proxy "socks5://${PROXY_ADDRESS}"
+        git config --global http.proxy "${PROXY_ADDRESS}"
+        git config --global https.proxy "${PROXY_ADDRESS}"
     fi
 }
 
@@ -1237,8 +1237,8 @@ function set_git_special_proxy() {
             git config --global --unset http.https://${TargetUrl}.proxy
             git config --global --unset https.https://${TargetUrl}.proxy
         else
-            git config --global http.https://${TargetUrl}.proxy "socks5://${PROXY_ADDRESS}"
-            git config --global https.https://${TargetUrl}.proxy "socks5://${PROXY_ADDRESS}"
+            git config --global http.https://${TargetUrl}.proxy "${PROXY_ADDRESS}"
+            git config --global https.https://${TargetUrl}.proxy "${PROXY_ADDRESS}"
         fi
     done
 }
@@ -1400,11 +1400,15 @@ function set_global_proxy() {
 
     if [[ -n "$SOCKS_ADDRESS" ]]; then
         set_proxy "${SOCKS_PROTOCOL}://${SOCKS_ADDRESS}"
+
         set_curl_proxy "${SOCKS_ADDRESS}"
-        # set git global proxy
-        set_git_proxy "${SOCKS_ADDRESS}"
+
+        ## set git global proxy
+        # set_git_proxy "${SOCKS_PROTOCOL}://${SOCKS_ADDRESS}"
+
         # set special socks5 proxy(curl...)
         set_special_socks5_proxy "${SOCKS_ADDRESS}"
+
         colorEcho "${GREEN}  :: Now using ${FUCHSIA}${SOCKS_PROTOCOL}://${SOCKS_ADDRESS} ${GREEN}for global socks5 proxy!"
 
         # wget must use http proxy
@@ -1445,6 +1449,7 @@ function check_set_global_proxy() {
     fi
 
     unset GLOBAL_PROXY_IP
+    unset GLOBAL_PROXY_SOCKS_PROTOCOL
     unset GLOBAL_PROXY_SOCKS_PORT
     unset GLOBAL_PROXY_HTTP_PORT
 
@@ -1469,8 +1474,9 @@ function check_set_global_proxy() {
         [[ -n "${SOCKS_PORT}" ]] && PROXY_SOCKS="${PROXY_IP}:${SOCKS_PORT}"
         [[ -n "${MIXED_PORT}" ]] && PROXY_HTTP="${PROXY_IP}:${MIXED_PORT}"
 
-        if set_global_proxy "${PROXY_SOCKS}" "${PROXY_HTTP}"; then
+        if set_global_proxy "${PROXY_SOCKS}" "${PROXY_HTTP}" "socks5h"; then
             export GLOBAL_PROXY_IP=${PROXY_IP}
+            export GLOBAL_PROXY_SOCKS_PROTOCOL="socks5h"
             export GLOBAL_PROXY_SOCKS_PORT=${SOCKS_PORT}
             export GLOBAL_PROXY_HTTP_PORT=${MIXED_PORT}
 
@@ -1562,6 +1568,7 @@ function Git_Clone_Update() {
     local REPODIR=${2:-""}
     local REPOURL=${3:-"github.com"}
     local BRANCH=${4:-""}
+    local GIT_COMMAND="git"
     local REPOREMOTE=""
     local DEFAULTBRANCH=""
     local CurrentDir
@@ -1574,10 +1581,25 @@ function Git_Clone_Update() {
     [[ -z "${REPODIR}" ]] && REPODIR=$(echo ${REPONAME} | awk -F"/" '{print $NF}')
 
     if [[ "${REPOURL}" == "github.com" ]]; then
-        REPOREMOTE="https://${REPOURL}/${REPONAME}.git"
+        # Accelerate the speed of accessing GitHub
+        # https://www.gitclone.com/
+        # https://fastgit.org/
+        if [[ -n "$GITHUB_CLONE_USE_CGIT}" && -x "$(command -v cgit)" ]]; then
+            GIT_COMMAND="cgit"
+        else
+            [[ -n "$GITHUB_CLONE_USE_GITCLONE}" ]] && REPOURL="gitclone.com/github.com"
+            [[ -n "$GITHUB_CLONE_USE_CNPMJS}" ]] && REPOURL="github.com.cnpmjs.org"
+            [[ -n "$GITHUB_CLONE_USE_FASTGIT}" ]] && REPOURL="hub.fastgit.org"
+        fi
+
+        REPOREMOTE="https://${REPOURL}/${REPONAME}"
     else
         REPOREMOTE="${REPOURL}/${REPONAME}"
     fi
+
+    ## clear git proxy when using github mirror
+    # [[ -n "$GITHUB_CLONE_USE_CGIT}" && -x "$(command -v cgit)" ]] && set_git_proxy
+    # [[ -n "$GITHUB_CLONE_USE_GITCLONE}" || -n "$GITHUB_CLONE_USE_CNPMJS}" || -n "$GITHUB_CLONE_USE_FASTGIT}" ]] && set_git_proxy
 
     if [[ -d "${REPODIR}/.git" ]]; then
         colorEcho "${BLUE}  Updating ${FUCHSIA}${REPONAME}${BLUE}..."
@@ -1585,13 +1607,13 @@ function Git_Clone_Update() {
         CurrentDir=$(pwd)
 
         cd "${REPODIR}"
-        [[ -z "${BRANCH}" ]] && BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
+        [[ -z "${BRANCH}" ]] && BRANCH=$(${GIT_COMMAND} symbolic-ref --short HEAD 2>/dev/null)
         [[ -z "${BRANCH}" ]] && BRANCH="master"
 
-        git pull --rebase --stat origin "${BRANCH}"
+        ${GIT_COMMAND} pull --rebase --stat origin "${BRANCH}"
         # pull error: fallback to default branch
         if [[ $? != 0 ]]; then
-            DEFAULTBRANCH=$(git ls-remote --symref "${REPOREMOTE}" HEAD \
+            DEFAULTBRANCH=$(${GIT_COMMAND} ls-remote --symref "${REPOREMOTE}" HEAD \
                         | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
             if [[ -n "${DEFAULTBRANCH}" && "${DEFAULTBRANCH}" != "${BRANCH}" ]]; then
                 git branch -m "${BRANCH}" "${DEFAULTBRANCH}"
@@ -1604,7 +1626,7 @@ function Git_Clone_Update() {
                 # git branch -u "origin/${DEFAULTBRANCH}" "${DEFAULTBRANCH}"
                 # git symbolic-ref "refs/remotes/origin/HEAD" "refs/remotes/origin/${DEFAULTBRANCH}"
 
-                git pull --rebase --stat origin "${DEFAULTBRANCH}"
+                ${GIT_COMMAND} pull --rebase --stat origin "${DEFAULTBRANCH}"
             fi
         fi
 
@@ -1620,11 +1642,11 @@ function Git_Clone_Update() {
     else
         colorEcho "${BLUE}  Cloning ${FUCHSIA}${REPONAME}${BLUE}..."
         [[ -z "${BRANCH}" ]] && \
-            BRANCH=$(git ls-remote --symref "${REPOREMOTE}" HEAD \
+            BRANCH=$(${GIT_COMMAND} ls-remote --symref "${REPOREMOTE}" HEAD \
                     | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
         [[ -z "${BRANCH}" ]] && BRANCH="master"
 
-        git clone -c core.autocrlf=false -c core.filemode=false \
+        ${GIT_COMMAND} clone -c core.autocrlf=false -c core.filemode=false \
             -c fsck.zeroPaddedFilemode=ignore \
             -c fetch.fsck.zeroPaddedFilemode=ignore \
             -c receive.fsck.zeroPaddedFilemode=ignore \
@@ -1633,19 +1655,18 @@ function Git_Clone_Update() {
                 return 1
             }
     fi
+
+    ## restore git proxy
+    # [[ -n "${GLOBAL_PROXY_IP}" && -n "${GLOBAL_PROXY_SOCKS_PORT}" ]] && \
+    #     set_git_proxy "${GLOBAL_PROXY_SOCKS_PROTOCOL}://${GLOBAL_PROXY_IP}:${GLOBAL_PROXY_SOCKS_PORT}"
 }
 
 
 # https://stackoverflow.com/questions/3497123/run-git-pull-over-all-subdirectories
 function git_update_repo_in_subdir() {
     local SubDir=${1:-""}
-    local FindDir
-    local TargetDir
-    local CurrentDir
-    local REPOREMOTE
-    local REPODIR
-    local BRANCH
-    local DEFAULTBRANCH
+    local FindDir TargetDir CurrentDir
+    local REPOREMOTE REPONAME REPODIR REPOURL BRANCH
     local DIRLIST=()
 
     CurrentDir=$(pwd)
@@ -1664,24 +1685,15 @@ function git_update_repo_in_subdir() {
         REPODIR="${TargetDir}"
         cd "${REPODIR}"
 
+        REPOREMOTE=$(git config --get remote.origin.url | head -n1)
+        REPONAME=$(echo "${REPOREMOTE}"| sed 's|^http://||;s|^https://||;s|.git$||' | sed 's/.*\/\([^ ]*\/[^ ]*\).*/\1/')
+        REPOURL=$(echo "${REPOREMOTE}" | sed 's|.git$||' | sed "s|/${REPONAME}||")
+        [[ "${REPOURL}" =~ "://github.com" ]] && REPOURL="github.com"
+
         BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
         [[ -z "${BRANCH}" ]] && BRANCH="master"
 
-        git pull --rebase --stat origin "${BRANCH}"
-        # pull error: fallback to default branch
-        if [[ $? != 0 ]]; then
-            REPOREMOTE=$(git config --get remote.origin.url)
-            DEFAULTBRANCH=$(git ls-remote --symref "${REPOREMOTE}" HEAD \
-                        | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
-            if [[ -n "${DEFAULTBRANCH}" && "${DEFAULTBRANCH}" != "${BRANCH}" ]]; then
-                git branch -m "${BRANCH}" "${DEFAULTBRANCH}"
-
-                [[ -s "${REPODIR}/.git/config" ]] && \
-                    sed -i "s|${BRANCH}|${DEFAULTBRANCH}|g" "${REPODIR}/.git/config"
-
-                git pull --rebase --stat origin "${DEFAULTBRANCH}"
-            fi
-        fi
+        Git_Clone_Update "${REPONAME}" "${REPODIR}" "${REPOURL}" "${BRANCH}"
     done
 
     cd "${CurrentDir}"
