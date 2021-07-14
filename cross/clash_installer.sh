@@ -17,6 +17,9 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 # Use proxy or mirror when some sites were blocked or low speed
 set_proxy_mirrors_env
 
@@ -52,10 +55,10 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
     # CHECK_URL="https://api.github.com/repos/Dreamacro/clash/releases/latest"
-    # REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    # REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
     # Pre-release
-    REMOTE_VERSION=$(curl -fsL -N https://github.com/Dreamacro/clash/releases \
+    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" -N https://github.com/Dreamacro/clash/releases \
         | grep -Eo -m1 '\/releases\/tag\/v([0-9]{1,}\.)+[0-9]{1,}' \
         | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
@@ -112,7 +115,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
 
-    curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" "$DOWNLOAD_URL" && \
+    curl "${curl_download_opts[@]}" -o "${WORKDIR}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" "$DOWNLOAD_URL" && \
         sudo mkdir -p "/srv/clash" && \
         sudo mv "${WORKDIR}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" "/srv/clash" && \
         cd "/srv/clash" && \
@@ -131,7 +134,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     ## https://geolite.clash.dev/
     # CHECK_URL="https://geolite.clash.dev/version"
     # MMDB_URL="https://geolite.clash.dev/Country.mmdb"
-    # REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}")
+    # REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}")
 
     ## All Country
     ## https://github.com/alecthw/mmdb_china_ip_list
@@ -143,13 +146,14 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     CHECK_URL="https://api.github.com/repos/Hackl0us/GeoIP2-CN"
     MMDB_URL="https://raw.githubusercontent.com/Hackl0us/GeoIP2-CN/release/Country.mmdb"
 
-    # REPO_PUSH_AT=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'pushed_at' | head -n1 | cut -d\" -f4)
-    REPO_PUSH_AT=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | jq -r '.pushed_at//empty')
+    # REPO_PUSH_AT=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'pushed_at' | head -n1 | cut -d\" -f4)
+    REPO_PUSH_AT=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | jq -r '.pushed_at//empty')
     REMOTE_VERSION=$(date -d $REPO_PUSH_AT +"%Y%m%d")
 
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}  Installing ${FUCHSIA}clash geo database ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-        curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/Country.mmdb" "$MMDB_URL" && \
+
+        curl "${curl_download_opts[@]}" -o "${WORKDIR}/Country.mmdb" "$MMDB_URL" && \
             sudo mv -f "${WORKDIR}/Country.mmdb" "/srv/clash/Country.mmdb" && \
             echo ${REMOTE_VERSION} | sudo tee "/srv/clash/mmdb.ver" >/dev/null
     fi

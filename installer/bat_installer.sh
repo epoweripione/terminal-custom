@@ -17,9 +17,11 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 [[ -z "$OS_INFO_TYPE" ]] && get_os_type
 [[ -z "$OS_INFO_VDIS" ]] && get_sysArch
-
 
 # bat
 # https://github.com/sharkdp/bat
@@ -28,7 +30,7 @@ APP_INSTALL_NAME="bat"
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
 CHECK_URL="https://api.github.com/repos/sharkdp/bat/releases/latest"
-REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
+REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
 
 REMOTE_FILENAME=""
 case "$OS_INFO_TYPE" in
@@ -74,7 +76,8 @@ if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
     fi
 
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/sharkdp/bat/releases/download/${REMOTE_VERSION}/${REMOTE_FILENAME}"
-    curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/bat.tar.gz" "${DOWNLOAD_URL}" && \
+
+    curl "${curl_download_opts[@]}" -o "${WORKDIR}/bat.tar.gz" "${DOWNLOAD_URL}" && \
         sudo tar -xzf "${WORKDIR}/bat.tar.gz" -C "/usr/local" && \
         cd "/usr/local" && \
         sudo mv bat-* bat && \

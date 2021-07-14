@@ -60,6 +60,9 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 # Use proxy or mirror when some sites were blocked or low speed
 set_proxy_mirrors_env
 
@@ -129,7 +132,7 @@ fi
 # .NET Core SDK
 # https://docs.microsoft.com/zh-cn/dotnet/core/install/linux-package-manager-debian10
 if [[ ! -e "/etc/apt/sources.list.d/microsoft-prod.list" ]]; then
-    curl -fSL -o packages-microsoft-prod.deb "https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb" && \
+    curl "${curl_download_opts[@]}" -o packages-microsoft-prod.deb "https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb" && \
         sudo dpkg -i packages-microsoft-prod.deb && \
         rm packages-microsoft-prod.deb
 

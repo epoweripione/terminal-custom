@@ -92,6 +92,9 @@ function checkPackageNeedInstall() {
     return 1
 }
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 # pacaptr - Pacman-like syntax wrapper for many package managers
 # https://github.com/rami3l/pacaptr
 case $(uname) in
@@ -109,7 +112,7 @@ esac
 OS_ARCH=$(uname -m)
 if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; then
     CHECK_URL="https://api.github.com/repos/rami3l/pacaptr/releases/latest"
-    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
     if [[ -x "$(command -v pacaptr)" ]]; then
         ECHO_TYPE="Updating"
@@ -131,7 +134,7 @@ if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; the
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}${ECHO_TYPE} ${FUCHSIA}pacaptr - Pacman-like syntax wrapper for many package managers${BLUE}..."
         DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/rami3l/pacaptr/releases/download/v${REMOTE_VERSION}/pacaptr-${OS_TYPE}-amd64.tar.gz"
-        curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/pacaptr.tar.gz" "$DOWNLOAD_URL" && \
+        curl "${curl_download_opts[@]}" -o "${WORKDIR}/pacaptr.tar.gz" "$DOWNLOAD_URL" && \
             sudo tar -xzf "${WORKDIR}/pacaptr.tar.gz" -C "/usr/local/bin" && \
             sudo ln -sv "/usr/local/bin/pacaptr" "/usr/bin/pacman" || true
     fi
@@ -285,15 +288,15 @@ if [[ ! -x "$(command -v zsh)" ]]; then
 
         # ZSH_REPO_VERSION=$(dnf info zsh | grep -E "[Vv]ersion" | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
 
-        REMOTE_VERSION=$(curl -fsL http://zsh.sourceforge.net/News/ \
+        REMOTE_VERSION=$(curl "${curl_check_opts[@]}" http://zsh.sourceforge.net/News/ \
                             | grep -Eo -m1 'Release ([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         REMOTE_VERSION=$(echo $REMOTE_VERSION | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}')
 
         if [[ -n "$REMOTE_VERSION" ]]; then
             DOWNLOAD_URL="https://nchc.dl.sourceforge.net/project/zsh/zsh/${REMOTE_VERSION}/zsh-${REMOTE_VERSION}.tar.xz"
-            sudo curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/zsh.tar.xz" "$DOWNLOAD_URL" && \
-                sudo tar -xJf "${WORKDIR}/zsh.tar.xz" -C "${WORKDIR}" && \
-                sudo mv ${WORKDIR}/zsh-* "${WORKDIR}/zsh" && \
+            curl "${curl_download_opts[@]}" -o "${WORKDIR}/zsh.tar.xz" "$DOWNLOAD_URL" && \
+                tar -xJf "${WORKDIR}/zsh.tar.xz" -C "${WORKDIR}" && \
+                mv ${WORKDIR}/zsh-* "${WORKDIR}/zsh" && \
                 cd "${WORKDIR}/zsh" && \
                 sudo ./configure >/dev/null && \
                 sudo make >/dev/null && \

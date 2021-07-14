@@ -17,6 +17,9 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 [[ -z "$OS_INFO_TYPE" ]] && get_os_type
 [[ -z "$OS_INFO_VDIS" ]] && get_sysArch
 
@@ -29,7 +32,7 @@ fi
 #         :
 #     else
 #         colorEcho "${BLUE}  Installing ${FUCHSIA}GLIBC 2.18 ${BLUE}(required by exa)..."
-#         curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/glibc.tar.gz" "http://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz" && \
+#         curl "${curl_download_opts[@]}" -o "${WORKDIR}/glibc.tar.gz" "http://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz" && \
 #             tar -xzf "${WORKDIR}/glibc.tar.gz" -C "${WORKDIR}" && \
 #                 mv ${WORKDIR}/glibc-* "${WORKDIR}/glibc" && \
 #                 mkdir "${WORKDIR}/glibc/build" && \
@@ -47,7 +50,7 @@ APP_INSTALL_NAME="exa"
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
 CHECK_URL="https://api.github.com/repos/ogham/exa/releases/latest"
-REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
 REMOTE_FILENAME=""
 case "$OS_INFO_TYPE" in
@@ -82,7 +85,8 @@ if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
     fi
 
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/ogham/exa/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
-    curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/exa.zip" "$DOWNLOAD_URL" && \
+
+    curl "${curl_download_opts[@]}" -o "${WORKDIR}/exa.zip" "$DOWNLOAD_URL" && \
         unzip -qo "${WORKDIR}/exa.zip" -d "${WORKDIR}" && \
         sudo mv -f "${WORKDIR}/bin/exa" "/usr/local/bin/exa" && \
         sudo mv -f ${WORKDIR}/man/exa* "/usr/share/man/man1" && \

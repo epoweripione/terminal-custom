@@ -43,6 +43,7 @@ function colorEchoAllColor() {
 
 # no proxy lists
 NO_PROXY_LISTS="localhost,127.0.0.1,.local"
+NO_PROXY_LISTS="${NO_PROXY_LISTS},fastgit.org,gitclone.com,cnpmjs.org"
 NO_PROXY_LISTS="${NO_PROXY_LISTS},ip.sb,ip-api.com,ident.me,ifconfig.co,icanhazip.com,ipinfo.io"
 
 
@@ -930,10 +931,13 @@ function get_proxy() {
     [[ -n "${https_proxy}" ]] && colorEcho "${BLUE}https_proxy=${FUCHSIA}${https_proxy}"
     [[ -n "${ftp_proxy}" ]] && colorEcho "${BLUE}ftp_proxy=${FUCHSIA}${ftp_proxy}"
     [[ -n "${all_proxy}" ]] && colorEcho "${BLUE}all_proxy=${FUCHSIA}${all_proxy}"
+    [[ -n "${no_proxy}" ]] && colorEcho "${BLUE}no_proxy=${FUCHSIA}${no_proxy}"
+
     [[ -n "${HTTP_PROXY}" ]] && colorEcho "${BLUE}HTTP_PROXY=${FUCHSIA}${HTTP_PROXY}"
     [[ -n "${HTTPS_PROXY}" ]] && colorEcho "${BLUE}HTTPS_PROXY=${FUCHSIA}${HTTPS_PROXY}"
     [[ -n "${FTP_PROXY}" ]] && colorEcho "${BLUE}FTP_PROXY=${FUCHSIA}${FTP_PROXY}"
     [[ -n "${ALL_PROXY}" ]] && colorEcho "${BLUE}ALL_PROXY=${FUCHSIA}${ALL_PROXY}"
+    [[ -n "${NO_PROXY}" ]] && colorEcho "${BLUE}NO_PROXY=${FUCHSIA}${NO_PROXY}"
 
     if [[ -x "$(command -v git)" ]]; then
         proxy_output1=$(git config --global --list 2>/dev/null | grep -E "http\.|https\.")
@@ -1401,13 +1405,13 @@ function set_global_proxy() {
     if [[ -n "$SOCKS_ADDRESS" ]]; then
         set_proxy "${SOCKS_PROTOCOL}://${SOCKS_ADDRESS}"
 
-        set_curl_proxy "${SOCKS_ADDRESS}"
+        # set_curl_proxy "${SOCKS_ADDRESS}"
 
         ## set git global proxy
         # set_git_proxy "${SOCKS_PROTOCOL}://${SOCKS_ADDRESS}"
 
-        # set special socks5 proxy(curl...)
-        set_special_socks5_proxy "${SOCKS_ADDRESS}"
+        ## set special socks5 proxy(curl...)
+        # set_special_socks5_proxy "${SOCKS_ADDRESS}"
 
         colorEcho "${GREEN}  :: Now using ${FUCHSIA}${SOCKS_PROTOCOL}://${SOCKS_ADDRESS} ${GREEN}for global socks5 proxy!"
 

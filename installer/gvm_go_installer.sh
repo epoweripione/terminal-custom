@@ -12,6 +12,9 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 [[ -z "$OS_INFO_TYPE" ]] && get_os_type
 [[ -z "$OS_INFO_ARCH" ]] && get_arch
 
@@ -118,7 +121,7 @@ if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
         GVM_DOWNLOAD_NAME="${GVM_DOWNLOAD_VERSION}.${OS_INFO_TYPE}-${OS_INFO_ARCH}.${GVM_DOWNLOAD_EXT}"
         GVM_DOWNLOAD_SOURCE="https://dl.google.com/go/${GVM_DOWNLOAD_NAME}"
 
-        curl -fSL -o "$HOME/.gvm/archive/${GVM_DOWNLOAD_NAME}" -C- "${GVM_DOWNLOAD_SOURCE}" && \
+        curl "${curl_download_opts[@]}" -o "$HOME/.gvm/archive/${GVM_DOWNLOAD_NAME}" -C- "${GVM_DOWNLOAD_SOURCE}" && \
             gvm install go1.4 -B
     fi
 
@@ -129,7 +132,7 @@ if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
         # GOROOT_BOOTSTRAP=$GOROOT
 
         # Install latest go version
-        REMOTE_VERSION=$(curl -fsL https://golang.org/dl/ | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+        REMOTE_VERSION=$(curl "${curl_download_opts[@]}" https://golang.org/dl/ | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         # REMOTE_VERSION=${REMOTE_VERSION%.}
 
         if [[ -n "$REMOTE_VERSION" ]] && [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
@@ -142,7 +145,7 @@ if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
             GVM_DOWNLOAD_NAME="${GVM_DOWNLOAD_VERSION}.${OS_INFO_TYPE}-${OS_INFO_ARCH}.${GVM_DOWNLOAD_EXT}"
             GVM_DOWNLOAD_SOURCE="https://dl.google.com/go/${GVM_DOWNLOAD_NAME}"
 
-            curl -fSL -o "$HOME/.gvm/archive/${GVM_DOWNLOAD_NAME}" -C- "${GVM_DOWNLOAD_SOURCE}" && \
+            curl "${curl_download_opts[@]}" -o "$HOME/.gvm/archive/${GVM_DOWNLOAD_NAME}" -C- "${GVM_DOWNLOAD_SOURCE}" && \
                 gvm install ${REMOTE_VERSION} -B
         fi
 

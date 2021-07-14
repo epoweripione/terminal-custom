@@ -17,6 +17,9 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 # ☄🌌️ The minimal, blazing-fast, and infinitely customizable prompt for any shell!
 # https://github.com/starship/starship
 APP_INSTALL_NAME="starship"
@@ -33,7 +36,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/starship/starship/releases/latest"
-    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
         IS_INSTALL="no"
     fi
@@ -42,7 +45,8 @@ fi
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
     # curl -fsSL https://starship.rs/install.sh | bash
-    curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/starship_install.sh" "https://starship.rs/install.sh" && \
+
+    curl "${curl_download_opts[@]}" -o "${WORKDIR}/starship_install.sh" "https://starship.rs/install.sh" && \
         bash "${WORKDIR}/starship_install.sh" --force
 
     ## config

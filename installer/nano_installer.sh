@@ -18,12 +18,15 @@ else
 fi
 
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 # https://www.nano-editor.org/dist/latest/faq.html
 APP_INSTALL_NAME="nano"
 EXEC_INSTALL_NAME="nano"
 
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
-REMOTE_VERSION=$(curl -fsL -N https://www.nano-editor.org/download.php \
+REMOTE_VERSION=$(curl "${curl_check_opts[@]}" -N https://www.nano-editor.org/download.php \
     | grep -Eo -m1 'nano-([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d'-' -f2)
 DIST_VERSION=$(echo $REMOTE_VERSION | cut -d'.' -f1)
 

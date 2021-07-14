@@ -17,6 +17,8 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
 
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}Lua & LuaRocks${BLUE}..."
 
@@ -37,7 +39,7 @@ else
     CURRENT_VERSION=0.0
 fi
 
-REMOTE_VERSION=$(curl -fsL -N http://www.lua.org/download.html \
+REMOTE_VERSION=$(curl "${curl_check_opts[@]}" -N http://www.lua.org/download.html \
     | grep -Eo -m1 'lua-([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d'-' -f2)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
@@ -60,7 +62,7 @@ else
     CURRENT_VERSION=0.0
 fi
 
-REMOTE_VERSION=$(curl -fsL -N https://luarocks.org/ \
+REMOTE_VERSION=$(curl "${curl_check_opts[@]}" -N https://luarocks.org/ \
     | grep -Eo -m1 'luarocks-([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d'-' -f2)
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then

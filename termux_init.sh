@@ -50,6 +50,9 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 # https://termux.com/
 if [[ -z "$PREFIX" ]]; then
     colorEcho "${RED}This script only for Termux!"
@@ -114,7 +117,7 @@ mv "$PREFIX/etc/motd" "$PREFIX/etc/motd.bak" && echo -e "\nWelcome to Termux\!" 
 
 # font: Fira Code Regular Nerd Font Complete Mono
 NerdFont_URL="https://github.com/epoweripione/terminal-custom/releases/download/v5.2.0/FiraCode-Mono.zip"
-curl -fSL "${NerdFont_URL}" -o "$HOME/FiraCode-Mono.zip" && \
+curl "${curl_download_opts[@]}" "${NerdFont_URL}" -o "$HOME/FiraCode-Mono.zip" && \
     mkdir -p "$HOME/FiraCode-Mono" && \
 	unzip -q "$HOME/FiraCode-Mono.zip" -d "$HOME/FiraCode-Mono" && \
     mv "$HOME/.termux/font.ttf" "$HOME/.termux/font.ttf.bak" && \
@@ -126,11 +129,11 @@ curl -fSL "${NerdFont_URL}" -o "$HOME/FiraCode-Mono.zip" && \
 if [[ ! -d "$HOME/frp" ]]; then
     colorEcho "${BLUE}Installing ${FUCHSIA}frp${BLUE}..."
     CHECK_URL="https://api.github.com/repos/fatedier/frp/releases/latest"
-    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_linux_arm64.tar.gz"
-        curl -fSL -o frp.tar.gz "$DOWNLOAD_URL" && \
+        curl "${curl_download_opts[@]}" -o frp.tar.gz "$DOWNLOAD_URL" && \
             tar -xzf frp.tar.gz -C "$HOME" && \
             rm frp.tar.gz && \
             mkdir -p "$HOME/frp" && \

@@ -22,6 +22,9 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 # Use proxy or mirror when some sites were blocked or low speed
 set_proxy_mirrors_env
 
@@ -85,10 +88,11 @@ if [[ ! -x "$(command -v docker-compose)" ]]; then
     colorEcho "${BLUE}Installing ${FUCHSIA}Docker Compose${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
-    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
+    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
-        curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/docker-compose" "$DOWNLOAD_URL" && \
+
+        curl "${curl_download_opts[@]}" -o "${WORKDIR}/docker-compose" "$DOWNLOAD_URL" && \
             mv -f "${WORKDIR}/docker-compose" "/usr/local/bin/docker-compose" && \
             chmod +x "/usr/local/bin/docker-compose"
     fi
@@ -108,10 +112,11 @@ if [[ ! -x "$(command -v ctop)" ]]; then
     colorEcho "${BLUE}Installing ${FUCHSIA}ctop${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
-    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if [[ -n "$REMOTE_VERSION" ]]; then
         DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/bcicen/ctop/releases/download/$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}"
-        curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/ctop" "$DOWNLOAD_URL" && \
+
+        curl "${curl_download_opts[@]}" -o "${WORKDIR}/ctop" "$DOWNLOAD_URL" && \
             mv -f "${WORKDIR}/ctop" "/usr/local/bin/ctop" && \
             chmod +x "/usr/local/bin/ctop"
     fi

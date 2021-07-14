@@ -22,6 +22,9 @@ if [[ -n "$TMUX" ]]; then
     exit 1
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 # https://github.com/tmux/tmux
 APP_INSTALL_NAME="tmux"
 GITHUB_REPO_NAME="tmux/tmux"
@@ -30,7 +33,7 @@ EXEC_INSTALL_NAME="tmux"
 
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 CHECK_URL="https://api.github.com/repos/${GITHUB_REPO_NAME}/releases/latest"
-REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
+REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
 
 if [[ -x "$(command -v pacman)" ]]; then
     # Remove installed old version
@@ -86,7 +89,7 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
 
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/${GITHUB_REPO_NAME}/releases/download/${REMOTE_VERSION}/${REMOTE_FILENAME}"
 
-    curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}" && \
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}" && \
         tar -xzf "${DOWNLOAD_FILENAME}" -C "${WORKDIR}" && \
         mv ${WORKDIR}/${APP_INSTALL_NAME}-* "${WORKDIR}/${APP_INSTALL_NAME}"
 

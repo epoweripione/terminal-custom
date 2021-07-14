@@ -17,6 +17,9 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 # trojan
 # https://github.com/trojan-gfw/trojan
 APP_INSTALL_NAME="trojan"
@@ -36,7 +39,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/trojan-gfw/trojan/releases/latest"
-    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
         IS_INSTALL="no"
     fi
@@ -51,7 +54,8 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     [[ $(systemctl is-enabled trojan 2>/dev/null) ]] && sudo systemctl stop trojan
 
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/trojan-gfw/trojan/releases/download/v${REMOTE_VERSION}/trojan-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.xz"
-    curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/trojan.tar.xz" "$DOWNLOAD_URL" && \
+
+    curl "${curl_download_opts[@]}" -o "${WORKDIR}/trojan.tar.xz" "$DOWNLOAD_URL" && \
         sudo tar -xJf "${WORKDIR}/trojan.tar.xz" -C "/srv/"
 
     if [[ ! -s "/etc/systemd/system/trojan.service" ]]; then

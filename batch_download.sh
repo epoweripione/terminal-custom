@@ -12,6 +12,8 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
 
 function get_remote_file_size() {
     local REMOTE_FILE_URL=$1
@@ -85,7 +87,7 @@ fi
 
 # for TargetFile in ${DOWNLOAD_FILES[@]}; do
 #     colorEcho "${BLUE}Downloading ${TargetFile}..."
-#     curl -fSL -o "${DOWNLOAD_DIR}/${TargetFile}" "${DOWNLOAD_URL}/${TargetFile}"
+#     curl "${curl_download_opts[@]}" -o "${DOWNLOAD_DIR}/${TargetFile}" "${DOWNLOAD_URL}/${TargetFile}"
 # done
 
 
@@ -107,7 +109,7 @@ while read -r TargetUrl; do
     if [[ -n "$TargetUrl" ]]; then
         colorEcho "${BLUE}Downloading ${TargetUrl}..."
         # TargetFileName=$(echo "${TargetUrl}" | awk -F '/' '{print $NF}')
-        # curl -fSL -o "${TargetFileName}" "${TargetUrl}"
+        # curl "${curl_download_opts[@]}" -o "${TargetFileName}" "${TargetUrl}"
         wget -c "${TargetUrl}"
     fi
 done < "$DOWNLOAD_FILES_URL"
@@ -142,7 +144,7 @@ done < "$DOWNLOAD_FILES_URL"
 # # 	: && \
 # # 	# fix latest version issue patch char i,j not correct
 # # 	# rm -f ~/nerd-fonts/font-patcher && \
-# # 	# 	curl -fSL -o ~/nerd-fonts/font-patcher \
+# # 	# 	curl "${curl_download_opts[@]}" -o ~/nerd-fonts/font-patcher \
 # # 	# 		https://github.com/ryanoasis/nerd-fonts/raw/3241ea6e44191ec89c0260f51112dec691363ebd/font-patcher
 # # 	# : && \
 # # 	cd ~ && zip -qyr nerd-fonts.zip ./nerd-fonts && \
@@ -153,7 +155,7 @@ done < "$DOWNLOAD_FILES_URL"
 # fi
 
 # # FuraCode-Mono
-# # curl -fSL -o ~/FuraCode-Mono.zip \
+# # curl "${curl_download_opts[@]}" -o ~/FuraCode-Mono.zip \
 # #     https://github.com/epoweripione/terminal-custom/releases/download/v2.3.2/FuraCode-Mono-2.0.0.zip && \
 # #     mv ~/FuraCode-Mono.zip /srv/web/www/default
 # if [[ -s "${DOWNLOAD_DIR}/FuraCode-Mono.zip" ]]; then

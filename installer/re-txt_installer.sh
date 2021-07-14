@@ -17,6 +17,9 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 # re-txt
 # https://github.com/alash3al/re-txt
 APP_INSTALL_NAME="re-txt"
@@ -43,7 +46,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/${GITHUB_REPO_NAME}/releases/latest"
-    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
         IS_INSTALL="no"
     fi
@@ -72,7 +75,8 @@ if [[ -n "$REMOTE_FILENAME" && "${IS_INSTALL}" == "yes" ]]; then
     fi
 
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/${GITHUB_REPO_NAME}/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
-    curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/${EXEC_INSTALL_NAME}.zip" "$DOWNLOAD_URL" && \
+
+    curl "${curl_download_opts[@]}" -o "${WORKDIR}/${EXEC_INSTALL_NAME}.zip" "$DOWNLOAD_URL" && \
         unzip -qo "${WORKDIR}/${EXEC_INSTALL_NAME}.zip" -d "${WORKDIR}" && \
         sudo mv -f ${WORKDIR}/${EXEC_INSTALL_NAME}_* "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
         echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null || true

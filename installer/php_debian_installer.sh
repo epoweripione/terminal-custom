@@ -17,6 +17,9 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 ## add php repository
 if [[ ! -e /etc/apt/sources.list.d/php.list ]]; then
     wget -O /etc/apt/trusted.gpg.d/php.gpg https://mirror.xtom.com.hk/sury/php/apt.gpg
@@ -91,7 +94,7 @@ composer g require "hirak/prestissimo" && \
 
 colorEcho "${BLUE}Downloading ${FUCHSIA}psysh chinese php_manual${BLUE}..."
 mkdir -p $HOME/.local/share/psysh/ && \
-    curl -fSL http://psysh.org/manual/zh/php_manual.sqlite -o $HOME/php_manual.sqlite && \
+    curl "${curl_download_opts[@]}" http://psysh.org/manual/zh/php_manual.sqlite -o $HOME/php_manual.sqlite && \
     mv -f $HOME/php_manual.sqlite $HOME/.local/share/psysh/php_manual.sqlite
 
 

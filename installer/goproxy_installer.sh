@@ -17,6 +17,9 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 [[ -z "$OS_INFO_TYPE" ]] && get_os_type
 [[ -z "$OS_INFO_ARCH" ]] && get_arch
 
@@ -37,7 +40,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/snail007/goproxy/releases/latest"
-    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
         IS_INSTALL="no"
     fi
@@ -45,13 +48,13 @@ fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-    # curl -fSL \
+    # curl "${curl_download_opts[@]}" \
     #     https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh \
     # | sudo bash
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/snail007/goproxy/releases/download/v${REMOTE_VERSION}/proxy-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.gz"
     cd "${WORKDIR}" && \
-        curl -fSL -o proxy-linux-amd64.tar.gz "$DOWNLOAD_URL" && \
-        curl -fSL "https://raw.githubusercontent.com/snail007/goproxy/master/install.sh" | sudo bash
+        curl "${curl_download_opts[@]}" -o proxy-linux-amd64.tar.gz "$DOWNLOAD_URL" && \
+        curl "${curl_download_opts[@]}" "https://raw.githubusercontent.com/snail007/goproxy/master/install.sh" | sudo bash
 fi
 
 if [[ -d "/etc/proxy" && -x "$(command -v proxy)" ]]; then
@@ -82,7 +85,7 @@ fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     CHECK_URL="https://api.github.com/repos/snail007/proxy_admin_free/releases/latest"
-    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
+    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
         IS_INSTALL="no"
     fi
@@ -90,7 +93,7 @@ fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}Installing ${FUCHSIA}ProxyAdmin ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-    curl -fSL "https://raw.githubusercontent.com/snail007/proxy_admin_free/master/install_auto.sh" | sudo bash && \
+    curl "${curl_download_opts[@]}" "https://raw.githubusercontent.com/snail007/proxy_admin_free/master/install_auto.sh" | sudo bash && \
         echo ${REMOTE_VERSION} | sudo tee "/etc/gpa/.version" >/dev/null
 fi
 

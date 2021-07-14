@@ -12,6 +12,9 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
+
 # Local WAN IP
 if [[ -z "$WAN_NET_IP" ]]; then
     get_network_wan_ipv4
@@ -170,7 +173,7 @@ read -p "Download URL for FiraCode-Mono?[Use github by default]" NerdFont_URL
     NerdFont_URL="https://github.com/epoweripione/terminal-custom/releases/download/v5.2.0/FiraCode-Mono.zip"
 
 mkdir -p "$HOME/patched-fonts/FiraCode-Mono" && \
-    curl -fSL -o "$HOME/patched-fonts/FiraCode-Mono.zip" ${NerdFont_URL} && \
+    curl "${curl_download_opts[@]}" -o "$HOME/patched-fonts/FiraCode-Mono.zip" ${NerdFont_URL} && \
     unzip -q "$HOME/patched-fonts/FiraCode-Mono.zip" -d "$HOME/patched-fonts/FiraCode-Mono" && \
     sudo mv -f "$HOME/patched-fonts/FiraCode-Mono/" "/usr/share/fonts/" && \
     sudo chmod -R 744 "/usr/share/fonts/FiraCode-Mono" && \
@@ -295,7 +298,7 @@ sudo pacman --noconfirm -S conky-lua-nv conky-manager jq lua-clock-manjaro
 # http://forum.ubuntu.org.cn/viewtopic.php?f=94&t=313031
 # http://www.manongzj.com/blog/4-lhjnjqtantllpnj.html
 yay --noconfirm -S conky-colors
-curl -fSL -o $HOME/conky-convert.lua \
+curl "${curl_download_opts[@]}" -o $HOME/conky-convert.lua \
     https://raw.githubusercontent.com/brndnmtthws/conky/master/extras/convert.lua
 # conky-colors --help
 conky-colors --theme=human --side=right --arch --cpu=2 --proc=5 \
@@ -561,7 +564,7 @@ sudo pacman --noconfirm -S wps-office ttf-wps-fonts wps-office-mui-zh-cn
 # # https://github.com/GitSquared/edex-ui
 # # yay --noconfirm -S edex-ui-git
 # CHECK_URL="https://api.github.com/repos/GitSquared/edex-ui/releases/latest"
-# REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
+# REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
 # wget -c -O eDEX-UI.AppImage \
 #     https://github.com/GitSquared/edex-ui/releases/download/${REMOTE_VERSION}/eDEX-UI.Linux.x86_64.AppImage
 

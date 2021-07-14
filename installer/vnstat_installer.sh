@@ -17,6 +17,8 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
 
 colorEcho "${BLUE}Installing ${FUCHSIA}vnstat${BLUE}..."
 if [[ -x "$(command -v pacman)" ]]; then
@@ -35,7 +37,7 @@ fi
 
 
 cd "${WORKDIR}" && \
-    curl -fSL -o vnstat.tar.gz https://humdi.net/vnstat/vnstat-latest.tar.gz && \
+    curl "${curl_download_opts[@]}" -o vnstat.tar.gz https://humdi.net/vnstat/vnstat-latest.tar.gz && \
     sudo tar xvzf vnstat.tar.gz && \
     sudo mv vnstat-* vnstat && cd vnstat/ && \
     sudo ./configure --prefix=/usr --sysconfdir=/etc >/dev/null && \

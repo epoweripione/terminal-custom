@@ -17,13 +17,15 @@ else
     fi
 fi
 
+[[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
+[[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
 
 # pacapt - An Arch's pacman-like package manager for some Unices
 # https://github.com/icy/pacapt
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}pacapt${BLUE}..."
 
 CHECK_URL="https://api.github.com/repos/icy/pacapt/releases/latest"
-REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
 if [[ -x "$(command -v pacapt)" ]]; then
     ECHO_TYPE="Updating"
@@ -47,7 +49,7 @@ fi
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     colorEcho "${BLUE}  ${ECHO_TYPE} ${FUCHSIA}pacapt ${YELLOW}${REMOTE_VERSION}${BLUE}..."
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/icy/pacapt/raw/ng/pacapt"
-    sudo curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/pacapt" "$DOWNLOAD_URL" && \
+    sudo curl "${curl_download_opts[@]}" -o "${WORKDIR}/pacapt" "$DOWNLOAD_URL" && \
         sudo mv -f "${WORKDIR}/pacapt" "${PREFIX}/bin/pacapt" && \
         sudo chmod 755 "${PREFIX}/bin/pacapt" && \
         sudo ln -sv "${PREFIX}/bin/pacapt" "${INSTALL_PACMAN_TO}/pacman" || true
