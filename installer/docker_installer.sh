@@ -85,10 +85,10 @@ if [[ ! -x "$(command -v docker-compose)" ]]; then
     colorEcho "${BLUE}Installing ${FUCHSIA}Docker Compose${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
-    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
     if [[ -n "$REMOTE_VERSION" ]]; then
-        DOWNLOAD_URL="https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
-        curl -fSL -o "${WORKDIR}/docker-compose" "$DOWNLOAD_URL" && \
+        DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
+        curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/docker-compose" "$DOWNLOAD_URL" && \
             mv -f "${WORKDIR}/docker-compose" "/usr/local/bin/docker-compose" && \
             chmod +x "/usr/local/bin/docker-compose"
     fi
@@ -108,10 +108,10 @@ if [[ ! -x "$(command -v ctop)" ]]; then
     colorEcho "${BLUE}Installing ${FUCHSIA}ctop${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
-    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if [[ -n "$REMOTE_VERSION" ]]; then
-        DOWNLOAD_URL="https://github.com/bcicen/ctop/releases/download/$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}"
-        curl -fSL -o "${WORKDIR}/ctop" "$DOWNLOAD_URL" && \
+        DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/bcicen/ctop/releases/download/$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}"
+        curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/ctop" "$DOWNLOAD_URL" && \
             mv -f "${WORKDIR}/ctop" "/usr/local/bin/ctop" && \
             chmod +x "/usr/local/bin/ctop"
     fi

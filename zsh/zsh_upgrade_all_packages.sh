@@ -68,11 +68,11 @@ if [[ -x "$(command -v docker-compose)" ]]; then
     CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
 
     CURRENT_VERSION=$(docker-compose -v 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}  Installing ${FUCHSIA}docker-compose ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-        DOWNLOAD_URL="https://github.com/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
-        curl -fSL -o "${WORKDIR}/docker-compose" "$DOWNLOAD_URL" && \
+        DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
+        curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/docker-compose" "$DOWNLOAD_URL" && \
             sudo mv -f "${WORKDIR}/docker-compose" "/usr/local/bin/docker-compose" && \
             sudo chmod +x "/usr/local/bin/docker-compose"
     fi
@@ -84,11 +84,11 @@ if [[ -x "$(command -v ctop)" ]]; then
 
     CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
     CURRENT_VERSION=$(ctop -v 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}  Installing ${FUCHSIA}ctop ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-        DOWNLOAD_URL="https://github.com/bcicen/ctop/releases/download/$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}"
-        curl -fSL -o "${WORKDIR}/ctop" "$DOWNLOAD_URL" && \
+        DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/bcicen/ctop/releases/download/$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}"
+        curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/ctop" "$DOWNLOAD_URL" && \
             sudo mv -f "${WORKDIR}/ctop" "/usr/local/bin/ctop" && \
             sudo chmod +x "/usr/local/bin/ctop"
     fi
@@ -108,7 +108,7 @@ if [[ -x "$(command -v micro)" ]]; then
     CHECK_URL="https://api.github.com/repos/zyedidia/micro/releases/latest"
 
     CURRENT_VERSION=$(micro -version | grep Version | cut -d',' -f2)
-    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}  Installing ${FUCHSIA}micro ${YELLOW}${REMOTE_VERSION}${BLUE}..."
         curl https://getmic.ro | bash && sudo mv micro "/usr/local/bin"
@@ -146,7 +146,7 @@ if [[ -d "$HOME/.jabba" ]]; then
     CHECK_URL="https://api.github.com/repos/shyiko/jabba/releases/latest"
 
     CURRENT_VERSION=$(jabba --version | cut -d' ' -f2)
-    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}  Installing ${FUCHSIA}jabba ${YELLOW}${REMOTE_VERSION}${BLUE}..."
         curl -fsSL https://github.com/shyiko/jabba/raw/master/install.sh | bash && \

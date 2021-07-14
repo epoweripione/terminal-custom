@@ -38,7 +38,7 @@ fi
 
 ## Besttrack
 # wget -qO- git.io/besttrace | bash
-curl -fSL -o "${WORKDIR}/besttrace" "https://github.com/zq/shell/raw/master/besttrace2021" && \
+curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/besttrace" "https://github.com/zq/shell/raw/master/besttrace2021" && \
     sudo mv -f "${WORKDIR}/besttrace" "/usr/local/bin/besttrace" && \
     sudo chmod +x "/usr/local/bin/besttrace"
 

@@ -30,7 +30,7 @@ EXEC_INSTALL_NAME="tmux"
 
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 CHECK_URL="https://api.github.com/repos/${GITHUB_REPO_NAME}/releases/latest"
-REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
 
 if [[ -x "$(command -v pacman)" ]]; then
     # Remove installed old version
@@ -84,9 +84,9 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     REMOTE_FILENAME="${APP_INSTALL_NAME}-${REMOTE_VERSION}.tar.gz"
     DOWNLOAD_FILENAME="${WORKDIR}/${APP_INSTALL_NAME}.tar.gz"
 
-    DOWNLOAD_URL="https://github.com/${GITHUB_REPO_NAME}/releases/download/${REMOTE_VERSION}/${REMOTE_FILENAME}"
+    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/${GITHUB_REPO_NAME}/releases/download/${REMOTE_VERSION}/${REMOTE_FILENAME}"
 
-    curl -fSL -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}" && \
+    curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}" && \
         tar -xzf "${DOWNLOAD_FILENAME}" -C "${WORKDIR}" && \
         mv ${WORKDIR}/${APP_INSTALL_NAME}-* "${WORKDIR}/${APP_INSTALL_NAME}"
 

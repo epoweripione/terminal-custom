@@ -37,7 +37,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/snail007/goproxy/releases/latest"
-    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
         IS_INSTALL="no"
     fi
@@ -48,9 +48,9 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     # curl -fSL \
     #     https://raw.githubusercontent.com/snail007/goproxy/master/install_auto.sh \
     # | sudo bash
-    DOWNLOAD_URL="https://github.com/snail007/goproxy/releases/download/v${REMOTE_VERSION}/proxy-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.gz"
+    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/snail007/goproxy/releases/download/v${REMOTE_VERSION}/proxy-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.gz"
     cd "${WORKDIR}" && \
-        curl -fSL -o proxy-linux-amd64.tar.gz -C- "$DOWNLOAD_URL" && \
+        curl -fSL -o proxy-linux-amd64.tar.gz "$DOWNLOAD_URL" && \
         curl -fSL "https://raw.githubusercontent.com/snail007/goproxy/master/install.sh" | sudo bash
 fi
 
@@ -82,7 +82,7 @@ fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     CHECK_URL="https://api.github.com/repos/snail007/proxy_admin_free/releases/latest"
-    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
         IS_INSTALL="no"
     fi

@@ -24,6 +24,9 @@ if (Get-Command "git" -ErrorAction SilentlyContinue) {
     git config --global color.branch true
     git config --global color.interactive true
 
+    git config --global http.lowSpeedLimit 0
+    git config --global http.lowSpeedTime 999999
+
     git config --global alias.st status
     git config --global alias.co checkout
     git config --global alias.ci commit

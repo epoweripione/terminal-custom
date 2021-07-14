@@ -29,7 +29,7 @@ fi
 #         :
 #     else
 #         colorEcho "${BLUE}  Installing ${FUCHSIA}GLIBC 2.18 ${BLUE}(required by exa)..."
-#         curl -fSL -o "${WORKDIR}/glibc.tar.gz" "http://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz" && \
+#         curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/glibc.tar.gz" "http://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz" && \
 #             tar -xzf "${WORKDIR}/glibc.tar.gz" -C "${WORKDIR}" && \
 #                 mv ${WORKDIR}/glibc-* "${WORKDIR}/glibc" && \
 #                 mkdir "${WORKDIR}/glibc/build" && \
@@ -47,7 +47,7 @@ APP_INSTALL_NAME="exa"
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
 CHECK_URL="https://api.github.com/repos/ogham/exa/releases/latest"
-REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
 REMOTE_FILENAME=""
 case "$OS_INFO_TYPE" in
@@ -81,8 +81,8 @@ if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
         sudo rm -f "/usr/local/bin/exa"
     fi
 
-    DOWNLOAD_URL="https://github.com/ogham/exa/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
-    curl -fSL -o "${WORKDIR}/exa.zip" -C- "$DOWNLOAD_URL" && \
+    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/ogham/exa/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
+    curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/exa.zip" "$DOWNLOAD_URL" && \
         unzip -qo "${WORKDIR}/exa.zip" -d "${WORKDIR}" && \
         sudo mv -f "${WORKDIR}/bin/exa" "/usr/local/bin/exa" && \
         sudo mv -f ${WORKDIR}/man/exa* "/usr/share/man/man1" && \

@@ -35,7 +35,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/mikefarah/yq/releases/latest"
-    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
         IS_INSTALL="no"
     fi
@@ -47,9 +47,9 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     OS_TYPE=$(uname | sed 's/.*/\L&/')
     [[ -z "$OS_INFO_ARCH" ]] && get_arch
 
-    DOWNLOAD_URL="https://github.com/mikefarah/yq/releases/download/v${REMOTE_VERSION}/yq_${OS_TYPE}_${OS_INFO_ARCH}.tar.gz"
+    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/mikefarah/yq/releases/download/v${REMOTE_VERSION}/yq_${OS_TYPE}_${OS_INFO_ARCH}.tar.gz"
 
-    curl -fSL -o "${WORKDIR}/yq.tar.gz" -C- "$DOWNLOAD_URL" && \
+    curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/yq.tar.gz" "$DOWNLOAD_URL" && \
         sudo tar -xzf "${WORKDIR}/yq.tar.gz" -C "${WORKDIR}" && \
         sudo mv -f ${WORKDIR}/yq_* "/usr/local/bin/yq"
         sudo chmod +x "/usr/local/bin/yq"

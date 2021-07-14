@@ -561,7 +561,7 @@ sudo pacman --noconfirm -S wps-office ttf-wps-fonts wps-office-mui-zh-cn
 # # https://github.com/GitSquared/edex-ui
 # # yay --noconfirm -S edex-ui-git
 # CHECK_URL="https://api.github.com/repos/GitSquared/edex-ui/releases/latest"
-# REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4)
+# REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
 # wget -c -O eDEX-UI.AppImage \
 #     https://github.com/GitSquared/edex-ui/releases/download/${REMOTE_VERSION}/eDEX-UI.Linux.x86_64.AppImage
 

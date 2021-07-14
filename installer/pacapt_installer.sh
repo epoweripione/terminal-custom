@@ -23,7 +23,7 @@ fi
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}pacapt${BLUE}..."
 
 CHECK_URL="https://api.github.com/repos/icy/pacapt/releases/latest"
-REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
 if [[ -x "$(command -v pacapt)" ]]; then
     ECHO_TYPE="Updating"
@@ -46,8 +46,8 @@ fi
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     colorEcho "${BLUE}  ${ECHO_TYPE} ${FUCHSIA}pacapt ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-    DOWNLOAD_URL="https://github.com/icy/pacapt/raw/ng/pacapt"
-    sudo curl -fSL -o "${WORKDIR}/pacapt" "$DOWNLOAD_URL" && \
+    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/icy/pacapt/raw/ng/pacapt"
+    sudo curl -fSL ${GITHUB_DOWNLOAD_CURL_OPTION:-""} -o "${WORKDIR}/pacapt" "$DOWNLOAD_URL" && \
         sudo mv -f "${WORKDIR}/pacapt" "${PREFIX}/bin/pacapt" && \
         sudo chmod 755 "${PREFIX}/bin/pacapt" && \
         sudo ln -sv "${PREFIX}/bin/pacapt" "${INSTALL_PACMAN_TO}/pacman" || true

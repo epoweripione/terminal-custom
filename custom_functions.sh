@@ -1584,12 +1584,12 @@ function Git_Clone_Update() {
         # Accelerate the speed of accessing GitHub
         # https://www.gitclone.com/
         # https://fastgit.org/
-        if [[ -n "$GITHUB_CLONE_USE_CGIT}" && -x "$(command -v cgit)" ]]; then
+        if [[ -n "${GITHUB_MIRROR_USE_CGIT}" && -x "$(command -v cgit)" ]]; then
             GIT_COMMAND="cgit"
         else
-            [[ -n "$GITHUB_CLONE_USE_GITCLONE}" ]] && REPOURL="gitclone.com/github.com"
-            [[ -n "$GITHUB_CLONE_USE_CNPMJS}" ]] && REPOURL="github.com.cnpmjs.org"
-            [[ -n "$GITHUB_CLONE_USE_FASTGIT}" ]] && REPOURL="hub.fastgit.org"
+            [[ -n "${GITHUB_MIRROR_USE_GITCLONE}" ]] && REPOURL="gitclone.com/github.com"
+            [[ -n "${GITHUB_MIRROR_USE_CNPMJS}" ]] && REPOURL="github.com.cnpmjs.org"
+            [[ -n "${GITHUB_MIRROR_USE_FASTGIT}" ]] && REPOURL="hub.fastgit.org"
         fi
 
         REPOREMOTE="https://${REPOURL}/${REPONAME}"
@@ -1598,8 +1598,8 @@ function Git_Clone_Update() {
     fi
 
     ## clear git proxy when using github mirror
-    # [[ -n "$GITHUB_CLONE_USE_CGIT}" && -x "$(command -v cgit)" ]] && set_git_proxy
-    # [[ -n "$GITHUB_CLONE_USE_GITCLONE}" || -n "$GITHUB_CLONE_USE_CNPMJS}" || -n "$GITHUB_CLONE_USE_FASTGIT}" ]] && set_git_proxy
+    # [[ -n "${GITHUB_MIRROR_USE_CGIT}" && -x "$(command -v cgit)" ]] && set_git_proxy
+    # [[ -n "${GITHUB_MIRROR_USE_GITCLONE}" || -n "${GITHUB_MIRROR_USE_CNPMJS}" || -n "${GITHUB_MIRROR_USE_FASTGIT}" ]] && set_git_proxy
 
     if [[ -d "${REPODIR}/.git" ]]; then
         colorEcho "${BLUE}  Updating ${FUCHSIA}${REPONAME}${BLUE}..."
@@ -1688,7 +1688,7 @@ function git_update_repo_in_subdir() {
         REPOREMOTE=$(git config --get remote.origin.url | head -n1)
         REPONAME=$(echo "${REPOREMOTE}"| sed 's|^http://||;s|^https://||;s|.git$||' | sed 's/.*\/\([^ ]*\/[^ ]*\).*/\1/')
         REPOURL=$(echo "${REPOREMOTE}" | sed 's|.git$||' | sed "s|/${REPONAME}||")
-        [[ "${REPOURL}" =~ "://github.com" ]] && REPOURL="github.com"
+        [[ "${REPOREMOTE}" =~ "://github.com/" ]] && REPOURL="github.com"
 
         BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
         [[ -z "${BRANCH}" ]] && BRANCH="master"

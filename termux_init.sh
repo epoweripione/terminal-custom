@@ -126,11 +126,11 @@ curl -fSL "${NerdFont_URL}" -o "$HOME/FiraCode-Mono.zip" && \
 if [[ ! -d "$HOME/frp" ]]; then
     colorEcho "${BLUE}Installing ${FUCHSIA}frp${BLUE}..."
     CHECK_URL="https://api.github.com/repos/fatedier/frp/releases/latest"
-    REMOTE_VERSION=$(curl -fsL $CHECK_URL | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
+    REMOTE_VERSION=$(curl -fsL ${GITHUB_CHECK_CURL_OPTION:-""} "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
     if [[ -n "$REMOTE_VERSION" ]]; then
-        DOWNLOAD_URL="https://github.com/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_linux_arm64.tar.gz"
-        curl -fSL -o frp.tar.gz -C- "$DOWNLOAD_URL" && \
+        DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_linux_arm64.tar.gz"
+        curl -fSL -o frp.tar.gz "$DOWNLOAD_URL" && \
             tar -xzf frp.tar.gz -C "$HOME" && \
             rm frp.tar.gz && \
             mkdir -p "$HOME/frp" && \
