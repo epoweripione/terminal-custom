@@ -606,16 +606,18 @@ INSTALLER_DOWNLOAD_CURL_OPTION="-fSL --connect-timeout 5"
 if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
     # export GITHUB_MIRROR_USE_CGIT=true
     # export GITHUB_MIRROR_USE_GITCLONE=true
-    # export GITHUB_MIRROR_USE_CNPMJS=true
+    export GITHUB_MIRROR_USE_CNPMJS=true
     export GITHUB_MIRROR_USE_FASTGIT=true
 
     [[ -n "${GITHUB_MIRROR_USE_CNPMJS}" ]] && GITHUB_DOWNLOAD_URL="https://github.com.cnpmjs.org"
-    [[ -n "${GITHUB_MIRROR_USE_FASTGIT}" ]] && GITHUB_DOWNLOAD_URL="https://download.fastgit.org"
+    [[ -n "${GITHUB_MIRROR_USE_FASTGIT}" ]] && \
+        GITHUB_DOWNLOAD_URL="https://download.fastgit.org" && GITHUB_RAW_URL="https://raw.fastgit.org"
 fi
 
 export INSTALLER_CHECK_CURL_OPTION=${INSTALLER_CHECK_CURL_OPTION:-""}
 export INSTALLER_DOWNLOAD_CURL_OPTION=${INSTALLER_DOWNLOAD_CURL_OPTION:-""}
 export GITHUB_DOWNLOAD_URL=${GITHUB_DOWNLOAD_URL:-"https://github.com"}
+export GITHUB_RAW_URL=${GITHUB_DOWNLOAD_URL:-"https://raw.githubusercontent.com"}
 
 # Autostart Tmux/screen Session On Remote System When Logging In Via SSH
 if [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then

@@ -1591,9 +1591,9 @@ function Git_Clone_Update() {
         if [[ -n "${GITHUB_MIRROR_USE_CGIT}" && -x "$(command -v cgit)" ]]; then
             GIT_COMMAND="cgit"
         else
+            [[ -n "${GITHUB_MIRROR_USE_FASTGIT}" ]] && REPOURL="hub.fastgit.org"
             [[ -n "${GITHUB_MIRROR_USE_GITCLONE}" ]] && REPOURL="gitclone.com/github.com"
             [[ -n "${GITHUB_MIRROR_USE_CNPMJS}" ]] && REPOURL="github.com.cnpmjs.org"
-            [[ -n "${GITHUB_MIRROR_USE_FASTGIT}" ]] && REPOURL="hub.fastgit.org"
         fi
 
         REPOREMOTE="https://${REPOURL}/${REPONAME}"
@@ -1680,10 +1680,10 @@ function git_update_repo_in_subdir() {
 
     # find . -type d -name ".git" -execdir git pull --rebase --stat origin master \;
 
-    find "${SubDir}" -type d -name ".git" | while read -r FindDir; do
+    while read -r FindDir; do
         FindDir="$(realpath "${FindDir}")"
         DIRLIST+=("${FindDir%/*}")
-    done
+    done < <(find "${SubDir}" -type d -name ".git")
 
     for TargetDir in "${DIRLIST[@]}"; do
         REPODIR="${TargetDir}"
@@ -1722,6 +1722,47 @@ function git_update_repo_in_subdir_parallel() {
             | xargs -P10 -I{} git --git-dir="{}/.git" --work-tree="{}" \
                 pull --rebase --stat origin "${BRANCH}"
     fi
+}
+
+function Git_Replace_Remote_Origin_URL() {
+    # Usage: Git_Replace_Remote_Origin_URL $HOME "https://hub.fastgit.org" "https://github.com"
+    local SubDir=${1:-""}
+    local UrlOLD=$2
+    local UrlNEW=$3
+    local FindDir TargetDir CurrentDir
+    local REPOREMOTE REPOREMOTE_NEW
+    local DIRLIST=()
+
+    [[ -z "${SubDir}" ]] && exit 0
+    [[ ! -d "${SubDir}" ]] && exit 0
+
+    CurrentDir=$(pwd)
+
+    while read -r FindDir; do
+        FindDir="$(realpath "${FindDir}")"
+        DIRLIST+=("${FindDir%/*}")
+    done < <(find "${SubDir}" -type d -name ".git")
+
+    UrlOLD="${UrlOLD%/}/"
+    UrlNEW="${UrlNEW%/}/"
+
+    for TargetDir in "${DIRLIST[@]}"; do
+        # if grep -q "${UrlOLD}" "${TargetDir}/.git/config"; then
+        #     sed -i "s|${UrlOLD}|${UrlNEW}|g" "${TargetDir}/.git/config"
+        # fi
+        cd "${TargetDir}"
+
+        REPOREMOTE=$(git config --get remote.origin.url | head -n1)
+        if [[ "${REPOREMOTE}" =~ "${UrlOLD}" ]]; then
+            REPOREMOTE_NEW=$(echo "${REPOREMOTE}" | sed "s|${UrlOLD}|${UrlNEW}|")
+            if [[ -n "${REPOREMOTE_NEW}" ]]; then
+                colorEcho "${YELLOW}${TargetDir}${BLUE}: ${FUCHSIA}${REPOREMOTE}${BLUE} → ${GREEN}${REPOREMOTE_NEW}"
+                git remote set-url origin "${REPOREMOTE_NEW}"
+            fi
+        fi
+    done
+
+    cd "${CurrentDir}"
 }
 
 function git_get_remote_default_branch() {
