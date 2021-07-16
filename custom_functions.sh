@@ -1601,10 +1601,6 @@ function Git_Clone_Update() {
         REPOREMOTE="${REPOURL}/${REPONAME}"
     fi
 
-    ## clear git proxy when using github mirror
-    # [[ -n "${GITHUB_MIRROR_USE_CGIT}" && -x "$(command -v cgit)" ]] && set_git_proxy
-    # [[ -n "${GITHUB_MIRROR_USE_GITCLONE}" || -n "${GITHUB_MIRROR_USE_CNPMJS}" || -n "${GITHUB_MIRROR_USE_FASTGIT}" ]] && set_git_proxy
-
     if [[ -d "${REPODIR}/.git" ]]; then
         colorEcho "${BLUE}  Updating ${FUCHSIA}${REPONAME}${BLUE}..."
 
@@ -1659,10 +1655,6 @@ function Git_Clone_Update() {
                 return 1
             }
     fi
-
-    ## restore git proxy
-    # [[ -n "${GLOBAL_PROXY_IP}" && -n "${GLOBAL_PROXY_SOCKS_PORT}" ]] && \
-    #     set_git_proxy "${GLOBAL_PROXY_SOCKS_PROTOCOL}://${GLOBAL_PROXY_IP}:${GLOBAL_PROXY_SOCKS_PORT}"
 }
 
 
@@ -1772,10 +1764,6 @@ function git_get_remote_default_branch() {
         REPO_DEFAULT_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
     else
         [[ -z "${REPOREMOTE}" ]] && exit 0
-
-        ## Github: https://api.github.com/repos/docker/compose
-        # REPO_DEFAULT_BRANCH=$(curl -fsL "${REPOREMOTE}" | grep 'default_branch' | cut -d\" -f4)
-
         REPO_DEFAULT_BRANCH=$(git ls-remote --symref "${REPOREMOTE}" HEAD \
                                 | awk '/^ref:/ {sub(/refs\/heads\//, "", $2); print $2}')
     fi

@@ -20,17 +20,17 @@ fi
 [[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
 [[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
 
-# as-tree: Print a list of paths as a tree of paths
-# https://github.com/jez/as-tree
-APP_INSTALL_NAME="as-tree"
-GITHUB_REPO_NAME="jez/as-tree"
+# nnn - Supercharge your productivity!
+# https://github.com/jarun/nnn
+APP_INSTALL_NAME="nnn"
+GITHUB_REPO_NAME="jarun/nnn"
 
-ARCHIVE_EXT="zip"
+ARCHIVE_EXT="tar.gz"
 ARCHIVE_EXEC_DIR=""
-ARCHIVE_EXEC_NAME="as-tree"
+ARCHIVE_EXEC_NAME="nnn-*"
 
 EXEC_INSTALL_PATH="/usr/local/bin"
-EXEC_INSTALL_NAME="as-tree"
+EXEC_INSTALL_NAME="nnn"
 
 [[ -z "${ARCHIVE_EXEC_NAME}" ]] && ARCHIVE_EXEC_NAME="${EXEC_INSTALL_NAME}"
 
@@ -50,7 +50,7 @@ VERSION_FILENAME=""
 if [[ -x "$(command -v ${EXEC_INSTALL_NAME})" ]]; then
     IS_UPDATE="yes"
     [[ -s "${VERSION_FILENAME}" ]] && CURRENT_VERSION=$(head -n1 ${VERSION_FILENAME})
-    CURRENT_VERSION=$(${EXEC_INSTALL_NAME} --version 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+    CURRENT_VERSION=$(${EXEC_INSTALL_NAME} -V 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
 else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi
@@ -59,7 +59,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
     CHECK_URL="https://api.github.com/repos/${GITHUB_REPO_NAME}/releases/latest"
-    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
+    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
     if version_le $REMOTE_VERSION $CURRENT_VERSION; then
         IS_INSTALL="no"
     fi
@@ -71,10 +71,14 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 
     case "$OS_INFO_TYPE" in
         linux)
-            REMOTE_FILENAME="${EXEC_INSTALL_NAME}-${REMOTE_VERSION}-linux.${ARCHIVE_EXT}"
+            case "$OS_INFO_ARCH" in
+                amd64)
+                    REMOTE_FILENAME="nnn-nerd-static-${REMOTE_VERSION}.x86_64.${ARCHIVE_EXT}"
+                    ;;
+            esac
             ;;
         darwin)
-            REMOTE_FILENAME="${EXEC_INSTALL_NAME}-${REMOTE_VERSION}-osx.${ARCHIVE_EXT}"
+            REMOTE_FILENAME="nnn-nerd-static-${REMOTE_VERSION}.x86_64.${ARCHIVE_EXT}"
             ;;
     esac
 
@@ -89,7 +93,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     fi
 
     # Download file
-    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/${GITHUB_REPO_NAME}/releases/download/${REMOTE_VERSION}/${REMOTE_FILENAME}"
+    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/${GITHUB_REPO_NAME}/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
     curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
 
     curl_download_status=$?
@@ -131,6 +135,13 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
                 [[ -n "${VERSION_FILENAME}" ]] && echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null || true
         fi
     fi
+fi
+
+# install all plugins
+# https://github.com/jarun/nnn/tree/master/plugins
+# ${XDG_CONFIG_HOME:-$HOME/.config}/nnn/plugins
+if [[ "${IS_INSTALL}" == "yes" && "${IS_UPDATE}" == "no" ]]; then
+    curl -fsL "https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs" | sh
 fi
 
 cd "${CURRENT_DIR}"

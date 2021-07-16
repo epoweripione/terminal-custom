@@ -202,7 +202,7 @@ if (Get-Command "scoop" -ErrorAction SilentlyContinue) {
         "vlc"
         "potplayer"
         "captura"
-        # "quicklook"
+        "quicklook"
         "screentogif"
         "aida64extreme"
         "cpu-z"

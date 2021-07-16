@@ -83,10 +83,16 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 
     # Download file
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/${GITHUB_REPO_NAME}/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
-
     curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
 
-    if [[ $? -eq 0 ]]; then
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
         # Extract file
         case "${ARCHIVE_EXT}" in
             "zip")

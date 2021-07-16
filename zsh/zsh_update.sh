@@ -301,7 +301,7 @@ Plugins="git"
 
 [[ "$OS_INFO_TYPE" == "darwin" ]] && Plugins="${Plugins} osx"
 
-Plugins="${Plugins} cp rsync sudo supervisor colored-man-pages"
+Plugins="${Plugins} cp z rsync sudo supervisor colored-man-pages"
 # Plugins="${Plugins} command-time"
 
 [[ -d "$HOME/.asdf" ]] && Plugins="${Plugins} asdf"

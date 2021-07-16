@@ -132,7 +132,7 @@ if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
         # GOROOT_BOOTSTRAP=$GOROOT
 
         # Install latest go version
-        REMOTE_VERSION=$(curl "${curl_download_opts[@]}" https://golang.org/dl/ | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+        REMOTE_VERSION=$(curl "${curl_check_opts[@]}" https://golang.org/dl/ | grep -Eo -m1 'go([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
         # REMOTE_VERSION=${REMOTE_VERSION%.}
 
         if [[ -n "$REMOTE_VERSION" ]] && [[ ! "$(gvm list | grep "$REMOTE_VERSION")" ]]; then
@@ -189,9 +189,6 @@ if [[ -d "$HOME/.gvm" ]]; then
         ENV_PATH_GO=$(echo "$ENV_PATH_GO" | sed 's/:$//')
         [[ -n "${ENV_PATH_GO}" ]] && export PATH=${ENV_PATH_GO}:${ENV_PATH_OLD}
     fi
-
-    # GOBIN
-    [[ -z "$GOBIN" && -n "$GOROOT" ]] && export GOBIN=$GOROOT/bin
 
     unset ENV_PATH_GO
     unset ENV_PATH_OLD

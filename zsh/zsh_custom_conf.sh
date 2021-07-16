@@ -342,19 +342,20 @@ if [[ -d "$HOME/.go" ]]; then
     if [[ -z "$GO_INSTALLER_NOT_USE_PROXY" ]]; then
         export GOUP_GO_HOST=golang.google.cn
 
-        [[ -n "${all_proxy}" ]] && alias goup='noproxy_cmd goup'
+        # [[ -n "${all_proxy}" ]] && alias goup='noproxy_cmd goup'
 
-        ## fix: proxyconnect tcp: dial tcp: lookup socks5h: no such host
-        # if echo "${all_proxy}" | grep -q 'socks5h'; then
-        #     alias goupInstall='proxy_socks5h_to_socks5 goup install'
-        #     alias goupUpgrade='proxy_socks5h_to_socks5 goup upgrade'
-        # fi
+        # fix: proxyconnect tcp: dial tcp: lookup socks5h: no such host
+        if echo "${all_proxy}" | grep -q 'socks5h'; then
+            alias goupInstall='proxy_socks5h_to_socks5 goup install'
+            alias goupUpgrade='proxy_socks5h_to_socks5 goup upgrade'
+        fi
     fi
 fi
 
 # go
 if [[ -x "$(command -v go)" ]]; then
-    [[ -z "$GOBIN" && -n "$GOROOT" ]] && export GOBIN=$GOROOT/bin
+    [[ -n "${GOPATH}" ]] && GO_ENV_GOPATH="${GOPATH}" || GO_ENV_GOPATH=$(go env GOPATH 2>/dev/null)
+    [[ -n "${GO_ENV_GOPATH}" && ":$PATH:" != *":${GO_ENV_GOPATH}/bin:"* ]] && export PATH=$PATH:${GO_ENV_GOPATH}/bin
 
     # go module
     GO_VERSION=$(go version | cut -d' ' -f3)
@@ -375,7 +376,9 @@ if [[ -x "$(command -v go)" ]]; then
         #     alias goInstall='proxy_socks5h_to_socks5 go install'
         # fi
     fi
+
     unset GO_VERSION
+    unset GO_ENV_GOPATH
 fi
 
 # rustup & cargo
@@ -549,6 +552,43 @@ else
     alias decodeURIComponent="sed 's/%/\\\\x/g' | xargs -0 printf '%b'"
 fi
 
+# nnn
+if [[ -x "$(command -v nnn)" ]]; then
+    NNN_PLUG_INLINE='g:!go run $nnn*'
+    NNN_PLUG_DEFAULT="1:bookmarks;a:autojump;b:oldbigfile;d:diffs;e:suedit;f:finder;i:ipinfo;k:pskill;m:nmount"
+    NNN_PLUG_DEFAULT="${NNN_PLUG_DEFAULT};o:fzz;p:preview-tui;u:getplugs;v:imgview;w:pdfread;x:togglex"
+    NNN_PLUG="${NNN_PLUG_DEFAULT};${NNN_PLUG_INLINE}"
+
+    export NNN_PLUG
+    export NNN_TMPFILE="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd"
+    export NNN_FIFO="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/nnn.fifo"
+    [[ -x "$(command -v pistol)" ]] && export USE_PISTOL=1
+fi
+
+# fzf
+if [[ -x "$(command -v fzf)" && -s "${MY_SHELL_SCRIPTS}/fzf_config.sh" ]]; then
+    source "${MY_SHELL_SCRIPTS}/fzf_config.sh"
+fi
+
+# Accelerate the speed of accessing GitHub
+INSTALLER_CHECK_CURL_OPTION="-fsL --connect-timeout 5"
+INSTALLER_DOWNLOAD_CURL_OPTION="-fSL --connect-timeout 5"
+if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
+    # export GITHUB_MIRROR_USE_CGIT=true
+    # export GITHUB_MIRROR_USE_GITCLONE=true
+    export GITHUB_MIRROR_USE_CNPMJS=true
+    export GITHUB_MIRROR_USE_FASTGIT=true
+
+    [[ -n "${GITHUB_MIRROR_USE_CNPMJS}" ]] && GITHUB_DOWNLOAD_URL="https://github.com.cnpmjs.org"
+    [[ -n "${GITHUB_MIRROR_USE_FASTGIT}" ]] && \
+        GITHUB_DOWNLOAD_URL="https://download.fastgit.org" && GITHUB_RAW_URL="https://raw.fastgit.org"
+fi
+
+export INSTALLER_CHECK_CURL_OPTION=${INSTALLER_CHECK_CURL_OPTION:-""}
+export INSTALLER_DOWNLOAD_CURL_OPTION=${INSTALLER_DOWNLOAD_CURL_OPTION:-""}
+export GITHUB_DOWNLOAD_URL=${GITHUB_DOWNLOAD_URL:-"https://github.com"}
+export GITHUB_RAW_URL=${GITHUB_RAW_URL:-"https://raw.githubusercontent.com"}
+
 # WSL1
 if [[ "$OS_WSL" =~ "Microsoft" ]]; then
     # Docker
@@ -594,30 +634,6 @@ if [[ "$OS_WSL" =~ "Microsoft" || "$OS_WSL" =~ "microsoft" ]]; then
     # get local weather
     get_weather_custom
 fi
-
-# fzf
-if [[ -x "$(command -v fzf)" && -s "${MY_SHELL_SCRIPTS}/fzf_config.sh" ]]; then
-    source "${MY_SHELL_SCRIPTS}/fzf_config.sh"
-fi
-
-# Accelerate the speed of accessing GitHub
-INSTALLER_CHECK_CURL_OPTION="-fsL --connect-timeout 5"
-INSTALLER_DOWNLOAD_CURL_OPTION="-fSL --connect-timeout 5"
-if [[ -z "$GITHUB_NOT_USE_PROXY" ]]; then
-    # export GITHUB_MIRROR_USE_CGIT=true
-    # export GITHUB_MIRROR_USE_GITCLONE=true
-    export GITHUB_MIRROR_USE_CNPMJS=true
-    export GITHUB_MIRROR_USE_FASTGIT=true
-
-    [[ -n "${GITHUB_MIRROR_USE_CNPMJS}" ]] && GITHUB_DOWNLOAD_URL="https://github.com.cnpmjs.org"
-    [[ -n "${GITHUB_MIRROR_USE_FASTGIT}" ]] && \
-        GITHUB_DOWNLOAD_URL="https://download.fastgit.org" && GITHUB_RAW_URL="https://raw.fastgit.org"
-fi
-
-export INSTALLER_CHECK_CURL_OPTION=${INSTALLER_CHECK_CURL_OPTION:-""}
-export INSTALLER_DOWNLOAD_CURL_OPTION=${INSTALLER_DOWNLOAD_CURL_OPTION:-""}
-export GITHUB_DOWNLOAD_URL=${GITHUB_DOWNLOAD_URL:-"https://github.com"}
-export GITHUB_RAW_URL=${GITHUB_DOWNLOAD_URL:-"https://raw.githubusercontent.com"}
 
 # Autostart Tmux/screen Session On Remote System When Logging In Via SSH
 if [[ -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then

@@ -167,6 +167,12 @@ if [[ -x "$(command -v bat)" ]]; then
         --preview="bat --theme=TwoDark --style=numbers,changes --color=always --line-range :500 {}"'
 fi
 
+if [[ -x "$(command -v pistol)" ]]; then
+    alias fzf-pistol='${FZF_REAL_COMMAND:-fzf} --layout=reverse --preview-window=right,70%,wrap \
+        --bind="ctrl-j:preview-page-down,ctrl-k:preview-page-up,alt-j:preview-bottom,alt-k:preview-top" \
+        --preview="pistol {}"'
+fi
+
 if [[ -x "$(command -v viu)" ]]; then
     alias fzf-viu='${FZF_REAL_COMMAND:-fzf} --layout=reverse --preview-window=right,70% --preview="viu {}"'
 fi
