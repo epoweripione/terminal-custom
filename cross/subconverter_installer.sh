@@ -46,13 +46,13 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    [[ -z "$OS_INFO_TYPE" ]] && get_os_type
-    [[ -z "$OS_INFO_VDIS" ]] && get_sysArch
+    [[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+    [[ -z "${OS_INFO_VDIS}" ]] && get_sysArch
 
     REMOTE_FILENAME=""
-    case "$OS_INFO_TYPE" in
+    case "${OS_INFO_TYPE}" in
         linux)
-            case "$OS_INFO_VDIS" in
+            case "${OS_INFO_VDIS}" in
                 arm64)
                     REMOTE_FILENAME=${APP_INSTALL_NAME}_aarch64.tar.gz
                     ;;
@@ -68,7 +68,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
             REMOTE_FILENAME=${APP_INSTALL_NAME}_darwin64.tar.gz
             ;;
         windows)
-            case "$OS_INFO_VDIS" in
+            case "${OS_INFO_VDIS}" in
                 32)
                     REMOTE_FILENAME=${APP_INSTALL_NAME}_win32.zip
                     ;;
@@ -85,11 +85,21 @@ fi
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
 
+    DOWNLOAD_FILENAME="${WORKDIR}/subconverter.tar.gz"
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/tindy2013/subconverter/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
 
-    curl "${curl_download_opts[@]}" -o "${WORKDIR}/subconverter.tar.gz" "$DOWNLOAD_URL" && \
-        sudo tar -xzf "${WORKDIR}/subconverter.tar.gz" -C "/srv" && \
-        echo ${REMOTE_VERSION} | sudo tee "/srv/subconverter/.version" >/dev/null
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
+        sudo tar -xzf "${DOWNLOAD_FILENAME}" -C "/srv" && \
+            echo ${REMOTE_VERSION} | sudo tee "/srv/subconverter/.version" >/dev/null
+    fi
 
     if [[ "${IS_UPDATE}" == "no" ]]; then
         [[ ! -s "/srv/subconverter/pref.yml" ]] && cp "/srv/subconverter/pref-new.yml" "/srv/subconverter/pref.yml"

@@ -20,16 +20,17 @@ fi
 [[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
 [[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
 
-# tldr++: fast and interactive tldr client written with go
-# https://github.com/isacikgoz/tldr
-APP_INSTALL_NAME="tldr++"
-GITHUB_REPO_NAME="isacikgoz/tldr"
+# onefetch: Git repository summary on your terminal
+# https://github.com/o2sh/onefetch
+APP_INSTALL_NAME="onefetch"
+GITHUB_REPO_NAME="o2sh/onefetch"
 
 ARCHIVE_EXT="tar.gz"
-ARCHIVE_EXEC_NAME="tldr"
+ARCHIVE_EXEC_DIR=""
+ARCHIVE_EXEC_NAME="onefetch"
 
 EXEC_INSTALL_PATH="/usr/local/bin"
-EXEC_INSTALL_NAME="tldr"
+EXEC_INSTALL_NAME="onefetch"
 
 [[ -z "${ARCHIVE_EXEC_NAME}" ]] && ARCHIVE_EXEC_NAME="${EXEC_INSTALL_NAME}"
 
@@ -49,8 +50,7 @@ VERSION_FILENAME=""
 if [[ -x "$(command -v ${EXEC_INSTALL_NAME})" ]]; then
     IS_UPDATE="yes"
     [[ -s "${VERSION_FILENAME}" ]] && CURRENT_VERSION=$(head -n1 ${VERSION_FILENAME})
-    CURRENT_VERSION=$(${EXEC_INSTALL_NAME} --version 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1 | cut -d. -f1-2)
-    # CURRENT_VERSION=$(${EXEC_INSTALL_NAME} --version 2>&1 | cut -d' ' -f3)
+    CURRENT_VERSION=$(${EXEC_INSTALL_NAME} -V 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
 else
     [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
 fi
@@ -69,8 +69,17 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     [[ -z "${OS_INFO_TYPE}" ]] && get_os_type
     [[ -z "${OS_INFO_ARCH}" ]] && get_arch
 
-    [[ "${OS_INFO_TYPE}" == "windows" ]] && ARCHIVE_EXT="zip"
-    REMOTE_FILENAME="${EXEC_INSTALL_NAME}_${REMOTE_VERSION}_${OS_INFO_TYPE}_${OS_INFO_ARCH}.${ARCHIVE_EXT}"
+    case "${OS_INFO_TYPE}" in
+        linux)
+            REMOTE_FILENAME="onefetch-linux.${ARCHIVE_EXT}"
+            ;;
+        darwin)
+            REMOTE_FILENAME="onefetch-mac.${ARCHIVE_EXT}"
+            ;;
+        windows)
+            REMOTE_FILENAME="onefetch-win.${ARCHIVE_EXT}"
+            ;;
+    esac
 
     [[ -z "${REMOTE_FILENAME}" ]] && IS_INSTALL="no"
 fi
@@ -121,31 +130,16 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
                 sudo rm -f "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}"
             fi
 
-            sudo mv -f ${WORKDIR}/${ARCHIVE_EXEC_NAME} "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
+            [[ -n "${ARCHIVE_EXEC_DIR}" ]] && \
+                ARCHIVE_EXEC_DIR=$(find ${WORKDIR} -type d -name ${ARCHIVE_EXEC_DIR})
+
+            [[ -z "${ARCHIVE_EXEC_DIR}" || ! -d "${ARCHIVE_EXEC_DIR}" ]] && ARCHIVE_EXEC_DIR=${WORKDIR}
+
+            sudo mv -f ${ARCHIVE_EXEC_DIR}/${ARCHIVE_EXEC_NAME} "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
                 sudo chmod +x "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
                 [[ -n "${VERSION_FILENAME}" ]] && echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null || true
         fi
     fi
 fi
-
-
-# Pulls the github.com/tldr-pages/tldr repository
-if [[ "${IS_INSTALL}" == "yes" || "${IS_UPDATE}" == "yes" ]]; then
-    [[ -z "${OS_INFO_TYPE}" ]] && get_os_type
-    case "${OS_INFO_TYPE}" in
-        darwin)
-            TLDR_PAGES="$HOME/Library/Application Support/tldr"
-            ;;
-        windows)
-            # TLDR_PAGES="$HOME/AppData/Roaming/tldr"
-            TLDR_PAGES=""
-            ;;
-        *)
-            TLDR_PAGES="$HOME/.local/share/tldr"
-            ;;
-    esac
-    [[ -n "${TLDR_PAGES}" ]] && Git_Clone_Update "tldr-pages/tldr" "${TLDR_PAGES}"
-fi
-
 
 cd "${CURRENT_DIR}"

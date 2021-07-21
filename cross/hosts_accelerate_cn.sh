@@ -19,7 +19,7 @@ else
     fi
 fi
 
-[[ -z "$OS_INFO_TYPE" ]] && get_os_type
+[[ -z "${OS_INFO_TYPE}" ]] && get_os_type
 
 
 # Local WAN IP
@@ -49,7 +49,7 @@ PARAMS_NUM=$#
 if [[ $PARAMS_NUM > 0 ]]; then
     HostsFile="$1"
 else
-    if [[ "$OS_INFO_TYPE" == "windows" ]]; then
+    if [[ "${OS_INFO_TYPE}" == "windows" ]]; then
         HostsFile=/c/Windows/System32/drivers/etc/hosts
     else
         HostsFile=/etc/hosts
@@ -279,7 +279,7 @@ fi
 
 
 # Flush DNS cache
-if [[ "$OS_INFO_TYPE" == "windows" ]]; then
+if [[ "${OS_INFO_TYPE}" == "windows" ]]; then
     ipconfig -flushdns || true
 else
     flush_dns_cache

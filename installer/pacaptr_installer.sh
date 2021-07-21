@@ -60,10 +60,21 @@ if [[ -n "$OS_TYPE" && ("$OS_ARCH" == "amd64" || "$OS_ARCH" == "x86_64") ]]; the
 
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}  ${ECHO_TYPE} ${FUCHSIA}pacaptr ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-        DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/rami3l/pacaptr/releases/download/v${REMOTE_VERSION}/pacaptr-${OS_TYPE}-amd64.tar.gz"
 
-        curl "${curl_download_opts[@]}" -o "${WORKDIR}/pacaptr.tar.gz" "$DOWNLOAD_URL" && \
-            sudo tar -xzf "${WORKDIR}/pacaptr.tar.gz" -C "/usr/local/bin" && \
-            sudo ln -sv "/usr/local/bin/pacaptr" "/usr/bin/pacman" || true
+        DOWNLOAD_FILENAME="${WORKDIR}/pacaptr.tar.gz"
+        DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/rami3l/pacaptr/releases/download/v${REMOTE_VERSION}/pacaptr-${OS_TYPE}-amd64.tar.gz"
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+
+        curl_download_status=$?
+        if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+            DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+            curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+            curl_download_status=$?
+        fi
+
+        if [[ ${curl_download_status} -eq 0 ]]; then
+            sudo tar -xzf "${DOWNLOAD_FILENAME}" -C "/usr/local/bin" && \
+                sudo ln -sv "/usr/local/bin/pacaptr" "/usr/bin/pacman" || true
+        fi
     fi
 fi

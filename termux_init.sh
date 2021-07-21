@@ -176,7 +176,7 @@ if [[ -s "$HOME/.zshrc" ]]; then
 
     for Target in "${PluginList[@]}"; do
         TargetName=$(echo ${Target} | awk -F"/" '{print $NF}')
-        Git_Clone_Update "$Target" "${ZSH_CUSTOM}/plugins/${TargetName}"
+        Git_Clone_Update "${Target}" "${ZSH_CUSTOM}/plugins/${TargetName}"
     done
 
     # Enable plugins

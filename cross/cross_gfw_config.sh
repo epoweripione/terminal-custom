@@ -19,9 +19,9 @@ else
     fi
 fi
 
-[[ -z "$OS_INFO_TYPE" ]] && get_os_type
-[[ -z "$OS_INFO_ARCH" ]] && get_arch
-[[ -z "$OS_INFO_VDIS" ]] && get_sysArch
+[[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+[[ -z "${OS_INFO_ARCH}" ]] && get_arch
+[[ -z "${OS_INFO_VDIS}" ]] && get_sysArch
 
 # jq
 if [[ ! -x "$(command -v jq)" ]]; then

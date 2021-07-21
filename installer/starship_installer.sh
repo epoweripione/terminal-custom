@@ -58,11 +58,13 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 
     # bash
     if [[ ! $(grep "starship init bash" "$HOME/.bashrc") ]]; then
+        echo '' >> "$HOME/.bashrc"
         echo 'eval "$(starship init bash)"' >> "$HOME/.bashrc"
     fi
 
     # zsh
     if [[ ! $(grep "starship init zsh" "$HOME/.zshrc") ]]; then
+        echo '' >> "$HOME/.zshrc"
         echo 'eval "$(starship init zsh)"' >> "$HOME/.zshrc"
     fi
 fi

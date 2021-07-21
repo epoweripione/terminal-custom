@@ -20,8 +20,8 @@ fi
 [[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
 [[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
 
-[[ -z "$OS_INFO_TYPE" ]] && get_os_type
-[[ -z "$OS_INFO_ARCH" ]] && get_arch
+[[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+[[ -z "${OS_INFO_ARCH}" ]] && get_arch
 
 # goproxy
 # https://github.com/snail007/goproxy
@@ -37,11 +37,22 @@ REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' |
 
 if [[ -n "$REMOTE_VERSION" ]]; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}shadowtunnel ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/snail007/shadowtunnel/releases/download/$REMOTE_VERSION/shadowtunnel-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.gz"
 
-    curl "${curl_download_opts[@]}" -o "${WORKDIR}/shadowtunnel.tar.gz" "$DOWNLOAD_URL" && \
-        sudo tar zxfv "${WORKDIR}/shadowtunnel.tar.gz" -C "/usr/local/bin" && \
+    DOWNLOAD_FILENAME="${WORKDIR}/shadowtunnel.tar.gz"
+    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/snail007/shadowtunnel/releases/download/$REMOTE_VERSION/shadowtunnel-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.gz"
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+            curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+            curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
+        sudo tar zxfv "${DOWNLOAD_FILENAME}" -C "/usr/local/bin" && \
         chmod +x "/usr/local/bin/shadowtunnel"
+    fi
 fi
 
 # How to use

@@ -56,12 +56,12 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    [[ -z "$OS_INFO_TYPE" ]] && get_os_type
+    [[ -z "${OS_INFO_TYPE}" ]] && get_os_type
     [[ -z "${OS_INFO_ARCH}" ]] && get_arch
 
-    case "$OS_INFO_TYPE" in
+    case "${OS_INFO_TYPE}" in
         linux)
-            case "$OS_INFO_ARCH" in
+            case "${OS_INFO_ARCH}" in
                 arm | arm64)
                     REMOTE_FILENAME="http://cgit.killf.info/cgit_arm_latest"
                     ;;
@@ -84,10 +84,20 @@ fi
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     DOWNLOAD_URL="${REMOTE_FILENAME}"
 
-    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}" && \
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
         sudo mv -f "${DOWNLOAD_FILENAME}" "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
-        sudo chmod +x "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
-        [[ -n "${VERSION_FILENAME}" ]] && echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null || true
+            sudo chmod +x "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
+            [[ -n "${VERSION_FILENAME}" ]] && echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null || true
+    fi
 fi
 
 

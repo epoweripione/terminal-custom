@@ -25,8 +25,13 @@ fi
 APP_INSTALL_NAME="re-txt"
 GITHUB_REPO_NAME="alash3al/re-txt"
 
+ARCHIVE_EXT="zip"
+
 EXEC_INSTALL_PATH="/usr/local/bin"
 EXEC_INSTALL_NAME="re-txt"
+
+DOWNLOAD_FILENAME="${WORKDIR}/${EXEC_INSTALL_NAME}"
+[[ -n "${ARCHIVE_EXT}" ]] && DOWNLOAD_FILENAME="${DOWNLOAD_FILENAME}.${ARCHIVE_EXT}"
 
 IS_INSTALL="yes"
 IS_UPDATE="no"
@@ -53,14 +58,14 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    [[ -z "$OS_INFO_TYPE" ]] && get_os_type
-    [[ -z "$OS_INFO_VDIS" ]] && get_sysArch
+    [[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+    [[ -z "${OS_INFO_VDIS}" ]] && get_sysArch
 
-    case "$OS_INFO_VDIS" in
+    case "${OS_INFO_VDIS}" in
         64)
-            case "$OS_INFO_TYPE" in
+            case "${OS_INFO_TYPE}" in
                 linux | darwin | windows)
-                    REMOTE_FILENAME="${EXEC_INSTALL_NAME}_${OS_INFO_TYPE}_amd64.zip"
+                    REMOTE_FILENAME="${EXEC_INSTALL_NAME}_${OS_INFO_TYPE}_amd64.${ARCHIVE_EXT}"
                     ;;
             esac
             ;;
@@ -70,17 +75,25 @@ fi
 if [[ -n "$REMOTE_FILENAME" && "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
 
-    if [[ -s "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" ]]; then
-        sudo rm -f "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}"
+    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/${GITHUB_REPO_NAME}/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
     fi
 
-    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/${GITHUB_REPO_NAME}/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
+    if [[ ${curl_download_status} -eq 0 ]]; then
+        if [[ -s "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" ]]; then
+            sudo rm -f "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}"
+        fi
 
-    curl "${curl_download_opts[@]}" -o "${WORKDIR}/${EXEC_INSTALL_NAME}.zip" "$DOWNLOAD_URL" && \
-        unzip -qo "${WORKDIR}/${EXEC_INSTALL_NAME}.zip" -d "${WORKDIR}" && \
-        sudo mv -f ${WORKDIR}/${EXEC_INSTALL_NAME}_* "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
-        echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null || true
-
+        unzip -qo "${DOWNLOAD_FILENAME}" -d "${WORKDIR}" && \
+            sudo mv -f ${WORKDIR}/${EXEC_INSTALL_NAME}_* "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
+            echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null || true
+    fi
 fi
 
 cd "${CURRENT_DIR}"

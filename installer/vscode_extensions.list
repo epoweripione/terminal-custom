@@ -4,6 +4,7 @@ vscode-icons-team.vscode-icons
 miguelsolorio.fluent-icons
 idleberg.icon-fonts
 zhuangtongfa.material-theme
+tds.taptap-vscode-theme
 # Editing
 aaron-bond.better-comments
 bmewburn.vscode-intelephense-client
@@ -145,6 +146,8 @@ rebornix.ruby
 rust-lang.rust
 bungcip.better-toml
 serayuzgur.crates
+## cht.sh snippets
+vscode-snippet.snippet
 ## linux/shell/vim
 vscodevim.vim
 ## XML/JSON/GraphQL/YAML

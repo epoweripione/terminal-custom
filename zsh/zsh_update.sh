@@ -26,7 +26,7 @@ else
     fi
 fi
 
-[[ -z "$OS_INFO_TYPE" ]] && get_os_type
+[[ -z "${OS_INFO_TYPE}" ]] && get_os_type
 
 
 ## oh-my-zsh custom plugins & themes
@@ -155,9 +155,9 @@ fi
 if [[ ! -x "$(command -v neofetch)" ]]; then
     Git_Clone_Update "dylanaraps/neofetch" "$HOME/neofetch"
 
-    if [[ "$OS_INFO_TYPE" == "darwin" ]]; then
+    if [[ "${OS_INFO_TYPE}" == "darwin" ]]; then
         cd $HOME/neofetch && sudo make PREFIX=/usr/local install
-    elif [[ "$OS_INFO_TYPE" == "windows" ]]; then
+    elif [[ "${OS_INFO_TYPE}" == "windows" ]]; then
         cd $HOME/neofetch && sudo make -i install
     else
         cd $HOME/neofetch && sudo make install
@@ -186,16 +186,6 @@ elif [[ -d "$HOME/.fzf" ]]; then
     Git_Clone_Update "junegunn/fzf" "$HOME/.fzf"
     [[ -s "$HOME/.fzf/install" ]] && $HOME/.fzf/install --bin
 fi
-
-
-# navi
-# Git_Clone_Update "denisidoro/navi" "/opt/navi"
-# if [[ ! -x "$(command -v navi)" ]]; then
-#     colorEcho "${BLUE}Installing ${FUCHSIA}navi${BLUE}..."
-#     cd /opt/navi && sudo make install
-# elif [[ -d "/opt/navi" ]]; then
-#     cd /opt/navi && sudo make update
-# fi
 
 
 ## PathPicker
@@ -228,7 +218,7 @@ PluginList=(
 
 for Target in "${PluginList[@]}"; do
     TargetName=$(echo ${Target} | awk -F"/" '{print $NF}')
-    Git_Clone_Update "$Target" "${ZSH_CUSTOM}/plugins/${TargetName}"
+    Git_Clone_Update "${Target}" "${ZSH_CUSTOM}/plugins/${TargetName}"
 done
 
 # fzf-tab: speed up parse and apply filename colorizing
@@ -252,7 +242,7 @@ ThemeList=(
 
 for Target in "${ThemeList[@]}"; do
     TargetName=$(echo ${Target} | awk -F"/" '{print $NF}')
-    Git_Clone_Update "$Target" "${ZSH_CUSTOM}/themes/${TargetName}"
+    Git_Clone_Update "${Target}" "${ZSH_CUSTOM}/themes/${TargetName}"
 done
 
 # agnosterzak
@@ -299,7 +289,7 @@ Plugins="git"
 
 [[ "$(command -v git-flow)" ]] && Plugins="${Plugins} git-flow-avh"
 
-[[ "$OS_INFO_TYPE" == "darwin" ]] && Plugins="${Plugins} osx"
+[[ "${OS_INFO_TYPE}" == "darwin" ]] && Plugins="${Plugins} osx"
 
 Plugins="${Plugins} cp z rsync sudo supervisor colored-man-pages"
 # Plugins="${Plugins} command-time"

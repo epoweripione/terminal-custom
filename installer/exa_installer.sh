@@ -20,8 +20,8 @@ fi
 [[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
 [[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
 
-[[ -z "$OS_INFO_TYPE" ]] && get_os_type
-[[ -z "$OS_INFO_VDIS" ]] && get_sysArch
+[[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+[[ -z "${OS_INFO_VDIS}" ]] && get_sysArch
 
 ## fix: /lib64/libc.so.6: version `GLIBC_2.18' not found (required by exa)
 ## ldd $(which exa)
@@ -53,9 +53,9 @@ CHECK_URL="https://api.github.com/repos/ogham/exa/releases/latest"
 REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
 REMOTE_FILENAME=""
-case "$OS_INFO_TYPE" in
+case "${OS_INFO_TYPE}" in
     linux)
-        case "$OS_INFO_VDIS" in
+        case "${OS_INFO_VDIS}" in
             64)
                 REMOTE_FILENAME=exa-linux-x86_64-musl-v${REMOTE_VERSION}.zip
                 ;;
@@ -84,15 +84,25 @@ if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
         sudo rm -f "/usr/local/bin/exa"
     fi
 
+    DOWNLOAD_FILENAME="${WORKDIR}/exa.zip"
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/ogham/exa/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
 
-    curl "${curl_download_opts[@]}" -o "${WORKDIR}/exa.zip" "$DOWNLOAD_URL" && \
-        unzip -qo "${WORKDIR}/exa.zip" -d "${WORKDIR}" && \
-        sudo mv -f "${WORKDIR}/bin/exa" "/usr/local/bin/exa" && \
-        sudo mv -f ${WORKDIR}/man/exa* "/usr/share/man/man1" && \
-        sudo mv -f "${WORKDIR}/completions/exa.zsh" "/usr/local/share/zsh/site-functions" && \
-        sudo chmod 644 "/usr/local/share/zsh/site-functions/exa.zsh" && \
-        sudo chown $(id -u):$(id -g) "/usr/local/share/zsh/site-functions/exa.zsh"
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
+        unzip -qo "${DOWNLOAD_FILENAME}" -d "${WORKDIR}" && \
+            sudo mv -f "${WORKDIR}/bin/exa" "/usr/local/bin/exa" && \
+            sudo mv -f ${WORKDIR}/man/exa* "/usr/share/man/man1" && \
+            sudo mv -f "${WORKDIR}/completions/exa.zsh" "/usr/local/share/zsh/site-functions" && \
+            sudo chmod 644 "/usr/local/share/zsh/site-functions/exa.zsh" && \
+            sudo chown $(id -u):$(id -g) "/usr/local/share/zsh/site-functions/exa.zsh"
+    fi
 fi
 
 cd "${CURRENT_DIR}"

@@ -34,9 +34,9 @@ fi
 # OS Type: darwin, windows, linux, bsd, solaris
 # Arch(spruce_type): amd64, 386, arm, arm64, mips64le, mips64, mipsle, mips, s390x, ppc64le, ppc64, riscv64
 # VDIS: 64, 32, arm, arm64, mips64le, mips64, mipsle, mips, s390x, ppc64le, ppc64, riscv64
-[[ -z "$OS_INFO_TYPE" ]] && get_os_type
-[[ -z "$OS_INFO_ARCH" ]] && get_arch
-[[ -z "$OS_INFO_VDIS" ]] && get_sysArch
+[[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+[[ -z "${OS_INFO_ARCH}" ]] && get_arch
+[[ -z "${OS_INFO_VDIS}" ]] && get_sysArch
 
 # [[ -s "${MY_SHELL_SCRIPTS}/installer/pacapt_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/pacapt_installer.sh"
 
@@ -65,38 +65,8 @@ else
 fi
 
 
-if [[ -x "$(command -v docker-compose)" ]]; then
-    colorEcho "${BLUE}Checking latest version for ${FUCHSIA}docker-compose${BLUE}..."
-
-    CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
-
-    CURRENT_VERSION=$(docker-compose -v 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        colorEcho "${BLUE}  Installing ${FUCHSIA}docker-compose ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-        DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
-
-        curl "${curl_download_opts[@]}" -o "${WORKDIR}/docker-compose" "$DOWNLOAD_URL" && \
-            sudo mv -f "${WORKDIR}/docker-compose" "/usr/local/bin/docker-compose" && \
-            sudo chmod +x "/usr/local/bin/docker-compose"
-    fi
-fi
-
-
-if [[ -x "$(command -v ctop)" ]]; then
-    colorEcho "${BLUE}Checking latest version for ${FUCHSIA}ctop${BLUE}..."
-
-    CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
-    CURRENT_VERSION=$(ctop -v 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
-    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-    if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
-        colorEcho "${BLUE}  Installing ${FUCHSIA}ctop ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-        DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/bcicen/ctop/releases/download/$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}"
-
-        curl "${curl_download_opts[@]}" -o "${WORKDIR}/ctop" "$DOWNLOAD_URL" && \
-            sudo mv -f "${WORKDIR}/ctop" "/usr/local/bin/ctop" && \
-            sudo chmod +x "/usr/local/bin/ctop"
-    fi
+if [[ -x "$(command -v docker)" ]]; then
+    [[ -s "${MY_SHELL_SCRIPTS}/installer/docker_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/docker_installer.sh"
 fi
 
 
@@ -188,6 +158,8 @@ fi
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/duf_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/duf_installer.sh"
 
+[[ -s "${MY_SHELL_SCRIPTS}/installer/dust_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/dust_installer.sh"
+
 [[ -s "${MY_SHELL_SCRIPTS}/installer/exa_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/exa_installer.sh"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/fd_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/fd_installer.sh"
@@ -212,9 +184,11 @@ IS_UPDATE_ONLY="yes"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/git-lfs_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/git-lfs_installer.sh"
 
+[[ -s "${MY_SHELL_SCRIPTS}/installer/onefetch_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/onefetch_installer.sh"
+
 [[ -s "${MY_SHELL_SCRIPTS}/installer/re-txt_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/re-txt_installer.sh"
 
-[[ -s "${MY_SHELL_SCRIPTS}/installer/tldr++_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/tldr++_installer.sh"
+[[ -s "${MY_SHELL_SCRIPTS}/installer/navi_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/navi_installer.sh"
 
 [[ -s "${MY_SHELL_SCRIPTS}/installer/pup_installer.sh" ]] && source "${MY_SHELL_SCRIPTS}/installer/pup_installer.sh"
 

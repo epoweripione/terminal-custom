@@ -48,9 +48,21 @@ fi
 
 if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
     colorEcho "${BLUE}  ${ECHO_TYPE} ${FUCHSIA}pacapt ${YELLOW}${REMOTE_VERSION}${BLUE}..."
+
+    DOWNLOAD_FILENAME="${WORKDIR}/pacapt"
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/icy/pacapt/raw/ng/pacapt"
-    sudo curl "${curl_download_opts[@]}" -o "${WORKDIR}/pacapt" "$DOWNLOAD_URL" && \
-        sudo mv -f "${WORKDIR}/pacapt" "${PREFIX}/bin/pacapt" && \
-        sudo chmod 755 "${PREFIX}/bin/pacapt" && \
-        sudo ln -sv "${PREFIX}/bin/pacapt" "${INSTALL_PACMAN_TO}/pacman" || true
+    sudo curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
+        sudo mv -f "${DOWNLOAD_FILENAME}" "${PREFIX}/bin/pacapt" && \
+            sudo chmod 755 "${PREFIX}/bin/pacapt" && \
+            sudo ln -sv "${PREFIX}/bin/pacapt" "${INSTALL_PACMAN_TO}/pacman" || true
+    fi
 fi

@@ -75,6 +75,8 @@ extensions=(
 	"rust-lang.rust"
 	"bungcip.better-toml"
 	"serayuzgur.crates"
+	## cht.sh snippets
+	"vscode-snippet.snippet"
     ## XML/JSON/GraphQL/YAML
     "eriklynd.json-tools"
 	"mohsen1.prettify-json"
@@ -117,7 +119,7 @@ if [[ $PARAMS_NUM > 0 ]]; then
     cat "${ExtFile}" | grep -v '^#' | xargs -L1 code --install-extension
 else
     for Target in "${extensions[@]}"; do
-        code --install-extension $Target
+        code --install-extension ${Target}
     done
 fi
 

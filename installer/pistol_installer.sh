@@ -51,7 +51,7 @@ IS_UPDATE="no"
 CURRENT_VERSION="0.0.0"
 
 # http://mybookworld.wikidot.com/compile-tmux-from-source
-if [[ -x "$(command -v ${EXEC_INSTALL_NAME})" ]]; then
+if [[ -x "$(command -v ${EXEC_INSTALL_NAME})" && -x "$(command -v go)" ]]; then
     IS_UPDATE="yes"
     VERSION_FILENAME="$(which ${EXEC_INSTALL_NAME}).version"
     [[ -s "${VERSION_FILENAME}" ]] && CURRENT_VERSION=$(head -n1 ${VERSION_FILENAME})

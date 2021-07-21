@@ -17,16 +17,26 @@ else
     fi
 fi
 
-# asdf:Extendable version manager with support for Ruby, Node.js, Elixir, Erlang & more
+# asdf: Extendable version manager with support for Ruby, Node.js, Elixir, Erlang & more
 # https://asdf-vm.com/
 # https://github.com/asdf-vm/asdf
 IS_INSTALL="yes"
-[[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
+IS_UPDATE="no"
 
-if [[ "${IS_INSTALL}" == "yes" ]]; then
+if [[ -d "$HOME/.asdf" ]]; then
+    IS_UPDATE="yes"
+else
+    [[ "${IS_UPDATE_ONLY}" == "yes" ]] && IS_INSTALL="no"
+fi
+
+if [[ -d "$HOME/.asdf" ]]; then
     Git_Clone_Update "asdf-vm/asdf" "$HOME/.asdf"
 fi
 
+if [[ "${IS_UPDATE}" == "yes" ]]; then
+    # asdf update
+    asdf plugin update --all
+fi
 
 ## asdf plugins repository
 ## https://asdf-vm.com/#/plugins-all

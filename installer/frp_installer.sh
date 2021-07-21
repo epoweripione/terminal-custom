@@ -20,8 +20,8 @@ fi
 [[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
 [[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
 
-[[ -z "$OS_INFO_TYPE" ]] && get_os_type
-[[ -z "$OS_INFO_ARCH" ]] && get_arch
+[[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+[[ -z "${OS_INFO_ARCH}" ]] && get_arch
 
 # frp
 # https://github.com/fatedier/frp
@@ -57,11 +57,22 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
         sudo pkill -f "frps"
     fi
 
+    DOWNLOAD_FILENAME="${WORKDIR}/frp.tar.gz"
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/fatedier/frp/releases/download/v${REMOTE_VERSION}/frp_${REMOTE_VERSION}_${OS_INFO_TYPE}_${OS_INFO_ARCH}.tar.gz"
-    curl "${curl_download_opts[@]}" -o "${WORKDIR}/frp.tar.gz" "$DOWNLOAD_URL" && \
-        tar -xzf "${WORKDIR}/frp.tar.gz" -C "${WORKDIR}" && \
-        sudo mkdir -p "/srv/frp" && \
-        sudo cp -rf ${WORKDIR}/frp_*/* "/srv/frp"
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
+        tar -xzf "${DOWNLOAD_FILENAME}" -C "${WORKDIR}" && \
+            sudo mkdir -p "/srv/frp" && \
+            sudo cp -rf ${WORKDIR}/frp_*/* "/srv/frp"
+    fi
 
     [[ -d "/srv/backup_frp" ]] && sudo cp -f /srv/backup_frp/*.ini "/srv/frp"
 

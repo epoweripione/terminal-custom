@@ -20,8 +20,8 @@ fi
 [[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
 [[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
 
-[[ -z "$OS_INFO_TYPE" ]] && get_os_type
-[[ -z "$OS_INFO_VDIS" ]] && get_sysArch
+[[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+[[ -z "${OS_INFO_VDIS}" ]] && get_sysArch
 
 # duf
 # https://github.com/muesli/duf
@@ -33,9 +33,9 @@ CHECK_URL="https://api.github.com/repos/muesli/duf/releases/latest"
 REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
 REMOTE_FILENAME=""
-case "$OS_INFO_TYPE" in
+case "${OS_INFO_TYPE}" in
     linux | bsd)
-        case "$OS_INFO_VDIS" in
+        case "${OS_INFO_VDIS}" in
             32)
                 REMOTE_FILENAME=duf_${REMOTE_VERSION}_$(uname | sed 's/.*/\L&/')_i386.tar.gz
                 ;;
@@ -54,7 +54,7 @@ case "$OS_INFO_TYPE" in
         REMOTE_FILENAME=duf_${REMOTE_VERSION}_Darwin_x86_64.tar.gz
         ;;
     windows)
-        case "$OS_INFO_VDIS" in
+        case "${OS_INFO_VDIS}" in
             32)
                 REMOTE_FILENAME=duf_${REMOTE_VERSION}_Windows_i386.zip
                 ;;
@@ -82,10 +82,20 @@ if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
         sudo rm -rf "/usr/local/duf"
     fi
 
+    DOWNLOAD_FILENAME="${WORKDIR}/duf.tar.gz"
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/muesli/duf/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
 
-    curl "${curl_download_opts[@]}" -o "${WORKDIR}/duf.tar.gz" "$DOWNLOAD_URL" && \
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
         sudo mkdir -p "/usr/local/duf" && \
-        sudo tar -xzf "${WORKDIR}/duf.tar.gz" -C "/usr/local/duf" && \
-        sudo cp -f "/usr/local/duf/duf" "/usr/local/bin/duf"
+            sudo tar -xzf "${DOWNLOAD_FILENAME}" -C "/usr/local/duf" && \
+            sudo cp -f "/usr/local/duf/duf" "/usr/local/bin/duf"
+    fi
 fi

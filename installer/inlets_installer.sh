@@ -31,6 +31,8 @@ ARCHIVE_EXEC_NAME=""
 EXEC_INSTALL_PATH="/usr/local/bin"
 EXEC_INSTALL_NAME="inlets"
 
+DOWNLOAD_FILENAME="${WORKDIR}/${EXEC_INSTALL_NAME}"
+
 REMOTE_SUFFIX=""
 REMOTE_FILENAME=""
 
@@ -60,10 +62,10 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    [[ -z "$OS_INFO_TYPE" ]] && get_os_type
-    [[ -z "$OS_INFO_ARCH" ]] && get_arch
+    [[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+    [[ -z "${OS_INFO_ARCH}" ]] && get_arch
 
-    case "$OS_INFO_TYPE" in
+    case "${OS_INFO_TYPE}" in
         darwin)
             REMOTE_SUFFIX="-darwin"
             ;;
@@ -71,7 +73,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
             REMOTE_SUFFIX=".exe"
             ;;
         linux)
-            case "$OS_INFO_ARCH" in
+            case "${OS_INFO_ARCH}" in
                 arm64)
                     REMOTE_SUFFIX="-arm64"
                     ;;
@@ -88,16 +90,25 @@ fi
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
 
-    if [[ -s "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" ]]; then
-        sudo rm -f "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}"
+    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/${GITHUB_REPO_NAME}/releases/download/${REMOTE_VERSION}/${REMOTE_FILENAME}"
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
     fi
 
-    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/${GITHUB_REPO_NAME}/releases/download/${REMOTE_VERSION}/${REMOTE_FILENAME}"
+    if [[ ${curl_download_status} -eq 0 ]]; then
+        if [[ -s "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" ]]; then
+            sudo rm -f "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}"
+        fi
 
-    curl "${curl_download_opts[@]}" -o "${WORKDIR}/${EXEC_INSTALL_NAME}" "$DOWNLOAD_URL" && \
         sudo mv -f ${WORKDIR}/${EXEC_INSTALL_NAME} "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
-        sudo chmod +x "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
-        [[ -n "${VERSION_FILENAME}" ]] && echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null || true
+            sudo chmod +x "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
+            [[ -n "${VERSION_FILENAME}" ]] && echo ${REMOTE_VERSION} | sudo tee "${VERSION_FILENAME}" >/dev/null || true
+    fi
 fi
 
 

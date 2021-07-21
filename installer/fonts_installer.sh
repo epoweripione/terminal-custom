@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [[ "$OS_INFO_TYPE" != "windows" && $UID -ne 0 ]]; then
+if [[ "${OS_INFO_TYPE}" != "windows" && $UID -ne 0 ]]; then
     echo "Please run this script as root user!"
     exit 0
 fi
@@ -141,7 +141,7 @@ colorEcho "${BLUE}Downloading ${FUCHSIA}Iosevka Term SS05 Nerd Font Complete Mon
 curl "${curl_download_opts[@]}" https://github.com/ryanoasis/nerd-fonts/raw/master/install.sh -o ~/nerdfonts_installer.sh && chmod +x ~/nerdfonts_installer.sh
 
 colorEcho "${BLUE}Installing ${FUCHSIA}Nerd fonts${BLUE}..."
-if [[ "$OS_INFO_TYPE" == "windows" ]]; then
+if [[ "${OS_INFO_TYPE}" == "windows" ]]; then
 	cd ~ && ./nerdfonts_installer.sh --quiet --clean --use-single-width-glyphs --install-to-user-path
 	colorEcho "${BLUE}Please manual install fonts from $HOME/.local/share/fonts"
 else

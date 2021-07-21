@@ -48,14 +48,24 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
 
     OS_TYPE=$(uname | sed 's/.*/\L&/')
-    [[ -z "$OS_INFO_ARCH" ]] && get_arch
+    [[ -z "${OS_INFO_ARCH}" ]] && get_arch
 
+    DOWNLOAD_FILENAME="${WORKDIR}/yq.tar.gz" 
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/mikefarah/yq/releases/download/v${REMOTE_VERSION}/yq_${OS_TYPE}_${OS_INFO_ARCH}.tar.gz"
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
 
-    curl "${curl_download_opts[@]}" -o "${WORKDIR}/yq.tar.gz" "$DOWNLOAD_URL" && \
-        sudo tar -xzf "${WORKDIR}/yq.tar.gz" -C "${WORKDIR}" && \
-        sudo mv -f ${WORKDIR}/yq_* "/usr/local/bin/yq"
-        sudo chmod +x "/usr/local/bin/yq"
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
+        sudo tar -xzf "${DOWNLOAD_FILENAME}" -C "${WORKDIR}" && \
+            sudo mv -f ${WORKDIR}/yq_* "/usr/local/bin/yq"
+            sudo chmod +x "/usr/local/bin/yq"
+    fi
 fi
 
 cd "${CURRENT_DIR}"

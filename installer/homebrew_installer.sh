@@ -22,7 +22,7 @@ colorEcho "${BLUE}Installing ${FUCHSIA}homebrew${BLUE}..."
 
 [[ -z "${OS_INFO_TYPE}" ]] && get_os_type
 
-case "$OS_INFO_TYPE" in
+case "${OS_INFO_TYPE}" in
     darwin | linux)
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
         ;;
@@ -33,7 +33,7 @@ case "$OS_INFO_TYPE" in
 esac
 
 # https://docs.brew.sh/Homebrew-on-Linux
-if [[ "$OS_INFO_TYPE" == "linux" && -s "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+if [[ "${OS_INFO_TYPE}" == "linux" && -s "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
     echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> "$HOME/.zprofile"
     # eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 fi

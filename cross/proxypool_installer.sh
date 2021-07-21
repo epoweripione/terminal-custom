@@ -84,10 +84,6 @@ fi
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
 
-    if [[ -s "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" ]]; then
-        sudo rm -f "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}"
-    fi
-
     # Download file
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/${GITHUB_REPO_NAME}/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
     curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
@@ -115,12 +111,22 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
                 tar -xJf "${DOWNLOAD_FILENAME}" -C "${WORKDIR}"
                 ;;
             "gz")
-                gzip -d -f "${DOWNLOAD_FILENAME}"
+                cd "${WORKDIR}" && gzip -df "${DOWNLOAD_FILENAME}"
+                ;;
+            "bz")
+                cd "${WORKDIR}" && bzip2 -df "${DOWNLOAD_FILENAME}"
+                ;;
+            "7z")
+                7z e "${DOWNLOAD_FILENAME}" -o"${WORKDIR}"
                 ;;
         esac
 
         # Install
         if [[ $? -eq 0 ]]; then
+            if [[ -s "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" ]]; then
+                sudo rm -f "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}"
+            fi
+
             [[ -z "${ARCHIVE_EXEC_NAME}" ]] && ARCHIVE_EXEC_NAME="${EXEC_INSTALL_NAME}"
             sudo mv -f ${WORKDIR}/${ARCHIVE_EXEC_NAME} "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \
                 sudo chmod +x "${EXEC_INSTALL_PATH}/${EXEC_INSTALL_NAME}" && \

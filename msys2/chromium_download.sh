@@ -8,8 +8,8 @@ else
     exit 0
 fi
 
-[[ -z "$OS_INFO_TYPE" ]] && get_os_type
-[[ -z "$OS_INFO_ARCH" ]] && get_arch
+[[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+[[ -z "${OS_INFO_ARCH}" ]] && get_arch
 
 
 if [[ -x "$(command -v pacman)" ]]; then
@@ -36,10 +36,10 @@ if [[ ! "$(command -v curl)" ]]; then
 fi
 
 
-if [[ "$OS_INFO_TYPE" == "windows" ]]; then
+if [[ "${OS_INFO_TYPE}" == "windows" ]]; then
     read -p "Use proxy?[y/N]:" USE_PROXY
 
-    if [[ "$OS_INFO_ARCH" == "amd64" ]]; then
+    if [[ "${OS_INFO_ARCH}" == "amd64" ]]; then
         ver="win64"
         url1="https://storage.googleapis.com/chromium-browser-snapshots/Win_x64"
         url2="https://storage.googleapis.com/chromium-browser-snapshots/win_rel"

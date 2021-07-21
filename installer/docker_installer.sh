@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-if [[ $UID -ne 0 ]]; then
-    echo "Please run this script as root user!"
-    exit 0
-fi
+# if [[ $UID -ne 0 ]]; then
+#     echo "Please run this script as root user!"
+#     exit 0
+# fi
 
 trap 'rm -rf "$WORKDIR"' EXIT
 
@@ -28,52 +28,49 @@ fi
 # Use proxy or mirror when some sites were blocked or low speed
 set_proxy_mirrors_env
 
-# Get os release name
-get_os_release
-
 [[ -z "${OS_INFO_TYPE}" ]] && get_os_type
 [[ -z "${OS_INFO_ARCH}" ]] && get_arch
+[[ -z "${OS_INFO_RELEASE}" ]] && get_os_release
 
 ## Docker
-colorEcho "${BLUE}Installing ${FUCHSIA}Docker${BLUE}..."
-# apt install -y docker-ce
 # https://github.com/docker/docker-install
 if [[ ! -x "$(command -v docker)" ]]; then
+    colorEcho "${BLUE}Installing ${FUCHSIA}Docker${BLUE}..."
     if [[ -z "$DOCKER_INSTALLER_NOT_USE_MIRROR" ]]; then
         # curl -fsSL https://get.docker.com | bash -s docker --mirror AzureChinaCloud
-        curl -fsSL https://get.docker.com -o get-docker.sh && \
-            bash get-docker.sh --mirror Aliyun
+        curl -fsSL https://get.docker.com -o "${WORKDIR}/get-docker.sh" && \
+            sudo bash "${WORKDIR}/get-docker.sh" --mirror Aliyun
     else
-        curl -fsSL https://get.docker.com -o get-docker.sh && \
-            bash get-docker.sh
+        curl -fsSL https://get.docker.com -o "${WORKDIR}/get-docker.sh" && \
+            sudo bash "${WORKDIR}/get-docker.sh"
     fi
 fi
 
 if [[ ! -x "$(command -v docker)" ]]; then
     # Oracle Linux、RHEL
     if [[ "$OS_INFO_RELEASE" == "ol" || "$OS_INFO_RELEASE" == "rhel" ]]; then
-        # yum -y install docker-engine
-        # yum -y remove docker docker-common docker-selinux docker-engine docker-cli
-        yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-        yum -y install docker-ce && \
-            systemctl enable docker && \
-            systemctl start docker
+        # sudo yum -y install docker-engine
+        # sudo yum -y remove docker docker-common docker-selinux docker-engine docker-cli
+        sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+        sudo yum -y install docker-ce && \
+            sudo systemctl enable docker && \
+            sudo systemctl start docker
 
         # fix: Error response from daemon: OCI runtime create failed: 
         # ...write /proc/self/attr/keycreate: permission denied
         OS_VERSION_ID=$(grep -E '^VERSION_ID=([a-zA-Z]*)' /etc/os-release \
                         | cut -d'=' -f2 | sed 's/\"//g' | cut -d'.' -f1)
         if [[ "$OS_VERSION_ID" == "7" ]]; then
-            yum -y install \
+            sudo yum -y install \
                 http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.107-1.el7_6.noarch.rpm
         fi
     fi
 
     # SUSE Linux Enterprise Server
     if [[ "$OS_INFO_RELEASE" == "sles" ]]; then
-        zypper in docker && \
-            systemctl enable docker && \
-            systemctl start docker
+        sudo zypper in docker && \
+            sudo systemctl enable docker && \
+            sudo systemctl start docker
     fi
 fi
 
@@ -84,16 +81,36 @@ fi
 
 
 ## Docker Compose
-if [[ ! -x "$(command -v docker-compose)" ]]; then
-    colorEcho "${BLUE}Installing ${FUCHSIA}Docker Compose${BLUE}..."
+IS_INSTALL="yes"
+CURRENT_VERSION="0.0.0"
 
-    CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
-    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
-    if [[ -n "$REMOTE_VERSION" ]]; then
-        DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
+if [[ -x "$(command -v docker-compose)" ]]; then
+    CURRENT_VERSION=$(docker-compose -v 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+fi
 
-        curl "${curl_download_opts[@]}" -o "${WORKDIR}/docker-compose" "$DOWNLOAD_URL" && \
-            mv -f "${WORKDIR}/docker-compose" "/usr/local/bin/docker-compose" && \
+colorEcho "${BLUE}Checking latest version for ${FUCHSIA}docker-compose${BLUE}..."
+CHECK_URL="https://api.github.com/repos/docker/compose/releases/latest"
+REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
+if version_le $REMOTE_VERSION $CURRENT_VERSION; then
+    IS_INSTALL="no"
+fi
+
+if [[ "${IS_INSTALL}" == "yes" ]]; then
+    colorEcho "${BLUE}  Installing ${FUCHSIA}docker-compose ${YELLOW}${REMOTE_VERSION}${BLUE}..."
+
+    DOWNLOAD_FILENAME="${WORKDIR}/docker-compose"
+    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/docker/compose/releases/download/$REMOTE_VERSION/docker-compose-`uname -s`-`uname -m`"
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
+        mv -f "${DOWNLOAD_FILENAME}" "/usr/local/bin/docker-compose" && \
             chmod +x "/usr/local/bin/docker-compose"
     fi
 
@@ -108,16 +125,36 @@ fi
 
 
 ## ctop
-if [[ ! -x "$(command -v ctop)" ]]; then
-    colorEcho "${BLUE}Installing ${FUCHSIA}ctop${BLUE}..."
+IS_INSTALL="yes"
+CURRENT_VERSION="0.0.0"
 
-    CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
-    REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
-    if [[ -n "$REMOTE_VERSION" ]]; then
-        DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/bcicen/ctop/releases/download/$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}"
+if [[ -x "$(command -v ctop)" ]]; then
+    CURRENT_VERSION=$(ctop -v 2>&1 | grep -Eo '([0-9]{1,}\.)+[0-9]{1,}' | head -n1)
+fi
 
-        curl "${curl_download_opts[@]}" -o "${WORKDIR}/ctop" "$DOWNLOAD_URL" && \
-            mv -f "${WORKDIR}/ctop" "/usr/local/bin/ctop" && \
+colorEcho "${BLUE}Checking latest version for ${FUCHSIA}ctop${BLUE}..."
+CHECK_URL="https://api.github.com/repos/bcicen/ctop/releases/latest"
+REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
+if version_le $REMOTE_VERSION $CURRENT_VERSION; then
+    IS_INSTALL="no"
+fi
+
+if [[ "${IS_INSTALL}" == "yes" ]]; then
+    colorEcho "${BLUE}  Installing ${FUCHSIA}ctop ${YELLOW}${REMOTE_VERSION}${BLUE}..."
+
+    DOWNLOAD_FILENAME="${WORKDIR}/ctop"
+    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/bcicen/ctop/releases/download/$REMOTE_VERSION/ctop-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}"
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
+        mv -f "${DOWNLOAD_FILENAME}" "/usr/local/bin/ctop" && \
             chmod +x "/usr/local/bin/ctop"
     fi
 fi
@@ -145,3 +182,6 @@ EOF
 
     systemctl daemon-reload && systemctl restart docker
 fi
+
+
+cd "${CURRENT_DIR}"

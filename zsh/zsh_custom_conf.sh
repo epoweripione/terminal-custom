@@ -530,11 +530,6 @@ if [[ -d "$HOME/.sdkman" ]]; then
     fi
 fi
 
-# navi
-if [[ -x "$(command -v navi)" ]]; then
-    source "$(navi widget zsh)"
-fi
-
 # URL encode/decode
 # https://love2dev.com/blog/whats-the-difference-between-encodeuri-and-encodeuricomponent/
 # usage

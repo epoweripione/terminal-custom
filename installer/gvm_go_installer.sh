@@ -15,8 +15,8 @@ fi
 [[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
 [[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
 
-[[ -z "$OS_INFO_TYPE" ]] && get_os_type
-[[ -z "$OS_INFO_ARCH" ]] && get_arch
+[[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+[[ -z "${OS_INFO_ARCH}" ]] && get_arch
 
 # Use proxy or mirror when some sites were blocked or low speed
 set_proxy_mirrors_env
@@ -76,7 +76,7 @@ if [[ "${IS_INSTALL}" == "yes" && "${IS_UPDATE}" == "no" ]]; then
         done
     fi
 
-    if [[ "$OS_INFO_TYPE" == "darwin" && -x "$(command -v brew)" ]]; then
+    if [[ "${OS_INFO_TYPE}" == "darwin" && -x "$(command -v brew)" ]]; then
         xcode-select --install
         brew update
         brew install mercurial
@@ -101,7 +101,7 @@ if [[ "${IS_INSTALL}" == "yes" && -d "$HOME/.gvm" ]]; then
         [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
     fi
 
-    case "$OS_INFO_TYPE" in
+    case "${OS_INFO_TYPE}" in
         windows)
             GVM_DOWNLOAD_EXT="zip"
             ;;

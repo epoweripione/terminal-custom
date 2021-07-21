@@ -63,15 +63,15 @@ fi
 if [[ "${IS_INSTALL}" == "yes" && -x "$(command -v rustup)" && -x "$(command -v cargo)" ]]; then
     Git_Clone_Update "${GITHUB_REPO_NAME}" "${WORKDIR}/${APP_INSTALL_NAME}"
     if [[ -d "${WORKDIR}/${APP_INSTALL_NAME}" ]]; then
-        [[ -z "$OS_INFO_TYPE" ]] && get_os_type
-        [[ -z "$OS_INFO_VDIS" ]] && get_sysArch
+        [[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+        [[ -z "${OS_INFO_VDIS}" ]] && get_sysArch
 
         # Build for architecture
         # <arch><sub>-<vendor>-<sys>-<abi>
         # rustc --print target-list
-        case "$OS_INFO_TYPE" in
+        case "${OS_INFO_TYPE}" in
             linux)
-                case "$OS_INFO_VDIS" in
+                case "${OS_INFO_VDIS}" in
                     32)
                         TARGET_PLATFORM=i686-unknown-linux-musl
                         ;;
@@ -87,7 +87,7 @@ if [[ "${IS_INSTALL}" == "yes" && -x "$(command -v rustup)" && -x "$(command -v 
                 esac
                 ;;
             darwin)
-                case "$OS_INFO_VDIS" in
+                case "${OS_INFO_VDIS}" in
                     64)
                         TARGET_PLATFORM=x86_64-apple-darwin
                         ;;
@@ -97,7 +97,7 @@ if [[ "${IS_INSTALL}" == "yes" && -x "$(command -v rustup)" && -x "$(command -v 
                 esac
                 ;;
             windows)
-                case "$OS_INFO_VDIS" in
+                case "${OS_INFO_VDIS}" in
                     32)
                         TARGET_PLATFORM=i686-pc-windows-msvc
                         ;;

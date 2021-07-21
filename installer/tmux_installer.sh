@@ -89,9 +89,19 @@ if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
 
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/${GITHUB_REPO_NAME}/releases/download/${REMOTE_VERSION}/${REMOTE_FILENAME}"
 
-    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}" && \
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
         tar -xzf "${DOWNLOAD_FILENAME}" -C "${WORKDIR}" && \
-        mv ${WORKDIR}/${APP_INSTALL_NAME}-* "${WORKDIR}/${APP_INSTALL_NAME}"
+            mv ${WORKDIR}/${APP_INSTALL_NAME}-* "${WORKDIR}/${APP_INSTALL_NAME}"
+    fi
 
     if [[ -d "${WORKDIR}/${APP_INSTALL_NAME}" ]]; then
         colorEcho "${BLUE}  Compiling ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."

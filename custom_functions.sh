@@ -231,10 +231,10 @@ function get_os() {
 
 function get_arch_float() {
     # https://raspberrypi.stackexchange.com/questions/4677/how-can-i-tell-if-i-am-using-the-hard-float-or-the-soft-float-version-of-debian
-    [[ -z "$OS_INFO_ARCH" ]] && get_arch
+    [[ -z "${OS_INFO_ARCH}" ]] && get_arch
 
     unset OS_INFO_FLOAT
-    case "$OS_INFO_ARCH" in
+    case "${OS_INFO_ARCH}" in
         mips | mipsle)
             if [[ -x "$(command -v dpkg)" ]]; then
                 local dpkg_arch=$(dpkg --print-architecture 2>/dev/null)
@@ -1726,7 +1726,10 @@ function Git_Replace_Remote_Origin_URL() {
     local DIRLIST=()
 
     [[ -z "${SubDir}" ]] && exit 0
-    [[ ! -d "${SubDir}" ]] && exit 0
+    [[ ! -d "${SubDir}" ]] && colorEcho "${FUCHSIA}${SubDir}${RED} is not exist or not a valid directory!" && exit 0
+
+    [[ -z "${UrlOLD}" || ! "${UrlOLD}" =~ "^(https?://|git@)" ]] && colorEcho "${FUCHSIA}${UrlOLD}${RED} is not a valid url!" && exit 0
+    [[ -z "${UrlNEW}" || ! "${UrlNEW}" =~ "^(https?://|git@)" ]] && colorEcho "${FUCHSIA}${UrlNEW}${RED} is not a valid url!" && exit 0
 
     CurrentDir=$(pwd)
 
@@ -1735,8 +1738,8 @@ function Git_Replace_Remote_Origin_URL() {
         DIRLIST+=("${FindDir%/*}")
     done < <(find "${SubDir}" -type d -name ".git")
 
-    UrlOLD="${UrlOLD%/}/"
-    UrlNEW="${UrlNEW%/}/"
+    [[ "${UrlOLD}" =~ "^(https?)://" ]] && UrlOLD="${UrlOLD%/}/"
+    [[ "${UrlNEW}" =~ "^(https?)://" ]] && UrlNEW="${UrlNEW%/}/"
 
     for TargetDir in "${DIRLIST[@]}"; do
         # if grep -q "${UrlOLD}" "${TargetDir}/.git/config"; then
@@ -1837,6 +1840,39 @@ EOF
     else
         colorEcho "${RED}  systemd service ${FUCHSIA}${service_name}${RED} install failed!"
     fi
+}
+
+
+# asdf: Extendable version manager with support for Ruby, Node.js, Elixir, Erlang & more
+# https://asdf-vm.com/
+# https://github.com/asdf-vm/asdf
+function asdf_App_Install() {
+    local appName=$1
+    local appVersion=${2:-"latest"}
+
+    [[ ! "$(command -v asdf)" ]] && colorEcho "${FUCHSIA}$asdf${RED} is not installed!" && exit 0
+
+    [[ -z "${appName}" ]] && \
+        colorEcho "${RED}Please input a valid ${FUCHSIA}asdf plugin${RED}!" && \
+        return 0
+
+    # List All in Short-name Repository
+    if ! asdf plugin list all | grep -q "${appName}"; then
+        colorEcho "${GREEN}${appName}${RED} is not a valid ${FUCHSIA}asdf plugin${RED}\!\nmore: ${FUCHSIA}https://asdf-vm.com/#/plugins-all"
+        return 0
+    fi
+
+    # List Installed
+    if asdf plugin list | grep -q "${appName}"; then
+        asdf uninstall ${appName} ${appVersion}
+    else
+        asdf plugin add ${appName}
+    fi
+
+    asdf install ${appName} ${appVersion}
+    asdf global ${appName} ${appVersion}
+
+    asdf current ${appName}
 }
 
 

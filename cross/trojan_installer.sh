@@ -48,15 +48,25 @@ fi
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
 
-    [[ -z "$OS_INFO_TYPE" ]] && get_os_type
-    [[ -z "$OS_INFO_ARCH" ]] && get_arch
+    [[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+    [[ -z "${OS_INFO_ARCH}" ]] && get_arch
 
     [[ $(systemctl is-enabled trojan 2>/dev/null) ]] && sudo systemctl stop trojan
 
+    DOWNLOAD_FILENAME="${WORKDIR}/trojan.tar.xz"
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/trojan-gfw/trojan/releases/download/v${REMOTE_VERSION}/trojan-${REMOTE_VERSION}-${OS_INFO_TYPE}-${OS_INFO_ARCH}.tar.xz"
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
 
-    curl "${curl_download_opts[@]}" -o "${WORKDIR}/trojan.tar.xz" "$DOWNLOAD_URL" && \
-        sudo tar -xJf "${WORKDIR}/trojan.tar.xz" -C "/srv/"
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
+        sudo tar -xJf "${DOWNLOAD_FILENAME}" -C "/srv/"
+    fi
 
     if [[ ! -s "/etc/systemd/system/trojan.service" ]]; then
         [[ "${IS_UPDATE}" == "no" ]] && read -p "Install trojan systemd service?[y/N]:" CHOICE

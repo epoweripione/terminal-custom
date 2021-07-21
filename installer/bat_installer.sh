@@ -20,41 +20,43 @@ fi
 [[ -n "${INSTALLER_CHECK_CURL_OPTION}" ]] && curl_check_opts=(`echo ${INSTALLER_CHECK_CURL_OPTION}`) || curl_check_opts=(-fsL)
 [[ -n "${INSTALLER_DOWNLOAD_CURL_OPTION}" ]] && curl_download_opts=(`echo ${INSTALLER_DOWNLOAD_CURL_OPTION}`) || curl_download_opts=(-fSL)
 
-[[ -z "$OS_INFO_TYPE" ]] && get_os_type
-[[ -z "$OS_INFO_VDIS" ]] && get_sysArch
+[[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+[[ -z "${OS_INFO_VDIS}" ]] && get_sysArch
 
 # bat
 # https://github.com/sharkdp/bat
 APP_INSTALL_NAME="bat"
+ARCHIVE_EXT="tar.gz"
 
 colorEcho "${BLUE}Checking latest version for ${FUCHSIA}${APP_INSTALL_NAME}${BLUE}..."
 
 CHECK_URL="https://api.github.com/repos/sharkdp/bat/releases/latest"
-REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4)
+REMOTE_VERSION=$(curl "${curl_check_opts[@]}" "${CHECK_URL}" | grep 'tag_name' | cut -d\" -f4 | cut -d'v' -f2)
 
 REMOTE_FILENAME=""
-case "$OS_INFO_TYPE" in
+case "${OS_INFO_TYPE}" in
     linux)
-        case "$OS_INFO_VDIS" in
+        case "${OS_INFO_VDIS}" in
             32)
-                REMOTE_FILENAME=bat-${REMOTE_VERSION}-i686-unknown-linux-gnu.tar.gz
+                REMOTE_FILENAME=bat-v${REMOTE_VERSION}-i686-unknown-linux-musl.${ARCHIVE_EXT}
                 ;;
             64)
-                REMOTE_FILENAME=bat-${REMOTE_VERSION}-x86_64-unknown-linux-musl.tar.gz
+                REMOTE_FILENAME=bat-v${REMOTE_VERSION}-x86_64-unknown-linux-musl.${ARCHIVE_EXT}
                 ;;
             arm)
-                REMOTE_FILENAME=bat-${REMOTE_VERSION}-arm-unknown-linux-gnueabihf.tar.gz
+                REMOTE_FILENAME=bat-v${REMOTE_VERSION}-arm-unknown-linux-gnueabihf.${ARCHIVE_EXT}
                 ;;
             arm64)
-                REMOTE_FILENAME=bat-${REMOTE_VERSION}-aarch64-unknown-linux-gnu.tar.gz
+                REMOTE_FILENAME=bat-v${REMOTE_VERSION}-aarch64-unknown-linux-gnu.${ARCHIVE_EXT}
                 ;;
         esac
         ;;
     darwin)
-        REMOTE_FILENAME=bat-${REMOTE_VERSION}-x86_64-apple-darwin.tar.gz
+        REMOTE_FILENAME=bat-v${REMOTE_VERSION}-x86_64-apple-darwin.${ARCHIVE_EXT}
         ;;
     windows)
-        REMOTE_FILENAME=bat-${REMOTE_VERSION}-x86_64-pc-windows-msvc.zip
+        ARCHIVE_EXT="zip"
+        REMOTE_FILENAME=bat-v${REMOTE_VERSION}-x86_64-pc-windows-msvc.${ARCHIVE_EXT}
         ;;
 esac
 
@@ -67,21 +69,27 @@ fi
 
 if [[ -n "$REMOTE_VERSION" && -n "$REMOTE_FILENAME" ]]; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
-    if [[ -s "/usr/bin/bat" ]]; then
-        sudo rm -f "/usr/bin/bat"
+
+    DOWNLOAD_FILENAME="${WORKDIR}/bat.${ARCHIVE_EXT}"
+    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/sharkdp/bat/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
     fi
 
-    if [[ -d "/usr/local/bat" ]]; then
-        sudo rm -rf "/usr/local/bat"
+    if [[ ${curl_download_status} -eq 0 ]]; then
+        [[ -s "/usr/bin/bat" ]] && sudo rm -f "/usr/bin/bat"
+        [[ -d "/usr/local/bat" ]] && sudo rm -rf "/usr/local/bat"
+
+        sudo tar -xzf "${DOWNLOAD_FILENAME}" -C "/usr/local" && \
+            cd "/usr/local" && \
+            sudo mv bat-v* bat && \
+            sudo ln -sv "/usr/local/bat/bat" "/usr/bin/bat" || true
     fi
-
-    DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/sharkdp/bat/releases/download/${REMOTE_VERSION}/${REMOTE_FILENAME}"
-
-    curl "${curl_download_opts[@]}" -o "${WORKDIR}/bat.tar.gz" "${DOWNLOAD_URL}" && \
-        sudo tar -xzf "${WORKDIR}/bat.tar.gz" -C "/usr/local" && \
-        cd "/usr/local" && \
-        sudo mv bat-* bat && \
-        sudo ln -sv "/usr/local/bat/bat" "/usr/bin/bat" || true
 fi
 
 cd "${CURRENT_DIR}"

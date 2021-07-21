@@ -67,14 +67,14 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
 fi
 
 if [[ "${IS_INSTALL}" == "yes" ]]; then
-    [[ -z "$OS_INFO_TYPE" ]] && get_os_type
-    [[ -z "$OS_INFO_ARCH" ]] && get_arch
-    [[ -z "$OS_INFO_FLOAT" ]] && get_arch_float
+    [[ -z "${OS_INFO_TYPE}" ]] && get_os_type
+    [[ -z "${OS_INFO_ARCH}" ]] && get_arch
+    [[ -z "${OS_INFO_FLOAT}" ]] && get_arch_float
 
     REMOTE_FILENAME=""
-    case "$OS_INFO_TYPE" in
+    case "${OS_INFO_TYPE}" in
         linux)
-            case "$OS_INFO_ARCH" in
+            case "${OS_INFO_ARCH}" in
                 arm64)
                     REMOTE_FILENAME=${APP_INSTALL_NAME}-${OS_INFO_TYPE}-armv8-v${REMOTE_VERSION}.gz
                     ;;
@@ -96,7 +96,7 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
             REMOTE_FILENAME=${APP_INSTALL_NAME}-freebsd-${OS_INFO_ARCH}-v${REMOTE_VERSION}.gz
             ;;
         windows)
-            case "$OS_INFO_ARCH" in
+            case "${OS_INFO_ARCH}" in
                 arm)
                     REMOTE_FILENAME=${APP_INSTALL_NAME}-${OS_INFO_TYPE}-arm32v7-v${REMOTE_VERSION}.gz
                     ;;
@@ -113,15 +113,25 @@ fi
 if [[ "${IS_INSTALL}" == "yes" ]]; then
     colorEcho "${BLUE}  Installing ${FUCHSIA}${APP_INSTALL_NAME} ${YELLOW}${REMOTE_VERSION}${BLUE}..."
 
+    DOWNLOAD_FILENAME="${WORKDIR}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz"
     DOWNLOAD_URL="${GITHUB_DOWNLOAD_URL:-https://github.com}/Dreamacro/clash/releases/download/v${REMOTE_VERSION}/${REMOTE_FILENAME}"
+    curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
 
-    curl "${curl_download_opts[@]}" -o "${WORKDIR}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" "$DOWNLOAD_URL" && \
+    curl_download_status=$?
+    if [[ ${curl_download_status} -gt 0 && -n "${GITHUB_DOWNLOAD_URL}" ]]; then
+        DOWNLOAD_URL=$(echo "${DOWNLOAD_URL}" | sed "s|${GITHUB_DOWNLOAD_URL}|https://github.com|")
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${DOWNLOAD_URL}"
+        curl_download_status=$?
+    fi
+
+    if [[ ${curl_download_status} -eq 0 ]]; then
         sudo mkdir -p "/srv/clash" && \
-        sudo mv "${WORKDIR}/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" "/srv/clash" && \
-        cd "/srv/clash" && \
-        sudo gzip -d -f "clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" && \
-        sudo chmod +x "clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}" && \
-        sudo ln -sv "/srv/clash/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}" "/srv/clash/clash" || true
+            sudo mv "${DOWNLOAD_FILENAME}" "/srv/clash" && \
+            cd "/srv/clash" && \
+            sudo gzip -df "clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}.gz" && \
+            sudo chmod +x "clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}" && \
+            sudo ln -sv "/srv/clash/clash-${OS_INFO_TYPE}-${OS_INFO_ARCH}" "/srv/clash/clash" || true
+    fi
 
     # geo database
     if [[ -s "/srv/clash/mmdb.ver" ]]; then
@@ -153,8 +163,9 @@ if [[ "${IS_INSTALL}" == "yes" ]]; then
     if version_gt $REMOTE_VERSION $CURRENT_VERSION; then
         colorEcho "${BLUE}  Installing ${FUCHSIA}clash geo database ${YELLOW}${REMOTE_VERSION}${BLUE}..."
 
-        curl "${curl_download_opts[@]}" -o "${WORKDIR}/Country.mmdb" "$MMDB_URL" && \
-            sudo mv -f "${WORKDIR}/Country.mmdb" "/srv/clash/Country.mmdb" && \
+        DOWNLOAD_FILENAME="${WORKDIR}/Country.mmdb"
+        curl "${curl_download_opts[@]}" -o "${DOWNLOAD_FILENAME}" "${MMDB_URL}" && \
+            sudo mv -f "${DOWNLOAD_FILENAME}" "/srv/clash/Country.mmdb" && \
             echo ${REMOTE_VERSION} | sudo tee "/srv/clash/mmdb.ver" >/dev/null
     fi
 

@@ -68,6 +68,8 @@ $extensions = @(
 	"rust-lang.rust"
 	"bungcip.better-toml"
 	"serayuzgur.crates"
+	## cht.sh snippets
+	"vscode-snippet.snippet"
     ## XML/JSON/GraphQL/YAML
     "eriklynd.json-tools"
 	"mohsen1.prettify-json"
